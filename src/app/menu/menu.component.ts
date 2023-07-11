@@ -13,7 +13,6 @@ export class MenuComponent {
     this.items = [
       {
         label: 'Vocabulary',
-        icon: 'pi pi-fw pi-file',
         expanded: true,
         items: [
           {
