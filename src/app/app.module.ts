@@ -14,9 +14,10 @@ import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
 import { HomeComponent } from './home/home.component';
 import { PanelMenuModule } from 'primeng/panelmenu';
+import { WordSlideComponent } from './word-slide/word-slide.component';
 
 @NgModule({
-  declarations: [AppComponent, MenuComponent, HomeComponent],
+  declarations: [AppComponent, MenuComponent, HomeComponent, WordSlideComponent],
   imports: [
     BrowserModule,
     FormsModule,

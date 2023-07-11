@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 
 @Component({
   selector: 'app-menu',
@@ -7,10 +7,16 @@ import { MenuItem } from 'primeng/api';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent {
-  items: MenuItem[] | undefined;
+  contentItems: MenuItem[] | undefined;
+  navItems: MenuItem[] | undefined;
+
+  showMessage(e: any) {
+    console.log('hello');
+    console.log({ e });
+  }
 
   ngOnInit() {
-    this.items = [
+    this.contentItems = [
       {
         label: 'Vocabulary',
         expanded: true,
@@ -86,6 +92,30 @@ export class MenuComponent {
             label: 'Exercise 3',
           },
         ],
+      },
+    ];
+
+    this.navItems = [
+      {
+        label: 'Start',
+        command: (e) => {
+          this.showMessage(e);
+        },
+      },
+      {
+        label: 'Previous',
+      },
+      {
+        label: 'Next',
+      },
+      {
+        label: 'End',
+      },
+      {
+        label: 'Toggle',
+      },
+      {
+        icon: 'pi-bars',
       },
     ];
   }
