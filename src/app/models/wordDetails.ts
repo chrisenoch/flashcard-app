@@ -1,5 +1,5 @@
-export interface PresWord {
-  id: number;
+export interface WordDetails {
+  id: string;
   english: string;
   spanish: string;
   explanation: string;

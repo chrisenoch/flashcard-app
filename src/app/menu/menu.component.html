@@ -1,6 +1,10 @@
 <div class="wrapper">
   <p-panelMenu [model]="contentItems" [multiple]="true"></p-panelMenu>
-  <app-word-slide ngClass="app-word-slide"></app-word-slide>
+  <app-word-slide
+    ngClass="app-word-slide"
+    [word]="displayedContent?.english"
+    [explanation]="displayedContent?.explanation"
+  ></app-word-slide>
 </div>
 
 <p-menubar [model]="navItems"></p-menubar>

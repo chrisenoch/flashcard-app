@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { WordDetails } from '../models/wordDetails';
 
 @Component({
   selector: 'app-word-slide',
@@ -6,6 +7,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./word-slide.component.scss'],
 })
 export class WordSlideComponent {
-  word = 'Hello';
-  explanation = 'A very clear explanation';
+  // Need to receive a word object (with the examples as well?)
+  //Later this will be a word | summary | exercise
+  @Input() word: string | undefined = '';
+  @Input() explanation: string | undefined = '';
+
+  // ngOnInit(): void {
+  //   this.word = word;
+  //   this.explanation = explanation;
+  // }
 }
