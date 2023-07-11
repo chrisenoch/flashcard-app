@@ -1,0 +1,18 @@
+//test to ensure I can change sizes of buttons if necessary
+.p-button {
+  &.p-button-xsm {
+    @include scaledFontSize(
+      $fontSize,
+      $scaleSM
+    ); //use scaleSM and not scaleXSm so that the font does not become too small
+    @include scaledPadding($buttonPadding, $scaleXSM);
+
+    .p-button-icon {
+      @include scaledFontSize($primeIconFontSize, $scaleSM);
+    }
+  }
+}
+
+.p-menubar .p-menuitem-link {
+  box-shadow: none !important;
+}
