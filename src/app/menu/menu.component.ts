@@ -14,15 +14,6 @@ export class MenuComponent {
   displayedContent: ItemDetails | undefined;
   currentPos = 0;
 
-  //my custom approach  -tried this first and worked
-  isWD(obj: ItemDetails): WordDetails | null {
-    if (obj.type === 'WORD') {
-      return obj;
-    } else {
-      return null;
-    }
-  }
-
   //proper approach
   isWordDetails(item: ItemDetails): item is WordDetails {
     return (item as WordDetails).type === 'WORD';
