@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <p-panelMenu [model]="contentItems" [multiple]="true"></p-panelMenu>
+  <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
 
   <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
     <app-word-slide

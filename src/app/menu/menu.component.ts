@@ -4,6 +4,7 @@ import { TeachingItem } from '../models/types/teachingItem';
 import { WordItem } from '../models/interfaces/wordItem';
 import { SummaryItem } from '../models/interfaces/summaryItem';
 import { ExerciseItem } from '../models/interfaces/exerciseItem';
+import { capitalize } from '../utlities/text';
 
 @Component({
   selector: 'app-menu',
@@ -11,7 +12,7 @@ import { ExerciseItem } from '../models/interfaces/exerciseItem';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent {
-  contentItems: MenuItem[] = [];
+  contents: MenuItem[] = [];
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
@@ -47,66 +48,28 @@ export class MenuComponent {
   );
 
   //get these from service later
-  //words for now, but this may include other objects later
   teachingItems: TeachingItem[] = [...this.wordItems, ...this.summaryItems];
 
   ngOnInit() {
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
 
-    this.contentItems = [
+    this.contents = [
       {
         label: 'Vocabulary',
         expanded: true,
-        items: [
-          {
-            label: 'Table',
-            id: 'word-1',
-            command: (e) => {
-              this.updateDisplayedContent(e);
-            },
-          },
-          {
-            label: 'Chair',
-            id: 'word-2',
-            command: (e) => {
-              this.updateDisplayedContent(e);
-            },
-          },
-          {
-            label: 'Door',
-            id: 'word-3',
-            command: (e) => {
-              this.updateDisplayedContent(e);
-            },
-          },
-        ],
+        items: this.generateContentsItems(this.wordItems, (e) => {
+          this.updateDisplayedContent(e);
+        }),
       },
       {
         label: 'Summary',
-        items: [
-          {
-            label: 'Vocabulary',
-            id: 'summary-1',
-            command: (e) => {
-              this.updateDisplayedContent(e);
-            },
-          },
-        ],
+        items: this.generateContentsItems(this.summaryItems, (e) => {
+          this.updateDisplayedContent(e);
+        }),
       },
       {
         label: 'Exercises',
-        // items: [
-        //   {
-        //     label: 'Exercise 1',
-        //   },
-        //   {
-        //     label: 'Exercise 2',
-        //   },
-        //   {
-        //     label: 'Exercise 3',
-        //   },
-        // ],
       },
     ];
 
@@ -147,6 +110,41 @@ export class MenuComponent {
         icon: 'pi-bars',
       },
     ];
+  }
+
+  generateContentsItems(
+    items: TeachingItem[],
+    callback: (...args: any[]) => void,
+    label?: string
+  ): any {
+    let count = 0;
+    let newLabel = '';
+    const contentsItems: any[] = items.map((item) => {
+      if (label === undefined) {
+        if (this.isWordItem(item)) {
+          newLabel = item.english;
+          console.log(item);
+          console.log(label);
+        }
+        if (this.isSummaryItem(item)) {
+          newLabel = capitalize(item.type) + ' ' + count++;
+        }
+        if (this.isExerciseItem(item)) {
+          newLabel = capitalize(item.type) + ' ' + count++;
+        }
+      }
+
+      const newItem = {
+        label: newLabel,
+        id: item.id,
+        command: callback,
+      };
+
+      return newItem;
+    });
+
+    //console.log(contentsItems);
+    return contentsItems;
   }
 
   generateSummaryItems(
@@ -193,9 +191,6 @@ export class MenuComponent {
       }
     });
 
-    console.log('summaryItems below');
-    console.log(summaryItems);
-
     return summaryItems;
   }
 
@@ -213,9 +208,9 @@ export class MenuComponent {
   }
 
   //this only checks items one-level deep
-  // getNumOfContentItems() {
+  // getNumOfcontents() {
   //   let count = 0;
-  //   this.contentItems.forEach((item) => {
+  //   this.contents.forEach((item) => {
   //     if (item.items) {
   //       count += item.items?.length;
   //     }
@@ -231,12 +226,12 @@ export class MenuComponent {
   }
 
   incrementCurrentPos() {
-    if (this.contentItems) {
+    if (this.contents) {
       if (this.currentPos + 1 > this.teachingItems.length - 1) {
         return;
       }
       this.displayedContent = this.teachingItems[++this.currentPos];
-      console.log(this.currentPos);
+      //console.log(this.currentPos);
     }
   }
 
