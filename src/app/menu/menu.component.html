@@ -1,10 +1,21 @@
 <div class="wrapper">
   <p-panelMenu [model]="contentItems" [multiple]="true"></p-panelMenu>
-  <app-word-slide
+
+  <!-- <app-word-slide
+    *ngIf="getWordDetails(displayedContent)"
     ngClass="app-word-slide"
-    [word]="displayedContent?.english"
-    [explanation]="displayedContent?.explanation"
-  ></app-word-slide>
+    [word]="getWordDetails(displayedContent)?.english"
+    [explanation]="getWordDetails(displayedContent)?.explanation"
+  ></app-word-slide> -->
+  <ng-container *ngIf="displayedContent && isWD(displayedContent) as wD">
+    <app-word-slide
+      ngClass="app-word-slide"
+      [word]="wD.english"
+      [explanation]="wD.explanation"
+    ></app-word-slide>
+  </ng-container>
 </div>
 
 <p-menubar [model]="navItems"></p-menubar>
+
+<!-- *ngIf="typeof 'hello' === string" -->

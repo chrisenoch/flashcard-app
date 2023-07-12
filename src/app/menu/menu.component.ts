@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
-import { WordDetails } from '../models/wordDetails';
+import { ItemDetails } from '../models/types/itemDetails';
+import { WordDetails } from '../models/interfaces/wordDetails';
 
 @Component({
   selector: 'app-menu',
@@ -10,23 +11,52 @@ import { WordDetails } from '../models/wordDetails';
 export class MenuComponent {
   contentItems: MenuItem[] = [];
   navItems: MenuItem[] | undefined;
-  displayedContent: WordDetails | undefined;
+  displayedContent: ItemDetails | undefined;
   currentPos = 0;
 
-  //this only cheecks items one-level deep
-  getNumOfContentItems() {
-    let count = 0;
-    this.contentItems.forEach((item) => {
-      if (item.items) {
-        count += item.items?.length;
-      }
-    });
-    return count;
+  //my custom approach  -tried this first and worked
+  isWD(obj: ItemDetails): WordDetails | null {
+    if (obj.type === 'WORD') {
+      return obj;
+    } else {
+      return null;
+    }
   }
+
+  //proper approach
+  isWordDetails(item: ItemDetails): item is WordDetails {
+    return (item as WordDetails).type === 'WORD';
+  }
+
+  //get these from service later
+  //words for now, but this may include other objects later
+  itemDetails: ItemDetails[] = [
+    {
+      id: 'word-1',
+      type: 'WORD',
+      english: 'Table',
+      spanish: 'La mesa',
+      explanation: 'Some table explanation here',
+    },
+    {
+      id: 'word-2',
+      type: 'WORD',
+      english: 'Chair',
+      spanish: 'La silla',
+      explanation: 'Some chair explanation here',
+    },
+    {
+      id: 'word-3',
+      type: 'WORD',
+      english: 'Door',
+      spanish: 'La puerta',
+      explanation: 'Some door explanation here',
+    },
+  ];
 
   ngOnInit() {
     //init first word
-    this.displayedContent = this.wordDetails[this.currentPos];
+    this.displayedContent = this.itemDetails[this.currentPos];
     console.log(this.displayedContent);
 
     this.contentItems = [
@@ -173,11 +203,22 @@ export class MenuComponent {
     ];
   }
 
+  //this only cheecks items one-level deep
+  getNumOfContentItems() {
+    let count = 0;
+    this.contentItems.forEach((item) => {
+      if (item.items) {
+        count += item.items?.length;
+      }
+    });
+    return count;
+  }
+
   decrementCurrentPos() {
     if (this.currentPos - 1 < 0) {
       return;
     }
-    this.displayedContent = this.wordDetails[--this.currentPos];
+    this.displayedContent = this.itemDetails[--this.currentPos];
   }
 
   incrementCurrentPos() {
@@ -185,45 +226,19 @@ export class MenuComponent {
       if (this.currentPos + 1 > this.getNumOfContentItems() - 1) {
         return;
       }
-      this.displayedContent = this.wordDetails[++this.currentPos];
+      this.displayedContent = this.itemDetails[++this.currentPos];
       console.log(this.currentPos);
     }
   }
 
   goToStart() {
     this.currentPos = 0;
-    this.displayedContent = this.wordDetails[this.currentPos];
+    this.displayedContent = this.itemDetails[this.currentPos];
   }
   goToEnd() {
-    this.currentPos = this.wordDetails.length - 1;
-    this.displayedContent = this.wordDetails[this.currentPos];
+    this.currentPos = this.itemDetails.length - 1;
+    this.displayedContent = this.itemDetails[this.currentPos];
   }
-
-  //get these from service later
-  //words for now, but this may include other objects later
-  wordDetails: WordDetails[] = [
-    {
-      id: 'word-1',
-      type: 'WORD',
-      english: 'Table',
-      spanish: 'La mesa',
-      explanation: 'Some table explanation here',
-    },
-    {
-      id: 'word-2',
-      type: 'WORD',
-      english: 'Chair',
-      spanish: 'La silla',
-      explanation: 'Some chair explanation here',
-    },
-    {
-      id: 'word-3',
-      type: 'WORD',
-      english: 'Door',
-      spanish: 'La puerta',
-      explanation: 'Some door explanation here',
-    },
-  ];
 
   //test PrimeNg command property
   showMessage(e: any) {
@@ -234,14 +249,14 @@ export class MenuComponent {
   updateDisplayedContent(e: MenuItemCommandEvent) {
     if (e?.item?.id) {
       const id = e.item.id;
-      const newDisplayedContent = this.wordDetails.find(
-        (wordDetails) => id === wordDetails.id
+      const newDisplayedContent = this.itemDetails.find(
+        (itemDetails) => id === itemDetails.id
       );
 
       if (newDisplayedContent) {
         this.displayedContent = newDisplayedContent;
 
-        this.currentPos = this.wordDetails.findIndex(
+        this.currentPos = this.itemDetails.findIndex(
           (ele) => ele.id === this.displayedContent!.id
         );
       }

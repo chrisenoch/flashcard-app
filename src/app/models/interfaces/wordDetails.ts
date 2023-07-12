@@ -1,8 +1,8 @@
-import { Details } from './details';
+import { Details } from '../types/details';
 
 export interface WordDetails {
   id: string;
-  type: Details;
+  type: 'WORD';
   english: string;
   spanish: string;
   explanation: string;
