@@ -15,10 +15,9 @@ export class MenuComponent {
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
+  maxWordsOnSummarySlide: number = 2;
 
-  //get these from service later
-  //words for now, but this may include other objects later
-  teachingItems: TeachingItem[] = [
+  wordItems: WordItem[] = [
     {
       id: 'word-1',
       type: 'WORD',
@@ -40,40 +39,20 @@ export class MenuComponent {
       spanish: 'La puerta',
       explanation: 'Some door explanation here',
     },
-
-    {
-      id: 'summary-1',
-      type: 'SUMMARY',
-      wordItems: [
-        {
-          id: 'word-1',
-          type: 'WORD',
-          english: 'Table',
-          spanish: 'La mesa',
-          explanation: 'Some table explanation here',
-        },
-        {
-          id: 'word-2',
-          type: 'WORD',
-          english: 'Chair',
-          spanish: 'La silla',
-          explanation: 'Some chair explanation here',
-        },
-        {
-          id: 'word-3',
-          type: 'WORD',
-          english: 'Door',
-          spanish: 'La puerta',
-          explanation: 'Some door explanation here',
-        },
-      ],
-    },
   ];
+
+  summaryItems: SummaryItem[] = this.generateSummaryItems(
+    this.maxWordsOnSummarySlide,
+    this.wordItems
+  );
+
+  //get these from service later
+  //words for now, but this may include other objects later
+  teachingItems: TeachingItem[] = [...this.wordItems, ...this.summaryItems];
 
   ngOnInit() {
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
-    console.log(this.displayedContent);
 
     this.contentItems = [
       {
@@ -101,58 +80,6 @@ export class MenuComponent {
               this.updateDisplayedContent(e);
             },
           },
-          // {
-          //   label: 'Lamp',
-          //   id: 'word-4',
-          // },
-          // {
-          //   label: 'Bookcase',
-          //   id: 'word-5',
-          // },
-          // {
-          //   label: 'Sofa',
-          //   id: 'word-6',
-          // },
-          // {
-          //   label: 'Rug',
-          //   id: 'word-7',
-          // },
-          // {
-          //   label: 'Desk',
-          //   id: 'word-8',
-          // },
-          // {
-          //   label: 'Bedside table',
-          //   id: 'word-9',
-          // },
-          // {
-          //   label: 'Curtains',
-          //   id: 'word-10',
-          // },
-          // {
-          //   label: 'Wardrobe',
-          //   id: 'word-11',
-          // },
-          // {
-          //   label: 'Toilet',
-          //   id: 'word-12',
-          // },
-          // {
-          //   label: 'Sink',
-          //   id: 'word-13',
-          // },
-          // {
-          //   label: 'Mirror',
-          //   id: 'word-14',
-          // },
-          // {
-          //   label: 'Bath',
-          //   id: 'word-15',
-          // },
-          // {
-          //   label: 'Shower',
-          //   id: 'word-16',
-          // },
         ],
       },
       {
@@ -186,8 +113,7 @@ export class MenuComponent {
     this.navItems = [
       {
         label: 'Start',
-        command: (e) => {
-          this.showMessage(e);
+        command: () => {
           this.goToStart();
         },
         id: 'fun-value',
@@ -221,6 +147,56 @@ export class MenuComponent {
         icon: 'pi-bars',
       },
     ];
+  }
+
+  generateSummaryItems(
+    wordsPerPage: number,
+    wordItems: WordItem[]
+  ): SummaryItem[] {
+    if (wordsPerPage < 1) {
+      return [];
+    }
+
+    let count = 1;
+    const type = 'SUMMARY';
+    const summaryItems: SummaryItem[] = [];
+
+    let summaryItem: SummaryItem = {
+      id: 'summary-',
+      type,
+      wordItems: [],
+    };
+
+    wordItems.forEach((wordItem, i, arr) => {
+      summaryItem.id = 'summary-' + count;
+      //continue adding wordItems to wordItems array on object until i = 8;
+      summaryItem.wordItems.push(wordItem);
+
+      //if last iteration, add the remaining summaryItem and end loop early
+      if (i === arr.length - 1) {
+        summaryItems.push(summaryItem);
+        return;
+      }
+
+      if ((i + 1) % wordsPerPage === 0) {
+        //when the wordsPerPage limit is reached, we add the SummaryItem to summaryItems
+        //add to main summaryItems array
+        summaryItems.push(summaryItem);
+        //increment count
+        count++;
+
+        summaryItem = {
+          id: 'summary-',
+          type,
+          wordItems: [],
+        };
+      }
+    });
+
+    console.log('summaryItems below');
+    console.log(summaryItems);
+
+    return summaryItems;
   }
 
   //proper approach
@@ -271,12 +247,6 @@ export class MenuComponent {
   goToEnd() {
     this.currentPos = this.teachingItems.length - 1;
     this.displayedContent = this.teachingItems[this.currentPos];
-  }
-
-  //test PrimeNg command property
-  showMessage(e: any) {
-    console.log('hello');
-    console.log({ e });
   }
 
   updateDisplayedContent(e: MenuItemCommandEvent) {
