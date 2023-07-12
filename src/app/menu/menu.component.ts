@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
-import { ItemDetails } from '../models/types/itemDetails';
-import { WordDetails } from '../models/interfaces/wordDetails';
+import { TeachingItem } from '../models/types/teachingItem';
+import { WordItem } from '../models/interfaces/wordItem';
+import { SummaryItem } from '../models/interfaces/summaryItem';
+import { ExerciseItem } from '../models/interfaces/exerciseItem';
 
 @Component({
   selector: 'app-menu',
@@ -11,17 +13,12 @@ import { WordDetails } from '../models/interfaces/wordDetails';
 export class MenuComponent {
   contentItems: MenuItem[] = [];
   navItems: MenuItem[] | undefined;
-  displayedContent: ItemDetails | undefined;
+  displayedContent: TeachingItem | undefined;
   currentPos = 0;
-
-  //proper approach
-  isWordDetails(item: ItemDetails): item is WordDetails {
-    return (item as WordDetails).type === 'WORD';
-  }
 
   //get these from service later
   //words for now, but this may include other objects later
-  itemDetails: ItemDetails[] = [
+  itemDetails: TeachingItem[] = [
     {
       id: 'word-1',
       type: 'WORD',
@@ -194,7 +191,20 @@ export class MenuComponent {
     ];
   }
 
-  //this only cheecks items one-level deep
+  //proper approach
+  isWordItem(item: TeachingItem): item is WordItem {
+    return (item as WordItem).type === 'WORD';
+  }
+
+  isSummaryItem(item: TeachingItem): item is SummaryItem {
+    return (item as SummaryItem).type === 'SUMMARY';
+  }
+
+  isExerciseItem(item: TeachingItem): item is ExerciseItem {
+    return (item as ExerciseItem).type === 'EXERCISE';
+  }
+
+  //this only checks items one-level deep
   getNumOfContentItems() {
     let count = 0;
     this.contentItems.forEach((item) => {

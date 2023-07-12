@@ -6,6 +6,6 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./word-slide.component.scss'],
 })
 export class WordSlideComponent {
-  @Input() word: string | undefined = '';
-  @Input() explanation: string | undefined = '';
+  @Input() word: string = '';
+  @Input() explanation: string = '';
 }

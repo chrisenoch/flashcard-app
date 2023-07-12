@@ -1,7 +1,7 @@
 import { Details } from '../types/details';
 
 //change this later
-export interface ExerciseDetails {
+export interface ExerciseItem {
   id: string;
   type: 'EXERCISE';
   question: string;

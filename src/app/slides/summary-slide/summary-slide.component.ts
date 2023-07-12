@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { WordItem } from 'src/app/models/interfaces/wordItem';
 
 @Component({
   selector: 'app-summary-slide',
@@ -6,7 +7,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./summary-slide.component.scss'],
 })
 export class SummarySlideComponent {
-  //change this later
-  @Input() word: string | undefined = '';
-  @Input() explanation: string | undefined = '';
+  @Input() wordItems: WordItem[] = [];
 }

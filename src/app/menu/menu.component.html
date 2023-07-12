@@ -1,13 +1,28 @@
 <div class="wrapper">
   <p-panelMenu [model]="contentItems" [multiple]="true"></p-panelMenu>
 
-  <ng-container *ngIf="displayedContent && isWordDetails(displayedContent)">
+  <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
     <app-word-slide
       ngClass="app-word-slide"
       [word]="displayedContent.english"
       [explanation]="displayedContent.explanation"
     ></app-word-slide>
   </ng-container>
+
+  <ng-container *ngIf="displayedContent && isSummaryItem(displayedContent)">
+    <app-summary-slide
+      ngClass="app-word-slide"
+      [wordItems]="displayedContent.wordItems"
+    ></app-summary-slide>
+  </ng-container>
+
+  <!-- <ng-container *ngIf="displayedContent && isExerciseItem(displayedContent)">
+    <app-exercise-slide
+      ngClass="app-word-slide"
+      [word]="displayedContent.english"
+      [explanation]="displayedContent.explanation"
+    ></app-exercise-slide>
+  </ng-container> -->
 </div>
 
 <p-menubar [model]="navItems"></p-menubar>
