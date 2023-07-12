@@ -1,5 +1,8 @@
-<!-- <div class="wrapper">
+<div class="wrapper">
   <p class="text-xs">Summary Slide</p>
-  <p>{{ word }}</p>
-  <p>{{ explanation }}</p>
-</div> -->
+  <ng-container *ngFor="let item of wordItems">
+    <p>{{ item.english }}</p>
+    <p>{{ item.explanation }}</p>
+    <hr />
+  </ng-container>
+</div>

@@ -18,7 +18,7 @@ export class MenuComponent {
 
   //get these from service later
   //words for now, but this may include other objects later
-  itemDetails: TeachingItem[] = [
+  teachingItems: TeachingItem[] = [
     {
       id: 'word-1',
       type: 'WORD',
@@ -40,11 +40,39 @@ export class MenuComponent {
       spanish: 'La puerta',
       explanation: 'Some door explanation here',
     },
+
+    {
+      id: 'summary-1',
+      type: 'SUMMARY',
+      wordItems: [
+        {
+          id: 'word-1',
+          type: 'WORD',
+          english: 'Table',
+          spanish: 'La mesa',
+          explanation: 'Some table explanation here',
+        },
+        {
+          id: 'word-2',
+          type: 'WORD',
+          english: 'Chair',
+          spanish: 'La silla',
+          explanation: 'Some chair explanation here',
+        },
+        {
+          id: 'word-3',
+          type: 'WORD',
+          english: 'Door',
+          spanish: 'La puerta',
+          explanation: 'Some door explanation here',
+        },
+      ],
+    },
   ];
 
   ngOnInit() {
     //init first word
-    this.displayedContent = this.itemDetails[this.currentPos];
+    this.displayedContent = this.teachingItems[this.currentPos];
     console.log(this.displayedContent);
 
     this.contentItems = [
@@ -129,11 +157,15 @@ export class MenuComponent {
       },
       {
         label: 'Summary',
-        // items: [
-        //   {
-        //     label: 'Vocabulary',
-        //   },
-        // ],
+        items: [
+          {
+            label: 'Vocabulary',
+            id: 'summary-1',
+            command: (e) => {
+              this.updateDisplayedContent(e);
+            },
+          },
+        ],
       },
       {
         label: 'Exercises',
@@ -205,40 +237,40 @@ export class MenuComponent {
   }
 
   //this only checks items one-level deep
-  getNumOfContentItems() {
-    let count = 0;
-    this.contentItems.forEach((item) => {
-      if (item.items) {
-        count += item.items?.length;
-      }
-    });
-    return count;
-  }
+  // getNumOfContentItems() {
+  //   let count = 0;
+  //   this.contentItems.forEach((item) => {
+  //     if (item.items) {
+  //       count += item.items?.length;
+  //     }
+  //   });
+  //   return count;
+  // }
 
   decrementCurrentPos() {
     if (this.currentPos - 1 < 0) {
       return;
     }
-    this.displayedContent = this.itemDetails[--this.currentPos];
+    this.displayedContent = this.teachingItems[--this.currentPos];
   }
 
   incrementCurrentPos() {
     if (this.contentItems) {
-      if (this.currentPos + 1 > this.getNumOfContentItems() - 1) {
+      if (this.currentPos + 1 > this.teachingItems.length - 1) {
         return;
       }
-      this.displayedContent = this.itemDetails[++this.currentPos];
+      this.displayedContent = this.teachingItems[++this.currentPos];
       console.log(this.currentPos);
     }
   }
 
   goToStart() {
     this.currentPos = 0;
-    this.displayedContent = this.itemDetails[this.currentPos];
+    this.displayedContent = this.teachingItems[this.currentPos];
   }
   goToEnd() {
-    this.currentPos = this.itemDetails.length - 1;
-    this.displayedContent = this.itemDetails[this.currentPos];
+    this.currentPos = this.teachingItems.length - 1;
+    this.displayedContent = this.teachingItems[this.currentPos];
   }
 
   //test PrimeNg command property
@@ -250,14 +282,14 @@ export class MenuComponent {
   updateDisplayedContent(e: MenuItemCommandEvent) {
     if (e?.item?.id) {
       const id = e.item.id;
-      const newDisplayedContent = this.itemDetails.find(
+      const newDisplayedContent = this.teachingItems.find(
         (itemDetails) => id === itemDetails.id
       );
 
       if (newDisplayedContent) {
         this.displayedContent = newDisplayedContent;
 
-        this.currentPos = this.itemDetails.findIndex(
+        this.currentPos = this.teachingItems.findIndex(
           (ele) => ele.id === this.displayedContent!.id
         );
       }
