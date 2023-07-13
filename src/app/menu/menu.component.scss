@@ -13,7 +13,9 @@
   display: flex;
 }
 
-.app-word-slide {
+.app-word-slide,
+.app-summary-slide,
+.app-exercise-slide {
   background-color: orange;
   flex-grow: 1;
   min-height: calc(100vh - 84px);

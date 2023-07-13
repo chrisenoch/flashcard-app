@@ -1,5 +1,8 @@
 <div class="wrapper">
   <p class="text-xs">Exercise Slide</p>
-  <p>{{ word }}</p>
-  <p>{{ explanation }}</p>
+  <div *ngFor="let q of questions">
+    <p>{{ "Question:" + q.question }}</p>
+    <p>{{ "Answer: " + q.answer }}</p>
+    <hr />
+  </div>
 </div>

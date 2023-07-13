@@ -11,18 +11,17 @@
 
   <ng-container *ngIf="displayedContent && isSummaryItem(displayedContent)">
     <app-summary-slide
-      ngClass="app-word-slide"
+      ngClass="app-summary-slide"
       [wordItems]="displayedContent.wordItems"
     ></app-summary-slide>
   </ng-container>
 
-  <!-- <ng-container *ngIf="displayedContent && isExerciseItem(displayedContent)">
+  <ng-container *ngIf="displayedContent && isExerciseItem(displayedContent)">
     <app-exercise-slide
-      ngClass="app-word-slide"
-      [word]="displayedContent.english"
-      [explanation]="displayedContent.explanation"
+      ngClass="app-exercise-slide"
+      [questions]="displayedContent.questions"
     ></app-exercise-slide>
-  </ng-container> -->
+  </ng-container>
 </div>
 
 <p-menubar [model]="navItems"></p-menubar>

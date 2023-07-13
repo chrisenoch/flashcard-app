@@ -47,8 +47,25 @@ export class MenuComponent {
     this.wordItems
   );
 
+  exerciseItems: ExerciseItem[] = [
+    {
+      type: 'EXERCISE',
+      id: 'exercise-1',
+      //questions:[{"Question 1", "Answer 1"}
+      questions: [
+        { question: 'Question 1', answer: 'Answer 1' },
+        { question: 'Question 2', answer: 'Answer 2' },
+        { question: 'Question 3', answer: 'Answer 3' },
+      ],
+    },
+  ];
+
   //get these from service later
-  teachingItems: TeachingItem[] = [...this.wordItems, ...this.summaryItems];
+  teachingItems: TeachingItem[] = [
+    ...this.wordItems,
+    ...this.summaryItems,
+    ...this.exerciseItems,
+  ];
 
   ngOnInit() {
     //init first word
@@ -70,6 +87,9 @@ export class MenuComponent {
       },
       {
         label: 'Exercises',
+        items: this.generateContentsItems(this.exerciseItems, (e) => {
+          this.updateDisplayedContent(e);
+        }),
       },
     ];
 
@@ -84,8 +104,7 @@ export class MenuComponent {
         label: 'Previous Section',
         command: () => {
           const currentId = this.teachingItems[this.currentPos].id;
-          console.log(currentId);
-          this.goToStartOfPreviousSection(currentId);
+          this.goToStartOfSection(currentId, true);
         },
       },
       {
@@ -104,8 +123,7 @@ export class MenuComponent {
         label: 'Next Section',
         command: () => {
           const currentId = this.teachingItems[this.currentPos].id;
-          console.log(currentId);
-          this.goToStartOfNextSection(currentId);
+          this.goToStartOfSection(currentId);
         },
       },
       {
@@ -133,7 +151,7 @@ export class MenuComponent {
     const contentsItems: any[] = items.map((item) => {
       if (label === undefined) {
         if (this.isWordItem(item)) {
-          newLabel = item.english;
+          newLabel = capitalize(item.english);
         }
         if (this.isSummaryItem(item)) {
           newLabel = capitalize(item.type) + ' ' + count++;
@@ -152,7 +170,6 @@ export class MenuComponent {
       return newItem;
     });
 
-    //console.log(contentsItems);
     return contentsItems;
   }
 
@@ -227,26 +244,15 @@ export class MenuComponent {
   //   return count;
   // }
 
-  goToStartOfNextSection(currentId: string): void {
-    const idNextSection = this.getIdOfNextSectionStart(currentId);
+  //Navigates to start of next section if goToPrevious argument is not provided or set to false. Set goToPrevious to true to navigate to start of previous section.
+  goToStartOfSection(currentId: string, goToPrevious?: boolean): void {
+    let idNextSection: string;
 
-    console.log('teaching items below');
-    console.log(this.teachingItems);
-
-    const indexNextSection = this.teachingItems.findIndex(
-      (ele) => ele.id === idNextSection
-    );
-
-    this.currentPos = indexNextSection;
-
-    this.displayedContent = this.teachingItems[this.currentPos];
-  }
-
-  goToStartOfPreviousSection(currentId: string): void {
-    const idNextSection = this.getIdOfPreviousSectionStart(currentId);
-
-    console.log('teaching items below');
-    console.log(this.teachingItems);
+    if (goToPrevious) {
+      idNextSection = this.getIdOfPreviousSectionStart(currentId);
+    } else {
+      idNextSection = this.getIdOfNextSectionStart(currentId);
+    }
 
     const indexNextSection = this.teachingItems.findIndex(
       (ele) => ele.id === idNextSection
@@ -328,7 +334,7 @@ export class MenuComponent {
         return;
       }
       this.displayedContent = this.teachingItems[++this.currentPos];
-      //console.log(this.currentPos);
+      console.log(this.displayedContent);
     }
   }
 

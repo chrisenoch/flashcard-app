@@ -6,7 +6,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./exercise-slide.component.scss'],
 })
 export default class ExerciseSlideComponent {
-  //change this later
-  @Input() word: string | undefined = '';
-  @Input() explanation: string | undefined = '';
+  @Input() questions: { question: string; answer: string }[] = [];
 }
