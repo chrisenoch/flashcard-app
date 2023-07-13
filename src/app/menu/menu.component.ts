@@ -22,12 +22,9 @@ export class MenuComponent implements OnInit, OnDestroy {
   maxWordsOnSummarySlide: number = 2;
   //showTranslation = false;
 
-  //change this - set to trye for now for testing
+  //change this - set to true for now for testing
   showTranslation = true;
   showPrimaryWordFirst = true;
-
-  primaryWord = '';
-  secondaryWord = '';
 
   wordItems: WordItem[] = [];
   summaryItems: SummaryItem[] = [];
@@ -69,14 +66,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
-
-    // this.primaryWord = this.isWordItem(this.displayedContent)
-    //   ? this.displayedContent.english
-    //   : '';
-    // this.secondaryWord = this.isWordItem(this.displayedContent)
-    //   ? this.displayedContent.spanish
-    //   : '';
-    this.updatePrimaryAndSecondaryWords();
 
     this.contents = [
       {
@@ -273,7 +262,6 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.currentPos = indexNextSection;
 
     this.displayedContent = this.teachingItems[this.currentPos];
-    this.updatePrimaryAndSecondaryWords();
   }
 
   getIdOfPreviousSectionStart(currentId: string): string {
@@ -339,14 +327,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       return;
     }
     this.displayedContent = this.teachingItems[--this.currentPos];
-
-    // this.primaryWord = this.isWordItem(this.displayedContent)
-    //   ? this.displayedContent.english
-    //   : '';
-    // this.secondaryWord = this.isWordItem(this.displayedContent)
-    //   ? this.displayedContent.spanish
-    //   : '';
-    this.updatePrimaryAndSecondaryWords();
   }
 
   incrementCurrentPos() {
@@ -356,27 +336,16 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
       this.displayedContent = this.teachingItems[++this.currentPos];
       console.log(this.displayedContent);
-
-      this.updatePrimaryAndSecondaryWords();
-    }
-  }
-
-  updatePrimaryAndSecondaryWords() {
-    if (this.displayedContent && this.isWordItem(this.displayedContent)) {
-      this.primaryWord = this.displayedContent.english;
-      this.secondaryWord = this.displayedContent.spanish;
     }
   }
 
   goToStart() {
     this.currentPos = 0;
     this.displayedContent = this.teachingItems[this.currentPos];
-    this.updatePrimaryAndSecondaryWords();
   }
   goToEnd() {
     this.currentPos = this.teachingItems.length - 1;
     this.displayedContent = this.teachingItems[this.currentPos];
-    this.updatePrimaryAndSecondaryWords();
   }
 
   updateDisplayedContent(e: MenuItemCommandEvent) {
