@@ -1,0 +1,7 @@
+{
+  "attr-lowercase": false,
+  "doctype-first": false,
+  "spec-char-escape": true,
+  "id-unique": true,
+  "src-not-empty": true
+}

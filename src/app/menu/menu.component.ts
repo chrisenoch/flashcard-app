@@ -1,52 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { TeachingItem } from '../models/types/teachingItem';
 import { WordItem } from '../models/interfaces/wordItem';
 import { SummaryItem } from '../models/interfaces/summaryItem';
 import { ExerciseItem } from '../models/interfaces/exerciseItem';
 import { capitalize } from '../utlities/text';
+import { WordService } from '../word.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit, OnDestroy {
   contents: MenuItem[] = [];
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
   maxWordsOnSummarySlide: number = 2;
+  private subscription!: Subscription;
 
-  wordItems: WordItem[] = [
-    {
-      id: 'word-1',
-      type: 'WORD',
-      english: 'Table',
-      spanish: 'La mesa',
-      explanation: 'Some table explanation here',
-    },
-    {
-      id: 'word-2',
-      type: 'WORD',
-      english: 'Chair',
-      spanish: 'La silla',
-      explanation: 'Some chair explanation here',
-    },
-    {
-      id: 'word-3',
-      type: 'WORD',
-      english: 'Door',
-      spanish: 'La puerta',
-      explanation: 'Some door explanation here',
-    },
-  ];
+  wordItems: WordItem[] = [];
+  summaryItems: SummaryItem[] = [];
+  teachingItems: TeachingItem[] = [];
 
-  summaryItems: SummaryItem[] = this.generateSummaryItems(
-    this.maxWordsOnSummarySlide,
-    this.wordItems
-  );
-
+  //get these from service later
   exerciseItems: ExerciseItem[] = [
     {
       type: 'EXERCISE',
@@ -60,14 +39,26 @@ export class MenuComponent {
     },
   ];
 
-  //get these from service later
-  teachingItems: TeachingItem[] = [
-    ...this.wordItems,
-    ...this.summaryItems,
-    ...this.exerciseItems,
-  ];
+  constructor(private wordService: WordService) {}
 
   ngOnInit() {
+    this.subscription = this.wordService
+      .getWordItems()
+      .subscribe((wordItems: WordItem[]) => {
+        this.wordItems = wordItems;
+      });
+
+    this.summaryItems = this.generateSummaryItems(
+      this.maxWordsOnSummarySlide,
+      this.wordItems
+    );
+
+    this.teachingItems = [
+      ...this.wordItems,
+      ...this.summaryItems,
+      ...this.exerciseItems,
+    ];
+
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
 
@@ -139,6 +130,10 @@ export class MenuComponent {
         icon: 'pi-bars',
       },
     ];
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   generateContentsItems(
@@ -232,17 +227,6 @@ export class MenuComponent {
   isExerciseItem(item: TeachingItem): item is ExerciseItem {
     return (item as ExerciseItem).type === 'EXERCISE';
   }
-
-  //this only checks items one-level deep
-  // getNumOfcontents() {
-  //   let count = 0;
-  //   this.contents.forEach((item) => {
-  //     if (item.items) {
-  //       count += item.items?.length;
-  //     }
-  //   });
-  //   return count;
-  // }
 
   //Navigates to start of next section if goToPrevious argument is not provided or set to false. Set goToPrevious to true to navigate to start of previous section.
   goToStartOfSection(currentId: string, goToPrevious?: boolean): void {
@@ -363,4 +347,15 @@ export class MenuComponent {
       }
     }
   }
+
+  //this only checks items one-level deep
+  // getNumOfcontents() {
+  //   let count = 0;
+  //   this.contents.forEach((item) => {
+  //     if (item.items) {
+  //       count += item.items?.length;
+  //     }
+  //   });
+  //   return count;
+  // }
 }
