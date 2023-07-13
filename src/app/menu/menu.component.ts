@@ -14,12 +14,20 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit, OnDestroy {
+  private subscription!: Subscription;
   contents: MenuItem[] = [];
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
   maxWordsOnSummarySlide: number = 2;
-  private subscription!: Subscription;
+  //showTranslation = false;
+
+  //change this - set to trye for now for testing
+  showTranslation = true;
+  showPrimaryWordFirst = true;
+
+  primaryWord = '';
+  secondaryWord = '';
 
   wordItems: WordItem[] = [];
   summaryItems: SummaryItem[] = [];
@@ -61,6 +69,14 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
+
+    // this.primaryWord = this.isWordItem(this.displayedContent)
+    //   ? this.displayedContent.english
+    //   : '';
+    // this.secondaryWord = this.isWordItem(this.displayedContent)
+    //   ? this.displayedContent.spanish
+    //   : '';
+    this.updatePrimaryAndSecondaryWords();
 
     this.contents = [
       {
@@ -125,6 +141,9 @@ export class MenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Toggle',
+        command: () => {
+          this.toggleTranslation();
+        },
       },
       {
         icon: 'pi-bars',
@@ -134,6 +153,15 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  toggleTranslation() {
+    // [this.primaryWord, this.secondaryWord] = [
+    //   this.secondaryWord,
+    //   this.primaryWord,
+    // ];
+    this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
+    console.log(this.showPrimaryWordFirst);
   }
 
   generateContentsItems(
@@ -245,6 +273,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.currentPos = indexNextSection;
 
     this.displayedContent = this.teachingItems[this.currentPos];
+    this.updatePrimaryAndSecondaryWords();
   }
 
   getIdOfPreviousSectionStart(currentId: string): string {
@@ -310,6 +339,14 @@ export class MenuComponent implements OnInit, OnDestroy {
       return;
     }
     this.displayedContent = this.teachingItems[--this.currentPos];
+
+    // this.primaryWord = this.isWordItem(this.displayedContent)
+    //   ? this.displayedContent.english
+    //   : '';
+    // this.secondaryWord = this.isWordItem(this.displayedContent)
+    //   ? this.displayedContent.spanish
+    //   : '';
+    this.updatePrimaryAndSecondaryWords();
   }
 
   incrementCurrentPos() {
@@ -319,16 +356,27 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
       this.displayedContent = this.teachingItems[++this.currentPos];
       console.log(this.displayedContent);
+
+      this.updatePrimaryAndSecondaryWords();
+    }
+  }
+
+  updatePrimaryAndSecondaryWords() {
+    if (this.displayedContent && this.isWordItem(this.displayedContent)) {
+      this.primaryWord = this.displayedContent.english;
+      this.secondaryWord = this.displayedContent.spanish;
     }
   }
 
   goToStart() {
     this.currentPos = 0;
     this.displayedContent = this.teachingItems[this.currentPos];
+    this.updatePrimaryAndSecondaryWords();
   }
   goToEnd() {
     this.currentPos = this.teachingItems.length - 1;
     this.displayedContent = this.teachingItems[this.currentPos];
+    this.updatePrimaryAndSecondaryWords();
   }
 
   updateDisplayedContent(e: MenuItemCommandEvent) {

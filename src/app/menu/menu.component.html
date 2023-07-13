@@ -4,7 +4,10 @@
   <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
     <app-word-slide
       ngClass="app-word-slide"
-      [word]="displayedContent.english"
+      [primaryWord]="primaryWord"
+      [secondaryWord]="secondaryWord"
+      [showTranslation]="showTranslation"
+      [showPrimaryWordFirst]="showPrimaryWordFirst"
       [explanation]="displayedContent.explanation"
     ></app-word-slide>
   </ng-container>

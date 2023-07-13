@@ -1,5 +1,14 @@
 <div class="wrapper">
   <p class="text-xs">Word Slide</p>
-  <p>{{ word }}</p>
+
+  <ng-container *ngIf="showTranslation">
+    <p *ngIf="showPrimaryWordFirst">{{ primaryWord }}</p>
+    <p *ngIf="!showPrimaryWordFirst">{{ secondaryWord }}</p>
+  </ng-container>
+  <ng-container *ngIf="showTranslation">
+    <p *ngIf="showPrimaryWordFirst" class="text-sm">{{ secondaryWord }}</p>
+    <p *ngIf="!showPrimaryWordFirst" class="text-sm">{{ primaryWord }}</p>
+  </ng-container>
+
   <p>{{ explanation }}</p>
 </div>
