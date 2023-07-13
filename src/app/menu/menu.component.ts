@@ -67,27 +67,28 @@ export class MenuComponent implements OnInit, OnDestroy {
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
 
-    this.contents = [
-      {
-        label: 'Vocabulary',
-        expanded: true,
-        items: this.generateContentsItems(this.wordItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
-      },
-      {
-        label: 'Summary',
-        items: this.generateContentsItems(this.summaryItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
-      },
-      {
-        label: 'Exercises',
-        items: this.generateContentsItems(this.exerciseItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
-      },
-    ];
+    // this.contents = [
+    //   {
+    //     label: 'Vocabulary',
+    //     expanded: true,
+    //     items: this.generateContentsItems(this.wordItems, (e) => {
+    //       this.updateDisplayedContent(e);
+    //     }),
+    //   },
+    //   {
+    //     label: 'Summary',
+    //     items: this.generateContentsItems(this.summaryItems, (e) => {
+    //       this.updateDisplayedContent(e);
+    //     }),
+    //   },
+    //   {
+    //     label: 'Exercises',
+    //     items: this.generateContentsItems(this.exerciseItems, (e) => {
+    //       this.updateDisplayedContent(e);
+    //     }),
+    //   },
+    // ];
+    this.contents = this.generateContents();
 
     this.navItems = [
       {
@@ -145,12 +146,33 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   toggleTranslation() {
-    // [this.primaryWord, this.secondaryWord] = [
-    //   this.secondaryWord,
-    //   this.primaryWord,
-    // ];
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
     console.log(this.showPrimaryWordFirst);
+    this.contents = this.generateContents();
+  }
+
+  generateContents() {
+    return [
+      {
+        label: 'Vocabulary',
+        expanded: true,
+        items: this.generateContentsItems(this.wordItems, (e) => {
+          this.updateDisplayedContent(e);
+        }),
+      },
+      {
+        label: 'Summary',
+        items: this.generateContentsItems(this.summaryItems, (e) => {
+          this.updateDisplayedContent(e);
+        }),
+      },
+      {
+        label: 'Exercises',
+        items: this.generateContentsItems(this.exerciseItems, (e) => {
+          this.updateDisplayedContent(e);
+        }),
+      },
+    ];
   }
 
   generateContentsItems(
@@ -163,7 +185,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     const contentsItems: any[] = items.map((item) => {
       if (label === undefined) {
         if (this.isWordItem(item)) {
-          newLabel = capitalize(item.english);
+          newLabel = this.showPrimaryWordFirst
+            ? capitalize(item.english)
+            : capitalize(item.spanish);
         }
         if (this.isSummaryItem(item)) {
           newLabel = capitalize(item.type) + ' ' + count++;
