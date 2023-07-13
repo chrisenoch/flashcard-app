@@ -81,6 +81,14 @@ export class MenuComponent {
         },
       },
       {
+        label: 'Previous Section',
+        command: () => {
+          const currentId = this.teachingItems[this.currentPos].id;
+          console.log(currentId);
+          this.goToStartOfPreviousSection(currentId);
+        },
+      },
+      {
         label: 'Previous',
         command: () => {
           this.decrementCurrentPos();
@@ -97,7 +105,7 @@ export class MenuComponent {
         command: () => {
           const currentId = this.teachingItems[this.currentPos].id;
           console.log(currentId);
-          this.goToEndOfSection(currentId);
+          this.goToStartOfNextSection(currentId);
         },
       },
       {
@@ -219,8 +227,8 @@ export class MenuComponent {
   //   return count;
   // }
 
-  goToEndOfSection(currentId: string): void {
-    const idNextSection = this.getIdOfNextSection(currentId);
+  goToStartOfNextSection(currentId: string): void {
+    const idNextSection = this.getIdOfNextSectionStart(currentId);
 
     console.log('teaching items below');
     console.log(this.teachingItems);
@@ -234,17 +242,73 @@ export class MenuComponent {
     this.displayedContent = this.teachingItems[this.currentPos];
   }
 
-  getIdOfNextSection(currentId: string): string {
+  goToStartOfPreviousSection(currentId: string): void {
+    const idNextSection = this.getIdOfPreviousSectionStart(currentId);
+
+    console.log('teaching items below');
+    console.log(this.teachingItems);
+
+    const indexNextSection = this.teachingItems.findIndex(
+      (ele) => ele.id === idNextSection
+    );
+
+    this.currentPos = indexNextSection;
+
+    this.displayedContent = this.teachingItems[this.currentPos];
+  }
+
+  getIdOfPreviousSectionStart(currentId: string): string {
     //get the part of the id that comes before the last hyphen. This part of the id represents the section.
-    const currentIdStart = currentId.substring(0, currentId.lastIndexOf('-'));
+    const currentSection = currentId.substring(0, currentId.lastIndexOf('-'));
+    let previousSection: string = currentSection;
+    let idOfPreviousSectionStart = currentId;
+    let isInPreviousSection = false;
 
-    for (let i = 0; i < this.teachingItems.length; i++) {
-      let itemId = this.teachingItems[i].id;
+    //only iterate back from the current position in the array
+    const filteredTeachingItems = this.teachingItems.slice(
+      0,
+      this.currentPos + 1
+    );
+
+    for (let i = filteredTeachingItems.length - 1; i >= 0; i--) {
+      let itemId = filteredTeachingItems[i].id;
+      //if is the first slide, return the id for the first slide
+      if (i === 0) {
+        return itemId;
+      }
+
       //get the part of the id that comes before the last hyphen. This part of the id represents the section.
-      let itemIdStart = itemId.substring(0, itemId.lastIndexOf('-'));
+      let itemSection = itemId.substring(0, itemId.lastIndexOf('-'));
 
-      if (itemIdStart !== currentIdStart) {
-        //newId = itemId;
+      if (isInPreviousSection) {
+        //if section changes a second time, return the id of the next slide
+        if (itemSection !== previousSection) {
+          idOfPreviousSectionStart = filteredTeachingItems[i + 1].id;
+          return idOfPreviousSectionStart;
+        }
+      }
+
+      if (itemSection !== currentSection && !isInPreviousSection) {
+        previousSection = itemSection; //e.g. previousSection = 'word'
+        isInPreviousSection = true;
+      }
+    }
+    return idOfPreviousSectionStart;
+  }
+
+  getIdOfNextSectionStart(currentId: string): string {
+    //get the part of the id that comes before the last hyphen. This part of the id represents the section.
+    const currentSection = currentId.substring(0, currentId.lastIndexOf('-'));
+
+    //only iterate forward from the current position in the array
+    const filteredTeachingItems = this.teachingItems.slice(this.currentPos);
+
+    for (let i = 0; i < filteredTeachingItems.length; i++) {
+      let itemId = filteredTeachingItems[i].id;
+      //get the part of the id that comes before the last hyphen. This part of the id represents the section.
+      let itemSection = itemId.substring(0, itemId.lastIndexOf('-'));
+
+      if (itemSection !== currentSection) {
         return itemId;
       }
     }
