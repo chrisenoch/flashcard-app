@@ -79,11 +79,6 @@ export class MenuComponent {
         command: () => {
           this.goToStart();
         },
-        id: 'fun-value',
-        state: {
-          department: 'HR',
-          position: 'manager',
-        },
       },
       {
         label: 'Previous',
@@ -95,6 +90,14 @@ export class MenuComponent {
         label: 'Next',
         command: () => {
           this.incrementCurrentPos();
+        },
+      },
+      {
+        label: 'Next Section',
+        command: () => {
+          const currentId = this.teachingItems[this.currentPos].id;
+          console.log(currentId);
+          this.goToEndOfSection(currentId);
         },
       },
       {
@@ -117,14 +120,12 @@ export class MenuComponent {
     callback: (...args: any[]) => void,
     label?: string
   ): any {
-    let count = 0;
+    let count = 1;
     let newLabel = '';
     const contentsItems: any[] = items.map((item) => {
       if (label === undefined) {
         if (this.isWordItem(item)) {
           newLabel = item.english;
-          console.log(item);
-          console.log(label);
         }
         if (this.isSummaryItem(item)) {
           newLabel = capitalize(item.type) + ' ' + count++;
@@ -217,6 +218,38 @@ export class MenuComponent {
   //   });
   //   return count;
   // }
+
+  goToEndOfSection(currentId: string): void {
+    const idNextSection = this.getIdOfNextSection(currentId);
+
+    console.log('teaching items below');
+    console.log(this.teachingItems);
+
+    const indexNextSection = this.teachingItems.findIndex(
+      (ele) => ele.id === idNextSection
+    );
+
+    this.currentPos = indexNextSection;
+
+    this.displayedContent = this.teachingItems[this.currentPos];
+  }
+
+  getIdOfNextSection(currentId: string): string {
+    //get the part of the id that comes before the last hyphen. This part of the id represents the section.
+    const currentIdStart = currentId.substring(0, currentId.lastIndexOf('-'));
+
+    for (let i = 0; i < this.teachingItems.length; i++) {
+      let itemId = this.teachingItems[i].id;
+      //get the part of the id that comes before the last hyphen. This part of the id represents the section.
+      let itemIdStart = itemId.substring(0, itemId.lastIndexOf('-'));
+
+      if (itemIdStart !== currentIdStart) {
+        //newId = itemId;
+        return itemId;
+      }
+    }
+    return currentId;
+  }
 
   decrementCurrentPos() {
     if (this.currentPos - 1 < 0) {
