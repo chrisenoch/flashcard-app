@@ -20,6 +20,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
   maxWordsOnSummarySlide: number = 2;
+  showContentAfterWordVisited = true;
   //showTranslation = false;
 
   //change this - set to true for now for testing
@@ -67,27 +68,6 @@ export class MenuComponent implements OnInit, OnDestroy {
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
 
-    // this.contents = [
-    //   {
-    //     label: 'Vocabulary',
-    //     expanded: true,
-    //     items: this.generateContentsItems(this.wordItems, (e) => {
-    //       this.updateDisplayedContent(e);
-    //     }),
-    //   },
-    //   {
-    //     label: 'Summary',
-    //     items: this.generateContentsItems(this.summaryItems, (e) => {
-    //       this.updateDisplayedContent(e);
-    //     }),
-    //   },
-    //   {
-    //     label: 'Exercises',
-    //     items: this.generateContentsItems(this.exerciseItems, (e) => {
-    //       this.updateDisplayedContent(e);
-    //     }),
-    //   },
-    // ];
     this.contents = this.generateContents();
 
     this.navItems = [
@@ -108,12 +88,14 @@ export class MenuComponent implements OnInit, OnDestroy {
         label: 'Previous',
         command: () => {
           this.decrementCurrentPos();
+          this.addWordToContents();
         },
       },
       {
         label: 'Next',
         command: () => {
           this.incrementCurrentPos();
+          this.addWordToContents();
         },
       },
       {
@@ -136,6 +118,13 @@ export class MenuComponent implements OnInit, OnDestroy {
         },
       },
       {
+        label: 'Show words after visited',
+        command: () => {
+          this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
+          this.contents = this.generateContents();
+        },
+      },
+      {
         icon: 'pi-bars',
       },
     ];
@@ -147,7 +136,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   toggleTranslation() {
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
-    console.log(this.showPrimaryWordFirst);
     this.contents = this.generateContents();
   }
 
@@ -182,29 +170,48 @@ export class MenuComponent implements OnInit, OnDestroy {
   ): any {
     let count = 1;
     let newLabel = '';
-    const contentsItems: any[] = items.map((item) => {
-      if (label === undefined) {
-        if (this.isWordItem(item)) {
-          newLabel = this.showPrimaryWordFirst
-            ? capitalize(item.english)
-            : capitalize(item.spanish);
-        }
-        if (this.isSummaryItem(item)) {
-          newLabel = capitalize(item.type) + ' ' + count++;
-        }
-        if (this.isExerciseItem(item)) {
-          newLabel = capitalize(item.type) + ' ' + count++;
-        }
-      }
+    const contentsItems: any[] = items
 
-      const newItem = {
-        label: newLabel,
-        id: item.id,
-        command: callback,
-      };
+      .filter((item, i) => {
+        //don't show vocab word until it has been visited if showContentAfterWordVisited is true
+        if (
+          i !== 0 &&
+          this.showContentAfterWordVisited &&
+          this.isWordItem(item) &&
+          !item.isVisited
+        ) {
+          return false;
+        } else {
+          return true;
+        }
+      })
 
-      return newItem;
-    });
+      .map((item) => {
+        if (label === undefined) {
+          if (this.isWordItem(item)) {
+            newLabel = this.showPrimaryWordFirst
+              ? capitalize(item.english)
+              : capitalize(item.spanish);
+          }
+          if (this.isSummaryItem(item)) {
+            newLabel = capitalize(item.type) + ' ' + count++;
+          }
+          if (this.isExerciseItem(item)) {
+            newLabel = capitalize(item.type) + ' ' + count++;
+          }
+        }
+
+        const newItem = {
+          label: newLabel,
+          id: item.id,
+          command: callback,
+        };
+
+        return newItem;
+      });
+
+    // console.log('content items below');
+    // console.log(contentsItems);
 
     return contentsItems;
   }
@@ -267,6 +274,24 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   isExerciseItem(item: TeachingItem): item is ExerciseItem {
     return (item as ExerciseItem).type === 'EXERCISE';
+  }
+
+  setWordAsVisited(wordItem: WordItem) {
+    wordItem.isVisited = true;
+  }
+
+  addWordToContents() {
+    if (this.displayedContent && this.isWordItem(this.displayedContent)) {
+      const wordItem = this.displayedContent;
+
+      if (wordItem.isVisited) {
+        //don't generate contents again if word is already shown on the contents bar
+        return;
+      } else {
+        this.setWordAsVisited(wordItem);
+        this.contents = this.generateContents();
+      }
+    }
   }
 
   //Navigates to start of next section if goToPrevious argument is not provided or set to false. Set goToPrevious to true to navigate to start of previous section.
@@ -359,7 +384,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         return;
       }
       this.displayedContent = this.teachingItems[++this.currentPos];
-      console.log(this.displayedContent);
     }
   }
 

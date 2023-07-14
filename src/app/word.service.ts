@@ -18,6 +18,7 @@ export class WordService {
       english: 'Table',
       spanish: 'La mesa',
       explanation: 'Some table explanation here',
+      isVisited: false,
     },
     {
       id: 'word-2',
@@ -25,6 +26,7 @@ export class WordService {
       english: 'Chair',
       spanish: 'La silla',
       explanation: 'Some chair explanation here',
+      isVisited: false,
     },
     {
       id: 'word-3',
@@ -32,6 +34,7 @@ export class WordService {
       english: 'Door',
       spanish: 'La puerta',
       explanation: 'Some door explanation here',
+      isVisited: false,
     },
   ];
 }

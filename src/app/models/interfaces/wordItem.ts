@@ -7,4 +7,5 @@ export interface WordItem {
   spanish: string;
   explanation: string;
   examples?: string[];
+  isVisited: boolean;
 }
