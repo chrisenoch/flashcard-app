@@ -203,6 +203,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
         const newItem = {
           label: newLabel,
+          icon: 'pi pi-bolt',
           id: item.id,
           command: callback,
         };
