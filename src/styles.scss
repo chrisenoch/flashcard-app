@@ -3,9 +3,57 @@
 @tailwind utilities;
 
 @layer base {
-  // html {
-  //   @apply text-green-500;
-  // }
+  .default-font {
+    @apply text-base text-slate-700 font-normal;
+  }
+
+  .lead-text {
+    @apply text-lg text-slate-600;
+  }
+
+  .header-1 {
+    @apply text-4xl text-slate-900 font-bold;
+  }
+
+  .header-2 {
+    @apply text-3xl text-slate-900 font-bold;
+  }
+
+  .header-3 {
+    @apply text-2xl text-slate-900 font-bold;
+  }
+
+  .header-4 {
+    @apply text-xl text-slate-900 font-bold;
+  }
+
+  .header-5 {
+    @apply text-lg text-slate-900 font-bold;
+  }
+
+  .header-6 {
+    @apply text-base text-slate-900 font-bold;
+  }
+
+  .hero-text-1 {
+    @apply text-8xl text-slate-900 font-light;
+  }
+
+  .hero-text-2 {
+    @apply text-7xl text-slate-900 font-light;
+  }
+
+  .hero-text-3 {
+    @apply text-6xl text-slate-900 font-light;
+  }
+
+  .hero-text-4 {
+    @apply text-5xl text-slate-900 font-bold;
+  }
+
+  html {
+    @apply text-base text-slate-700 font-normal;
+  }
 
   // :root{
 
