@@ -1,9 +1,21 @@
 //$primaryColor: #d5e546 !default;
-@import "../variables";
+//@import "../variables";
 
 $scaleXSM: 0.7;
 //$inputListItemFocusShadow: inset 0 0 0 1px $focusOutlineColor;
 $inputFocusBorderColor: transparent;
+
+//all changed from zinc -* to gray-*
+$shade000: #ffffff; //surface
+$shade100: #f9fafb; //header background       //originally: zinc50
+$shade200: #f3f4f6; //hover background        //originally: zinc100
+$shade300: #e5e7eb; //border, divider         //originally: gray200
+$shade400: #d1d5db; //input border            //originally: zinc300
+$shade500: #9ca3af; //input icon              //originally: gray500
+$shade600: #6b7280; //text secondary color    //originally: zinc500
+$shade700: #374151; //text color              //originally:zinc700
+$shade800: #1f2937; //unused                  //originally: zinc800
+$shade900: #111827; //zinc900                //originally: zinc900
 
 //Define Tailwind color variables here so we can use them in Angular CSS and SCSS components when we are not using Tailwind. PrimeNG hides some of the implementation details and HTML elements so it is not possible to style PrimeNG components by only using Tailwind.
 //Being able to access these variables in Angular CSS and SCSS components ensures we keep a consistent colour scheme.
