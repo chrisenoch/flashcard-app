@@ -1,5 +1,7 @@
 <div class="flex bg-white">
-  <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
+  <div class="w-72 pl-10">
+    <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
+  </div>
 
   <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
     <app-word-slide

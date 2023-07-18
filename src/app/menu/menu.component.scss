@@ -1,13 +1,17 @@
+.app-word-slide,
+.app-summary-slide,
+.app-exercise-slide {
+  background-color: var(--tw-bg-white);
+  flex-grow: 1;
+  min-height: calc(100vh - 84px);
+}
+
 :host {
   ::ng-deep {
-    & .p-menuitem-icon {
-      //color: rgb(175, 13, 240) !important;
-      //color: $primaryColor !important;
-      color: var(--tw-purple-500) !important;
-      color: var(--tw-green-600) !important;
-      //color: $primaryColor !important;
-      //color: $purple-100 !important;
+    & .p-panelmenu-icon {
+      display: none;
     }
+
     & .p-menubar {
       position: fixed;
       bottom: 0;
@@ -16,28 +20,59 @@
     }
 
     & .p-panelmenu {
-      width: 300px;
-      border-radius: 0px !important;
+      width: 13rem;
       & .p-panelmenu-panel {
+        margin-bottom: 0.25rem;
+
+        &:first-child {
+          & .p-panelmenu-header {
+            & .p-menuitem-icon {
+              color: var(--tw-orange-400) !important;
+            }
+          }
+        }
+
+        &:nth-child(2) {
+          & .p-panelmenu-header {
+            & .p-menuitem-icon {
+              color: var(--tw-purple-400) !important;
+            }
+          }
+        }
+
+        &:nth-child(3) {
+          & .p-panelmenu-header {
+            & .p-menuitem-icon {
+              color: var(--tw-pink-400) !important;
+            }
+          }
+        }
+
         & .p-panelmenu-header {
+          & .p-menuitem-icon {
+            color: var(--tw-purple-500) !important;
+            color: var(--tw-orange-400) !important;
+            //font-size: 1rem;
+          }
           a {
-            background-color: #fff5f0;
-            background-color: #fae9e0;
-            background-color: rgb(245, 207, 242);
-            background-color: rgb(247 232 246);
-            // background-color: #784ea3;
-            // color: white;
+            // background-color: var(--tw-violet-900);
+            background-color: var(--tw-gray-800);
+
+            color: white;
+            border-radius: 0.75rem !important;
+            border: none !important;
+
+            &:focus {
+              box-shadow: none;
+              border: 2px solid var(--tw-purple-500) !important;
+            }
           }
 
           &:not(.p-disabled) {
             a {
               &:hover {
-                background-color: #f5dfd2;
-                background-color: rgb(241, 197, 238);
-                background-color: rgb(247 232 246);
-
-                //   background-color: #784ea3;
-                //   color: white;
+                background-color: var(--tw-gray-800);
+                color: white;
               }
             }
           }
@@ -49,35 +84,54 @@
           & .p-menuitem-link {
             &:not(.p-disabled) {
               &:hover {
-                background-color: blue;
+                background-color: transparent;
               }
             }
           }
         }
       }
+
+      & .word {
+        & .p-menuitem-icon {
+          color: var(--tw-orange-400) !important;
+        }
+      }
+
+      & .summary {
+        & .p-menuitem-icon {
+          color: var(--tw-purple-400) !important;
+        }
+      }
+
+      & .exercise {
+        & .p-menuitem-icon {
+          color: var(--tw-pink-400) !important;
+        }
+      }
     }
 
     & .p-panelmenu-content {
-      background-color: #fff5f0;
+      background-color: yellow;
+      background-color: transparent;
+      border: none !important;
 
       & .p-menuitem {
         & .p-menuitem-link {
+          padding-left: 1.25rem;
+          &:hover {
+            & .p-menuitem-text {
+              color: black !important;
+            }
+          }
+
           & .p-menuitem-text {
-            color: #181818;
+            color: var(--tw-gray-600);
+            font-weight: 600;
           }
         }
       }
     }
   }
-}
-
-.app-word-slide,
-.app-summary-slide,
-.app-exercise-slide {
-  background-color: orange;
-  background-color: white;
-  flex-grow: 1;
-  min-height: calc(100vh - 84px);
 }
 
 //.sidebar-and-slide-wrapper {

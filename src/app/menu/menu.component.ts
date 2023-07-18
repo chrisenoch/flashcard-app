@@ -143,6 +143,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     return [
       {
         label: 'Vocabulary',
+        //icon: 'pi pi-bolt',
+        icon: 'bi bi-record-fill',
         expanded: true,
         items: this.generateContentsItems(this.wordItems, (e) => {
           this.updateDisplayedContent(e);
@@ -150,12 +152,14 @@ export class MenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Summary',
+        icon: 'bi bi-record-fill',
         items: this.generateContentsItems(this.summaryItems, (e) => {
           this.updateDisplayedContent(e);
         }),
       },
       {
         label: 'Exercises',
+        icon: 'bi bi-record-fill',
         items: this.generateContentsItems(this.exerciseItems, (e) => {
           this.updateDisplayedContent(e);
         }),
@@ -170,6 +174,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   ): any {
     let count = 1;
     let newLabel = '';
+    let itemClass = '';
     const contentsItems: any[] = items
 
       .filter((item, i) => {
@@ -192,18 +197,22 @@ export class MenuComponent implements OnInit, OnDestroy {
             newLabel = this.showPrimaryWordFirst
               ? capitalize(item.english)
               : capitalize(item.spanish);
+            itemClass = 'word';
           }
           if (this.isSummaryItem(item)) {
             newLabel = capitalize(item.type) + ' ' + count++;
+            itemClass = 'summary';
           }
           if (this.isExerciseItem(item)) {
             newLabel = capitalize(item.type) + ' ' + count++;
+            itemClass = 'exercise';
           }
         }
 
         const newItem = {
           label: newLabel,
-          icon: 'pi pi-bolt',
+          styleClass: itemClass,
+          icon: 'bi bi-record2',
           id: item.id,
           command: callback,
         };
