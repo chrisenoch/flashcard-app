@@ -3,3 +3,21 @@
 //   padding: 0 24px;
 //   max-width: 960px;
 // }
+:host {
+  ::ng-deep {
+    .p-menubar {
+      background-color: var(--tw-bg-white);
+    }
+
+    .p-submenu-icon {
+      display: none;
+    }
+
+    .p-menuitem {
+      //display: block;
+      &:last-child {
+        margin-left: auto;
+      }
+    }
+  }
+}

@@ -17,6 +17,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { WordSlideComponent } from './slides/word-slide/word-slide.component';
 import { SummarySlideComponent } from './slides/summary-slide/summary-slide.component';
 import ExerciseSlideComponent from './slides/exercise-slide/exercise-slide.component';
+import { MainNavComponent } from './layout/main-nav/main-nav.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import ExerciseSlideComponent from './slides/exercise-slide/exercise-slide.compo
     WordSlideComponent,
     SummarySlideComponent,
     ExerciseSlideComponent,
+    MainNavComponent,
   ],
   imports: [
     BrowserModule,

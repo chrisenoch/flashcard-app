@@ -14,11 +14,11 @@ export class AppComponent {
     this.items = [
       {
         label: 'File',
-        icon: 'pi pi-fw pi-file',
+
         items: [
           {
             label: 'New',
-            icon: 'pi pi-fw pi-plus',
+
             items: [
               {
                 label: 'Bookmark',
@@ -32,20 +32,18 @@ export class AppComponent {
           },
           {
             label: 'Delete',
-            icon: 'pi pi-fw pi-trash',
           },
           {
             separator: true,
           },
           {
             label: 'Export',
-            icon: 'pi pi-fw pi-external-link',
           },
         ],
       },
       {
         label: 'Edit',
-        icon: 'pi pi-fw pi-pencil',
+
         items: [
           {
             label: 'Left',
@@ -67,15 +65,13 @@ export class AppComponent {
       },
       {
         label: 'Users',
-        icon: 'pi pi-fw pi-user',
+
         items: [
           {
             label: 'New',
-            icon: 'pi pi-fw pi-user-plus',
           },
           {
             label: 'Delete',
-            icon: 'pi pi-fw pi-user-minus',
           },
           {
             label: 'Search',
@@ -101,7 +97,7 @@ export class AppComponent {
       },
       {
         label: 'Events',
-        icon: 'pi pi-fw pi-calendar',
+
         items: [
           {
             label: 'Edit',
@@ -131,7 +127,6 @@ export class AppComponent {
       },
       {
         label: 'Quit',
-        icon: 'pi pi-fw pi-power-off',
       },
     ];
   }

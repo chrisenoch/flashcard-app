@@ -134,6 +134,39 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  onStart() {
+    this.goToStart();
+  }
+
+  onEnd() {
+    this.goToEnd();
+  }
+  onPrevious() {
+    this.decrementCurrentPos();
+    this.addWordToContents();
+  }
+  onPreviousSection() {
+    const currentId = this.teachingItems[this.currentPos].id;
+    this.goToStartOfSection(currentId, true);
+  }
+  onNext() {
+    this.incrementCurrentPos();
+    this.addWordToContents();
+  }
+  onNextSection() {
+    const currentId = this.teachingItems[this.currentPos].id;
+    this.goToStartOfSection(currentId);
+  }
+
+  onToggle() {
+    this.toggleTranslation();
+  }
+
+  onShowWordsAftervisited() {
+    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
+    this.contents = this.generateContents();
+  }
+
   toggleTranslation() {
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
     this.contents = this.generateContents();
