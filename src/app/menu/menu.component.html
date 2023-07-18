@@ -29,6 +29,26 @@
   </ng-container>
 </div>
 
-<p-menubar [model]="navItems"></p-menubar>
+<div class="slide-nav-bar">
+  <p-button label="Start" styleClass="p-button-info p-button-lg"></p-button>
+  <p-button
+    icon="bi bi-chevron-double-left"
+    styleClass="p-button p-button-lg"
+  ></p-button>
+  <p-button
+    icon="bi bi-chevron-left"
+    styleClass="p-button p-button-lg"
+  ></p-button>
+  <p-button
+    icon="bi bi-chevron-right"
+    styleClass="p-button p-button-lg"
+  ></p-button>
+  <p-button
+    icon="bi bi-chevron-double-right"
+    styleClass="p-button p-button-lg"
+  ></p-button>
+  <p-button label="End" styleClass="p-button-info p-button-lg"></p-button>
+</div>
+<!-- <p-menubar [model]="navItems"></p-menubar> -->
 
 <!-- *ngIf="typeof 'hello' === string" -->

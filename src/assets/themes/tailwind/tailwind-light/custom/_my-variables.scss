@@ -1,6 +1,23 @@
 //$primaryColor: #d5e546 !default;
 //@import "../variables";
 
+//Main
+$primaryColor: #9333ea;
+$primaryDarkColor: #7e22ce;
+$primaryDarkerColor: #6b21a8;
+$primaryTextColor: #ffffff;
+
+$secondaryCustom: #db2777;
+$secondaryCustomDark: #be185d;
+$infoCustom: #4b5563;
+$infoCustomDark: #374151;
+$warningCustom: #ea580c;
+$warningCustomDark: #c2410c;
+$dangerCustom: #dc2626;
+$dangerCustomDark: #b91c1c;
+$successCustom: #16a34a;
+$successCustomDark: #15803d;
+
 $scaleXSM: 0.7;
 //$inputListItemFocusShadow: inset 0 0 0 1px $focusOutlineColor;
 $inputFocusBorderColor: transparent;
@@ -16,6 +33,67 @@ $shade600: #6b7280; //text secondary color    //originally: zinc500
 $shade700: #374151; //text color              //originally:zinc700
 $shade800: #1f2937; //unused                  //originally: zinc800
 $shade900: #111827; //zinc900                //originally: zinc900
+
+//Buttons
+$secondaryButtonBg: $secondaryCustom;
+$secondaryButtonTextColor: #ffffff;
+$secondaryButtonBorder: 1px solid $secondaryButtonBg;
+$secondaryButtonHoverBg: $secondaryCustomDark;
+$secondaryButtonTextHoverColor: $secondaryButtonTextColor;
+$secondaryButtonHoverBorderColor: $secondaryCustomDark;
+$secondaryButtonActiveBg: $secondaryCustomDark;
+$secondaryButtonTextActiveColor: $secondaryButtonTextColor;
+$secondaryButtonActiveBorderColor: $secondaryCustomDark;
+
+$helpButtonBg: $secondaryCustom;
+$helpButtonTextColor: #ffffff;
+$helpButtonBorder: 1px solid $secondaryButtonBg;
+$helpButtonHoverBg: $secondaryCustomDark;
+$helpButtonTextHoverColor: $secondaryButtonTextColor;
+$helpButtonHoverBorderColor: $secondaryCustomDark;
+$helpButtonActiveBg: $secondaryCustomDark;
+$helpButtonTextActiveColor: $secondaryButtonTextColor;
+$helpButtonActiveBorderColor: $secondaryCustomDark;
+
+$infoButtonBg: $infoCustom;
+$infoButtonTextColor: #ffffff;
+$infoButtonBorder: 1px solid $infoButtonBg;
+$infoButtonHoverBg: $infoCustomDark;
+$infoButtonTextHoverColor: $infoButtonTextColor;
+$infoButtonHoverBorderColor: $infoCustomDark;
+$infoButtonActiveBg: $infoCustomDark;
+$infoButtonTextActiveColor: $infoButtonTextColor;
+$infoButtonActiveBorderColor: $infoCustomDark;
+
+$warningButtonBg: $warningCustom;
+$warningButtonTextColor: #ffffff;
+$warningButtonBorder: 1px solid $warningButtonBg;
+$warningButtonHoverBg: $warningCustomDark;
+$warningButtonTextHoverColor: $warningButtonTextColor;
+$warningButtonHoverBorderColor: $warningCustomDark;
+$warningButtonActiveBg: $warningCustomDark;
+$warningButtonTextActiveColor: $warningButtonTextColor;
+$warningButtonActiveBorderColor: $warningCustomDark;
+
+$dangerButtonBg: $dangerCustom;
+$dangerButtonTextColor: #ffffff;
+$dangerButtonBorder: 1px solid $dangerButtonBg;
+$dangerButtonHoverBg: $dangerCustomDark;
+$dangerButtonTextHoverColor: $dangerButtonTextColor;
+$dangerButtonHoverBorderColor: $dangerCustomDark;
+$dangerButtonActiveBg: $dangerCustomDark;
+$dangerButtonTextActiveColor: $dangerButtonTextColor;
+$dangerButtonActiveBorderColor: $dangerCustomDark;
+
+$successButtonBg: $successCustom;
+$successButtonTextColor: #ffffff;
+$successButtonBorder: 1px solid $successButtonBg;
+$successButtonHoverBg: $successCustomDark;
+$successButtonTextHoverColor: $successButtonTextColor;
+$successButtonHoverBorderColor: $successCustomDark;
+$successButtonActiveBg: $successCustomDark;
+$successButtonTextActiveColor: $successButtonTextColor;
+$successButtonActiveBorderColor: $successCustomDark;
 
 //Define Tailwind color variables here so we can use them in Angular CSS and SCSS components when we are not using Tailwind. PrimeNG hides some of the implementation details and HTML elements so it is not possible to style PrimeNG components by only using Tailwind.
 //Being able to access these variables in Angular CSS and SCSS components ensures we keep a consistent colour scheme.
