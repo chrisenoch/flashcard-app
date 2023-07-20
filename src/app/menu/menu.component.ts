@@ -21,9 +21,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
-  isVocabularyExpanded = true;
-  isSummaryExpanded = false;
-  isExercisesExpanded = false;
+  autoExpandVocabulary = true;
+  autoExpandSummary = false;
+  autoExpandExercises = false;
+  wantsVocabularyExpanded = true; //user-defined preference set when user expands/closes the panel
+  wantsSummaryExpanded = true; //user-defined preference set when user expands/closes the panel
+  wantsExercisesExpanded = true; //user-defined preference set when user expands/closes the panel
   maxWordsOnSummarySlide: number = 2;
   showContentAfterWordVisited = true;
   isGeneratedContentFinished = false;
@@ -209,6 +212,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     //this.addWordToContents();
     //this.updateActiveWord();
     this.onBottomNavigationCommon();
+    this.consoleDebugging();
   }
   onPreviousSection() {
     const currentId = this.teachingItems[this.currentPos].id;
@@ -220,11 +224,22 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     //this.addWordToContents();
     //this.updateActiveWord();
     this.onBottomNavigationCommon();
+    this.consoleDebugging();
   }
   onNextSection() {
     const currentId = this.teachingItems[this.currentPos].id;
     this.goToStartOfSection(currentId);
     this.onBottomNavigationCommon();
+  }
+
+  consoleDebugging() {
+    console.log('isSummaryExpanded ' + this.autoExpandSummary);
+    console.log('isVocabularyExpanded ' + this.autoExpandVocabulary);
+    console.log('isExercisesExpanded ' + this.autoExpandExercises);
+    console.log('wantsSummaryExpanded ' + this.wantsSummaryExpanded);
+    console.log('wantsVocabularyExpanded ' + this.wantsVocabularyExpanded);
+    console.log('wantsExercisesExpanded ' + this.wantsExercisesExpanded);
+    console.log('-----------------------');
   }
 
   //methods to be called on every bottom navigation method
@@ -233,21 +248,36 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.expandSection();
   }
 
+  //the default behaviour is for the sections on the sidebar
+  //to expand when a slide of that section is visited. However,
+  //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
   expandSection() {
-    if (this.displayedContent?.type === 'WORD' && !this.isVocabularyExpanded) {
-      this.isVocabularyExpanded = true;
+    if (
+      this.displayedContent?.type === 'WORD' &&
+      !this.autoExpandVocabulary &&
+      this.wantsVocabularyExpanded
+    ) {
+      console.log('in expanded if');
+      this.autoExpandVocabulary = true;
       this.contents = this.generateContents();
     }
-    if (this.displayedContent?.type === 'SUMMARY' && !this.isSummaryExpanded) {
-      this.isSummaryExpanded = true;
-      console.log(this.isSummaryExpanded);
+    if (
+      this.displayedContent?.type === 'SUMMARY' &&
+      !this.autoExpandSummary &&
+      this.wantsSummaryExpanded
+    ) {
+      console.log('in expanded if');
+      this.autoExpandSummary = true;
+      console.log(this.autoExpandSummary);
       this.contents = this.generateContents();
     }
     if (
       this.displayedContent?.type === 'EXERCISE' &&
-      !this.isExercisesExpanded
+      !this.autoExpandExercises &&
+      this.wantsExercisesExpanded
     ) {
-      this.isExercisesExpanded = true;
+      console.log('in expanded if');
+      this.autoExpandExercises = true;
       this.contents = this.generateContents();
     }
   }
@@ -272,7 +302,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         label: 'Vocabulary',
         //icon: 'pi pi-bolt',
         icon: 'bi bi-record-fill',
-        expanded: this.isVocabularyExpanded,
+        expanded: this.autoExpandVocabulary && this.wantsVocabularyExpanded,
+        command: () => {
+          this.wantsVocabularyExpanded = !this.wantsVocabularyExpanded;
+          this.consoleDebugging();
+        },
         items: this.generateContentsItems(this.wordItems, (e) => {
           this.updateDisplayedContent(e);
         }),
@@ -280,7 +314,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       {
         label: 'Summary',
         icon: 'bi bi-record-fill',
-        expanded: this.isSummaryExpanded,
+        expanded: this.autoExpandSummary && this.wantsSummaryExpanded,
+        command: () => {
+          this.wantsSummaryExpanded = !this.wantsSummaryExpanded;
+          this.consoleDebugging();
+        },
         items: this.generateContentsItems(this.summaryItems, (e) => {
           this.updateDisplayedContent(e);
         }),
@@ -288,7 +326,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       {
         label: 'Exercises',
         icon: 'bi bi-record-fill',
-        expanded: this.isExercisesExpanded,
+        expanded: this.autoExpandExercises && this.wantsExercisesExpanded,
+        command: () => {
+          this.wantsExercisesExpanded = !this.wantsExercisesExpanded;
+          this.consoleDebugging();
+        },
         items: this.generateContentsItems(this.exerciseItems, (e) => {
           this.updateDisplayedContent(e);
         }),
@@ -353,6 +395,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         return newItem;
       });
 
+    this.consoleDebugging();
     return contentsItems;
   }
 
