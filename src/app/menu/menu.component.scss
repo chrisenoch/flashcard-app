@@ -117,11 +117,26 @@
 
       & .active-word {
         & .p-menuitem-text {
-          //color: green !important;
           background-color: var(--tw-purple-200);
           padding: 0.5rem;
           border-radius: 0.75rem;
-          //color: black !important;
+          color: black !important;
+        }
+      }
+      & .active-summary {
+        & .p-menuitem-text {
+          background-color: var(--tw-orange-200);
+          padding: 0.5rem;
+          border-radius: 0.75rem;
+          color: black !important;
+        }
+      }
+      & .active-exercise {
+        & .p-menuitem-text {
+          background-color: var(--tw-pink-200);
+          padding: 0.5rem;
+          border-radius: 0.75rem;
+          color: black !important;
         }
       }
     }

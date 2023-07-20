@@ -45,6 +45,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         { question: 'Question 2', answer: 'Answer 2' },
         { question: 'Question 3', answer: 'Answer 3' },
       ],
+      isVisited: false,
     },
   ];
 
@@ -53,13 +54,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     @Inject(DOCUMENT) document: Document
   ) {}
 
-  updateActiveWord!: () => void;
+  // updateActiveWord!: () => void;
 
   ngAfterViewChecked() {
     //only emit the value here if generatecontents has just run?
     //if isgeneratecontentsfinished = true, emit event and then immediately set it back to false
 
-    if (this.isGeneratedContentFinished) {
+    if (this.isGeneratedContentFinished || this.displayedContent?.isVisited) {
       console.log('displayContent id ' + this.displayedContent?.id);
       const testCont = document.querySelector('.word-3');
       console.log('testCont below');
@@ -72,13 +73,36 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         console.log(newActiveWordContainer);
 
         //remove class from all possible places
-        const sideBarClasses = document.querySelectorAll("[class*='word']");
+        const wordClasses = Array.from(
+          document.querySelectorAll("[class*='word']")
+        );
+        const summaryClasses = Array.from(
+          document.querySelectorAll("[class*='summary']")
+        );
+        const exerciseClasses = Array.from(
+          document.querySelectorAll("[class*='exercise']")
+        );
+        const sideBarClasses = [
+          ...wordClasses,
+          ...summaryClasses,
+          ...exerciseClasses,
+        ];
+
         sideBarClasses.forEach((ele) => {
           ele.classList.remove('active-word');
+          ele.classList.remove('active-summary');
+          ele.classList.remove('active-exercise');
         });
 
-        //add new class to the word container
-        newActiveWordContainer?.classList.add('active-word');
+        if (this.isWordItem(this.displayedContent)) {
+          newActiveWordContainer?.classList.add('active-word');
+        }
+        if (this.isSummaryItem(this.displayedContent)) {
+          newActiveWordContainer?.classList.add('active-summary');
+        }
+        if (this.isExerciseItem(this.displayedContent)) {
+          newActiveWordContainer?.classList.add('active-exercise');
+        }
       }
 
       this.isGeneratedContentFinished = false;
@@ -218,28 +242,34 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   onStart() {
     this.goToStart();
+    this.displayedContent && this.setItemAsVisited(this.displayedContent);
   }
 
   onEnd() {
     this.goToEnd();
+    this.displayedContent && this.setItemAsVisited(this.displayedContent);
   }
   onPrevious() {
     this.decrementCurrentPos();
-    this.addWordToContents();
+    //this.addWordToContents();
     //this.updateActiveWord();
+    this.displayedContent && this.setItemAsVisited(this.displayedContent);
   }
   onPreviousSection() {
     const currentId = this.teachingItems[this.currentPos].id;
     this.goToStartOfSection(currentId, true);
+    this.displayedContent && this.setItemAsVisited(this.displayedContent);
   }
   onNext() {
     this.incrementCurrentPos();
-    this.addWordToContents();
+    //this.addWordToContents();
     //this.updateActiveWord();
+    this.displayedContent && this.setItemAsVisited(this.displayedContent);
   }
   onNextSection() {
     const currentId = this.teachingItems[this.currentPos].id;
     this.goToStartOfSection(currentId);
+    this.displayedContent && this.setItemAsVisited(this.displayedContent);
   }
 
   onToggle() {
@@ -369,6 +399,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       id: 'summary-',
       type,
       wordItems: [],
+      isVisited: false,
     };
 
     wordItems.forEach((wordItem, i, arr) => {
@@ -393,6 +424,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
           id: 'summary-',
           type,
           wordItems: [],
+          isVisited: false,
         };
       }
     });
@@ -413,9 +445,32 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return (item as ExerciseItem).type === 'EXERCISE';
   }
 
-  setWordAsVisited(wordItem: WordItem) {
-    wordItem.isVisited = true;
+  // setItemAsVisited(item: TeachingItem) {
+  //   item.isVisited = true;
+  // }
+
+  setItemAsVisited(item: TeachingItem) {
+    if (item.isVisited) {
+      return;
+    }
+
+    if (this.isWordItem(item)) {
+      item.isVisited = true;
+      this.contents = this.generateContents();
+    } else {
+      item.isVisited = true;
+    }
   }
+
+  // updateActiveItem() {
+  //   if (this.displayedContent) {
+  //     if (this.displayedContent.isVisited) {
+  //       return;
+  //     } else {
+  //       this.setItemAsVisited(this.displayedContent);
+  //     }
+  //   }
+  // }
 
   addWordToContents() {
     if (this.displayedContent && this.isWordItem(this.displayedContent)) {
@@ -425,7 +480,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         //don't generate contents again if word is already shown on the contents bar
         return;
       } else {
-        this.setWordAsVisited(wordItem);
+        this.setItemAsVisited(wordItem);
         this.contents = this.generateContents();
       }
     }

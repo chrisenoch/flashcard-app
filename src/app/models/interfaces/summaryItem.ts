@@ -6,4 +6,5 @@ export interface SummaryItem {
   id: string;
   type: 'SUMMARY';
   wordItems: WordItem[];
+  isVisited: boolean;
 }
