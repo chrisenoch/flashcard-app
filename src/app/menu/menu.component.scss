@@ -40,7 +40,7 @@
         &:first-child {
           & .p-panelmenu-header {
             & .p-menuitem-icon {
-              color: var(--tw-orange-400) !important;
+              color: var(--tw-purple-400) !important;
             }
           }
         }
@@ -48,7 +48,7 @@
         &:nth-child(2) {
           & .p-panelmenu-header {
             & .p-menuitem-icon {
-              color: var(--tw-purple-400) !important;
+              color: var(--tw-orange-400) !important;
             }
           }
         }
@@ -62,18 +62,8 @@
         }
 
         & .p-panelmenu-header {
-          & .p-menuitem-icon {
-            color: var(--tw-purple-500) !important;
-            color: var(--tw-orange-400) !important;
-            //font-size: 1rem;
-          }
           a {
-            // background-color: var(--tw-violet-900);
             background-color: var(--tw-gray-800);
-
-            // background-color: var(--tw-gray-700);
-            //background-color: var(--tw-purple-400);
-
             color: white;
             border-radius: 0.75rem !important;
             border: none !important;
@@ -109,19 +99,29 @@
 
       & .word {
         & .p-menuitem-icon {
-          color: var(--tw-orange-400) !important;
+          color: var(--tw-purple-400) !important;
         }
       }
 
       & .summary {
         & .p-menuitem-icon {
-          color: var(--tw-purple-400) !important;
+          color: var(--tw-orange-400) !important;
         }
       }
 
       & .exercise {
         & .p-menuitem-icon {
           color: var(--tw-pink-400) !important;
+        }
+      }
+
+      & .active-word {
+        & .p-menuitem-text {
+          //color: green !important;
+          background-color: var(--tw-purple-200);
+          padding: 0.5rem;
+          border-radius: 0.75rem;
+          //color: black !important;
         }
       }
     }

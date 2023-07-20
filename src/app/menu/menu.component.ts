@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { TeachingItem } from '../models/types/teachingItem';
 import { WordItem } from '../models/interfaces/wordItem';
@@ -6,21 +6,24 @@ import { SummaryItem } from '../models/interfaces/summaryItem';
 import { ExerciseItem } from '../models/interfaces/exerciseItem';
 import { capitalize } from '../utlities/text';
 import { WordService } from '../word.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent implements OnInit, OnDestroy {
-  private subscription!: Subscription;
+export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
+  private wordsSubscription!: Subscription;
   contents: MenuItem[] = [];
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
   maxWordsOnSummarySlide: number = 2;
   showContentAfterWordVisited = true;
+  isGeneratedContentFinished = false;
   //showTranslation = false;
 
   //change this - set to true for now for testing
@@ -45,10 +48,88 @@ export class MenuComponent implements OnInit, OnDestroy {
     },
   ];
 
-  constructor(private wordService: WordService) {}
+  constructor(
+    private wordService: WordService,
+    @Inject(DOCUMENT) document: Document
+  ) {}
+
+  updateActiveWord!: () => void;
+
+  ngAfterViewChecked() {
+    //only emit the value here if generatecontents has just run?
+    //if isgeneratecontentsfinished = true, emit event and then immediately set it back to false
+
+    if (this.isGeneratedContentFinished) {
+      console.log('displayContent id ' + this.displayedContent?.id);
+      const testCont = document.querySelector('.word-3');
+      console.log('testCont below');
+      console.log(testCont);
+      if (this.displayedContent) {
+        const newActiveWordContainer = document.querySelector(
+          '.' + this.displayedContent.id
+        );
+
+        console.log(newActiveWordContainer);
+
+        //remove class from all possible places
+        const sideBarClasses = document.querySelectorAll("[class*='word']");
+        sideBarClasses.forEach((ele) => {
+          ele.classList.remove('active-word');
+        });
+
+        //add new class to the word container
+        newActiveWordContainer?.classList.add('active-word');
+      }
+
+      this.isGeneratedContentFinished = false;
+    }
+
+    console.log('inside AfterViewChecked');
+    const testCont1 = document.querySelector('.word-1');
+    console.log('inside AfterViewChecked - word1 below');
+    console.log(testCont1);
+    console.log('inside AfterViewChecked - word2 below');
+    const testCont2 = document.querySelector('.word-2');
+    console.log(testCont2);
+    console.log('inside AfterViewChecked - word3 below');
+    const testCont3 = document.querySelector('.word-3');
+    console.log(testCont3);
+  }
+
+  //This method must be called in ngonInit with init set to true in order to set-up the subscription.
+  // updateActiveWord(init?: boolean) {
+  //   if (init) {
+  //     this.isGenerateContentsFinishedSubscription =
+  //       this.isGenerateContentsFinishedSubject.subscribe(() => {
+  //         // setTimeout(() => {
+  //         console.log('SUBSCRIPTIN CALLBACK RUNS');
+  //         console.log('displayContent id ' + this.displayedContent?.id);
+  //         const testCont = document.querySelector('.word-3');
+  //         console.log('testCont below');
+  //         console.log(testCont);
+  //         if (this.displayedContent) {
+  //           const newActiveWordContainer = document.querySelector(
+  //             '.' + this.displayedContent.id
+  //           );
+
+  //           console.log(newActiveWordContainer);
+
+  //           //remove class from all possible places
+  //           const sideBarClasses = document.querySelectorAll("[class*='word']");
+  //           sideBarClasses.forEach((ele) => {
+  //             ele.classList.remove('active-word');
+  //           });
+
+  //           //add new class to the word container
+  //           newActiveWordContainer?.classList.add('active-word');
+  //         }
+  //         // }, 3000);
+  //       });
+  //   }
+  // }
 
   ngOnInit() {
-    this.subscription = this.wordService
+    this.wordsSubscription = this.wordService
       .getWordItems()
       .subscribe((wordItems: WordItem[]) => {
         this.wordItems = wordItems;
@@ -131,7 +212,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.wordsSubscription.unsubscribe();
+    //this.isGenerateContentsFinishedSubscription.unsubscribe();
   }
 
   onStart() {
@@ -144,6 +226,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   onPrevious() {
     this.decrementCurrentPos();
     this.addWordToContents();
+    //this.updateActiveWord();
   }
   onPreviousSection() {
     const currentId = this.teachingItems[this.currentPos].id;
@@ -152,6 +235,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   onNext() {
     this.incrementCurrentPos();
     this.addWordToContents();
+    //this.updateActiveWord();
   }
   onNextSection() {
     const currentId = this.teachingItems[this.currentPos].id;
@@ -173,7 +257,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   generateContents() {
-    return [
+    console.log('in generate contents');
+    const generatedContents = [
       {
         label: 'Vocabulary',
         //icon: 'pi pi-bolt',
@@ -198,6 +283,14 @@ export class MenuComponent implements OnInit, OnDestroy {
         }),
       },
     ];
+
+    // console.log('in generatedContents() - just before emit true');
+    // this.isGenerateContentsFinishedSubject.next(true);
+    // console.log('in generatedContents() - just after emit true');
+
+    this.isGeneratedContentFinished = true;
+
+    return generatedContents;
   }
 
   generateContentsItems(
@@ -230,15 +323,15 @@ export class MenuComponent implements OnInit, OnDestroy {
             newLabel = this.showPrimaryWordFirst
               ? capitalize(item.english)
               : capitalize(item.spanish);
-            itemClass = 'word';
+            itemClass = 'word ' + item.id;
           }
           if (this.isSummaryItem(item)) {
             newLabel = capitalize(item.type) + ' ' + count++;
-            itemClass = 'summary';
+            itemClass = 'summary ' + item.id;
           }
           if (this.isExerciseItem(item)) {
             newLabel = capitalize(item.type) + ' ' + count++;
-            itemClass = 'exercise';
+            itemClass = 'exercise ' + item.id;
           }
         }
 
@@ -250,6 +343,7 @@ export class MenuComponent implements OnInit, OnDestroy {
           command: callback,
         };
 
+        console.log('end of generateItems method');
         return newItem;
       });
 
