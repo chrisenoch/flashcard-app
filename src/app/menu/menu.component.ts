@@ -28,7 +28,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   showContentAfterWordVisited = true;
   isGeneratedContentFinished = false;
   isTeachingItemsError = false;
-  isSlideError = true;
   //showTranslation = false;
 
   //change this - set to true for now for testing
@@ -58,8 +57,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     private wordService: WordService,
     @Inject(DOCUMENT) document: Document
   ) {}
-
-  // updateActiveWord!: () => void;
 
   ngAfterViewChecked() {
     if (this.isGeneratedContentFinished || this.displayedContent?.isVisited) {
@@ -123,10 +120,15 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       ...this.exerciseItems,
     ];
 
-    //init first word
-    this.displayedContent = this.teachingItems[this.currentPos];
+    if (this.teachingItems.length < 1) {
+      this.isTeachingItemsError = true;
+      return;
+    }
 
     this.contents = this.generateContents();
+
+    //init first word
+    this.displayedContent = this.teachingItems[this.currentPos];
 
     this.navItems = [
       {

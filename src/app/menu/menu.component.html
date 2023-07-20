@@ -8,7 +8,7 @@
     <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
   </div>
 
-  <ng-container *ngIf="isSlideError; else elseBlock">
+  <ng-container *ngIf="!displayedContent; else elseBlock">
     <app-no-slide-error
       class="h-[calc(100vh-80px)] block grow"
     ></app-no-slide-error>
