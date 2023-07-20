@@ -601,6 +601,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.currentPos = this.teachingItems.findIndex(
           (ele) => ele.id === this.displayedContent!.id
         );
+
+        this.setItemAsVisited(this.displayedContent);
       }
     }
   }
