@@ -21,9 +21,14 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   currentPos = 0;
+  isVocabularyExpanded = true;
+  isSummaryExpanded = false;
+  isExercisesExpanded = false;
   maxWordsOnSummarySlide: number = 2;
   showContentAfterWordVisited = true;
   isGeneratedContentFinished = false;
+  isTeachingItemsError = false;
+  isSlideError = true;
   //showTranslation = false;
 
   //change this - set to true for now for testing
@@ -57,20 +62,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   // updateActiveWord!: () => void;
 
   ngAfterViewChecked() {
-    //only emit the value here if generatecontents has just run?
-    //if isgeneratecontentsfinished = true, emit event and then immediately set it back to false
-
     if (this.isGeneratedContentFinished || this.displayedContent?.isVisited) {
-      console.log('displayContent id ' + this.displayedContent?.id);
-      const testCont = document.querySelector('.word-3');
-      console.log('testCont below');
-      console.log(testCont);
       if (this.displayedContent) {
         const newActiveWordContainer = document.querySelector(
           '.' + this.displayedContent.id
         );
-
-        console.log(newActiveWordContainer);
 
         //remove class from all possible places
         const wordClasses = Array.from(
@@ -107,50 +103,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       this.isGeneratedContentFinished = false;
     }
-
-    console.log('inside AfterViewChecked');
-    const testCont1 = document.querySelector('.word-1');
-    console.log('inside AfterViewChecked - word1 below');
-    console.log(testCont1);
-    console.log('inside AfterViewChecked - word2 below');
-    const testCont2 = document.querySelector('.word-2');
-    console.log(testCont2);
-    console.log('inside AfterViewChecked - word3 below');
-    const testCont3 = document.querySelector('.word-3');
-    console.log(testCont3);
   }
-
-  //This method must be called in ngonInit with init set to true in order to set-up the subscription.
-  // updateActiveWord(init?: boolean) {
-  //   if (init) {
-  //     this.isGenerateContentsFinishedSubscription =
-  //       this.isGenerateContentsFinishedSubject.subscribe(() => {
-  //         // setTimeout(() => {
-  //         console.log('SUBSCRIPTIN CALLBACK RUNS');
-  //         console.log('displayContent id ' + this.displayedContent?.id);
-  //         const testCont = document.querySelector('.word-3');
-  //         console.log('testCont below');
-  //         console.log(testCont);
-  //         if (this.displayedContent) {
-  //           const newActiveWordContainer = document.querySelector(
-  //             '.' + this.displayedContent.id
-  //           );
-
-  //           console.log(newActiveWordContainer);
-
-  //           //remove class from all possible places
-  //           const sideBarClasses = document.querySelectorAll("[class*='word']");
-  //           sideBarClasses.forEach((ele) => {
-  //             ele.classList.remove('active-word');
-  //           });
-
-  //           //add new class to the word container
-  //           newActiveWordContainer?.classList.add('active-word');
-  //         }
-  //         // }, 3000);
-  //       });
-  //   }
-  // }
 
   ngOnInit() {
     this.wordsSubscription = this.wordService
@@ -242,34 +195,59 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   onStart() {
     this.goToStart();
-    this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.onBottomNavigationCommon();
   }
 
   onEnd() {
     this.goToEnd();
-    this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.onBottomNavigationCommon();
   }
   onPrevious() {
     this.decrementCurrentPos();
     //this.addWordToContents();
     //this.updateActiveWord();
-    this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.onBottomNavigationCommon();
   }
   onPreviousSection() {
     const currentId = this.teachingItems[this.currentPos].id;
     this.goToStartOfSection(currentId, true);
-    this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.onBottomNavigationCommon();
   }
   onNext() {
     this.incrementCurrentPos();
     //this.addWordToContents();
     //this.updateActiveWord();
-    this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.onBottomNavigationCommon();
   }
   onNextSection() {
     const currentId = this.teachingItems[this.currentPos].id;
     this.goToStartOfSection(currentId);
+    this.onBottomNavigationCommon();
+  }
+
+  //methods to be called on every bottom navigation method
+  private onBottomNavigationCommon() {
     this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.expandSection();
+  }
+
+  expandSection() {
+    if (this.displayedContent?.type === 'WORD' && !this.isVocabularyExpanded) {
+      this.isVocabularyExpanded = true;
+      this.contents = this.generateContents();
+    }
+    if (this.displayedContent?.type === 'SUMMARY' && !this.isSummaryExpanded) {
+      this.isSummaryExpanded = true;
+      console.log(this.isSummaryExpanded);
+      this.contents = this.generateContents();
+    }
+    if (
+      this.displayedContent?.type === 'EXERCISE' &&
+      !this.isExercisesExpanded
+    ) {
+      this.isExercisesExpanded = true;
+      this.contents = this.generateContents();
+    }
   }
 
   onToggle() {
@@ -287,13 +265,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   generateContents() {
-    console.log('in generate contents');
     const generatedContents = [
       {
         label: 'Vocabulary',
         //icon: 'pi pi-bolt',
         icon: 'bi bi-record-fill',
-        expanded: true,
+        expanded: this.isVocabularyExpanded,
         items: this.generateContentsItems(this.wordItems, (e) => {
           this.updateDisplayedContent(e);
         }),
@@ -301,6 +278,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       {
         label: 'Summary',
         icon: 'bi bi-record-fill',
+        expanded: this.isSummaryExpanded,
         items: this.generateContentsItems(this.summaryItems, (e) => {
           this.updateDisplayedContent(e);
         }),
@@ -308,15 +286,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       {
         label: 'Exercises',
         icon: 'bi bi-record-fill',
+        expanded: this.isExercisesExpanded,
         items: this.generateContentsItems(this.exerciseItems, (e) => {
           this.updateDisplayedContent(e);
         }),
       },
     ];
-
-    // console.log('in generatedContents() - just before emit true');
-    // this.isGenerateContentsFinishedSubject.next(true);
-    // console.log('in generatedContents() - just after emit true');
 
     this.isGeneratedContentFinished = true;
 
@@ -373,12 +348,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
           command: callback,
         };
 
-        console.log('end of generateItems method');
         return newItem;
       });
-
-    // console.log('content items below');
-    // console.log(contentsItems);
 
     return contentsItems;
   }
@@ -445,10 +416,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return (item as ExerciseItem).type === 'EXERCISE';
   }
 
-  // setItemAsVisited(item: TeachingItem) {
-  //   item.isVisited = true;
-  // }
-
   setItemAsVisited(item: TeachingItem) {
     if (item.isVisited) {
       return;
@@ -461,16 +428,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       item.isVisited = true;
     }
   }
-
-  // updateActiveItem() {
-  //   if (this.displayedContent) {
-  //     if (this.displayedContent.isVisited) {
-  //       return;
-  //     } else {
-  //       this.setItemAsVisited(this.displayedContent);
-  //     }
-  //   }
-  // }
 
   addWordToContents() {
     if (this.displayedContent && this.isWordItem(this.displayedContent)) {

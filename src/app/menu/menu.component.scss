@@ -88,6 +88,9 @@
       & .p-panelmenu-content {
         & .p-menuitem {
           & .p-menuitem-link {
+            &:focus {
+              box-shadow: none;
+            }
             &:not(.p-disabled) {
               &:hover {
                 background-color: transparent;
@@ -156,6 +159,7 @@
           }
 
           & .p-menuitem-text {
+            //box-sizing: content-box;
             color: var(--tw-gray-600);
             font-weight: 600;
           }

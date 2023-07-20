@@ -1,35 +1,47 @@
-<div class="flex bg-gray-50">
+<!-- <app-no-slide-error class="h-[calc(100vh-80px)] block"></app-no-slide-error> -->
+<app-no-teaching-items-error
+  *ngIf="isTeachingItemsError"
+  class="h-[calc(100vh-80px)] block"
+></app-no-teaching-items-error>
+<div *ngIf="!isTeachingItemsError" class="flex bg-gray-50">
   <div class="w-72 pl-10 pt-8">
     <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
   </div>
 
-  <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
-    <app-word-slide
-      ngClass="app-word-slide"
-      [primaryWord]="displayedContent.english"
-      [secondaryWord]="displayedContent.spanish"
-      [showTranslation]="showTranslation"
-      [showPrimaryWordFirst]="showPrimaryWordFirst"
-      [explanation]="displayedContent.explanation"
-    ></app-word-slide>
+  <ng-container *ngIf="isSlideError; else elseBlock">
+    <app-no-slide-error
+      class="h-[calc(100vh-80px)] block grow"
+    ></app-no-slide-error>
   </ng-container>
+  <ng-template #elseBlock>
+    <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
+      <app-word-slide
+        ngClass="app-word-slide"
+        [primaryWord]="displayedContent.english"
+        [secondaryWord]="displayedContent.spanish"
+        [showTranslation]="showTranslation"
+        [showPrimaryWordFirst]="showPrimaryWordFirst"
+        [explanation]="displayedContent.explanation"
+      ></app-word-slide>
+    </ng-container>
 
-  <ng-container *ngIf="displayedContent && isSummaryItem(displayedContent)">
-    <app-summary-slide
-      ngClass="app-summary-slide"
-      [wordItems]="displayedContent.wordItems"
-    ></app-summary-slide>
-  </ng-container>
+    <ng-container *ngIf="displayedContent && isSummaryItem(displayedContent)">
+      <app-summary-slide
+        ngClass="app-summary-slide"
+        [wordItems]="displayedContent.wordItems"
+      ></app-summary-slide>
+    </ng-container>
 
-  <ng-container *ngIf="displayedContent && isExerciseItem(displayedContent)">
-    <app-exercise-slide
-      ngClass="app-exercise-slide"
-      [questions]="displayedContent.questions"
-    ></app-exercise-slide>
-  </ng-container>
+    <ng-container *ngIf="displayedContent && isExerciseItem(displayedContent)">
+      <app-exercise-slide
+        ngClass="app-exercise-slide"
+        [questions]="displayedContent.questions"
+      ></app-exercise-slide>
+    </ng-container>
+  </ng-template>
 </div>
 
-<div class="slide-nav-bar">
+<div *ngIf="!isTeachingItemsError" class="slide-nav-bar">
   <p-button
     label="Start"
     styleClass="p-button-rounded p-button-lg"
@@ -61,6 +73,3 @@
     (onClick)="onEnd()"
   ></p-button>
 </div>
-<!-- <p-menubar [model]="navItems"></p-menubar> -->
-
-<!-- *ngIf="typeof 'hello' === string" -->

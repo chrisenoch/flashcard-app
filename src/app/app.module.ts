@@ -18,6 +18,8 @@ import { WordSlideComponent } from './slides/word-slide/word-slide.component';
 import { SummarySlideComponent } from './slides/summary-slide/summary-slide.component';
 import ExerciseSlideComponent from './slides/exercise-slide/exercise-slide.component';
 import { MainNavComponent } from './layout/main-nav/main-nav.component';
+import { NoTeachingItemsErrorComponent } from './errors/no-teaching-items-error/no-teaching-items-error.component';
+import { NoSlideErrorComponent } from './errors/no-slide-error/no-slide-error.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { MainNavComponent } from './layout/main-nav/main-nav.component';
     SummarySlideComponent,
     ExerciseSlideComponent,
     MainNavComponent,
+    NoTeachingItemsErrorComponent,
+    NoSlideErrorComponent,
   ],
   imports: [
     BrowserModule,
