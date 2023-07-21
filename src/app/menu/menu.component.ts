@@ -1,6 +1,7 @@
 import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { TeachingItem } from '../models/types/teachingItem';
+import { TEACHING_ITEM } from '../models/enums/teaching_item';
 import { WordItem } from '../models/interfaces/wordItem';
 import { SummaryItem } from '../models/interfaces/summaryItem';
 import { ExerciseItem } from '../models/interfaces/exerciseItem';
@@ -45,7 +46,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //get these from service later
   exerciseItems: ExerciseItem[] = [
     {
-      type: 'EXERCISE',
+      type: TEACHING_ITEM.Exercise,
       id: 'exercise-1',
       //questions:[{"Question 1", "Answer 1"}
       questions: [
@@ -61,50 +62,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     private wordService: WordService,
     @Inject(DOCUMENT) document: Document
   ) {}
-
-  ngAfterViewChecked() {
-    if (this.isGeneratedContentFinished || this.displayedContent?.isVisited) {
-      if (this.displayedContent) {
-        const newActiveWordContainer = document.querySelector(
-          '.' + this.displayedContent.id
-        );
-
-        //remove class from all possible places
-        const wordClasses = Array.from(
-          document.querySelectorAll("[class*='word']")
-        );
-        const summaryClasses = Array.from(
-          document.querySelectorAll("[class*='summary']")
-        );
-        const exerciseClasses = Array.from(
-          document.querySelectorAll("[class*='exercise']")
-        );
-        const sideBarClasses = [
-          ...wordClasses,
-          ...summaryClasses,
-          ...exerciseClasses,
-        ];
-
-        sideBarClasses.forEach((ele) => {
-          ele.classList.remove('active-word');
-          ele.classList.remove('active-summary');
-          ele.classList.remove('active-exercise');
-        });
-
-        if (this.isWordItem(this.displayedContent)) {
-          newActiveWordContainer?.classList.add('active-word');
-        }
-        if (this.isSummaryItem(this.displayedContent)) {
-          newActiveWordContainer?.classList.add('active-summary');
-        }
-        if (this.isExerciseItem(this.displayedContent)) {
-          newActiveWordContainer?.classList.add('active-exercise');
-        }
-      }
-
-      this.isGeneratedContentFinished = false;
-    }
-  }
 
   ngOnInit() {
     this.wordsSubscription = this.wordService
@@ -194,6 +151,10 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     ];
   }
 
+  ngAfterViewChecked() {
+    this.updateActiveWordOnSidebar();
+  }
+
   ngOnDestroy(): void {
     this.wordsSubscription.unsubscribe();
     //this.isGenerateContentsFinishedSubscription.unsubscribe();
@@ -254,7 +215,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
   autoExpandSection() {
     if (
-      this.displayedContent?.type === 'WORD' &&
+      this.displayedContent?.type === TEACHING_ITEM.Word &&
       !this.autoExpandVocabulary &&
       this.wantsVocabularyExpanded === null
     ) {
@@ -262,7 +223,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.contents = this.generateContents();
     }
     if (
-      this.displayedContent?.type === 'SUMMARY' &&
+      this.displayedContent?.type === TEACHING_ITEM.Summary &&
       !this.autoExpandSummary &&
       this.wantsSummaryExpanded === null
     ) {
@@ -270,7 +231,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.contents = this.generateContents();
     }
     if (
-      this.displayedContent?.type === 'EXERCISE' &&
+      this.displayedContent?.type === TEACHING_ITEM.Exercise &&
       !this.autoExpandExercises &&
       this.wantsExercisesExpanded === null
     ) {
@@ -318,26 +279,26 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.contents.forEach((ele) => {
         let expanded = expandedStates.get(ele.label);
         if (!expanded) {
-          if (ele.id === 'WORD') {
+          if (ele.id === TEACHING_ITEM.Word) {
             this.wantsVocabularyExpanded = false;
           }
-          if (ele.id === 'SUMMARY') {
+          if (ele.id === TEACHING_ITEM.Summary) {
             this.wantsSummaryExpanded = false;
           }
-          if (ele.id === 'EXERCISE') {
+          if (ele.id === TEACHING_ITEM.Exercise) {
             this.wantsExercisesExpanded = false;
           }
         }
       });
     } else {
       //if selected section is open, update wantsExpanded to true for only the selected section
-      if (e.item.id === 'WORD') {
+      if (e.item.id === TEACHING_ITEM.Word) {
         this.wantsVocabularyExpanded = true;
       }
-      if (e.item.id === 'SUMMARY') {
+      if (e.item.id === TEACHING_ITEM.Summary) {
         this.wantsSummaryExpanded = true;
       }
-      if (e.item.id === 'EXERCISE') {
+      if (e.item.id === TEACHING_ITEM.Exercise) {
         this.wantsExercisesExpanded = true;
       }
     }
@@ -377,6 +338,50 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
+  private updateActiveWordOnSidebar() {
+    if (this.isGeneratedContentFinished || this.displayedContent?.isVisited) {
+      if (this.displayedContent) {
+        const newActiveWordContainer = document.querySelector(
+          '.' + this.displayedContent.id
+        );
+
+        //remove class from all possible places
+        const wordClasses = Array.from(
+          document.querySelectorAll("[class*='word']")
+        );
+        const summaryClasses = Array.from(
+          document.querySelectorAll("[class*='summary']")
+        );
+        const exerciseClasses = Array.from(
+          document.querySelectorAll("[class*='exercise']")
+        );
+        const sideBarClasses = [
+          ...wordClasses,
+          ...summaryClasses,
+          ...exerciseClasses,
+        ];
+
+        sideBarClasses.forEach((ele) => {
+          ele.classList.remove('active-word');
+          ele.classList.remove('active-summary');
+          ele.classList.remove('active-exercise');
+        });
+
+        if (this.isWordItem(this.displayedContent)) {
+          newActiveWordContainer?.classList.add('active-word');
+        }
+        if (this.isSummaryItem(this.displayedContent)) {
+          newActiveWordContainer?.classList.add('active-summary');
+        }
+        if (this.isExerciseItem(this.displayedContent)) {
+          newActiveWordContainer?.classList.add('active-exercise');
+        }
+      }
+
+      this.isGeneratedContentFinished = false;
+    }
+  }
+
   generateContents() {
     const isVocabularyExpanded = this.decideIfVocabularyExpanded();
     const isSummaryExpanded = this.decideIfSummaryExpanded();
@@ -385,7 +390,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     const generatedContents = [
       {
         label: 'Vocabulary',
-        id: 'WORD',
+        id: TEACHING_ITEM.Word,
         //icon: 'pi pi-bolt',
         icon: 'bi bi-record-fill',
         expanded: isVocabularyExpanded,
@@ -399,7 +404,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       },
       {
         label: 'Summary',
-        id: 'SUMMARY',
+        id: TEACHING_ITEM.Summary,
         icon: 'bi bi-record-fill',
         expanded: isSummaryExpanded,
         command: (e: MenuItemCommandEvent) => {
@@ -412,7 +417,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       },
       {
         label: 'Exercises',
-        id: 'EXERCISE',
+        id: TEACHING_ITEM.Exercise,
         icon: 'bi bi-record-fill',
         expanded: isExercisesExpanded,
         command: (e: MenuItemCommandEvent) => {
@@ -496,7 +501,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     let count = 1;
-    const type = 'SUMMARY';
+    const type = TEACHING_ITEM.Summary;
     const summaryItems: SummaryItem[] = [];
 
     let summaryItem: SummaryItem = {
@@ -538,15 +543,15 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   //proper approach
   isWordItem(item: TeachingItem): item is WordItem {
-    return (item as WordItem).type === 'WORD';
+    return (item as WordItem).type === TEACHING_ITEM.Word;
   }
 
   isSummaryItem(item: TeachingItem): item is SummaryItem {
-    return (item as SummaryItem).type === 'SUMMARY';
+    return (item as SummaryItem).type === TEACHING_ITEM.Summary;
   }
 
   isExerciseItem(item: TeachingItem): item is ExerciseItem {
-    return (item as ExerciseItem).type === 'EXERCISE';
+    return (item as ExerciseItem).type === TEACHING_ITEM.Exercise;
   }
 
   setItemAsVisited(item: TeachingItem) {
