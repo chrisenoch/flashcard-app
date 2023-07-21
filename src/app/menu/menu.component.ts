@@ -24,11 +24,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   autoExpandVocabulary = true;
   autoExpandSummary = false;
   autoExpandExercises = false;
-  wantsVocabularyExpanded = true; //user-defined preference set when user expands/closes the panel
-  wantsSummaryExpanded = true; //user-defined preference set when user expands/closes the panel
-  wantsExercisesExpanded = true; //user-defined preference set when user expands/closes the panel
+  wantsVocabularyExpanded: boolean | null = null; //user-defined preference set when user expands/closes the panel
+  wantsSummaryExpanded: boolean | null = null; //user-defined preference set when user expands/closes the panel
+  wantsExercisesExpanded: boolean | null = null; //user-defined preference set when user expands/closes the panel
   maxWordsOnSummarySlide: number = 2;
-  showContentAfterWordVisited = true;
+  //showContentAfterWordVisited = true;
+  showContentAfterWordVisited = false;
   isGeneratedContentFinished = false;
   isTeachingItemsError = false;
   //showTranslation = false;
@@ -233,9 +234,9 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   consoleDebugging() {
-    console.log('isSummaryExpanded ' + this.autoExpandSummary);
-    console.log('isVocabularyExpanded ' + this.autoExpandVocabulary);
-    console.log('isExercisesExpanded ' + this.autoExpandExercises);
+    console.log('autoExpandSummary' + this.autoExpandSummary);
+    console.log('autoExpandVocabulary ' + this.autoExpandVocabulary);
+    console.log('autoExpandExercises ' + this.autoExpandExercises);
     console.log('wantsSummaryExpanded ' + this.wantsSummaryExpanded);
     console.log('wantsVocabularyExpanded ' + this.wantsVocabularyExpanded);
     console.log('wantsExercisesExpanded ' + this.wantsExercisesExpanded);
@@ -245,38 +246,34 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //methods to be called on every bottom navigation method
   private onBottomNavigationCommon() {
     this.displayedContent && this.setItemAsVisited(this.displayedContent);
-    this.expandSection();
+    this.autoExpandSection();
   }
 
   //the default behaviour is for the sections on the sidebar
   //to expand when a slide of that section is visited. However,
   //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
-  expandSection() {
+  autoExpandSection() {
     if (
       this.displayedContent?.type === 'WORD' &&
       !this.autoExpandVocabulary &&
-      this.wantsVocabularyExpanded
+      this.wantsVocabularyExpanded === null
     ) {
-      console.log('in expanded if');
       this.autoExpandVocabulary = true;
       this.contents = this.generateContents();
     }
     if (
       this.displayedContent?.type === 'SUMMARY' &&
       !this.autoExpandSummary &&
-      this.wantsSummaryExpanded
+      this.wantsSummaryExpanded === null
     ) {
-      console.log('in expanded if');
       this.autoExpandSummary = true;
-      console.log(this.autoExpandSummary);
       this.contents = this.generateContents();
     }
     if (
       this.displayedContent?.type === 'EXERCISE' &&
       !this.autoExpandExercises &&
-      this.wantsExercisesExpanded
+      this.wantsExercisesExpanded === null
     ) {
-      console.log('in expanded if');
       this.autoExpandExercises = true;
       this.contents = this.generateContents();
     }
@@ -296,15 +293,107 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.contents = this.generateContents();
   }
 
+  updateExpanded(e: MenuItemCommandEvent) {
+    //find out expanded state of clicked on sections
+    let currentExpandedState;
+    if (e?.item?.expanded !== undefined && e?.item?.expanded !== null) {
+      currentExpandedState = e.item.expanded;
+    } else {
+      return;
+    }
+
+    currentExpandedState = !currentExpandedState;
+
+    console.log('currentexpandedState ' + currentExpandedState);
+
+    //get expanded state of all sections
+    const expandedStates = new Map();
+    this.contents.forEach((ele) => {
+      expandedStates.set(ele.label, ele.expanded);
+    });
+
+    //if current section is open
+    // update wantsExpanded of current section to false.
+    if (currentExpandedState) {
+      //e.item.expanded = false;
+
+      //Also update wantsExpanded of all closed sections to false.
+      this.contents.forEach((ele) => {
+        let expanded = expandedStates.get(ele.label);
+        if (!expanded) {
+          if (ele.id === 'WORD') {
+            this.wantsVocabularyExpanded = false;
+          }
+          if (ele.id === 'SUMMARY') {
+            this.wantsSummaryExpanded = false;
+          }
+          if (ele.id === 'EXERCISE') {
+            this.wantsExercisesExpanded = false;
+          }
+        }
+      });
+    } else {
+      //if current section is closed, update wantsExpanded to true for only current section
+      if (e.item.id === 'WORD') {
+        this.wantsVocabularyExpanded = true;
+      }
+      if (e.item.id === 'SUMMARY') {
+        this.wantsSummaryExpanded = true;
+      }
+      if (e.item.id === 'EXERCISE') {
+        this.wantsExercisesExpanded = true;
+      }
+    }
+    this.contents = this.generateContents();
+  }
+
+  decideIfVocabularyExpanded() {
+    if (this.wantsVocabularyExpanded === null) {
+      return this.autoExpandVocabulary;
+    }
+    if (this.wantsVocabularyExpanded) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  decideIfSummaryExpanded() {
+    if (this.wantsSummaryExpanded === null) {
+      return this.autoExpandSummary;
+    }
+    if (this.wantsSummaryExpanded) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  decideIfExercisesExpanded() {
+    if (this.wantsExercisesExpanded === null) {
+      return this.autoExpandExercises;
+    }
+    if (this.wantsExercisesExpanded) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   generateContents() {
+    const isVocabularyExpanded = this.decideIfVocabularyExpanded();
+    const isSummaryExpanded = this.decideIfSummaryExpanded();
+    const isExercisesExpanded = this.decideIfExercisesExpanded();
+
     const generatedContents = [
       {
         label: 'Vocabulary',
+        id: 'WORD',
         //icon: 'pi pi-bolt',
         icon: 'bi bi-record-fill',
-        expanded: this.autoExpandVocabulary && this.wantsVocabularyExpanded,
-        command: () => {
-          this.wantsVocabularyExpanded = !this.wantsVocabularyExpanded;
+        expanded: isVocabularyExpanded,
+        command: (e: MenuItemCommandEvent) => {
+          this.updateExpanded(e);
           this.consoleDebugging();
         },
         items: this.generateContentsItems(this.wordItems, (e) => {
@@ -313,10 +402,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       },
       {
         label: 'Summary',
+        id: 'SUMMARY',
         icon: 'bi bi-record-fill',
-        expanded: this.autoExpandSummary && this.wantsSummaryExpanded,
-        command: () => {
-          this.wantsSummaryExpanded = !this.wantsSummaryExpanded;
+        expanded: isSummaryExpanded,
+        command: (e: MenuItemCommandEvent) => {
+          this.updateExpanded(e);
           this.consoleDebugging();
         },
         items: this.generateContentsItems(this.summaryItems, (e) => {
@@ -325,10 +415,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       },
       {
         label: 'Exercises',
+        id: 'EXERCISE',
         icon: 'bi bi-record-fill',
-        expanded: this.autoExpandExercises && this.wantsExercisesExpanded,
-        command: () => {
-          this.wantsExercisesExpanded = !this.wantsExercisesExpanded;
+        expanded: isExercisesExpanded,
+        command: (e: MenuItemCommandEvent) => {
+          this.updateExpanded(e);
           this.consoleDebugging();
         },
         items: this.generateContentsItems(this.exerciseItems, (e) => {
@@ -420,7 +511,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     wordItems.forEach((wordItem, i, arr) => {
       summaryItem.id = 'summary-' + count;
-      //continue adding wordItems to wordItems array on object until i = 8;
+      //continue adding wordItems to wordItems array on object until wordsPerPage = 8;
       summaryItem.wordItems.push(wordItem);
 
       //if last iteration, add the remaining summaryItem and end loop early
