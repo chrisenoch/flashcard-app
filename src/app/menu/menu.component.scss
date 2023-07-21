@@ -10,10 +10,6 @@
 
 :host {
   ::ng-deep {
-    & .p-panelmenu-icon {
-      display: none;
-    }
-
     & .slide-nav-bar {
       position: fixed;
       bottom: 1rem;
@@ -95,6 +91,15 @@
                 color: white;
               }
             }
+          }
+
+          & .p-icon-wrapper {
+            order: 1;
+            color: var(--tw-gray-50);
+          }
+
+          & .p-menuitem-text {
+            flex-grow: 1;
           }
         }
       }

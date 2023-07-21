@@ -25,9 +25,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   autoExpandVocabulary = true;
   autoExpandSummary = false;
   autoExpandExercises = false;
-  wantsVocabularyExpanded: boolean | null = null; //user-defined preference set when user expands/closes the panel
-  wantsSummaryExpanded: boolean | null = null; //user-defined preference set when user expands/closes the panel
-  wantsExercisesExpanded: boolean | null = null; //user-defined preference set when user expands/closes the panel
+
+  //user-defined preference set when user expands/closes the sidebar section. Null means the user has never expanded or closed the section.
+  wantsVocabularyExpanded: boolean | null = null;
+  wantsSummaryExpanded: boolean | null = null;
+  wantsExercisesExpanded: boolean | null = null;
   maxWordsOnSummarySlide: number = 2;
   //showContentAfterWordVisited = true;
   showContentAfterWordVisited = false;
