@@ -42,6 +42,13 @@
             & .p-menuitem-icon {
               color: var(--tw-purple-400) !important;
             }
+
+            & a {
+              &:focus {
+                box-shadow: none;
+                border: 2px solid var(--tw-purple-500) !important;
+              }
+            }
           }
         }
 
@@ -50,6 +57,12 @@
             & .p-menuitem-icon {
               color: var(--tw-orange-400) !important;
             }
+            & a {
+              &:focus {
+                box-shadow: none;
+                border: 2px solid var(--tw-orange-500) !important;
+              }
+            }
           }
         }
 
@@ -57,6 +70,12 @@
           & .p-panelmenu-header {
             & .p-menuitem-icon {
               color: var(--tw-pink-400) !important;
+            }
+            & a {
+              &:focus {
+                box-shadow: none;
+                border: 2px solid var(--tw-pink-500) !important;
+              }
             }
           }
         }
@@ -67,11 +86,6 @@
             color: white;
             border-radius: 0.75rem !important;
             border: none !important;
-
-            &:focus {
-              box-shadow: none;
-              border: 2px solid var(--tw-purple-500) !important;
-            }
           }
 
           &:not(.p-disabled) {
