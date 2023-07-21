@@ -293,18 +293,16 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.contents = this.generateContents();
   }
 
-  updateExpanded(e: MenuItemCommandEvent) {
-    //find out expanded state of clicked on sections
-    let currentExpandedState;
+  updateWantsExpanded(e: MenuItemCommandEvent) {
+    //find out expanded state of clicked on section
+    let expandSection;
     if (e?.item?.expanded !== undefined && e?.item?.expanded !== null) {
-      currentExpandedState = e.item.expanded;
+      expandSection = e.item.expanded;
     } else {
       return;
     }
 
-    currentExpandedState = !currentExpandedState;
-
-    console.log('currentexpandedState ' + currentExpandedState);
+    console.log('isCurrentlExpanded: ' + expandSection);
 
     //get expanded state of all sections
     const expandedStates = new Map();
@@ -312,9 +310,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       expandedStates.set(ele.label, ele.expanded);
     });
 
-    //if current section is open
-    // update wantsExpanded of current section to false.
-    if (currentExpandedState) {
+    //if selected section is open update wantsExpanded of selected section to false.
+    if (!expandSection) {
       //e.item.expanded = false;
 
       //Also update wantsExpanded of all closed sections to false.
@@ -333,7 +330,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       });
     } else {
-      //if current section is closed, update wantsExpanded to true for only current section
+      //if selected section is open, update wantsExpanded to true for only the selected section
       if (e.item.id === 'WORD') {
         this.wantsVocabularyExpanded = true;
       }
@@ -393,7 +390,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         icon: 'bi bi-record-fill',
         expanded: isVocabularyExpanded,
         command: (e: MenuItemCommandEvent) => {
-          this.updateExpanded(e);
+          this.updateWantsExpanded(e);
           this.consoleDebugging();
         },
         items: this.generateContentsItems(this.wordItems, (e) => {
@@ -406,7 +403,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         icon: 'bi bi-record-fill',
         expanded: isSummaryExpanded,
         command: (e: MenuItemCommandEvent) => {
-          this.updateExpanded(e);
+          this.updateWantsExpanded(e);
           this.consoleDebugging();
         },
         items: this.generateContentsItems(this.summaryItems, (e) => {
@@ -419,7 +416,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         icon: 'bi bi-record-fill',
         expanded: isExercisesExpanded,
         command: (e: MenuItemCommandEvent) => {
-          this.updateExpanded(e);
+          this.updateWantsExpanded(e);
           this.consoleDebugging();
         },
         items: this.generateContentsItems(this.exerciseItems, (e) => {
