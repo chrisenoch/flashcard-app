@@ -151,7 +151,8 @@
 
       & .p-menuitem {
         & .p-menuitem-link {
-          padding-left: 1.25rem;
+          //padding-left: 1.25rem;
+          padding: 0.6rem 0.6rem 0.6rem 1.25rem;
           &:hover {
             & .p-menuitem-text {
               color: black !important;
@@ -162,6 +163,7 @@
             //box-sizing: content-box;
             color: var(--tw-gray-600);
             font-weight: 600;
+            padding: 0.5rem;
           }
         }
       }
