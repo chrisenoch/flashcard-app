@@ -17,5 +17,5 @@
     <p *ngIf="!showPrimaryWordFirst" class="text-sm">{{ primaryWord }}</p>
   </ng-container>
 
-  <p>{{ explanation }}</p>
+  <p *ngIf="showExplanation">{{ explanation }}</p>
 </div>

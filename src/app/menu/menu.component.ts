@@ -45,6 +45,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   //change this - set to true for now for testing
   showTranslation = true;
+  showExplanation = true;
   showPrimaryWordFirst = true;
 
   wordItems: WordItem[] = [];
@@ -80,6 +81,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   updateShowTranslation() {
     console.log('updateShowTranslation');
     this.showTranslation = !this.showTranslation;
+  }
+
+  updateShowExplanation() {
+    console.log('updateShowExplanation');
+    console.log('b4 swap ' + this.showExplanation);
+    this.showExplanation = !this.showExplanation;
+    console.log('after swap ' + this.showExplanation);
   }
 
   ngOnInit() {

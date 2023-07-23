@@ -13,6 +13,7 @@
   <app-slide-option-bar
     (updateShowContentAfterWordVisited)="updateContentAfterWordVisited()"
     (updateShowTranslation)="updateShowTranslation()"
+    (updateShowExplanation)="updateShowExplanation()"
     class="min-w-[4rem] flex flex-col items-center justify-end overflow-y-auto max-h-[calc(100vh-80px)] bg-gray-100"
   ></app-slide-option-bar>
 
@@ -28,6 +29,7 @@
         [primaryWord]="displayedContent.english"
         [secondaryWord]="displayedContent.spanish"
         [showTranslation]="showTranslation"
+        [showExplanation]="showExplanation"
         [showPrimaryWordFirst]="showPrimaryWordFirst"
         [explanation]="displayedContent.explanation"
       ></app-word-slide>

@@ -11,4 +11,5 @@ export class WordSlideComponent {
   @Input() explanation: string = '';
   @Input() showPrimaryWordFirst: boolean = true;
   @Input() showTranslation: boolean = true;
+  @Input() showExplanation: boolean = true;
 }
