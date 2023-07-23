@@ -9,6 +9,8 @@ export class SlideOptionBarComponent {
   @Output() updateShowContentAfterWordVisited = new EventEmitter();
   @Output() updateShowTranslation = new EventEmitter();
   @Output() updateShowExplanation = new EventEmitter();
+  @Output() updateSidebarOnRight = new EventEmitter();
+  @Input() sidebarsOnRight = false;
 
   onShowContentAfterWordVisited() {
     this.updateShowContentAfterWordVisited.emit();
@@ -20,6 +22,10 @@ export class SlideOptionBarComponent {
 
   onShowExplanation() {
     this.updateShowExplanation.emit();
+  }
+
+  onMoveSidebar() {
+    this.updateSidebarOnRight.emit();
     console.log('just emitted');
   }
 }

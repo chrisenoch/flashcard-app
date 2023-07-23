@@ -31,8 +31,18 @@
   >
     <i class="bi bi-eye font-black text-gray-900 text-3xl"></i>
   </button>
-  <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
-    <i class="bi bi-arrow-bar-right font-black text-gray-900 text-3xl"></i>
+  <button
+    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+    (click)="onMoveSidebar()"
+  >
+    <i
+      *ngIf="!sidebarsOnRight"
+      class="bi bi-arrow-bar-right font-black text-gray-900 text-3xl"
+    ></i>
+    <i
+      *ngIf="sidebarsOnRight"
+      class="bi bi-arrow-bar-left font-black text-gray-900 text-3xl"
+    ></i>
   </button>
   <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
     <i class="bi bi-sign-turn-right font-black text-gray-900 text-3xl"></i>
