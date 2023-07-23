@@ -38,7 +38,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   wantsExercisesExpanded: boolean | null = null;
   maxWordsOnSummarySlide: number = 2;
   //showContentAfterWordVisited = true;
-  showContentAfterWordVisited = true;
+  showContentAfterWordVisited = false;
   isGeneratedContentFinished = false;
   isTeachingItemsError = false;
   //showTranslation = false;
@@ -71,6 +71,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) document: Document
   ) {}
+
+  updateContentAfterWordVisited() {
+    console.log('updateContentAfterWordVisited');
+    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
+    this.contents = this.generateContents();
+  }
 
   ngOnInit() {
     this.wordsSubscription = this.wordService

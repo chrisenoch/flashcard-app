@@ -20,6 +20,7 @@ import ExerciseSlideComponent from './slides/exercise-slide/exercise-slide.compo
 import { MainNavComponent } from './layout/main-nav/main-nav.component';
 import { NoTeachingItemsErrorComponent } from './errors/no-teaching-items-error/no-teaching-items-error.component';
 import { NoSlideErrorComponent } from './errors/no-slide-error/no-slide-error.component';
+import { SlideOptionBarComponent } from './menu/slide-option-bar/slide-option-bar.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { NoSlideErrorComponent } from './errors/no-slide-error/no-slide-error.co
     MainNavComponent,
     NoTeachingItemsErrorComponent,
     NoSlideErrorComponent,
+    SlideOptionBarComponent,
   ],
   imports: [
     BrowserModule,
