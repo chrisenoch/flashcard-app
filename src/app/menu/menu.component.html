@@ -4,7 +4,9 @@
   class="h-[calc(100vh-80px)] block"
 ></app-no-teaching-items-error>
 <div *ngIf="!isTeachingItemsError" class="flex bg-gray-50">
-  <div class="w-72 pl-10 pt-8 overflow-y-auto max-h-[calc(100vh-80px)]">
+  <div
+    class="min-w-[18rem] pl-10 pt-8 overflow-y-auto max-h-[calc(100vh-80px)]"
+  >
     <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
   </div>
 

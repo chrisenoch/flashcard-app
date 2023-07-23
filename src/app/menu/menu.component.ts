@@ -1,4 +1,10 @@
-import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { TeachingItem } from '../models/types/teachingItem';
 import { TEACHING_ITEM } from '../models/enums/teaching_item';
@@ -32,7 +38,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   wantsExercisesExpanded: boolean | null = null;
   maxWordsOnSummarySlide: number = 2;
   //showContentAfterWordVisited = true;
-  showContentAfterWordVisited = false;
+  showContentAfterWordVisited = true;
   isGeneratedContentFinished = false;
   isTeachingItemsError = false;
   //showTranslation = false;
@@ -62,6 +68,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private wordService: WordService,
+    private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) document: Document
   ) {}
 

@@ -1,9 +1,39 @@
-<div class="wrapper">
-  <p>Exercise Slide</p>
-  <p class="text-rose-500">Is this rose?</p>
-  <div *ngFor="let q of questions">
-    <p>{{ "Question:" + q.question }}</p>
-    <p>{{ "Answer: " + q.answer }}</p>
-    <hr />
+<div class="pt-24 flex flex-col items-center">
+  <h1 class="text-5xl">Exercises</h1>
+  <div class="flex gap-8 w-[70%]">
+    <p-accordion [multiple]="true" [activeIndex]="[0]" class="w-[70%] pt-8">
+      <p-accordionTab header="Question 1">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 2">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 3">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 4">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 5">
+        <p>Answer</p>
+      </p-accordionTab>
+    </p-accordion>
+    <p-accordion [multiple]="true" [activeIndex]="[0]" class="w-[70%] pt-8">
+      <p-accordionTab header="Question 6">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 7">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 8">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 9">
+        <p>Answer</p>
+      </p-accordionTab>
+      <p-accordionTab header="Question 10">
+        <p>Answer</p>
+      </p-accordionTab>
+    </p-accordion>
   </div>
 </div>

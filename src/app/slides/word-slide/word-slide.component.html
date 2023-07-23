@@ -1,12 +1,39 @@
-<div class="wrapper">
+<div class="pt-24">
   <ng-container *ngIf="showTranslation">
-    <p *ngIf="showPrimaryWordFirst">{{ primaryWord }}</p>
+    <p class="text-5xl text-center" *ngIf="showPrimaryWordFirst">
+      {{ primaryWord }}
+    </p>
     <p *ngIf="!showPrimaryWordFirst">{{ secondaryWord }}</p>
   </ng-container>
-  <ng-container *ngIf="showTranslation">
-    <p *ngIf="showPrimaryWordFirst" class="text-sm">{{ secondaryWord }}</p>
-    <p *ngIf="!showPrimaryWordFirst" class="text-sm">{{ primaryWord }}</p>
-  </ng-container>
+  <div class="mt-6 ml-10 pl-4 border-l-2 border-orange-500">
+    <button class="block p-1 mr-4 mb-4 text-orange-500">Translation</button>
+    <button class="block p-1 mr-4 mb-4 text-orange-500">Explanation</button>
+    <button class="block p-1 mr-4 mb-4 text-orange-500">Examples</button>
+  </div>
 
-  <p>{{ explanation }}</p>
+  <!-- <ul class="inline-block text-xl ml-8 text-gray-900">
+    <li class="p-2 m-4 bg-orange-300 rounded-xl">Translation</li>
+    <li class="p-2 m-4 bg-orange-300 rounded-xl">Explanation</li>
+    <li class="p-2 m-4 bg-orange-300 rounded-xl">Examples</li>
+  </ul> -->
+
+  <!-- <p-accordion [multiple]="true" [activeIndex]="[0]" class="w-[70%] pt-8">
+    <p-accordionTab header="Translation">
+      <ng-container *ngIf="showTranslation">
+        <p *ngIf="showPrimaryWordFirst" class="text-sm">{{ secondaryWord }}</p>
+        <p *ngIf="!showPrimaryWordFirst" class="text-sm">{{ primaryWord }}</p>
+      </ng-container>
+    </p-accordionTab>
+    <p-accordionTab header="Explanation">
+      <p>{{ explanation }}</p>
+    </p-accordionTab>
+    <p-accordionTab header="Examples">
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem
+        consectetur, modi, eaque dolor fugiat incidunt aperiam, consequatur
+        labore quasi provident dolore dolores porro possimus. Voluptas sint
+        distinctio sunt temporibus aperiam!
+      </p>
+    </p-accordionTab>
+  </p-accordion> -->
 </div>
