@@ -7,9 +7,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class SlideOptionBarComponent {
   @Output() updateShowContentAfterWordVisited = new EventEmitter();
+  @Output() updateShowTranslation = new EventEmitter();
 
   onShowContentAfterWordVisited() {
     this.updateShowContentAfterWordVisited.emit();
+    console.log('just emitted');
+  }
+
+  onShowTranslation() {
+    this.updateShowTranslation.emit();
     console.log('just emitted');
   }
 }

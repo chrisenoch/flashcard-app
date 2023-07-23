@@ -73,9 +73,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) {}
 
   updateContentAfterWordVisited() {
-    console.log('updateContentAfterWordVisited');
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
     this.contents = this.generateContents();
+  }
+
+  updateShowTranslation() {
+    console.log('updateShowTranslation');
+    this.showTranslation = !this.showTranslation;
   }
 
   ngOnInit() {
