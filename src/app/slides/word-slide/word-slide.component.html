@@ -1,8 +1,21 @@
-<div class="pt-24 h-full flex justify-center">
+<!-- <div class="pt-24 h-full flex justify-center">
   <div *ngIf="showTranslation">
     <p class="inline-block text-5xl" *ngIf="showPrimaryWordFirst">
       {{ primaryWord }}
     </p>
     <p *ngIf="!showPrimaryWordFirst">{{ secondaryWord }}</p>
   </div>
+</div> -->
+<div class="pt-24 h-full flex flex-col gap-8 items-center">
+  <p class="text-5xl" *ngIf="!showTranslation">{{ primaryWord }}</p>
+  <ng-container *ngIf="showTranslation">
+    <p class="text-5xl" *ngIf="showPrimaryWordFirst">{{ primaryWord }}</p>
+    <p *ngIf="!showPrimaryWordFirst">{{ secondaryWord }}</p>
+  </ng-container>
+  <ng-container *ngIf="showTranslation">
+    <p *ngIf="showPrimaryWordFirst" class="text-sm">{{ secondaryWord }}</p>
+    <p *ngIf="!showPrimaryWordFirst" class="text-sm">{{ primaryWord }}</p>
+  </ng-container>
+
+  <p>{{ explanation }}</p>
 </div>
