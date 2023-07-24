@@ -69,14 +69,14 @@
 >
   <!--change the justify-* class below to change where the navbar buttons are located-->
   <div
-    class="w-full bg-pink-400 flex"
+    class="w-full flex"
     [ngClass]="{
       'justify-center': slideNavbarPos === 'MIDDLE',
       'justify-start': slideNavbarPos === 'LEFT',
       'justify-end': slideNavbarPos === 'RIGHT',
     }"
   >
-    <div class="flex gap-4 justify-center bg-gray-500 w-[30rem]">
+    <div class="flex gap-4 justify-center w-[30rem]">
       <p-button
         label="Start"
         styleClass="p-button-rounded p-button-lg"
