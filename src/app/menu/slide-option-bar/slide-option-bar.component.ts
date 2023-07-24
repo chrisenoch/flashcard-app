@@ -12,6 +12,7 @@ export class SlideOptionBarComponent {
   @Output() updateSidebarOnRight = new EventEmitter();
   @Output() updateSlideNavbarPos = new EventEmitter();
   @Input() sidebarsOnRight = false;
+  @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   onShowContentAfterWordVisited() {
     this.updateShowContentAfterWordVisited.emit();

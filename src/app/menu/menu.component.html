@@ -21,6 +21,7 @@
     class="min-w-[4rem] flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)] bg-gray-100"
     [ngClass]="sidebarsOnRight ? 'order-1' : 'order-0'"
     [sidebarsOnRight]="sidebarsOnRight"
+    [slideNavbarPos]="slideNavbarPos"
   ></app-slide-option-bar>
 
   <ng-container *ngIf="!displayedContent; else elseBlock">
