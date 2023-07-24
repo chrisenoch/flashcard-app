@@ -14,6 +14,7 @@
   <!--second sidebar-->
   <app-slide-option-bar
     (updateShowContentAfterWordVisited)="updateContentAfterWordVisited()"
+    (updateSlideNavbarPos)="updateSlideNavbarPos()"
     (updateShowTranslation)="updateShowTranslation()"
     (updateShowExplanation)="updateShowExplanation()"
     (updateSidebarOnRight)="updateSidebarOnRight()"
@@ -62,39 +63,50 @@
 
 <div
   *ngIf="!isTeachingItemsError"
-  class="fixed bottom-4 left-[22rem] right-0 z-10 flex gap-4 justify-center"
+  class="fixed bottom-4 z-10 flex gap-4 justify-center"
+  [ngClass]="sidebarsOnRight ? 'left-0 right-[22rem] ' : 'left-[22rem] right-0'"
 >
-  <div class="flex gap-4 justify-center w-[50rem]">
-    <p-button
-      label="Start"
-      styleClass="p-button-rounded p-button-lg"
-      (onClick)="onStart()"
-    ></p-button>
-    <p-button
-      icon="bi bi-chevron-double-left"
-      styleClass="p-button-secondary p-button-lg"
-      (onClick)="onPreviousSection()"
-    ></p-button>
-    <p-button
-      icon="bi bi-chevron-left"
-      styleClass=" p-button-info p-button-lg"
-      (onClick)="onPrevious()"
-    ></p-button>
-    <p-button
-      icon="bi bi-chevron-right"
-      styleClass=" p-button-info p-button-lg"
-      (onClick)="onNext()"
-    ></p-button>
-    <p-button
-      icon="bi bi-chevron-double-right"
-      styleClass=" p-button-secondary p-button-lg"
-      (onClick)="onNextSection()"
-    ></p-button>
-    <p-button
-      label="End"
-      styleClass="p-button-rounded p-button-lg"
-      (onClick)="onEnd()"
-    ></p-button>
+  <!--change the justify-* class below to change where the navbar buttons are located-->
+  <div
+    class="w-full bg-pink-400 flex"
+    [ngClass]="{
+      'justify-center': slideNavbarPos === 'MIDDLE',
+      'justify-start': slideNavbarPos === 'LEFT',
+      'justify-end': slideNavbarPos === 'RIGHT',
+    }"
+  >
+    <div class="flex gap-4 justify-center bg-gray-500 w-[30rem]">
+      <p-button
+        label="Start"
+        styleClass="p-button-rounded p-button-lg"
+        (onClick)="onStart()"
+      ></p-button>
+      <p-button
+        icon="bi bi-chevron-double-left"
+        styleClass="p-button-secondary p-button-lg"
+        (onClick)="onPreviousSection()"
+      ></p-button>
+      <p-button
+        icon="bi bi-chevron-left"
+        styleClass=" p-button-info p-button-lg"
+        (onClick)="onPrevious()"
+      ></p-button>
+      <p-button
+        icon="bi bi-chevron-right"
+        styleClass=" p-button-info p-button-lg"
+        (onClick)="onNext()"
+      ></p-button>
+      <p-button
+        icon="bi bi-chevron-double-right"
+        styleClass=" p-button-secondary p-button-lg"
+        (onClick)="onNextSection()"
+      ></p-button>
+      <p-button
+        label="End"
+        styleClass="p-button-rounded p-button-lg"
+        (onClick)="onEnd()"
+      ></p-button>
+    </div>
   </div>
 </div>
 

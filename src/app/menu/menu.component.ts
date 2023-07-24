@@ -48,6 +48,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   showTranslation = true;
   showExplanation = true;
   showPrimaryWordFirst = true;
+  slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   wordItems: WordItem[] = [];
   summaryItems: SummaryItem[] = [];
@@ -90,6 +91,19 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   updateSidebarOnRight() {
     console.log('updateSidebarOnRight');
     this.sidebarsOnRight = !this.sidebarsOnRight;
+  }
+
+  updateSlideNavbarPos() {
+    //problem is the arrow
+
+    if (this.slideNavbarPos === 'MIDDLE') {
+      this.slideNavbarPos = 'RIGHT';
+    } else if (this.slideNavbarPos === 'RIGHT') {
+      this.slideNavbarPos = 'LEFT';
+    } else if (this.slideNavbarPos === 'LEFT') {
+      this.slideNavbarPos = 'MIDDLE';
+    }
+    console.log(this.slideNavbarPos);
   }
 
   ngOnInit() {
