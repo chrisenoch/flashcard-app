@@ -6,7 +6,7 @@
 <div *ngIf="!isTeachingItemsError" class="flex bg-gray-50">
   <!--sidebar-->
   <div
-    class="min-w-[18rem] pl-10 pt-8 overflow-y-auto max-h-[calc(100vh-80px)]"
+    class="min-w-[18rem] pl-10 pt-8 overflow-y-auto h-[calc(100vh-80px)] bg-gray-50"
     [ngClass]="sidebarsOnRight ? 'order-2' : 'order-0'"
   >
     <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
@@ -17,7 +17,7 @@
     (updateShowTranslation)="updateShowTranslation()"
     (updateShowExplanation)="updateShowExplanation()"
     (updateSidebarOnRight)="updateSidebarOnRight()"
-    class="min-w-[4rem] flex flex-col items-center justify-end overflow-y-auto max-h-[calc(100vh-80px)] bg-gray-100"
+    class="min-w-[4rem] flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)] bg-gray-100"
     [ngClass]="sidebarsOnRight ? 'order-1' : 'order-0'"
     [sidebarsOnRight]="sidebarsOnRight"
   ></app-slide-option-bar>
@@ -31,6 +31,7 @@
   <ng-template #elseBlock>
     <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
       <app-word-slide
+        class="bg-white grow"
         ngClass="app-word-slide"
         [primaryWord]="displayedContent.english"
         [secondaryWord]="displayedContent.spanish"
@@ -43,6 +44,7 @@
 
     <ng-container *ngIf="displayedContent && isSummaryItem(displayedContent)">
       <app-summary-slide
+        class="bg-white grow"
         ngClass="app-summary-slide"
         [wordItems]="displayedContent.wordItems"
       ></app-summary-slide>
@@ -50,6 +52,7 @@
 
     <ng-container *ngIf="displayedContent && isExerciseItem(displayedContent)">
       <app-exercise-slide
+        class="bg-white grow"
         ngClass="app-exercise-slide"
         [questions]="displayedContent.questions"
       ></app-exercise-slide>
