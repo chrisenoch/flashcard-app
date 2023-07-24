@@ -1,27 +1,5 @@
-// .app-word-slide,
-// .app-summary-slide,
-// .app-exercise-slide {
-//   background-color: var(--tw-gray-50);
-//   background-color: white;
-//   //background-color: var(--tw-orange-50);
-//   flex-grow: 1;
-//   //min-height: calc(100vh - 80px);
-// }
-
 :host {
   ::ng-deep {
-    & .slide-nav-bar {
-      position: fixed;
-      bottom: 1rem;
-      left: calc(50% + 150px);
-      transform: translateX(-50%);
-      z-index: 10;
-
-      & .p-button {
-        margin-right: 1rem;
-      }
-    }
-
     & .p-menubar {
       position: fixed;
       bottom: 0;

@@ -3,7 +3,7 @@
   *ngIf="isTeachingItemsError"
   class="h-[calc(100vh-80px)] block"
 ></app-no-teaching-items-error>
-<div *ngIf="!isTeachingItemsError" class="flex bg-gray-50">
+<div *ngIf="!isTeachingItemsError" class="flex">
   <!--sidebar-->
   <div
     class="min-w-[18rem] pl-10 pt-8 overflow-y-auto h-[calc(100vh-80px)] bg-gray-50"
@@ -60,37 +60,42 @@
   </ng-template>
 </div>
 
-<div *ngIf="!isTeachingItemsError" class="slide-nav-bar">
-  <p-button
-    label="Start"
-    styleClass="p-button-rounded p-button-lg"
-    (onClick)="onStart()"
-  ></p-button>
-  <p-button
-    icon="bi bi-chevron-double-left"
-    styleClass="p-button-secondary p-button-lg"
-    (onClick)="onPreviousSection()"
-  ></p-button>
-  <p-button
-    icon="bi bi-chevron-left"
-    styleClass=" p-button-info p-button-lg"
-    (onClick)="onPrevious()"
-  ></p-button>
-  <p-button
-    icon="bi bi-chevron-right"
-    styleClass=" p-button-info p-button-lg"
-    (onClick)="onNext()"
-  ></p-button>
-  <p-button
-    icon="bi bi-chevron-double-right"
-    styleClass=" p-button-secondary p-button-lg"
-    (onClick)="onNextSection()"
-  ></p-button>
-  <p-button
-    label="End"
-    styleClass="p-button-rounded p-button-lg"
-    (onClick)="onEnd()"
-  ></p-button>
+<div
+  *ngIf="!isTeachingItemsError"
+  class="fixed bottom-4 left-[22rem] right-0 z-10 flex gap-4 justify-center"
+>
+  <div class="flex gap-4 justify-center w-[50rem]">
+    <p-button
+      label="Start"
+      styleClass="p-button-rounded p-button-lg"
+      (onClick)="onStart()"
+    ></p-button>
+    <p-button
+      icon="bi bi-chevron-double-left"
+      styleClass="p-button-secondary p-button-lg"
+      (onClick)="onPreviousSection()"
+    ></p-button>
+    <p-button
+      icon="bi bi-chevron-left"
+      styleClass=" p-button-info p-button-lg"
+      (onClick)="onPrevious()"
+    ></p-button>
+    <p-button
+      icon="bi bi-chevron-right"
+      styleClass=" p-button-info p-button-lg"
+      (onClick)="onNext()"
+    ></p-button>
+    <p-button
+      icon="bi bi-chevron-double-right"
+      styleClass=" p-button-secondary p-button-lg"
+      (onClick)="onNextSection()"
+    ></p-button>
+    <p-button
+      label="End"
+      styleClass="p-button-rounded p-button-lg"
+      (onClick)="onEnd()"
+    ></p-button>
+  </div>
 </div>
 
 <!-- [ngClass]="{
