@@ -27,7 +27,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   contents: MenuItem[] = [];
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
-  currentPos = 0;
+  //currentPos = 0;
+  currentPos = 7;
   autoExpandVocabulary = true;
   autoExpandSummary = false;
   autoExpandExercises = false;
@@ -36,7 +37,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   wantsVocabularyExpanded: boolean | null = null;
   wantsSummaryExpanded: boolean | null = null;
   wantsExercisesExpanded: boolean | null = null;
-  maxWordsOnSummarySlide: number = 2;
+  maxWordsOnSummarySlide: number = 8;
   //showContentAfterWordVisited = true;
   showContentAfterWordVisited = false;
   isGeneratedContentFinished = false;
