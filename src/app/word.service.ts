@@ -17,7 +17,8 @@ export class WordService {
       type: 'WORD',
       english: 'Table',
       spanish: 'La mesa',
-      explanation: 'Some table explanation here',
+      explanation:
+        'A flat surface, usually supported by four legs, used for putting things on',
       isVisited: false,
     },
     {
