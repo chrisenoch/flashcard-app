@@ -21,6 +21,8 @@ import { MainNavComponent } from './layout/main-nav/main-nav.component';
 import { NoTeachingItemsErrorComponent } from './errors/no-teaching-items-error/no-teaching-items-error.component';
 import { NoSlideErrorComponent } from './errors/no-slide-error/no-slide-error.component';
 import { SlideOptionBarComponent } from './menu/slide-option-bar/slide-option-bar.component';
+import { AccordionComponent } from './custom-components/accordion/accordion.component';
+import { AccordionTabComponent } from './custom-components/accordion/accordion-tab/accordion-tab.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { SlideOptionBarComponent } from './menu/slide-option-bar/slide-option-ba
     NoTeachingItemsErrorComponent,
     NoSlideErrorComponent,
     SlideOptionBarComponent,
+    AccordionComponent,
+    AccordionTabComponent,
   ],
   imports: [
     BrowserModule,

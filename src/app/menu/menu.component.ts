@@ -28,7 +28,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
   //currentPos = 0;
-  currentPos = 7;
+  currentPos = 8;
   autoExpandVocabulary = true;
   autoExpandSummary = false;
   autoExpandExercises = false;
