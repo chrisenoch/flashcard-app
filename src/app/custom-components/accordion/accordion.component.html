@@ -1,10 +1,1 @@
-<ng-content></ng-content>
-
-<!--probably won't need any html. Just pass the relevant styles down-->
-
-<!-- <div [ngClass]="accordionWrapper">
-  <div [ngClass]="accordionTab">
-    <ng-content select="header"></ng-content>
-    <ng-content select="content"></ng-content>
-  </div>
-</div> -->
+<ng-content (updateIsActive)="updateIsActive($event)"> </ng-content>
