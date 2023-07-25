@@ -37,7 +37,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   wantsVocabularyExpanded: boolean | null = null;
   wantsSummaryExpanded: boolean | null = null;
   wantsExercisesExpanded: boolean | null = null;
-  maxWordsOnSummarySlide: number = 8;
+  maxWordsOnSummarySlide: number = 16;
   //showContentAfterWordVisited = true;
   showContentAfterWordVisited = false;
   isGeneratedContentFinished = false;
