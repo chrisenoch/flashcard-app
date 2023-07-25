@@ -1,9 +1,18 @@
 <div class="pt-16 h-full flex flex-col gap-8 items-center">
   <p class="text-6xl">Vocab Summary</p>
+
   <ol class="text-4xl flex flex-col flex-wrap w-[80%] bg-orange-50 h-[36rem]">
-    <li *ngFor="let item of wordItems" class="pb-8">hey</li>
-    <li *ngFor="let item of wordItems" class="pb-8">hey</li>
-    <li *ngFor="let item of wordItems" class="pb-8">hey</li>
+    <div
+      *ngFor="let item of wordItems; index as i"
+      class="flex items-center gap-4 pb-8"
+    >
+      <div
+        class="h-8 w-8 text-base flex justify-center items-center rounded-[50%] font-bold bg-green-300"
+      >
+        {{ i + 1 }}
+      </div>
+      <li>{{ item.english }}</li>
+    </div>
   </ol>
 
   <!-- <div class="flex justify-around w-[80%] bg-orange-100">
