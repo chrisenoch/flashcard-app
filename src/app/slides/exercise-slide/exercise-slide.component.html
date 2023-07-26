@@ -1,31 +1,40 @@
-<div class="pt-24 flex flex-col items-center">
-  <h1 class="text-5xl">Exercises</h1>
+<div class="pt-16 h-full flex flex-col gap-8 items-center">
+  <h1 class="text-5xl border-b-gray-300 border-b-2">Exercises</h1>
+
   <app-accordion
-    [multiple]="false"
-    class="block h-[500px] bg-orange-300 w-full"
+    class="text-2xl content-around flex flex-col flex-wrap w-[95%] h-[36rem]"
   >
-    <app-accordion-tab
-      tabId="mysteriousId"
-      class="block h-[200px] w-[50%] bg-purple-300"
-    >
-      <h1 header>1. Mysterious question?</h1>
-      <p content>
-        ANSWER: To find the right answer you must ask the right question.
+    <app-accordion-tab tabId="1" class="w-[50%]" [isActive]="true">
+      <div header>
+        <span class="mr-4">1. Sed do eiusmod tempor incididunt ut ?</span
+        ><i class="bi bi-plus-circle-fill"></i>
+      </div>
+      <p content class="text-xl ml-7 mt-1">
+        In voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+        officia deserunt mollit anim id est laborum
       </p>
     </app-accordion-tab>
-    <app-accordion-tab
-      tabId="anotherId"
-      class="block h-[200px] w-[50%] bg-pink-300"
-    >
-      <h1 header>2. Another question?</h1>
-      <p content>Answer to another question.</p>
+    <app-accordion-tab tabId="2" class="w-[50%]" [isActive]="true">
+      <div header class="mt-8">
+        <span class="mr-4"
+          >2. Exercitation ullamco laboris nisi ut aliquip e?</span
+        ><i
+          class="bi bi-plus-circle-fill text-orange-300 rounded-full fill-slate-900"
+        ></i>
+      </div>
+      <p content class="text-xl ml-7 mt-1">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+      </p>
     </app-accordion-tab>
-    <app-accordion-tab
-      tabId="bazzId"
-      class="block h-[200px] w-[50%] bg-pink-300"
-    >
-      <h1 header>3. bazz bazz bazz?</h1>
-      <p content>Answer to bazz bazz bazz</p>
+    <app-accordion-tab tabId="3" class="w-[50%]" [isActive]="true">
+      <div header class="mt-8">
+        <span class="mr-4">3. Quae ab illo inventore veritatis et?</span
+        ><i class="bi bi-plus-circle-fill"></i>
+      </div>
+      <p content class="text-xl ml-7 mt-1">
+        Architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam
+      </p>
     </app-accordion-tab>
   </app-accordion>
 </div>

@@ -7,7 +7,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class AccordionTabComponent {
   @Input() tabId = ''; //make it so shjows error if not provided
-  isActive = false;
+  @Input() isActive = false;
 
   toggleTab() {
     this.isActive = !this.isActive;
