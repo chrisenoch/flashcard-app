@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 
 @Component({
   selector: 'app-accordion-tab',
@@ -10,8 +17,8 @@ export class AccordionTabComponent {
   @Input() isActive = false;
 
   ngOnChanges() {
-    console.log('in accordion tab in ngOnCXhanges - tabID ' + this.tabId);
-    console.log('in accordion tab in ngOnCXhanges - isActive ' + this.isActive);
+    console.log('in accordion tab in ngOnChanges - tabID ' + this.tabId);
+    console.log('in accordion tab in ngOnChanges - isActive ' + this.isActive);
   }
 
   toggleTab() {
