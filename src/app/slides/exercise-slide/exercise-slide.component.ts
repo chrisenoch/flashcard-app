@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ChevronLeftIcon } from 'primeng/icons/chevronleft';
 
 @Component({
   selector: 'app-exercise-slide',
@@ -8,6 +9,11 @@ import { Component, Input } from '@angular/core';
 export default class ExerciseSlideComponent {
   @Input() questions: { question: string; answer: string }[] = [];
   @Input() showAllAnswers = false;
+
+  ngOnChanges() {
+    console.log('in ngOnChanges in exercise');
+    console.log('showAllAnswers in exercise ' + this.showAllAnswers);
+  }
 
   toggleAllAnswers(showAll: boolean) {
     if (showAll) {

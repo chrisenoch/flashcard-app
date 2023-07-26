@@ -1,7 +1,7 @@
 <div class="pt-16 h-full flex flex-col gap-8 items-center">
   <h1 class="text-5xl mb-8 border-b-gray-300 border-b-2">Exercises</h1>
-  <!-- <button (click)="toggleAllAnswers(true)">Show All</button>
-  <button (click)="toggleAllAnswers(false)">Hide All</button> -->
+  <button (click)="toggleAllAnswers(true)">Show All</button>
+  <button (click)="toggleAllAnswers(false)">Hide All</button>
 
   <app-accordion
     class="text-2xl content-around flex flex-col flex-wrap gap-8 w-[90%] h-[36rem]"
@@ -13,6 +13,10 @@
     >
       <span header class="mr-4">
         1. Sed do eiusmod tempor incididunt ut ?
+        {{
+          "showAllAnswers in the actual accordion tab header in EXERCISE SLIDE " +
+            showAllAnswers
+        }}
       </span>
       <i foo class="bi bi-dash-circle-fill"></i>
       <i bar class="bi bi-plus-circle-fill"></i>

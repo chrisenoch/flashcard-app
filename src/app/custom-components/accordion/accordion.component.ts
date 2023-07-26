@@ -26,6 +26,17 @@ export class AccordionComponent implements AfterContentChecked {
 
   ngAfterContentChecked() {
     this.ensureOnlyOneTabIsActive();
+
+    for (let i = 0; i < this.contentChildren.length; i++) {
+      let ele = this.contentChildren.get(i);
+
+      if (ele) {
+        //update map with tabIds.
+        this.tabIds.set(ele.tabId, ele.isActive);
+      }
+    }
+    console.log('map of tabIds ad active states');
+    console.log(this.tabIds);
   }
 
   private ensureOnlyOneTabIsActive() {
@@ -68,8 +79,6 @@ export class AccordionComponent implements AfterContentChecked {
         });
         this.tabIdToRemove = null;
       }
-
-      console.log(this.tabIds);
     }
   }
 }

@@ -12,8 +12,10 @@ export class SlideOptionBarComponent {
   @Output() updateSidebarOnRight = new EventEmitter();
   @Output() updateSlideNavbarPos = new EventEmitter();
   @Output() updateShowAllExerciseAnswers = new EventEmitter();
+  @Output() updateHideAllExerciseAnswers = new EventEmitter();
 
   @Input() sidebarsOnRight = false;
+  @Input() showAllExerciseAnswers = false;
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   onShowContentAfterWordVisited() {
@@ -26,6 +28,10 @@ export class SlideOptionBarComponent {
 
   onShowAllExerciseAnswers() {
     this.updateShowAllExerciseAnswers.emit();
+  }
+
+  onHideAllExerciseAnswers() {
+    this.updateHideAllExerciseAnswers.emit();
     console.log('just emitted event');
   }
 

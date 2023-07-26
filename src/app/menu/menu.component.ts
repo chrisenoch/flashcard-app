@@ -88,7 +88,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateShowAllExerciseAnswers() {
     console.log('in updateShowAllExerciseAnswers in menu component');
-    this.showAllExerciseAnswers = !this.showAllExerciseAnswers;
+    this.showAllExerciseAnswers = true;
+  }
+
+  updateHideAllExerciseAnswers() {
+    console.log('in updateHideAllExerciseAnswers in menu component');
+    this.showAllExerciseAnswers = false;
+    console.log('showAllExerciseAnswers ' + this.showAllExerciseAnswers);
   }
 
   updateShowExplanation() {
