@@ -49,6 +49,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   showTranslation = true;
   showExplanation = true;
   showPrimaryWordFirst = true;
+  showAllExerciseAnswers = false;
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   wordItems: WordItem[] = [];
@@ -83,6 +84,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateShowTranslation() {
     this.showTranslation = !this.showTranslation;
+  }
+
+  updateShowAllExerciseAnswers() {
+    console.log('in updateShowAllExerciseAnswers in menu component');
+    this.showAllExerciseAnswers = !this.showAllExerciseAnswers;
   }
 
   updateShowExplanation() {

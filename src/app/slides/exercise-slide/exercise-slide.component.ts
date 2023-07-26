@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export default class ExerciseSlideComponent {
   @Input() questions: { question: string; answer: string }[] = [];
-  showAllAnswers = false;
+  @Input() showAllAnswers = false;
 
   toggleAllAnswers(showAll: boolean) {
     if (showAll) {

@@ -11,6 +11,8 @@ export class SlideOptionBarComponent {
   @Output() updateShowExplanation = new EventEmitter();
   @Output() updateSidebarOnRight = new EventEmitter();
   @Output() updateSlideNavbarPos = new EventEmitter();
+  @Output() updateShowAllExerciseAnswers = new EventEmitter();
+
   @Input() sidebarsOnRight = false;
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
@@ -20,6 +22,11 @@ export class SlideOptionBarComponent {
 
   onShowTranslation() {
     this.updateShowTranslation.emit();
+  }
+
+  onShowAllExerciseAnswers() {
+    this.updateShowAllExerciseAnswers.emit();
+    console.log('just emitted event');
   }
 
   onShowExplanation() {
