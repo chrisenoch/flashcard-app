@@ -1,8 +1,11 @@
 <div class="pt-24 flex flex-col items-center">
   <h1 class="text-5xl">Exercises</h1>
-  <app-accordion class="block h-[500px] bg-orange-300 w-full">
+  <app-accordion
+    [multiple]="false"
+    class="block h-[500px] bg-orange-300 w-full"
+  >
     <app-accordion-tab
-      tabId="foo"
+      tabId="mysteriousId"
       class="block h-[200px] w-[50%] bg-purple-300"
     >
       <h1 header>1. Mysterious question?</h1>
@@ -10,9 +13,19 @@
         ANSWER: To find the right answer you must ask the right question.
       </p>
     </app-accordion-tab>
-    <app-accordion-tab tabId="bar" class="block h-[200px] w-[50%] bg-pink-300">
+    <app-accordion-tab
+      tabId="anotherId"
+      class="block h-[200px] w-[50%] bg-pink-300"
+    >
       <h1 header>2. Another question?</h1>
       <p content>Answer to another question.</p>
+    </app-accordion-tab>
+    <app-accordion-tab
+      tabId="bazzId"
+      class="block h-[200px] w-[50%] bg-pink-300"
+    >
+      <h1 header>3. bazz bazz bazz?</h1>
+      <p content>Answer to bazz bazz bazz</p>
     </app-accordion-tab>
   </app-accordion>
 </div>
