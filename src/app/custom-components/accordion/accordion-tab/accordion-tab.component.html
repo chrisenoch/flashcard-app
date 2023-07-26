@@ -4,10 +4,10 @@
     <!-- added so that user's can change the position of he header icon with the Flexbox order class-->
     <ng-content select="[header]"></ng-content>
     <ng-container *ngIf="isActive">
-      <ng-content select="[foo]"></ng-content>
+      <ng-content select="[header-inactive-icon]"></ng-content>
     </ng-container>
     <ng-container *ngIf="!isActive">
-      <ng-content select="[bar]"></ng-content>
+      <ng-content select="[header-active-icon]"></ng-content>
     </ng-container>
   </div>
   <!-- hidden is a Tailwind class for display:none;-->
