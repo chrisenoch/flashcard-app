@@ -1,12 +1,15 @@
 <!-- can put Tailwind styles directly on the app-accordion-tab-->
 <div class="h-full" (click)="toggleTab()">
-  <ng-content select="[header]"></ng-content>
-  <span [ngClass]="{ hidden: !isActive }">
-    <ng-content select="[foo]"></ng-content>
-  </span>
-  <span [ngClass]="{ hidden: isActive }">
-    <ng-content select="[bar]"></ng-content>
-  </span>
+  <div class="flex">
+    <!-- added so that user's can change the position of he header icon with the Flexbox order class-->
+    <ng-content select="[header]"></ng-content>
+    <ng-container *ngIf="isActive">
+      <ng-content select="[foo]"></ng-content>
+    </ng-container>
+    <ng-container *ngIf="!isActive">
+      <ng-content select="[bar]"></ng-content>
+    </ng-container>
+  </div>
   <!-- hidden is a Tailwind class for display:none;-->
   <div [ngClass]="{ hidden: !isActive }">
     <ng-content select="[content]"></ng-content>
