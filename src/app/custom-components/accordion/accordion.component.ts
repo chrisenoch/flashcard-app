@@ -1,9 +1,11 @@
 import {
   AfterContentChecked,
+  AfterContentInit,
   Component,
   ContentChildren,
   Input,
   OnChanges,
+  OnInit,
   QueryList,
   SimpleChanges,
 } from '@angular/core';
@@ -15,24 +17,40 @@ import { fromEvent } from 'rxjs';
   templateUrl: './accordion.component.html',
   styleUrls: ['./accordion.component.scss'],
 })
-export class AccordionComponent implements AfterContentChecked {
+export class AccordionComponent
+  implements AfterContentChecked, OnInit, AfterContentInit
+{
   @Input() multiple = true;
   @Input() accordionState = {
     showAllTabs: false,
   };
+
+  //use this to get the isActive status of the accordion tabs
+  @ContentChildren(AccordionTabComponent)
+  contentChildren!: QueryList<AccordionTabComponent>;
+
   previousAccordionState = {};
   runUpdateShowAllTabs = false;
+  activeTabId: string | null = null; //keeps track of the activeTabId
+  tabIdToRemove: string | null = null;
 
   ngOnInit() {
     this.previousAccordionState = this.accordionState;
   }
 
-  activeTabId: string | null = null; //keeps track of the activeTabId
-  tabIdToRemove: string | null = null;
+  ngAfterContentInit(): void {
+    this.updateShowAllTabs();
+  }
 
-  //use this to get the isActive status of the accordion tabs
-  @ContentChildren(AccordionTabComponent)
-  contentChildren!: QueryList<AccordionTabComponent>;
+  ngAfterContentChecked() {
+    this.ensureOnlyOneTabIsActive();
+
+    if (this.accordionState !== this.previousAccordionState) {
+      this.updateShowAllTabs();
+      this.previousAccordionState = this.accordionState;
+      // this.runUpdateShowAllTabs = false;
+    }
+  }
 
   updateShowAllTabs() {
     console.log('inside updateShowAllTabs');
@@ -44,16 +62,6 @@ export class AccordionComponent implements AfterContentChecked {
       if (ele) {
         ele.isActive = showAllTabs;
       }
-    }
-  }
-
-  ngAfterContentChecked() {
-    this.ensureOnlyOneTabIsActive();
-
-    if (this.accordionState !== this.previousAccordionState) {
-      this.updateShowAllTabs();
-      this.previousAccordionState = this.accordionState;
-      // this.runUpdateShowAllTabs = false;
     }
   }
 
