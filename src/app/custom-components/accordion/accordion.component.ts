@@ -39,7 +39,7 @@ export class AccordionComponent
   }
 
   ngAfterContentInit(): void {
-    this.updateShowAllTabs();
+    this.updateShowAllTabsOnPageLoad();
   }
 
   ngAfterContentChecked() {
@@ -48,15 +48,21 @@ export class AccordionComponent
     if (this.accordionState !== this.previousAccordionState) {
       this.updateShowAllTabs();
       this.previousAccordionState = this.accordionState;
-      // this.runUpdateShowAllTabs = false;
+    }
+  }
+
+  updateShowAllTabsOnPageLoad() {
+    let showAllTabs = this.accordionState.showAllTabs;
+    for (let i = 0; i < this.contentChildren.length; i++) {
+      let ele = this.contentChildren.get(i);
+      if (ele && ele.isActive === null) {
+        ele.isActive = showAllTabs;
+      }
     }
   }
 
   updateShowAllTabs() {
-    console.log('inside updateShowAllTabs');
-
     let showAllTabs = this.accordionState.showAllTabs;
-    console.log('updating all to tabs to ' + showAllTabs);
     for (let i = 0; i < this.contentChildren.length; i++) {
       let ele = this.contentChildren.get(i);
       if (ele) {
