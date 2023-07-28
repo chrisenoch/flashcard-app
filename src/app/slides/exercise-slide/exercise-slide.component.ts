@@ -19,17 +19,23 @@ import { AccordionComponent } from 'src/app/custom-components/accordion/accordio
 // implements AfterViewChecked, OnChanges
 export default class ExerciseSlideComponent {
   @Input() questions: { question: string; answer: string }[] = [];
-  @Input() showAllAnswers = false;
+  @Input() accordionTabState = { isActive: false };
 
-  @Input() showAllAnswersNum = 'THREE';
-
-  updateActiveTabs = false;
+  // @Input() showAllAnswersNum = 'THREE';
+  // updateActiveTabs = false;
 
   ngOnChanges() {
     console.log('in ngOnChanges in exercise');
     console.log(
-      ' in ngOnChanges - showAllAnswers in exercise ' + this.showAllAnswers
+      ' in ngOnChanges - showAllAnswers in exercise ' +
+        this.accordionTabState.isActive
     );
+    // this.showAllAnswers =
+    //   this.showAllAnswersNum === 'ONE' || this.showAllAnswersNum === 'TWO'
+    //     ? true
+    //     : false;
+    // console.log('*** this.showAllAnswersNum ' + this.showAllAnswersNum);
+    console.log('*** this.showAllAnswers ' + this.accordionTabState.isActive);
   }
 
   // @ViewChild('accordionRef') accordion!: AccordionComponent;

@@ -32,7 +32,7 @@ export class AccordionComponent implements AfterContentChecked {
 
       if (ele) {
         //update map with tabIds.
-        this.tabIds.set(ele.tabId, ele.isActive);
+        this.tabIds.set(ele.tabId, ele.accordionTabState.isActive);
       }
     }
     console.log('map of tabIds ad active states');
@@ -46,14 +46,14 @@ export class AccordionComponent implements AfterContentChecked {
 
         if (ele) {
           //update map with tabIds.
-          this.tabIds.set(ele.tabId, ele.isActive);
+          this.tabIds.set(ele.tabId, ele.accordionTabState.isActive);
 
           //no previous activeTab so just update it
-          if (ele.isActive && this.activeTabId === null) {
+          if (ele.accordionTabState.isActive && this.activeTabId === null) {
             this.activeTabId = ele.tabId;
             //need
           } else if (
-            ele.isActive &&
+            ele.accordionTabState.isActive &&
             this.activeTabId !== null &&
             ele.tabId !== this.activeTabId
           ) {
@@ -74,7 +74,7 @@ export class AccordionComponent implements AfterContentChecked {
         console.log('in remove if');
         this.contentChildren.forEach((ele) => {
           if (ele.tabId === this.tabIdToRemove) {
-            ele.isActive = false;
+            ele.accordionTabState.isActive = false;
           }
         });
         this.tabIdToRemove = null;
