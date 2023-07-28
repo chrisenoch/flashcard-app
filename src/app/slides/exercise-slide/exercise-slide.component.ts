@@ -19,54 +19,16 @@ import { AccordionComponent } from 'src/app/custom-components/accordion/accordio
 // implements AfterViewChecked, OnChanges
 export default class ExerciseSlideComponent {
   @Input() questions: { question: string; answer: string }[] = [];
-  @Input() accordionTabState = { isActive: false };
-
-  // @Input() showAllAnswersNum = 'THREE';
-  // updateActiveTabs = false;
+  @Input() accordionState = {
+    showAllTabs: false,
+  };
 
   ngOnChanges() {
     console.log('in ngOnChanges in exercise');
     console.log(
       ' in ngOnChanges - showAllAnswers in exercise ' +
-        this.accordionTabState.isActive
+        this.accordionState.showAllTabs
     );
-    // this.showAllAnswers =
-    //   this.showAllAnswersNum === 'ONE' || this.showAllAnswersNum === 'TWO'
-    //     ? true
-    //     : false;
-    // console.log('*** this.showAllAnswersNum ' + this.showAllAnswersNum);
-    console.log('*** this.showAllAnswers ' + this.accordionTabState.isActive);
+    console.log('*** this.showAllAnswers ' + this.accordionState.showAllTabs);
   }
-
-  // @ViewChild('accordionRef') accordion!: AccordionComponent;
-
-  // ngAfterViewChecked() {
-  //   console.log(JSON.stringify(this.accordion.contentChildren));
-  //   const accordionTabs = this.accordion.contentChildren;
-
-  //   if (this.updateActiveTabs) {
-  //     if (this.showAllAnswers) {
-  //       accordionTabs.forEach((ele) => {
-  //         ele.isActive = true;
-  //       });
-  //     } else {
-  //       accordionTabs.forEach((ele) => {
-  //         ele.isActive = false;
-  //       });
-  //     }
-
-  //     this.updateActiveTabs = false;
-  //     //necessary to avoid "ExpressionChangedAfterItHasBeenCheckedError"
-  //     setTimeout(() => console.log('tick'), 0);
-  //   }
-  // }
-
-  // toggleAllAnswers(showAll: boolean) {
-  //   if (showAll) {
-  //     this.showAllAnswers = true;
-  //   } else {
-  //     this.showAllAnswers = false;
-  //   }
-  //   this.updateActiveTabs = true;
-  // }
 }

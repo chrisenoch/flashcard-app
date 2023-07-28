@@ -49,7 +49,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   showTranslation = true;
   showExplanation = true;
   showPrimaryWordFirst = true;
-  accordionTabState = { isActive: false };
+  accordionState = { showAllTabs: false };
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   // showAllExerciseAnswersNum = 'THREE';
@@ -89,43 +89,16 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateShowAllExerciseAnswers() {
-    const accordionTabStateCopy = { ...this.accordionTabState };
-    accordionTabStateCopy.isActive = true;
-    this.accordionTabState = accordionTabStateCopy;
-    // if (this.showAllExerciseAnswersNum === 'ONE') {
-    //   this.showAllExerciseAnswersNum = 'TWO';
-    // } else if ((this.showAllExerciseAnswersNum = 'TWO')) {
-    //   this.showAllExerciseAnswersNum = 'ONE';
-    //   //if get to here, there value was not already set as one or two. I.e. the last value was hideAll Answers
-    // } else if (
-    //   this.showAllExerciseAnswersNum === 'THREE' ||
-    //   this.showAllExerciseAnswersNum === 'FOUR'
-    // ) {
-    //   this.showAllExerciseAnswersNum = 'ONE';
-    // }
-
+    const accordionStateCopy = { ...this.accordionState };
+    accordionStateCopy.showAllTabs = true;
+    this.accordionState = accordionStateCopy;
     console.log('in updateShowAllExerciseAnswers in menu component');
-    // this.showAllExerciseAnswers = true;
   }
 
   updateHideAllExerciseAnswers() {
-    const accordionTabStateCopy = { ...this.accordionTabState };
-    accordionTabStateCopy.isActive = false;
-    this.accordionTabState = accordionTabStateCopy;
-    // if (this.showAllExerciseAnswersNum === 'THREE') {
-    //   this.showAllExerciseAnswersNum = 'FOUR';
-    // } else if ((this.showAllExerciseAnswersNum = 'FOUR')) {
-    //   this.showAllExerciseAnswersNum = 'THREE';
-    //   //if get to here, there value was not already set as one or two. I.e. the last value was hideAll Answers
-    // } else if (
-    //   this.showAllExerciseAnswersNum === 'ONE' ||
-    //   this.showAllExerciseAnswersNum === 'TWO'
-    // ) {
-    //   this.showAllExerciseAnswersNum = 'THREE';
-    // }
-
-    // console.log('in updateHideAllExerciseAnswers in menu component');
-    // this.showAllExerciseAnswers = false;
+    const accordionStateCopy = { ...this.accordionState };
+    accordionStateCopy.showAllTabs = false;
+    this.accordionState = accordionStateCopy;
   }
 
   updateShowExplanation() {
@@ -267,7 +240,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     //this.addWordToContents();
     //this.updateActiveWord();
     this.onBottomNavigationCommon();
-    this.consoleDebugging();
   }
   onPreviousSection() {
     const currentId = this.teachingItems[this.currentPos].id;
@@ -279,22 +251,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     //this.addWordToContents();
     //this.updateActiveWord();
     this.onBottomNavigationCommon();
-    this.consoleDebugging();
   }
   onNextSection() {
     const currentId = this.teachingItems[this.currentPos].id;
     this.goToStartOfSection(currentId);
     this.onBottomNavigationCommon();
-  }
-
-  consoleDebugging() {
-    console.log('autoExpandSummary' + this.autoExpandSummary);
-    console.log('autoExpandVocabulary ' + this.autoExpandVocabulary);
-    console.log('autoExpandExercises ' + this.autoExpandExercises);
-    console.log('wantsSummaryExpanded ' + this.wantsSummaryExpanded);
-    console.log('wantsVocabularyExpanded ' + this.wantsVocabularyExpanded);
-    console.log('wantsExercisesExpanded ' + this.wantsExercisesExpanded);
-    console.log('-----------------------');
   }
 
   //methods to be called on every bottom navigation method
@@ -489,7 +450,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         expanded: isVocabularyExpanded,
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
-          this.consoleDebugging();
         },
         items: this.generateContentsItems(this.wordItems, (e) => {
           this.updateDisplayedContent(e);
@@ -502,7 +462,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         expanded: isSummaryExpanded,
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
-          this.consoleDebugging();
         },
         items: this.generateContentsItems(this.summaryItems, (e) => {
           this.updateDisplayedContent(e);
@@ -515,7 +474,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         expanded: isExercisesExpanded,
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
-          this.consoleDebugging();
         },
         items: this.generateContentsItems(this.exerciseItems, (e) => {
           this.updateDisplayedContent(e);
@@ -581,7 +539,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         return newItem;
       });
 
-    this.consoleDebugging();
     return contentsItems;
   }
 

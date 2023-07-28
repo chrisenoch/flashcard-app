@@ -3,7 +3,9 @@ import {
   Component,
   ContentChildren,
   Input,
+  OnChanges,
   QueryList,
+  SimpleChanges,
 } from '@angular/core';
 import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
 import { fromEvent } from 'rxjs';
@@ -15,8 +17,16 @@ import { fromEvent } from 'rxjs';
 })
 export class AccordionComponent implements AfterContentChecked {
   @Input() multiple = true;
-  //tabIds map could be useful for easily deciding how to style the tabs
-  tabIds: Map<string, boolean> = new Map(); //To do: change boolean type to object later
+  @Input() accordionState = {
+    showAllTabs: false,
+  };
+  previousAccordionState = {};
+  runUpdateShowAllTabs = false;
+
+  ngOnInit() {
+    this.previousAccordionState = this.accordionState;
+  }
+
   activeTabId: string | null = null; //keeps track of the activeTabId
   tabIdToRemove: string | null = null;
 
@@ -24,19 +34,27 @@ export class AccordionComponent implements AfterContentChecked {
   @ContentChildren(AccordionTabComponent)
   contentChildren!: QueryList<AccordionTabComponent>;
 
+  updateShowAllTabs() {
+    console.log('inside updateShowAllTabs');
+
+    let showAllTabs = this.accordionState.showAllTabs;
+    console.log('updating all to tabs to ' + showAllTabs);
+    for (let i = 0; i < this.contentChildren.length; i++) {
+      let ele = this.contentChildren.get(i);
+      if (ele) {
+        ele.isActive = showAllTabs;
+      }
+    }
+  }
+
   ngAfterContentChecked() {
     this.ensureOnlyOneTabIsActive();
 
-    for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
-
-      if (ele) {
-        //update map with tabIds.
-        this.tabIds.set(ele.tabId, ele.accordionTabState.isActive);
-      }
+    if (this.accordionState !== this.previousAccordionState) {
+      this.updateShowAllTabs();
+      this.previousAccordionState = this.accordionState;
+      // this.runUpdateShowAllTabs = false;
     }
-    console.log('map of tabIds ad active states');
-    console.log(this.tabIds);
   }
 
   private ensureOnlyOneTabIsActive() {
@@ -45,21 +63,15 @@ export class AccordionComponent implements AfterContentChecked {
         let ele = this.contentChildren.get(i);
 
         if (ele) {
-          //update map with tabIds.
-          this.tabIds.set(ele.tabId, ele.accordionTabState.isActive);
-
           //no previous activeTab so just update it
-          if (ele.accordionTabState.isActive && this.activeTabId === null) {
+          if (ele.isActive && this.activeTabId === null) {
             this.activeTabId = ele.tabId;
             //need
           } else if (
-            ele.accordionTabState.isActive &&
+            ele.isActive &&
             this.activeTabId !== null &&
             ele.tabId !== this.activeTabId
           ) {
-            //set isActive on other tabId to false
-            this.tabIds.set(this.activeTabId, false);
-
             //need to set it on the actual value as well
             this.tabIdToRemove = this.activeTabId;
 
@@ -74,7 +86,7 @@ export class AccordionComponent implements AfterContentChecked {
         console.log('in remove if');
         this.contentChildren.forEach((ele) => {
           if (ele.tabId === this.tabIdToRemove) {
-            ele.accordionTabState.isActive = false;
+            ele.isActive = false;
           }
         });
         this.tabIdToRemove = null;
