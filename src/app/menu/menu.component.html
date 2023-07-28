@@ -1,4 +1,8 @@
 <!-- <app-no-slide-error class="h-[calc(100vh-80px)] block"></app-no-slide-error> -->
+<button (click)="showAllExerciseAnswersNum = 'THREE'">
+  Click me to test accordion value of showAllExerciseAnswers
+  {{ showAllExerciseAnswersNum }}
+</button>
 <app-no-teaching-items-error
   *ngIf="isTeachingItemsError"
   class="h-[calc(100vh-80px)] block"
@@ -60,7 +64,7 @@
         class="bg-white grow"
         ngClass="app-exercise-slide"
         [questions]="displayedContent.questions"
-        [showAllAnswers]="showAllExerciseAnswers"
+        [showAllAnswersNum]="showAllExerciseAnswersNum"
       ></app-exercise-slide>
     </ng-container>
   </ng-template>

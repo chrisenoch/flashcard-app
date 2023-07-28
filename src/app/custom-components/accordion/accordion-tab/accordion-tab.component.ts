@@ -14,11 +14,16 @@ import {
 })
 export class AccordionTabComponent {
   @Input() tabId = ''; //make it so shjows error if not provided
-  @Input() isActive = false;
+  @Input() isActiveNum = 'THREE';
+  @Input() isActive =
+    this.isActiveNum === 'ONE' || this.isActiveNum === 'TWO' ? true : false;
 
   ngOnChanges() {
     console.log('in accordion tab in ngOnChanges - tabID ' + this.tabId);
     console.log('in accordion tab in ngOnChanges - isActive ' + this.isActive);
+    console.log('*** in accordion tab - this.isActiveNum ' + this.isActiveNum);
+    this.isActive =
+      this.isActiveNum === 'ONE' || this.isActiveNum === 'TWO' ? true : false;
   }
 
   toggleTab() {

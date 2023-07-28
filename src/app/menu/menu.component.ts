@@ -52,6 +52,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   showAllExerciseAnswers = false;
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
+  showAllExerciseAnswersNum = 'THREE';
+
   wordItems: WordItem[] = [];
   summaryItems: SummaryItem[] = [];
   teachingItems: TeachingItem[] = [];
@@ -87,14 +89,37 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateShowAllExerciseAnswers() {
+    if (this.showAllExerciseAnswersNum === 'ONE') {
+      this.showAllExerciseAnswersNum = 'TWO';
+    } else if ((this.showAllExerciseAnswersNum = 'TWO')) {
+      this.showAllExerciseAnswersNum = 'ONE';
+      //if get to here, there value was not already set as one or two. I.e. the last value was hideAll Answers
+    } else if (
+      this.showAllExerciseAnswersNum === 'THREE' ||
+      this.showAllExerciseAnswersNum === 'FOUR'
+    ) {
+      this.showAllExerciseAnswersNum = 'ONE';
+    }
+
     console.log('in updateShowAllExerciseAnswers in menu component');
-    this.showAllExerciseAnswers = true;
+    // this.showAllExerciseAnswers = true;
   }
 
   updateHideAllExerciseAnswers() {
-    console.log('in updateHideAllExerciseAnswers in menu component');
-    this.showAllExerciseAnswers = false;
-    console.log('showAllExerciseAnswers ' + this.showAllExerciseAnswers);
+    if (this.showAllExerciseAnswersNum === 'THREE') {
+      this.showAllExerciseAnswersNum = 'FOUR';
+    } else if ((this.showAllExerciseAnswersNum = 'FOUR')) {
+      this.showAllExerciseAnswersNum = 'THREE';
+      //if get to here, there value was not already set as one or two. I.e. the last value was hideAll Answers
+    } else if (
+      this.showAllExerciseAnswersNum === 'ONE' ||
+      this.showAllExerciseAnswersNum === 'TWO'
+    ) {
+      this.showAllExerciseAnswersNum = 'THREE';
+    }
+
+    // console.log('in updateHideAllExerciseAnswers in menu component');
+    // this.showAllExerciseAnswers = false;
   }
 
   updateShowExplanation() {

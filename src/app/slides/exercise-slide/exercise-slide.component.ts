@@ -16,11 +16,12 @@ import { AccordionComponent } from 'src/app/custom-components/accordion/accordio
   templateUrl: './exercise-slide.component.html',
   styleUrls: ['./exercise-slide.component.scss'],
 })
-export default class ExerciseSlideComponent
-  implements AfterViewChecked, OnChanges
-{
+// implements AfterViewChecked, OnChanges
+export default class ExerciseSlideComponent {
   @Input() questions: { question: string; answer: string }[] = [];
   @Input() showAllAnswers = false;
+
+  @Input() showAllAnswersNum = 'THREE';
 
   updateActiveTabs = false;
 
@@ -31,35 +32,35 @@ export default class ExerciseSlideComponent
     );
   }
 
-  @ViewChild('accordionRef') accordion!: AccordionComponent;
+  // @ViewChild('accordionRef') accordion!: AccordionComponent;
 
-  ngAfterViewChecked() {
-    console.log(JSON.stringify(this.accordion.contentChildren));
-    const accordionTabs = this.accordion.contentChildren;
+  // ngAfterViewChecked() {
+  //   console.log(JSON.stringify(this.accordion.contentChildren));
+  //   const accordionTabs = this.accordion.contentChildren;
 
-    if (this.updateActiveTabs) {
-      if (this.showAllAnswers) {
-        accordionTabs.forEach((ele) => {
-          ele.isActive = true;
-        });
-      } else {
-        accordionTabs.forEach((ele) => {
-          ele.isActive = false;
-        });
-      }
+  //   if (this.updateActiveTabs) {
+  //     if (this.showAllAnswers) {
+  //       accordionTabs.forEach((ele) => {
+  //         ele.isActive = true;
+  //       });
+  //     } else {
+  //       accordionTabs.forEach((ele) => {
+  //         ele.isActive = false;
+  //       });
+  //     }
 
-      this.updateActiveTabs = false;
-      //necessary to avoid "ExpressionChangedAfterItHasBeenCheckedError"
-      setTimeout(() => console.log('tick'), 0);
-    }
-  }
+  //     this.updateActiveTabs = false;
+  //     //necessary to avoid "ExpressionChangedAfterItHasBeenCheckedError"
+  //     setTimeout(() => console.log('tick'), 0);
+  //   }
+  // }
 
-  toggleAllAnswers(showAll: boolean) {
-    if (showAll) {
-      this.showAllAnswers = true;
-    } else {
-      this.showAllAnswers = false;
-    }
-    this.updateActiveTabs = true;
-  }
+  // toggleAllAnswers(showAll: boolean) {
+  //   if (showAll) {
+  //     this.showAllAnswers = true;
+  //   } else {
+  //     this.showAllAnswers = false;
+  //   }
+  //   this.updateActiveTabs = true;
+  // }
 }
