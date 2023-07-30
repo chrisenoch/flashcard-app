@@ -31,7 +31,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //showTranslation = false;
   showTranslation = true;
   showExplanation = true;
-  showPrimaryWordFirst = true;
+  showPrimaryWordFirst = false;
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
   accordionState = { showAllTabs: false };
 
