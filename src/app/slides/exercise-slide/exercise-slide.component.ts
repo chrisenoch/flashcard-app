@@ -7,4 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export default class ExerciseSlideComponent {
   @Input() questions: { question: string; answer: string }[] = [];
+  @Input() accordionState = {
+    showAllTabs: false,
+  };
 }
