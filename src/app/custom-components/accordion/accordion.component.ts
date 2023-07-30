@@ -94,7 +94,6 @@ export class AccordionComponent
       }
 
       if (this.tabIdToRemove) {
-        console.log('in remove if');
         this.contentChildren.forEach((ele) => {
           if (ele.tabId === this.tabIdToRemove) {
             ele.isActive = false;

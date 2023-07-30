@@ -185,7 +185,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     const accordionStateCopy = { ...this.accordionState };
     accordionStateCopy.showAllTabs = true;
     this.accordionState = accordionStateCopy;
-    console.log('in updateShowAllExerciseAnswers in menu component');
   }
 
   updateHideAllExerciseAnswers() {
@@ -199,7 +198,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateSidebarOnRight() {
-    console.log('updateSidebarOnRight');
     this.sidebarsOnRight = !this.sidebarsOnRight;
 
     if (this.slideNavbarPos === 'RIGHT') {
@@ -219,7 +217,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else if (this.slideNavbarPos === 'LEFT') {
       this.slideNavbarPos = 'MIDDLE';
     }
-    console.log(this.slideNavbarPos);
   }
 
   //proper approach
@@ -323,8 +320,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       return;
     }
-
-    console.log('isCurrentlExpanded: ' + expandSection);
 
     //get expanded state of all sections
     const expandedStates = new Map();

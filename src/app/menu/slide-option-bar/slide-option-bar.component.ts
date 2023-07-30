@@ -31,7 +31,6 @@ export class SlideOptionBarComponent {
 
   onHideAllExerciseAnswers() {
     this.updateHideAllExerciseAnswers.emit();
-    console.log('just emitted event');
   }
 
   onShowExplanation() {
@@ -44,6 +43,5 @@ export class SlideOptionBarComponent {
 
   onChangeSlideNavbarPos() {
     this.updateSlideNavbarPos.emit();
-    console.log('just emitted');
   }
 }
