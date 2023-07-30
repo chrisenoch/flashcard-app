@@ -8,7 +8,6 @@ import {
   QueryList,
 } from '@angular/core';
 import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
-import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-accordion',
