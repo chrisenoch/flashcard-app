@@ -8,4 +8,5 @@ import { WordItem } from 'src/app/models/interfaces/wordItem';
 })
 export class SummarySlideComponent {
   @Input() wordItems: WordItem[] = [];
+  @Input() showPrimaryWordFirst = false;
 }

@@ -11,7 +11,8 @@
       >
         {{ i + 1 }}
       </div>
-      <li>{{ item.english }}</li>
+      <li *ngIf="showPrimaryWordFirst">{{ item.english }}</li>
+      <li *ngIf="!showPrimaryWordFirst">{{ item.spanish }}</li>
     </div>
   </ol>
 </div>
