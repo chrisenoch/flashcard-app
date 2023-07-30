@@ -1,10 +1,19 @@
 <div class="pt-16 h-full flex flex-col gap-8 items-center">
-  <p class="text-8xl" *ngIf="!showTranslation">{{ primaryWord }}</p>
+  <p class="text-8xl" *ngIf="!showTranslation && showPrimaryWordFirst">
+    {{ primaryWord }}
+  </p>
+  <p class="text-8xl" *ngIf="!showTranslation && !showPrimaryWordFirst">
+    {{ secondaryWord }}
+  </p>
   <ng-container *ngIf="showTranslation">
     <p class="text-8xl text-gray-800" *ngIf="showPrimaryWordFirst">
       {{ primaryWord }}
     </p>
-    <i class="bi bi-diamond-fill text-orange-500"></i>
+    <i
+      *ngIf="showPrimaryWordFirst"
+      class="bi bi-diamond-fill text-orange-500"
+    ></i>
+
     <p class="text-8xl" *ngIf="!showPrimaryWordFirst">
       {{ secondaryWord }}
     </p>
@@ -13,10 +22,16 @@
     <p *ngIf="showPrimaryWordFirst" class="text-6xl text-gray-700">
       {{ "(" + secondaryWord + ")" }}
     </p>
+    <i
+      *ngIf="!showPrimaryWordFirst"
+      class="bi bi-diamond-fill text-orange-500"
+    ></i>
+
     <p *ngIf="!showPrimaryWordFirst" class="text-6xl text-gray-700">
       {{ "(" + primaryWord + ")" }}
     </p>
   </ng-container>
+  <!-- explanation -->
   <div
     *ngIf="showExplanation"
     class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-pink-200 relative z-10"

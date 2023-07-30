@@ -31,12 +31,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //showTranslation = false;
   showTranslation = true;
   showExplanation = true;
-  showPrimaryWordFirst = true;
+  showPrimaryWordFirst = false;
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
   accordionState = { showAllTabs: false };
 
   private wordsSubscription!: Subscription;
-  private navItems: MenuItem[] | undefined;
   private currentPos = 0;
   private autoExpandVocabulary = true;
   private autoExpandSummary = false;
@@ -103,65 +102,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
-
-    this.navItems = [
-      {
-        label: 'Start',
-        command: () => {
-          this.goToStart();
-        },
-      },
-      {
-        label: 'Previous Section',
-        command: () => {
-          const currentId = this.teachingItems[this.currentPos].id;
-          this.goToStartOfSection(currentId, true);
-        },
-      },
-      {
-        label: 'Previous',
-        command: () => {
-          this.decrementCurrentPos();
-          this.addWordToContents();
-        },
-      },
-      {
-        label: 'Next',
-        command: () => {
-          this.incrementCurrentPos();
-          this.addWordToContents();
-        },
-      },
-      {
-        label: 'Next Section',
-        command: () => {
-          const currentId = this.teachingItems[this.currentPos].id;
-          this.goToStartOfSection(currentId);
-        },
-      },
-      {
-        label: 'End',
-        command: () => {
-          this.goToEnd();
-        },
-      },
-      {
-        label: 'Toggle',
-        command: () => {
-          this.toggleTranslation();
-        },
-      },
-      {
-        label: 'Show words after visited',
-        command: () => {
-          this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-          this.contents = this.generateContents();
-        },
-      },
-      {
-        icon: 'pi-bars',
-      },
-    ];
   }
 
   ngAfterViewChecked() {
@@ -181,6 +121,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.showTranslation = !this.showTranslation;
   }
 
+  updateToggleTranslation() {
+    this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
+    this.contents = this.generateContents();
+  }
+
   updateShowAllExerciseAnswers() {
     const accordionStateCopy = { ...this.accordionState };
     accordionStateCopy.showAllTabs = true;
@@ -197,7 +142,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.showExplanation = !this.showExplanation;
   }
 
-  updateSidebarOnRight() {
+  updateSidebarsOnRight() {
     this.sidebarsOnRight = !this.sidebarsOnRight;
 
     if (this.slideNavbarPos === 'RIGHT') {
@@ -260,15 +205,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     const currentId = this.teachingItems[this.currentPos].id;
     this.goToStartOfSection(currentId);
     this.onBottomNavigationCommon();
-  }
-
-  onToggle() {
-    this.toggleTranslation();
-  }
-
-  private toggleTranslation() {
-    this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
-    this.contents = this.generateContents();
   }
 
   onShowWordsAftervisited() {

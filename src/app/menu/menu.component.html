@@ -15,10 +15,11 @@
     (updateShowContentAfterWordVisited)="updateContentAfterWordVisited()"
     (updateSlideNavbarPos)="updateSlideNavbarPos()"
     (updateShowTranslation)="updateShowTranslation()"
+    (updateToggleTranslation)="updateToggleTranslation()"
     (updateShowExplanation)="updateShowExplanation()"
     (updateShowAllExerciseAnswers)="updateShowAllExerciseAnswers()"
     (updateHideAllExerciseAnswers)="updateHideAllExerciseAnswers()"
-    (updateSidebarOnRight)="updateSidebarOnRight()"
+    (updateSidebarsOnRight)="updateSidebarsOnRight()"
     class="min-w-[4rem] flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)] bg-gray-100"
     [ngClass]="sidebarsOnRight ? 'order-1' : 'order-0'"
     [sidebarsOnRight]="sidebarsOnRight"
@@ -50,6 +51,7 @@
         class="bg-white grow"
         ngClass="app-summary-slide"
         [wordItems]="displayedContent.wordItems"
+        [showPrimaryWordFirst]="showPrimaryWordFirst"
       ></app-summary-slide>
     </ng-container>
 
