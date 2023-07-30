@@ -4,10 +4,8 @@ import {
   Component,
   ContentChildren,
   Input,
-  OnChanges,
   OnInit,
   QueryList,
-  SimpleChanges,
 } from '@angular/core';
 import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
 import { fromEvent } from 'rxjs';
