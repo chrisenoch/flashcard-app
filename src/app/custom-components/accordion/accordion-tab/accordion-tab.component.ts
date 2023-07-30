@@ -14,7 +14,7 @@ import {
   templateUrl: './accordion-tab.component.html',
   styleUrls: ['./accordion-tab.component.scss'],
 })
-export class AccordionTabComponent implements OnChanges {
+export class AccordionTabComponent {
   @Input() tabId = ''; //make it so shows error if not provided
   @Input() isActive: boolean | null = null;
 
@@ -24,14 +24,7 @@ export class AccordionTabComponent implements OnChanges {
     );
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(
-      'ngOnChanges in accordion tab Value of isActive is ' + this.isActive
-    );
-  }
-
   toggleTab() {
-    console.log('in toggleTab in accordionTab');
     this.isActive = !this.isActive;
   }
 }

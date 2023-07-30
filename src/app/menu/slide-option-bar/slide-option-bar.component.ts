@@ -15,7 +15,6 @@ export class SlideOptionBarComponent {
   @Output() updateHideAllExerciseAnswers = new EventEmitter();
 
   @Input() sidebarsOnRight = false;
-  @Input() showAllExerciseAnswers = false;
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   onShowContentAfterWordVisited() {

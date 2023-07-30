@@ -23,43 +23,40 @@ import { Inject } from '@angular/core';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
-  private wordsSubscription!: Subscription;
-  contents: MenuItem[] = [];
-  navItems: MenuItem[] | undefined;
   displayedContent: TeachingItem | undefined;
-  //currentPos = 0;
-  currentPos = 8;
-  autoExpandVocabulary = true;
-  autoExpandSummary = false;
-  autoExpandExercises = false;
-
-  //user-defined preference set when user expands/closes the sidebar section. Null means the user has never expanded or closed the section.
-  wantsVocabularyExpanded: boolean | null = null;
-  wantsSummaryExpanded: boolean | null = null;
-  wantsExercisesExpanded: boolean | null = null;
-  maxWordsOnSummarySlide: number = 16;
-  //showContentAfterWordVisited = true;
-  showContentAfterWordVisited = false;
-  isGeneratedContentFinished = false;
+  contents: MenuItem[] = [];
   isTeachingItemsError = false;
-  //showTranslation = false;
   sidebarsOnRight = false;
-
   //change this - set to true for now for testing
+  //showTranslation = false;
   showTranslation = true;
   showExplanation = true;
   showPrimaryWordFirst = true;
-  accordionState = { showAllTabs: false };
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
+  accordionState = { showAllTabs: false };
 
-  // showAllExerciseAnswersNum = 'THREE';
+  private wordsSubscription!: Subscription;
+  private navItems: MenuItem[] | undefined;
+  private currentPos = 0;
+  private autoExpandVocabulary = true;
+  private autoExpandSummary = false;
+  private autoExpandExercises = false;
 
-  wordItems: WordItem[] = [];
-  summaryItems: SummaryItem[] = [];
-  teachingItems: TeachingItem[] = [];
+  //user-defined preference set when user expands/closes the sidebar section. Null means the user has never expanded or closed the section.
+  private wantsVocabularyExpanded: boolean | null = null;
+  private wantsSummaryExpanded: boolean | null = null;
+  private wantsExercisesExpanded: boolean | null = null;
+  private maxWordsOnSummarySlide: number = 16;
+  //showContentAfterWordVisited = true;
+  private showContentAfterWordVisited = false;
+  private isGeneratedContentFinished = false;
+
+  private wordItems: WordItem[] = [];
+  private summaryItems: SummaryItem[] = [];
+  private teachingItems: TeachingItem[] = [];
 
   //get these from service later
-  exerciseItems: ExerciseItem[] = [
+  private exerciseItems: ExerciseItem[] = [
     {
       type: TEACHING_ITEM.Exercise,
       id: 'exercise-1',
@@ -78,56 +75,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) document: Document
   ) {}
-
-  updateContentAfterWordVisited() {
-    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.contents = this.generateContents();
-  }
-
-  updateShowTranslation() {
-    this.showTranslation = !this.showTranslation;
-  }
-
-  updateShowAllExerciseAnswers() {
-    const accordionStateCopy = { ...this.accordionState };
-    accordionStateCopy.showAllTabs = true;
-    this.accordionState = accordionStateCopy;
-    console.log('in updateShowAllExerciseAnswers in menu component');
-  }
-
-  updateHideAllExerciseAnswers() {
-    const accordionStateCopy = { ...this.accordionState };
-    accordionStateCopy.showAllTabs = false;
-    this.accordionState = accordionStateCopy;
-  }
-
-  updateShowExplanation() {
-    this.showExplanation = !this.showExplanation;
-  }
-
-  updateSidebarOnRight() {
-    console.log('updateSidebarOnRight');
-    this.sidebarsOnRight = !this.sidebarsOnRight;
-
-    if (this.slideNavbarPos === 'RIGHT') {
-      this.slideNavbarPos = 'LEFT';
-    } else if (this.slideNavbarPos === 'LEFT') {
-      this.slideNavbarPos = 'RIGHT';
-    }
-  }
-
-  updateSlideNavbarPos() {
-    //problem is the arrow
-
-    if (this.slideNavbarPos === 'MIDDLE') {
-      this.slideNavbarPos = 'RIGHT';
-    } else if (this.slideNavbarPos === 'RIGHT') {
-      this.slideNavbarPos = 'LEFT';
-    } else if (this.slideNavbarPos === 'LEFT') {
-      this.slideNavbarPos = 'MIDDLE';
-    }
-    console.log(this.slideNavbarPos);
-  }
 
   ngOnInit() {
     this.wordsSubscription = this.wordService
@@ -223,7 +170,69 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnDestroy(): void {
     this.wordsSubscription.unsubscribe();
-    //this.isGenerateContentsFinishedSubscription.unsubscribe();
+  }
+
+  updateContentAfterWordVisited() {
+    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
+    this.contents = this.generateContents();
+  }
+
+  updateShowTranslation() {
+    this.showTranslation = !this.showTranslation;
+  }
+
+  updateShowAllExerciseAnswers() {
+    const accordionStateCopy = { ...this.accordionState };
+    accordionStateCopy.showAllTabs = true;
+    this.accordionState = accordionStateCopy;
+    console.log('in updateShowAllExerciseAnswers in menu component');
+  }
+
+  updateHideAllExerciseAnswers() {
+    const accordionStateCopy = { ...this.accordionState };
+    accordionStateCopy.showAllTabs = false;
+    this.accordionState = accordionStateCopy;
+  }
+
+  updateShowExplanation() {
+    this.showExplanation = !this.showExplanation;
+  }
+
+  updateSidebarOnRight() {
+    console.log('updateSidebarOnRight');
+    this.sidebarsOnRight = !this.sidebarsOnRight;
+
+    if (this.slideNavbarPos === 'RIGHT') {
+      this.slideNavbarPos = 'LEFT';
+    } else if (this.slideNavbarPos === 'LEFT') {
+      this.slideNavbarPos = 'RIGHT';
+    }
+  }
+
+  updateSlideNavbarPos() {
+    //problem is the arrow
+
+    if (this.slideNavbarPos === 'MIDDLE') {
+      this.slideNavbarPos = 'RIGHT';
+    } else if (this.slideNavbarPos === 'RIGHT') {
+      this.slideNavbarPos = 'LEFT';
+    } else if (this.slideNavbarPos === 'LEFT') {
+      this.slideNavbarPos = 'MIDDLE';
+    }
+    console.log(this.slideNavbarPos);
+  }
+
+  //proper approach
+  isWordItem(item: TeachingItem): item is WordItem {
+    return (item as WordItem).type === TEACHING_ITEM.Word;
+  }
+
+  isSummaryItem(item: TeachingItem): item is SummaryItem {
+    return (item as SummaryItem).type === TEACHING_ITEM.Summary;
+  }
+
+  isExerciseItem(item: TeachingItem): item is ExerciseItem {
+    return (item as ExerciseItem).type === TEACHING_ITEM.Exercise;
   }
 
   onStart() {
@@ -237,8 +246,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
   onPrevious() {
     this.decrementCurrentPos();
-    //this.addWordToContents();
-    //this.updateActiveWord();
     this.onBottomNavigationCommon();
   }
   onPreviousSection() {
@@ -258,6 +265,20 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.onBottomNavigationCommon();
   }
 
+  onToggle() {
+    this.toggleTranslation();
+  }
+
+  private toggleTranslation() {
+    this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
+    this.contents = this.generateContents();
+  }
+
+  onShowWordsAftervisited() {
+    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
+    this.contents = this.generateContents();
+  }
+
   //methods to be called on every bottom navigation method
   private onBottomNavigationCommon() {
     this.displayedContent && this.setItemAsVisited(this.displayedContent);
@@ -267,7 +288,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //the default behaviour is for the sections on the sidebar
   //to expand when a slide of that section is visited. However,
   //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
-  autoExpandSection() {
+  private autoExpandSection() {
     if (
       this.displayedContent?.type === TEACHING_ITEM.Word &&
       !this.autoExpandVocabulary &&
@@ -294,21 +315,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  onToggle() {
-    this.toggleTranslation();
-  }
-
-  onShowWordsAftervisited() {
-    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.contents = this.generateContents();
-  }
-
-  toggleTranslation() {
-    this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
-    this.contents = this.generateContents();
-  }
-
-  updateWantsExpanded(e: MenuItemCommandEvent) {
+  private updateWantsExpanded(e: MenuItemCommandEvent) {
     //find out expanded state of clicked on section
     let expandSection;
     if (e?.item?.expanded !== undefined && e?.item?.expanded !== null) {
@@ -327,8 +334,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     //if selected section is open update wantsExpanded of selected section to false.
     if (!expandSection) {
-      //e.item.expanded = false;
-
       //Also update wantsExpanded of all closed sections to false.
       this.contents.forEach((ele) => {
         let expanded = expandedStates.get(ele.label);
@@ -359,7 +364,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.contents = this.generateContents();
   }
 
-  decideIfVocabularyExpanded() {
+  private decideIfVocabularyExpanded() {
     if (this.wantsVocabularyExpanded === null) {
       return this.autoExpandVocabulary;
     }
@@ -370,7 +375,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  decideIfSummaryExpanded() {
+  private decideIfSummaryExpanded() {
     if (this.wantsSummaryExpanded === null) {
       return this.autoExpandSummary;
     }
@@ -381,7 +386,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  decideIfExercisesExpanded() {
+  private decideIfExercisesExpanded() {
     if (this.wantsExercisesExpanded === null) {
       return this.autoExpandExercises;
     }
@@ -436,7 +441,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  generateContents() {
+  private generateContents() {
     const isVocabularyExpanded = this.decideIfVocabularyExpanded();
     const isSummaryExpanded = this.decideIfSummaryExpanded();
     const isExercisesExpanded = this.decideIfExercisesExpanded();
@@ -486,7 +491,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return generatedContents;
   }
 
-  generateContentsItems(
+  private generateContentsItems(
     items: TeachingItem[],
     callback: (...args: any[]) => void,
     label?: string
@@ -542,7 +547,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return contentsItems;
   }
 
-  generateSummaryItems(
+  private generateSummaryItems(
     wordsPerPage: number,
     wordItems: WordItem[]
   ): SummaryItem[] {
@@ -591,20 +596,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return summaryItems;
   }
 
-  //proper approach
-  isWordItem(item: TeachingItem): item is WordItem {
-    return (item as WordItem).type === TEACHING_ITEM.Word;
-  }
-
-  isSummaryItem(item: TeachingItem): item is SummaryItem {
-    return (item as SummaryItem).type === TEACHING_ITEM.Summary;
-  }
-
-  isExerciseItem(item: TeachingItem): item is ExerciseItem {
-    return (item as ExerciseItem).type === TEACHING_ITEM.Exercise;
-  }
-
-  setItemAsVisited(item: TeachingItem) {
+  private setItemAsVisited(item: TeachingItem) {
     if (item.isVisited) {
       return;
     }
@@ -617,7 +609,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  addWordToContents() {
+  private addWordToContents() {
     if (this.displayedContent && this.isWordItem(this.displayedContent)) {
       const wordItem = this.displayedContent;
 
@@ -632,7 +624,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   //Navigates to start of next section if goToPrevious argument is not provided or set to false. Set goToPrevious to true to navigate to start of previous section.
-  goToStartOfSection(currentId: string, goToPrevious?: boolean): void {
+  private goToStartOfSection(currentId: string, goToPrevious?: boolean): void {
     let idNextSection: string;
 
     if (goToPrevious) {
@@ -650,7 +642,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.displayedContent = this.teachingItems[this.currentPos];
   }
 
-  getIdOfPreviousSectionStart(currentId: string): string {
+  private getIdOfPreviousSectionStart(currentId: string): string {
     //get the part of the id that comes before the last hyphen. This part of the id represents the section.
     const currentSection = currentId.substring(0, currentId.lastIndexOf('-'));
     let previousSection: string = currentSection;
@@ -689,7 +681,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return idOfPreviousSectionStart;
   }
 
-  getIdOfNextSectionStart(currentId: string): string {
+  private getIdOfNextSectionStart(currentId: string): string {
     //get the part of the id that comes before the last hyphen. This part of the id represents the section.
     const currentSection = currentId.substring(0, currentId.lastIndexOf('-'));
 
@@ -708,14 +700,14 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return currentId;
   }
 
-  decrementCurrentPos() {
+  private decrementCurrentPos() {
     if (this.currentPos - 1 < 0) {
       return;
     }
     this.displayedContent = this.teachingItems[--this.currentPos];
   }
 
-  incrementCurrentPos() {
+  private incrementCurrentPos() {
     if (this.contents) {
       if (this.currentPos + 1 > this.teachingItems.length - 1) {
         return;
@@ -724,16 +716,16 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  goToStart() {
+  private goToStart() {
     this.currentPos = 0;
     this.displayedContent = this.teachingItems[this.currentPos];
   }
-  goToEnd() {
+  private goToEnd() {
     this.currentPos = this.teachingItems.length - 1;
     this.displayedContent = this.teachingItems[this.currentPos];
   }
 
-  updateDisplayedContent(e: MenuItemCommandEvent) {
+  private updateDisplayedContent(e: MenuItemCommandEvent) {
     if (e?.item?.id) {
       const id = e.item.id;
       const newDisplayedContent = this.teachingItems.find(
