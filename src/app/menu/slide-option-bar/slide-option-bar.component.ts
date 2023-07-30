@@ -10,7 +10,7 @@ export class SlideOptionBarComponent {
   @Output() updateShowTranslation = new EventEmitter();
   @Output() updateToggleTranslation = new EventEmitter();
   @Output() updateShowExplanation = new EventEmitter();
-  @Output() updateSidebarOnRight = new EventEmitter();
+  @Output() updateSidebarsOnRight = new EventEmitter();
   @Output() updateSlideNavbarPos = new EventEmitter();
   @Output() updateShowAllExerciseAnswers = new EventEmitter();
   @Output() updateHideAllExerciseAnswers = new EventEmitter();
@@ -43,7 +43,7 @@ export class SlideOptionBarComponent {
   }
 
   onMoveSidebar() {
-    this.updateSidebarOnRight.emit();
+    this.updateSidebarsOnRight.emit();
   }
 
   onChangeSlideNavbarPos() {

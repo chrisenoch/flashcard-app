@@ -142,7 +142,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.showExplanation = !this.showExplanation;
   }
 
-  updateSidebarOnRight() {
+  updateSidebarsOnRight() {
     this.sidebarsOnRight = !this.sidebarsOnRight;
 
     if (this.slideNavbarPos === 'RIGHT') {
