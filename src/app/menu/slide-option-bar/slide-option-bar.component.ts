@@ -8,6 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class SlideOptionBarComponent {
   @Output() updateShowContentAfterWordVisited = new EventEmitter();
   @Output() updateShowTranslation = new EventEmitter();
+  @Output() updateToggleTranslation = new EventEmitter();
   @Output() updateShowExplanation = new EventEmitter();
   @Output() updateSidebarOnRight = new EventEmitter();
   @Output() updateSlideNavbarPos = new EventEmitter();
@@ -23,6 +24,10 @@ export class SlideOptionBarComponent {
 
   onShowTranslation() {
     this.updateShowTranslation.emit();
+  }
+
+  onToggleTranslation() {
+    this.updateToggleTranslation.emit();
   }
 
   onShowAllExerciseAnswers() {
