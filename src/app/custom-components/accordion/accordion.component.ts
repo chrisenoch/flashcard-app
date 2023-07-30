@@ -23,6 +23,8 @@ export class AccordionComponent
     showAllTabs: false,
   };
 
+  accordionTabs: AccordionTabComponent[] = [];
+
   //use this to get the isActive status of the accordion tabs
   @ContentChildren(AccordionTabComponent)
   private contentChildren!: QueryList<AccordionTabComponent>;
@@ -37,6 +39,7 @@ export class AccordionComponent
 
   ngAfterContentInit(): void {
     this.updateShowAllTabsOnPageLoad();
+    this.initAccordionTabArr();
   }
 
   ngAfterContentChecked() {
@@ -45,6 +48,15 @@ export class AccordionComponent
     if (this.accordionState !== this.previousAccordionState) {
       this.updateShowAllTabs();
       this.previousAccordionState = this.accordionState;
+    }
+  }
+
+  private initAccordionTabArr() {
+    for (let i = 0; i < this.contentChildren.length; i++) {
+      let ele = this.contentChildren.get(i);
+      if (ele) {
+        this.accordionTabs.push(ele);
+      }
     }
   }
 
