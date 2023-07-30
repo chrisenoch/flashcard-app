@@ -8,7 +8,6 @@ import {
   QueryList,
 } from '@angular/core';
 import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
-import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-accordion',
@@ -22,6 +21,8 @@ export class AccordionComponent
   @Input() accordionState = {
     showAllTabs: false,
   };
+
+  accordionTabs: AccordionTabComponent[] = [];
 
   //use this to get the isActive status of the accordion tabs
   @ContentChildren(AccordionTabComponent)
@@ -37,6 +38,7 @@ export class AccordionComponent
 
   ngAfterContentInit(): void {
     this.updateShowAllTabsOnPageLoad();
+    this.initAccordionTabArr();
   }
 
   ngAfterContentChecked() {
@@ -45,6 +47,15 @@ export class AccordionComponent
     if (this.accordionState !== this.previousAccordionState) {
       this.updateShowAllTabs();
       this.previousAccordionState = this.accordionState;
+    }
+  }
+
+  private initAccordionTabArr() {
+    for (let i = 0; i < this.contentChildren.length; i++) {
+      let ele = this.contentChildren.get(i);
+      if (ele) {
+        this.accordionTabs.push(ele);
+      }
     }
   }
 

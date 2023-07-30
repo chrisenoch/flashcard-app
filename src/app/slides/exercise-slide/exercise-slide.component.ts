@@ -1,4 +1,11 @@
-import { Component, Input } from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  Component,
+  Input,
+  ViewChild,
+} from '@angular/core';
+import { AccordionComponent } from 'src/app/custom-components/accordion/accordion.component';
 
 @Component({
   selector: 'app-exercise-slide',
