@@ -1,5 +1,10 @@
 <div class="pt-16 h-full flex flex-col gap-8 items-center">
-  <p class="text-8xl" *ngIf="!showTranslation">{{ primaryWord }}</p>
+  <p class="text-8xl" *ngIf="!showTranslation && showPrimaryWordFirst">
+    {{ primaryWord }}
+  </p>
+  <p class="text-8xl" *ngIf="!showTranslation && !showPrimaryWordFirst">
+    {{ secondaryWord }}
+  </p>
   <ng-container *ngIf="showTranslation">
     <p class="text-8xl text-gray-800" *ngIf="showPrimaryWordFirst">
       {{ primaryWord }}
