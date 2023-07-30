@@ -12,15 +12,9 @@ import { AccordionComponent } from 'src/app/custom-components/accordion/accordio
   templateUrl: './exercise-slide.component.html',
   styleUrls: ['./exercise-slide.component.scss'],
 })
-export default class ExerciseSlideComponent implements AfterViewChecked {
+export default class ExerciseSlideComponent {
   @Input() questions: { question: string; answer: string }[] = [];
   @Input() accordionState = {
     showAllTabs: false,
   };
-
-  @ViewChild('accordionInExerciseSlide') accordion!: AccordionComponent;
-
-  ngAfterViewChecked(): void {
-    console.log(this.accordion.accordionTabs);
-  }
 }
