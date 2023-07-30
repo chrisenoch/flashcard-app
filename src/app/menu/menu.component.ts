@@ -36,7 +36,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   accordionState = { showAllTabs: false };
 
   private wordsSubscription!: Subscription;
-  private currentPos = 8;
+  private currentPos = 0;
   private autoExpandVocabulary = true;
   private autoExpandSummary = false;
   private autoExpandExercises = false;
