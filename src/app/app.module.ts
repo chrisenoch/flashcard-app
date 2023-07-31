@@ -23,6 +23,7 @@ import { NoSlideErrorComponent } from './errors/no-slide-error/no-slide-error.co
 import { SlideOptionBarComponent } from './menu/slide-option-bar/slide-option-bar.component';
 import { AccordionComponent } from './custom-components/accordion/accordion.component';
 import { AccordionTabComponent } from './custom-components/accordion/accordion-tab/accordion-tab.component';
+import { ToastComponent } from './custom-components/toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { AccordionTabComponent } from './custom-components/accordion/accordion-t
     SlideOptionBarComponent,
     AccordionComponent,
     AccordionTabComponent,
+    ToastComponent,
   ],
   imports: [
     BrowserModule,

@@ -19,6 +19,10 @@ export class AccordionComponent
 {
   @Input() multiple = true;
   @Input() accordionState = {
+    //An object is needed to ensure Angular detects the change even if showAllTabs equates to the same true or false value. This happens when a user clicks
+    //showAllTabs, then closes one or more tabs manually and then clicks showAllTabs again, resulting in the value of showAllTabs being the same. I chose this approach
+    //rather than using a Boolean object because "Any object, including a Boolean object whose value is false, evaluates to true when passed to a conditional
+    //statement." This could lead to errors.
     showAllTabs: false,
   };
 

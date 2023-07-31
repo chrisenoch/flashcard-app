@@ -1,6 +1,16 @@
 <div
   class="my-4 py-4 flex flex-col items-center w-full gap-2 p-x-8 rounded-3xl bg-purple-300"
+  pTooltip="Enter your username"
+  [hideDelay]="9999999"
 >
+  <!-- <span class="absolute top-0 left-0 z-10 bg-red-500 w-96 h-96">Hi there</span> -->
+  <!-- <div class="relative w-full h-full">
+    <span class="absolute top-0 -left-36 w-96 h-96 bg-red-500 z-40 inline-block"
+      >Hello</span
+    >
+  </div> -->
+  <app-toast></app-toast>
+
   <button
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowTranslation()"
