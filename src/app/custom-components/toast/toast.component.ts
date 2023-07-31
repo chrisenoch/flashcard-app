@@ -31,10 +31,21 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
   toastWidth!: number;
   count = 0;
   toastParentDomRect!: DOMRect;
-  top: number | null = null;
-  bottom: number | null = null;
-  left: number | null = null;
-  right: number | null = null;
+  top: string | null = null;
+  bottom: string | null = null;
+  left: string | null = null;
+  right: string | null = null;
+  // top: string | null = '30';
+  // bottom: string | null = null;
+  // left: string | null = '60';
+  // right: string | null = null;
+
+  ngStyleObj = {
+    top: this.top,
+    left: this.left,
+    right: this.right,
+    bottom: this.bottom,
+  };
 
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
@@ -64,8 +75,6 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
         console.log('toastHeight and toastWidth');
         console.log(this.toastHeight + ' ' + this.toastWidth);
         this.defineCoords();
-        console.log('top and left ');
-        console.log(this.top + ' ' + this.left);
       }
     );
 
@@ -94,33 +103,39 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
     switch (this.position) {
       case 'LEFT':
         this.left =
-          this.toastParentDomRect.left - this.toastWidth - this.gapInPx;
-        this.top = this.toastParentDomRect.height / 2 - this.toastHeight / 2;
+          this.toastParentDomRect.left - this.toastWidth - this.gapInPx + 'px';
+        this.top =
+          this.toastParentDomRect.height / 2 - this.toastHeight / 2 + 'px';
         break;
       case 'RIGHT': //tested and correct
         this.left =
           this.toastParentDomRect.left +
           this.toastParentDomRect.width +
-          this.gapInPx;
+          this.gapInPx +
+          'px';
         this.top =
           this.toastParentDomRect.top +
           this.toastParentDomRect.height / 2 -
-          this.toastHeight / 2;
+          this.toastHeight / 2 +
+          'px';
         console.log('top and left');
         console.log(this.top);
         console.log(this.left);
 
         break;
       case 'TOP':
-        this.left = this.toastParentDomRect.width / 2 + this.toastWidth / 2;
-        this.top = this.toastHeight - this.gapInPx;
+        this.left =
+          this.toastParentDomRect.width / 2 + this.toastWidth / 2 + 'px';
+        this.top = this.toastHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
-        this.left = this.toastParentDomRect.width / 2 + this.toastWidth / 2;
+        this.left =
+          this.toastParentDomRect.width / 2 + this.toastWidth / 2 + 'px';
         this.top =
           this.toastParentDomRect.top +
           this.toastParentDomRect.height +
-          this.gapInPx;
+          this.gapInPx +
+          'px';
         break;
       default:
         const exhaustiveCheck: never = this.position;
