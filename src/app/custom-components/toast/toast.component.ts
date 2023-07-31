@@ -19,18 +19,28 @@ import {
 export class ToastComponent implements AfterViewChecked {
   constructor(@Inject(DOCUMENT) document: Document) {}
 
-  @ViewChild('toast') toastViewChild: ElementRef | undefined;
+  @ViewChild('toast') toastViewChild!: ElementRef | undefined;
+
+  toastViewChildCopy!: ElementRef | undefined;
+  count = 0;
 
   //change this to AfterViewInit
   ngAfterViewChecked(): void {
-    console.log(this.toastViewChild?.nativeElement);
+    if (this.count === 0) {
+      console.log(this.toastViewChild?.nativeElement);
 
-    setTimeout(() => {
-      // this.toastViewChild?.nativeElement.parentElement.remove();
-      if (this.toastViewChild) {
-        this.toastViewChild.nativeElement.parentElement.style.display = 'block';
-      }
-    }, 10000);
+      setTimeout(() => {
+        setTimeout(() => {
+          console.log('toastViewChildCopy ');
+          console.log(this.toastViewChildCopy);
+          document.body.appendChild(this.toastViewChildCopy?.nativeElement);
+        }, 4000);
+        // this.toastViewChild.nativeElement.parentElement.style.display = 'block';
+        this.toastViewChildCopy = this.toastViewChild;
+        this.toastViewChild?.nativeElement.parentElement.remove();
+      }, 2000);
+    }
+    this.count++;
   }
 
   accept() {
