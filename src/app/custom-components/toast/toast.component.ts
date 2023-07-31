@@ -105,7 +105,10 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
         this.left =
           this.toastParentDomRect.left - this.toastWidth - this.gapInPx + 'px';
         this.top =
-          this.toastParentDomRect.height / 2 - this.toastHeight / 2 + 'px';
+          this.toastParentDomRect.top +
+          this.toastParentDomRect.height / 2 -
+          this.toastHeight / 2 +
+          'px';
         break;
       case 'RIGHT': //tested and correct
         this.left =
@@ -125,12 +128,19 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
         break;
       case 'TOP':
         this.left =
-          this.toastParentDomRect.width / 2 + this.toastWidth / 2 + 'px';
-        this.top = this.toastHeight - this.gapInPx + 'px';
+          this.toastParentDomRect.left -
+          this.toastWidth / 2 +
+          this.toastParentDomRect.width / 2 +
+          'px';
+        this.top =
+          this.toastParentDomRect.top - this.toastHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
         this.left =
-          this.toastParentDomRect.width / 2 + this.toastWidth / 2 + 'px';
+          this.toastParentDomRect.left -
+          this.toastWidth / 2 +
+          this.toastParentDomRect.width / 2 +
+          'px';
         this.top =
           this.toastParentDomRect.top +
           this.toastParentDomRect.height +
