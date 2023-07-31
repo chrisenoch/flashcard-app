@@ -20,21 +20,13 @@ import {
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
 })
-export class ToastComponent
-  implements AfterContentInit, AfterViewInit, AfterViewChecked
-{
+export class ToastComponent implements AfterContentInit, AfterViewInit {
   constructor(
     @Inject(DOCUMENT) document: Document,
     private renderer2: Renderer2
   ) {}
 
-  @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
-  @Input() gapInPx: number | undefined;
-
-  @ViewChild('toast') toastViewChild!: ElementRef;
-  @ContentChild('accept') acceptContentChild: ElementRef | undefined;
-
-  toastViewChildCopy!: ElementRef;
+  toastVCCopy!: ElementRef;
   toastHeight!: number;
   toastWidth!: number;
   count = 0;
@@ -44,27 +36,48 @@ export class ToastComponent
   left: number | null = null;
   right: number | null = null;
 
+  @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
+  @Input() gapInPx: number | undefined;
+
+  @ViewChild('toast') toastVC!: ElementRef;
+  @ContentChild('accept') acceptCC: ElementRef | undefined;
+
   ngAfterViewInit(): void {
-    this.toastHeight = this.toastViewChild.nativeElement.height;
-    this.toastWidth = this.toastViewChild.nativeElement.width;
-    this.defineCoords();
+    //this copy may not be needed
+    this.toastVCCopy = this.toastVC;
 
-    this.toastViewChildCopy = this.toastViewChild;
-    this.toastViewChild.nativeElement.parentElement.remove();
-    this.renderer2.appendChild(
-      document.body,
-      this.toastViewChildCopy.nativeElement
+    //get coords of the parent to <app-toast>
+    this.toastParentDomRect =
+      this.toastVC.nativeElement.parentElement.parentElement.getBoundingClientRect();
+
+    console.log('this.toastParentDomRect');
+    console.log(this.toastParentDomRect);
+
+    //add hover event listener
+    this.renderer2.listen(
+      this.toastVCCopy.nativeElement,
+      'mouseover',
+      (e: MouseEvent) => {
+        console.log('triggered on hover');
+        this.toastHeight = this.toastVC.nativeElement.clientHeight;
+        this.toastWidth = this.toastVC.nativeElement.clientWidth;
+        console.log('toastHeight and toastWidth');
+        console.log(this.toastHeight + ' ' + this.toastWidth);
+        this.defineCoords();
+        console.log('top and left ');
+        console.log(this.top + ' ' + this.left);
+      }
     );
-  }
 
-  ngAfterViewChecked(): void {
-    //
+    //improve - use renderer to do this
+    this.toastVC.nativeElement.parentElement.remove();
+    this.renderer2.appendChild(document.body, this.toastVCCopy.nativeElement);
   }
 
   ngAfterContentInit(): void {
-    if (this.acceptContentChild) {
+    if (this.acceptCC) {
       this.renderer2.listen(
-        this.acceptContentChild.nativeElement,
+        this.acceptCC.nativeElement,
         'click',
         (e: MouseEvent) => {
           console.log('dynamically inserted accept button was clicked');
@@ -74,9 +87,6 @@ export class ToastComponent
   }
 
   defineCoords() {
-    this.toastParentDomRect =
-      this.toastViewChild.nativeElement.parentElement.parentElement.getBoundingClientRect();
-
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
@@ -87,12 +97,19 @@ export class ToastComponent
           this.toastParentDomRect.left - this.toastWidth - this.gapInPx;
         this.top = this.toastParentDomRect.height / 2 - this.toastHeight / 2;
         break;
-      case 'RIGHT':
+      case 'RIGHT': //tested and correct
         this.left =
           this.toastParentDomRect.left +
           this.toastParentDomRect.width +
           this.gapInPx;
-        this.top = this.toastParentDomRect.height / 2 - this.toastHeight / 2;
+        this.top =
+          this.toastParentDomRect.top +
+          this.toastParentDomRect.height / 2 -
+          this.toastHeight / 2;
+        console.log('top and left');
+        console.log(this.top);
+        console.log(this.left);
+
         break;
       case 'TOP':
         this.left = this.toastParentDomRect.width / 2 + this.toastWidth / 2;
