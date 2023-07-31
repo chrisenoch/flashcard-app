@@ -1,12 +1,16 @@
 import { DOCUMENT } from '@angular/common';
 import {
+  AfterContentChecked,
+  AfterContentInit,
   AfterViewChecked,
   AfterViewInit,
   Component,
+  ContentChild,
   ElementRef,
   Inject,
   Input,
   OnInit,
+  Renderer2,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -16,13 +20,35 @@ import {
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
 })
-export class ToastComponent implements AfterViewChecked {
-  constructor(@Inject(DOCUMENT) document: Document) {}
+export class ToastComponent
+  implements AfterViewChecked, AfterContentChecked, AfterContentInit
+{
+  constructor(
+    @Inject(DOCUMENT) document: Document,
+    private renderer2: Renderer2
+  ) {}
 
-  @ViewChild('toast') toastViewChild!: ElementRef | undefined;
+  @ViewChild('toast') toastViewChild!: ElementRef;
+  @ContentChild('accept') acceptContentChild: ElementRef | undefined;
 
-  toastViewChildCopy!: ElementRef | undefined;
+  toastViewChildCopy!: ElementRef;
   count = 0;
+
+  ngAfterContentInit(): void {
+    if (this.acceptContentChild) {
+      this.renderer2.listen(
+        this.acceptContentChild.nativeElement,
+        'click',
+        (e: MouseEvent) => {
+          console.log('dynamically inserted accept button was clicked');
+        }
+      );
+    }
+  }
+
+  ngAfterContentChecked(): void {
+    console.log('in aftercontentchecked');
+  }
 
   //change this to AfterViewInit
   ngAfterViewChecked(): void {

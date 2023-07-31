@@ -7,7 +7,13 @@
       >Hello</span
     >
   </div> -->
-  <app-toast></app-toast>
+  <app-toast>
+    <h1 header>My tooltip/toast header - dynamic</h1>
+    <div footer>
+      <button #accept>Accept new</button>
+      <button>Deny new</button>
+    </div>
+  </app-toast>
 
   <button
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"

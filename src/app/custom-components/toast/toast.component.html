@@ -1,9 +1,11 @@
 <div #toast class="absolute top-0 left-0 w-fit h-fit bg-gray-400">
   <div>
-    <h1>My tooltip/toast header</h1>
+    <!-- <h1>My tooltip/toast header</h1> -->
+    <ng-content select="[header]"></ng-content>
     <div class="flex gap-4">
-      <button (click)="accept()">Accept</button>
-      <button (click)="deny()">Deny</button>
+      <ng-content select="[footer]"></ng-content>
+      <!-- <button (click)="accept()">Accept</button>
+      <button (click)="deny()">Deny</button> -->
     </div>
   </div>
   <!-- <ng-content select="[header]"></ng-content>
