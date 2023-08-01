@@ -7,7 +7,6 @@ import {
   ElementRef,
   Inject,
   Input,
-  OnInit,
   Renderer2,
   ViewChild,
 } from '@angular/core';
@@ -17,7 +16,7 @@ import {
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
 })
-export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
+export class ToastComponent implements AfterContentInit, AfterViewInit {
   constructor(
     @Inject(DOCUMENT) document: Document,
     private renderer2: Renderer2
@@ -36,18 +35,19 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   right: string | null = null;
   visibility = 'hidden';
 
+  @Input() animation: boolean | null = null;
+  @Input() showArrow = true;
+  @Input() arrowLeft = true;
+  @Input() arrowRight = false;
+  @Input() arrowTop = false;
+  @Input() arrowBottom = false;
+
   @Input() showToast = false;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('accept') acceptCC: ElementRef | undefined;
-
-  ngOnInit(): void {
-    // if (this.showToast) {
-    //   this.visibility = 'visible';
-    // }
-  }
 
   ngAfterViewInit(): void {
     this.toastVCCopy = this.toastVC;

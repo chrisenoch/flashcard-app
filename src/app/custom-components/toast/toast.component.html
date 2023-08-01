@@ -1,24 +1,28 @@
 <div
   #toast
-  class="animate-fade-in fade-in absolute w-fit h-fit bg-gray-400 z-[9999]"
+  class="absolute w-fit h-fit z-[9999]"
   [ngStyle]="{
     top: top,
     left: left,
     right: right,
     bottom: bottom,
-    visibility: visibility
+    visibility: visibility,
+  }"
+  [ngClass]="{
+    'animate-fade-in':animation,
   }"
 >
-  <div>
-    <!-- <h1>My tooltip/toast header</h1> -->
-    <ng-content select="[header]"></ng-content>
-    <div class="flex gap-4">
-      <ng-content select="[footer]"></ng-content>
-      <!-- <button (click)="accept()">Accept</button>
-      <button (click)="deny()">Deny</button> -->
-    </div>
-  </div>
-  <!-- <ng-content select="[header]"></ng-content>
-  <ng-content select="[content]"></ng-content>
-  <ng-content select="[footer]"></ng-content> -->
+  <!-- <h1>My tooltip/toast header</h1> -->
+  <ng-content></ng-content>
+  <div
+    *ngIf="showArrow && arrowLeft"
+    class="absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-gray-400 z-[99999]"
+  ></div>
+  <!-- <div
+    *ngIf="showArrow && arrowLeft"
+    class="absolute top-[50%] left-0 w-0 h-0 -mt-8 border-r-8 border-b-transparent border-t-transparent border-r-pink-700 z-[99999]"
+  ></div> -->
+  <!-- <div *ngIf="showArrow && arrowRight" class="arrow-right"></div>
+  <div *ngIf="showArrow && arrowTop" class="arrow-top"></div>
+  <div *ngIf="showArrow && arrowBottom" class="arrow-bottom"></div> -->
 </div>
