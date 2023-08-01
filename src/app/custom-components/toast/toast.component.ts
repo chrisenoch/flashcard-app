@@ -37,8 +37,8 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
 
   @Input() animation: boolean | null = null;
   @Input() showArrow = true;
-  @Input() arrowLeft = true;
-  @Input() arrowRight = false;
+  @Input() arrowLeft = false;
+  @Input() arrowRight = true;
   @Input() arrowTop = false;
   @Input() arrowBottom = false;
 
