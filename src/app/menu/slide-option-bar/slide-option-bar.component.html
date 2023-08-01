@@ -5,7 +5,12 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowTranslation()"
   >
-    <app-toast position="RIGHT" [showToast]="true" [animation]="true">
+    <app-toast
+      position="RIGHT"
+      [showOnInit]="true"
+      [animation]="true"
+      [hideOnInitDelay]="5000"
+    >
       <div class="w-full h-full bg-gray-400 p-2 rounded-lg">
         <h1>My tooltip/toast</h1>
         <div class="flex gap-4">

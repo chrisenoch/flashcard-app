@@ -39,13 +39,17 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   display = 'inline-block';
 
   @Input() animation: boolean | null = null;
+  @Input() hideDelay = 0;
+  @Input() showDelay = 0;
+  @Input() showOnInitDelay = 0;
+  @Input() hideOnInitDelay = 0;
   @Input() showArrow = true;
   @Input() arrowLeft: boolean | undefined;
   @Input() arrowRight: boolean | undefined;
   @Input() arrowTop: boolean | undefined;
   @Input() arrowBottom: boolean | undefined;
 
-  @Input() showToast = false;
+  @Input() showOnInit = false;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
 
@@ -55,6 +59,7 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
 
   ngOnInit(): void {
     this.defineArrow();
+    this.checkInputs();
   }
 
   ngAfterViewInit(): void {
@@ -71,14 +76,17 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     this.moveToastToBody();
 
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
-    //delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
+    //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
       this.defineCoords();
-      // if (this.showToast) {
-      //   //this.visibility = 'visible';
-      //   this.display = 'inline-block';
-      // }
-    }, 300);
+    }, 300 + Math.abs(this.showOnInitDelay));
+
+    if (this.hideOnInitDelay > 0) {
+      setTimeout(() => {
+        this.display = 'none';
+        this.showOnInit = false;
+      }, this.hideOnInitDelay);
+    }
   }
 
   ngAfterContentInit(): void {
@@ -90,18 +98,16 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
           console.log('dynamically inserted accept button was clicked');
         }
       );
-
-      if (this.closeCC) {
-        this.renderer2.listen(
-          this.closeCC.nativeElement,
-          'click',
-          (e: MouseEvent) => {
-            this.display = 'none';
-            this.showToast = false;
-            //this.visibility = 'hidden';
-          }
-        );
-      }
+    }
+    if (this.closeCC) {
+      this.renderer2.listen(
+        this.closeCC.nativeElement,
+        'click',
+        (e: MouseEvent) => {
+          this.display = 'none';
+          this.showOnInit = false;
+        }
+      );
     }
   }
 
@@ -110,9 +116,11 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
       this.toastVCCopy.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
-        //this.visibility = 'visible';
-        this.display = 'inline-block';
-        console.log('in hover');
+        if (this.showDelay > 0) {
+          setTimeout(() => (this.display = 'inline-block'), this.showDelay);
+        } else {
+          this.display = 'inline-block';
+        }
       }
     );
 
@@ -120,9 +128,12 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
       this.toastVCCopy.nativeElement.parentElement.parentElement,
       'mouseout',
       (e: MouseEvent) => {
-        if (!this.showToast) {
-          //this.visibility = 'hidden';
-          console.log('inside mouseout');
+        // if (!this.showOnInit) {
+        //   this.display = 'none';
+        // }
+        if (this.hideDelay > 0) {
+          setTimeout(() => (this.display = 'none'), this.hideDelay);
+        } else {
           this.display = 'none';
         }
       }
@@ -151,8 +162,7 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     this.toastWidth = this.toastVCCopy.nativeElement.offsetWidth;
 
     //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
-    if (this.showToast) {
-      //this.visibility = 'visible';
+    if (this.showOnInit) {
       this.display = 'inline-block';
     } else {
       this.display = 'none';
@@ -239,6 +249,21 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
           const exhaustiveCheck: never = this.position;
           throw new Error(exhaustiveCheck);
       }
+    }
+  }
+
+  private checkInputs() {
+    if (this.hideDelay < 0) {
+      throw Error('hideDelay must not be less than 0.');
+    }
+    if (this.showDelay < 0) {
+      throw Error('showDelay must not be less than 0.');
+    }
+    if (this.hideOnInitDelay < 0) {
+      throw Error('hideOnInitDelay must not be less than 0.');
+    }
+    if (this.showOnInitDelay < 0) {
+      throw Error('showOnInitDelay must not be less than 0.');
     }
   }
 
