@@ -7,6 +7,7 @@ import {
   ElementRef,
   Inject,
   Input,
+  OnInit,
   Renderer2,
   ViewChild,
 } from '@angular/core';
@@ -16,7 +17,7 @@ import {
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
 })
-export class ToastComponent implements AfterContentInit, AfterViewInit {
+export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   constructor(
     @Inject(DOCUMENT) document: Document,
     private renderer2: Renderer2
@@ -31,13 +32,21 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
   bottom: string | null = '0px';
   left: string | null = '0px';
   right: string | null = null;
-  visibility: string = 'hidden';
+  visibility = 'hidden';
 
+  @Input() showToast = false;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('accept') acceptCC: ElementRef | undefined;
+
+  ngOnInit(): void {
+    if (this.showToast) {
+      console.log('in ngoninit');
+      this.visibility = 'visible';
+    }
+  }
 
   ngAfterViewInit(): void {
     this.toastVCCopy = this.toastVC;
@@ -46,18 +55,16 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
     this.toastParentDomRect =
       this.toastVC.nativeElement.parentElement.parentElement.getBoundingClientRect();
 
-    console.log('this.toastParentDomRect');
-    console.log(this.toastParentDomRect);
-
     //add hover event listener
     this.renderer2.listen(
       this.toastVCCopy.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
+        console.log('in mouseover');
         this.visibility = 'visible';
-        this.toastHeight = this.toastVC.nativeElement.clientHeight;
-        this.toastWidth = this.toastVC.nativeElement.clientWidth;
-        this.defineCoords();
+        // this.toastHeight = this.toastVC.nativeElement.clientHeight;
+        // this.toastWidth = this.toastVC.nativeElement.clientWidth;
+        // this.defineCoords();
       }
     );
 
@@ -70,8 +77,17 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
     );
 
     //improve - use renderer to do this
-    this.toastVC.nativeElement.parentElement.remove();
+    //this.toastVC.nativeElement.parentElement.remove();
+    this.renderer2.removeChild(
+      this.toastVC.nativeElement.parentElement,
+      this.toastVC.nativeElement
+    );
+
     this.renderer2.appendChild(document.body, this.toastVCCopy.nativeElement);
+
+    this.toastHeight = this.toastVC.nativeElement.clientHeight;
+    this.toastWidth = this.toastVC.nativeElement.clientWidth;
+    setTimeout(() => this.defineCoords(), 0); //ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked
   }
 
   ngAfterContentInit(): void {
