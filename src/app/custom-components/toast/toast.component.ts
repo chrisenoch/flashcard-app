@@ -1,18 +1,14 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  AfterContentChecked,
   AfterContentInit,
-  AfterViewChecked,
   AfterViewInit,
   Component,
   ContentChild,
   ElementRef,
   Inject,
   Input,
-  OnInit,
   Renderer2,
   ViewChild,
-  ViewEncapsulation,
 } from '@angular/core';
 
 @Component({
@@ -32,20 +28,10 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
   count = 0;
   toastParentDomRect!: DOMRect;
   top: string | null = null;
-  bottom: string | null = null;
-  left: string | null = null;
+  bottom: string | null = '0px';
+  left: string | null = '0px';
   right: string | null = null;
-  // top: string | null = '30';
-  // bottom: string | null = null;
-  // left: string | null = '60';
-  // right: string | null = null;
-
-  ngStyleObj = {
-    top: this.top,
-    left: this.left,
-    right: this.right,
-    bottom: this.bottom,
-  };
+  visibility: string = 'hidden';
 
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
@@ -54,7 +40,6 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
   @ContentChild('accept') acceptCC: ElementRef | undefined;
 
   ngAfterViewInit(): void {
-    //this copy may not be needed
     this.toastVCCopy = this.toastVC;
 
     //get coords of the parent to <app-toast>
@@ -66,15 +51,21 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
 
     //add hover event listener
     this.renderer2.listen(
-      this.toastVCCopy.nativeElement,
+      this.toastVCCopy.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
-        console.log('triggered on hover');
+        this.visibility = 'visible';
         this.toastHeight = this.toastVC.nativeElement.clientHeight;
         this.toastWidth = this.toastVC.nativeElement.clientWidth;
-        console.log('toastHeight and toastWidth');
-        console.log(this.toastHeight + ' ' + this.toastWidth);
         this.defineCoords();
+      }
+    );
+
+    this.renderer2.listen(
+      this.toastVCCopy.nativeElement.parentElement.parentElement,
+      'mouseout',
+      (e: MouseEvent) => {
+        this.visibility = 'hidden';
       }
     );
 
