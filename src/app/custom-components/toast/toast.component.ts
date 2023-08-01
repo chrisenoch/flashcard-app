@@ -43,28 +43,16 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
 
   ngOnInit(): void {
     if (this.showToast) {
-      console.log('in ngoninit');
       this.visibility = 'visible';
     }
   }
 
-  ngAfterViewInit(): void {
-    this.toastVCCopy = this.toastVC;
-
-    //get coords of the parent to <app-toast>
-    this.toastParentDomRect =
-      this.toastVC.nativeElement.parentElement.parentElement.getBoundingClientRect();
-
-    //add hover event listener
+  addHoverEventListeners() {
     this.renderer2.listen(
       this.toastVCCopy.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
-        console.log('in mouseover');
         this.visibility = 'visible';
-        // this.toastHeight = this.toastVC.nativeElement.clientHeight;
-        // this.toastWidth = this.toastVC.nativeElement.clientWidth;
-        // this.defineCoords();
       }
     );
 
@@ -75,19 +63,30 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
         this.visibility = 'hidden';
       }
     );
+  }
 
-    //improve - use renderer to do this
-    //this.toastVC.nativeElement.parentElement.remove();
+  moveToastToBody() {
+    //alternative: this.toastVC.nativeElement.parentElement.remove();
     this.renderer2.removeChild(
       this.toastVC.nativeElement.parentElement,
       this.toastVC.nativeElement
     );
 
     this.renderer2.appendChild(document.body, this.toastVCCopy.nativeElement);
+  }
 
-    this.toastHeight = this.toastVC.nativeElement.clientHeight;
-    this.toastWidth = this.toastVC.nativeElement.clientWidth;
-    setTimeout(() => this.defineCoords(), 0); //ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked
+  ngAfterViewInit(): void {
+    this.toastVCCopy = this.toastVC;
+
+    //get coords of the parent to <app-toast>. Toast should show upon hovering this.
+    this.toastParentDomRect =
+      this.toastVC.nativeElement.parentElement.parentElement.getBoundingClientRect();
+
+    this.addHoverEventListeners();
+
+    this.moveToastToBody();
+
+    setTimeout(() => this.defineCoords(), 0); //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
   }
 
   ngAfterContentInit(): void {
@@ -106,6 +105,9 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
+
+    this.toastHeight = this.toastVC.nativeElement.clientHeight;
+    this.toastWidth = this.toastVC.nativeElement.clientWidth;
 
     switch (this.position) {
       case 'LEFT':
