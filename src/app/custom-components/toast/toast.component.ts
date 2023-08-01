@@ -44,9 +44,9 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   @ContentChild('accept') acceptCC: ElementRef | undefined;
 
   ngOnInit(): void {
-    if (this.showToast) {
-      this.visibility = 'visible';
-    }
+    // if (this.showToast) {
+    //   this.visibility = 'visible';
+    // }
   }
 
   ngAfterViewInit(): void {
@@ -64,7 +64,12 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
 
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
-    setTimeout(() => this.defineCoords(), 300);
+    setTimeout(() => {
+      this.defineCoords();
+      if (this.showToast) {
+        this.visibility = 'visible';
+      }
+    }, 300);
   }
 
   ngAfterContentInit(): void {
