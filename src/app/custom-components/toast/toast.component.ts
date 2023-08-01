@@ -7,6 +7,7 @@ import {
   ElementRef,
   Inject,
   Input,
+  OnInit,
   Renderer2,
   ViewChild,
 } from '@angular/core';
@@ -16,13 +17,14 @@ import {
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
 })
-export class ToastComponent implements AfterContentInit, AfterViewInit {
+export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   constructor(
     @Inject(DOCUMENT) document: Document,
     private renderer2: Renderer2
   ) {
     this.documentInjected = document;
   }
+
   documentInjected!: Document;
   toastVCCopy!: ElementRef;
   toastHeight!: number;
@@ -34,13 +36,15 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
   left: string | null = '0px';
   right: string | null = null;
   visibility = 'hidden';
+  display = 'inline-block';
+  pointerEvents = 'none';
 
   @Input() animation: boolean | null = null;
   @Input() showArrow = true;
-  @Input() arrowLeft = false;
-  @Input() arrowRight = false;
-  @Input() arrowTop = false;
-  @Input() arrowBottom = true;
+  @Input() arrowLeft: boolean | undefined;
+  @Input() arrowRight: boolean | undefined;
+  @Input() arrowTop: boolean | undefined;
+  @Input() arrowBottom: boolean | undefined;
 
   @Input() showToast = false;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
@@ -48,6 +52,11 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('accept') acceptCC: ElementRef | undefined;
+  @ContentChild('close') closeCC: ElementRef | undefined;
+
+  ngOnInit(): void {
+    this.defineArrow();
+  }
 
   ngAfterViewInit(): void {
     this.toastVCCopy = this.toastVC;
@@ -68,6 +77,7 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
       this.defineCoords();
       if (this.showToast) {
         this.visibility = 'visible';
+        this.pointerEvents = 'auto';
       }
     }, 300);
   }
@@ -81,6 +91,18 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
           console.log('dynamically inserted accept button was clicked');
         }
       );
+
+      if (this.closeCC) {
+        this.renderer2.listen(
+          this.closeCC.nativeElement,
+          'click',
+          (e: MouseEvent) => {
+            this.display = 'none';
+            this.pointerEvents = 'none';
+            this.visibility = 'hidden';
+          }
+        );
+      }
     }
   }
 
@@ -176,6 +198,34 @@ export class ToastComponent implements AfterContentInit, AfterViewInit {
       default:
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
+    }
+  }
+
+  private defineArrow() {
+    if (
+      this.arrowTop === undefined &&
+      this.arrowBottom === undefined &&
+      this.arrowLeft === undefined &&
+      this.arrowRight === undefined
+    ) {
+      switch (this.position) {
+        case 'LEFT':
+          this.arrowRight = true;
+          break;
+        case 'RIGHT':
+          this.arrowLeft = true;
+          break;
+
+        case 'TOP':
+          this.arrowBottom = true;
+          break;
+        case 'BOTTOM':
+          this.arrowTop = true;
+          break;
+        default:
+          const exhaustiveCheck: never = this.position;
+          throw new Error(exhaustiveCheck);
+      }
     }
   }
 

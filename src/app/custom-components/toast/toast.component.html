@@ -7,6 +7,8 @@
     right: right,
     bottom: bottom,
     visibility: visibility,
+    display: display,
+    'pointer-events': pointerEvents
   }"
   [ngClass]="{
     'animate-fade-in':animation,
@@ -30,11 +32,4 @@
     *ngIf="showArrow && arrowBottom"
     class="absolute right-0 left-[50%] w-0 h-0 border-r-8 -ml-2 -mb-2 border-t-8 border-l-8 border-t-gray-400 border-r-transparent border-l-transparent z-[9999]"
   ></div>
-  <!-- <div
-    *ngIf="showArrow && arrowLeft"
-    class="absolute top-[50%] left-0 w-0 h-0 -mt-8 border-r-8 border-b-transparent border-t-transparent border-r-pink-700 z-[99999]"
-  ></div> -->
-  <!-- <div *ngIf="showArrow && arrowRight" class="arrow-right"></div>
-  <div *ngIf="showArrow && arrowTop" class="arrow-top"></div>
-  <div *ngIf="showArrow && arrowBottom" class="arrow-bottom"></div> -->
 </div>
