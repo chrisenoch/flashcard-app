@@ -37,7 +37,6 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   right: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  pointerEvents = 'none';
 
   @Input() animation: boolean | null = null;
   @Input() showArrow = true;
@@ -75,10 +74,10 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     //delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
       this.defineCoords();
-      if (this.showToast) {
-        this.visibility = 'visible';
-        this.pointerEvents = 'auto';
-      }
+      // if (this.showToast) {
+      //   //this.visibility = 'visible';
+      //   this.display = 'inline-block';
+      // }
     }, 300);
   }
 
@@ -98,8 +97,8 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
           'click',
           (e: MouseEvent) => {
             this.display = 'none';
-            this.pointerEvents = 'none';
-            this.visibility = 'hidden';
+            this.showToast = false;
+            //this.visibility = 'hidden';
           }
         );
       }
@@ -111,7 +110,9 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
       this.toastVCCopy.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
-        this.visibility = 'visible';
+        //this.visibility = 'visible';
+        this.display = 'inline-block';
+        console.log('in hover');
       }
     );
 
@@ -120,7 +121,9 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
       'mouseout',
       (e: MouseEvent) => {
         if (!this.showToast) {
-          this.visibility = 'hidden';
+          //this.visibility = 'hidden';
+          console.log('inside mouseout');
+          this.display = 'none';
         }
       }
     );
@@ -146,6 +149,16 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
 
     this.toastHeight = this.toastVCCopy.nativeElement.offsetHeight;
     this.toastWidth = this.toastVCCopy.nativeElement.offsetWidth;
+
+    //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
+    if (this.showToast) {
+      //this.visibility = 'visible';
+      this.display = 'inline-block';
+    } else {
+      this.display = 'none';
+    }
+    this.visibility = 'visible';
+
     console.log('toastHeight - this.toastWidth - this.gapInPx ');
     console.log(this.toastHeight + ' ' + this.toastWidth + ' ' + this.gapInPx);
 
