@@ -21,8 +21,10 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   constructor(
     @Inject(DOCUMENT) document: Document,
     private renderer2: Renderer2
-  ) {}
-
+  ) {
+    this.documentInjected = document;
+  }
+  documentInjected!: Document;
   toastVCCopy!: ElementRef;
   toastHeight!: number;
   toastWidth!: number;
@@ -47,34 +49,6 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     }
   }
 
-  addHoverEventListeners() {
-    this.renderer2.listen(
-      this.toastVCCopy.nativeElement.parentElement.parentElement,
-      'mouseover',
-      (e: MouseEvent) => {
-        this.visibility = 'visible';
-      }
-    );
-
-    this.renderer2.listen(
-      this.toastVCCopy.nativeElement.parentElement.parentElement,
-      'mouseout',
-      (e: MouseEvent) => {
-        this.visibility = 'hidden';
-      }
-    );
-  }
-
-  moveToastToBody() {
-    //alternative: this.toastVC.nativeElement.parentElement.remove();
-    this.renderer2.removeChild(
-      this.toastVC.nativeElement.parentElement,
-      this.toastVC.nativeElement
-    );
-
-    this.renderer2.appendChild(document.body, this.toastVCCopy.nativeElement);
-  }
-
   ngAfterViewInit(): void {
     this.toastVCCopy = this.toastVC;
 
@@ -82,11 +56,15 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     this.toastParentDomRect =
       this.toastVC.nativeElement.parentElement.parentElement.getBoundingClientRect();
 
+    console.log(this.toastParentDomRect);
+
     this.addHoverEventListeners();
 
     this.moveToastToBody();
 
-    setTimeout(() => this.defineCoords(), 0); //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
+    //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
+    //delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
+    setTimeout(() => this.defineCoords(), 300);
   }
 
   ngAfterContentInit(): void {
@@ -101,25 +79,62 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     }
   }
 
-  defineCoords() {
+  private addHoverEventListeners() {
+    this.renderer2.listen(
+      this.toastVCCopy.nativeElement.parentElement.parentElement,
+      'mouseover',
+      (e: MouseEvent) => {
+        this.visibility = 'visible';
+      }
+    );
+
+    this.renderer2.listen(
+      this.toastVCCopy.nativeElement.parentElement.parentElement,
+      'mouseout',
+      (e: MouseEvent) => {
+        if (!this.showToast) {
+          this.visibility = 'hidden';
+        }
+      }
+    );
+  }
+
+  private moveToastToBody() {
+    //alternative: this.toastVC.nativeElement.parentElement.remove();
+    this.renderer2.removeChild(
+      this.toastVC.nativeElement.parentElement,
+      this.toastVC.nativeElement
+    );
+
+    this.renderer2.appendChild(
+      this.documentInjected.body,
+      this.toastVCCopy.nativeElement
+    );
+  }
+
+  private defineCoords() {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
 
-    this.toastHeight = this.toastVC.nativeElement.clientHeight;
-    this.toastWidth = this.toastVC.nativeElement.clientWidth;
+    this.toastHeight = this.toastVCCopy.nativeElement.offsetHeight;
+    this.toastWidth = this.toastVCCopy.nativeElement.offsetWidth;
+    console.log('toastHeight - this.toastWidth - this.gapInPx ');
+    console.log(this.toastHeight + ' ' + this.toastWidth + ' ' + this.gapInPx);
 
     switch (this.position) {
       case 'LEFT':
         this.left =
           this.toastParentDomRect.left - this.toastWidth - this.gapInPx + 'px';
+        console.log('left in switch ' + this.left);
+
         this.top =
           this.toastParentDomRect.top +
           this.toastParentDomRect.height / 2 -
           this.toastHeight / 2 +
           'px';
         break;
-      case 'RIGHT': //tested and correct
+      case 'RIGHT':
         this.left =
           this.toastParentDomRect.left +
           this.toastParentDomRect.width +
@@ -130,9 +145,6 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
           this.toastParentDomRect.height / 2 -
           this.toastHeight / 2 +
           'px';
-        console.log('top and left');
-        console.log(this.top);
-        console.log(this.left);
 
         break;
       case 'TOP':
