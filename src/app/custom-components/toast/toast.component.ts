@@ -19,9 +19,15 @@ import {
   Subscription,
   fromEvent,
   pipe,
+  timer,
+  interval,
   debounce,
   debounceTime,
   tap,
+  map,
+  filter,
+  takeUntil,
+  takeWhile,
 } from 'rxjs';
 
 @Component({
@@ -43,7 +49,6 @@ export class ToastComponent
     console.log('DoCheck ran');
   }
 
-  testMode = false;
   resizeObs$!: Observable<Event>;
   resizeSub$!: Subscription;
   documentInjected!: Document;
@@ -79,6 +84,26 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
+
+  cancelTimers = false;
+  pauseTimers = false;
+  timer(time: number) {
+    const timerSub$ = interval(time).pipe(
+      map((_newNum) => 0),
+      map((val) => {
+        if (this.cancelTimers) {
+          return time;
+        } else if (this.pauseTimers) {
+          return val;
+        } else {
+          return ++val;
+        }
+      }),
+      takeWhile((val) => val < time)
+    );
+
+    return timerSub$;
+  }
 
   //Show should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
   private updateShow(isShow: boolean) {
@@ -178,11 +203,6 @@ export class ToastComponent
           console.log(
             'dynamically inserted show button was clicked. Now setting top and left'
           );
-          // this.top = '105px';
-          // this.left = '144px';
-          this.testMode = true;
-          this.defineCoords();
-          this.testMode = false;
         }
       );
     }
@@ -273,73 +293,58 @@ export class ToastComponent
       this.visibility = 'visible';
     }
 
-    if (this.isResizing) {
-      console.log('resizing now');
-    }
     console.log('toastHeight - this.toastWidth - this.gapInPx ');
     console.log(this.toastHeight + ' ' + this.toastWidth + ' ' + this.gapInPx);
 
-    if (this.testMode) {
-      console.log('entering testmode in defineCoords');
-      this.top = '105px';
-      this.left = '144px';
-    } else {
-      switch (this.position) {
-        case 'LEFT':
-          this.left =
-            this.toastParentDomRect.left -
-            this.toastWidth -
-            this.gapInPx +
-            'px';
-          console.log('left in switch ' + this.left);
+    switch (this.position) {
+      case 'LEFT':
+        this.left =
+          this.toastParentDomRect.left - this.toastWidth - this.gapInPx + 'px';
+        console.log('left in switch ' + this.left);
 
-          this.top =
-            this.toastParentDomRect.top +
-            this.toastParentDomRect.height / 2 -
-            this.toastHeight / 2 +
-            'px';
-          break;
-        case 'RIGHT':
-          this.left =
-            this.toastParentDomRect.left +
-            this.toastParentDomRect.width +
-            this.gapInPx +
-            'px';
-          this.top =
-            this.toastParentDomRect.top +
-            this.toastParentDomRect.height / 2 -
-            this.toastHeight / 2 +
-            'px';
+        this.top =
+          this.toastParentDomRect.top +
+          this.toastParentDomRect.height / 2 -
+          this.toastHeight / 2 +
+          'px';
+        break;
+      case 'RIGHT':
+        this.left =
+          this.toastParentDomRect.left +
+          this.toastParentDomRect.width +
+          this.gapInPx +
+          'px';
+        this.top =
+          this.toastParentDomRect.top +
+          this.toastParentDomRect.height / 2 -
+          this.toastHeight / 2 +
+          'px';
 
-          break;
-        case 'TOP':
-          this.left =
-            this.toastParentDomRect.left -
-            this.toastWidth / 2 +
-            this.toastParentDomRect.width / 2 +
-            'px';
-          this.top =
-            this.toastParentDomRect.top -
-            this.toastHeight -
-            this.gapInPx +
-            'px';
-          break;
-        case 'BOTTOM':
-          this.left =
-            this.toastParentDomRect.left -
-            this.toastWidth / 2 +
-            this.toastParentDomRect.width / 2 +
-            'px';
-          this.top =
-            this.toastParentDomRect.top +
-            this.toastParentDomRect.height +
-            this.gapInPx +
-            'px';
-          break;
-        default:
-          const exhaustiveCheck: never = this.position;
-          throw new Error(exhaustiveCheck);
-      }
+        break;
+      case 'TOP':
+        this.left =
+          this.toastParentDomRect.left -
+          this.toastWidth / 2 +
+          this.toastParentDomRect.width / 2 +
+          'px';
+        this.top =
+          this.toastParentDomRect.top - this.toastHeight - this.gapInPx + 'px';
+        break;
+      case 'BOTTOM':
+        this.left =
+          this.toastParentDomRect.left -
+          this.toastWidth / 2 +
+          this.toastParentDomRect.width / 2 +
+          'px';
+        this.top =
+          this.toastParentDomRect.top +
+          this.toastParentDomRect.height +
+          this.gapInPx +
+          'px';
+        break;
+      default:
+        const exhaustiveCheck: never = this.position;
+        throw new Error(exhaustiveCheck);
     }
 
     console.log('top + bottom + left + right');
