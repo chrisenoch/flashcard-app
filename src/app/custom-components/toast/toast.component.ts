@@ -114,23 +114,19 @@ export class ToastComponent
             this.isResizing = true;
             if (firstOfResizeBatch) {
               this.ngZone.run(() => {
-                console.log('in ng run IF STATEMENT');
                 this.visibility = 'hidden';
                 firstOfResizeBatch = false;
+                if (this.display === 'none') {
+                  this.display = 'inline-block';
+                  displayChanged = true;
+                }
               });
-            }
-
-            if (this.display === 'none') {
-              this.display = 'inline-block';
-              displayChanged = true;
             }
           }),
           debounceTime(1000)
         )
         .subscribe((e) => {
           this.ngZone.run(() => {
-            console.log('resize event fired: ', e);
-
             this.toastParentDomRect =
               this.originalToastParent.getBoundingClientRect();
             this.defineCoords();
