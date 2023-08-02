@@ -43,15 +43,18 @@ export class ToastComponent
     console.log('DoCheck ran');
   }
 
+  testMode = false;
   resizeObs$!: Observable<Event>;
   resizeSub$!: Subscription;
   documentInjected!: Document;
   toastHeight!: number;
   toastWidth!: number;
   count = 0;
+  isResizing = false;
   toastParentDomRect!: DOMRect;
-  top: string | null = null;
-  bottom: string | null = '0px';
+  originalToastParent!: Element;
+  top: string | null = '0px';
+  bottom: string | null = null;
   left: string | null = '0px';
   right: string | null = null;
   visibility = 'hidden';
@@ -100,38 +103,45 @@ export class ToastComponent
       this.show = true;
     }
 
-    // this.resizeObs$ = fromEvent(window, 'resize');
-    // this.ngZone.runOutsideAngular(() => {
-    //   let displayChanged = false;
-    //   this.resizeSub$ = this.resizeObs$
-    //     .pipe(
-    //       tap(() => {
-    //         if (this.display === 'none') {
-    //           this.visibility = 'hidden';
-    //           this.display = 'inline-block';
-    //           displayChanged = true;
-    //         }
-    //       }),
-    //       debounceTime(1000)
-    //     )
-    //     .subscribe((e) => {
-    //       console.log('resize event fired: ', e);
+    this.resizeObs$ = fromEvent(window, 'resize');
+    this.ngZone.runOutsideAngular(() => {
+      let displayChanged = false;
+      this.resizeSub$ = this.resizeObs$
+        .pipe(
+          tap(() => {
+            this.isResizing = true;
+            if (this.display === 'none') {
+              this.visibility = 'hidden';
+              this.display = 'inline-block';
+              displayChanged = true;
+            }
+          }),
+          debounceTime(1000)
+        )
+        .subscribe((e) => {
+          this.ngZone.run(() => {
+            console.log('resize event fired: ', e);
 
-    //       this.defineCoords();
+            this.toastParentDomRect =
+              this.originalToastParent.getBoundingClientRect();
+            this.defineCoords();
 
-    //       if (displayChanged) {
-    //         this.visibility = 'visible';
-    //         this.display = 'none';
-    //         displayChanged = false;
-    //       }
-    //     });
-    // });
+            if (displayChanged) {
+              this.display = 'none';
+              this.visibility = 'visible';
+              displayChanged = false;
+            }
+            this.isResizing = false;
+          });
+        });
+    });
   }
 
   ngAfterViewInit(): void {
+    this.originalToastParent =
+      this.toastVC.nativeElement.parentElement.parentElement;
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
-    this.toastParentDomRect =
-      this.toastVC.nativeElement.parentElement.parentElement.getBoundingClientRect();
+    this.toastParentDomRect = this.originalToastParent.getBoundingClientRect();
 
     console.log(this.toastParentDomRect);
 
@@ -159,7 +169,14 @@ export class ToastComponent
         this.showCC.nativeElement,
         'click',
         (e: MouseEvent) => {
-          console.log('dynamically inserted show button was clicked');
+          console.log(
+            'dynamically inserted show button was clicked. Now setting top and left'
+          );
+          // this.top = '105px';
+          // this.left = '144px';
+          this.testMode = true;
+          this.defineCoords();
+          this.testMode = false;
         }
       );
     }
@@ -204,8 +221,6 @@ export class ToastComponent
       'mouseout',
       (e: MouseEvent) => {
         clearTimeout(this.showDelayTimer);
-        // clearTimeout(this.showOnInitDelayTimer);
-        // clearTimeout(this.hideOnInitDelayTimer);
 
         if (this.hideDelay > 0) {
           this.hideDelayTimer = setTimeout(
@@ -242,67 +257,89 @@ export class ToastComponent
     this.toastHeight = this.toastVC.nativeElement.offsetHeight;
     this.toastWidth = this.toastVC.nativeElement.offsetWidth;
 
-    //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
-    if (this.show) {
-      this.display = 'inline-block';
-    } else {
-      this.display = 'none';
+    if (!this.isResizing) {
+      //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
+      if (this.show) {
+        this.display = 'inline-block';
+      } else {
+        this.display = 'none';
+      }
+      this.visibility = 'visible';
     }
-    this.visibility = 'visible';
 
+    if (this.isResizing) {
+      console.log('resizing now');
+    }
     console.log('toastHeight - this.toastWidth - this.gapInPx ');
     console.log(this.toastHeight + ' ' + this.toastWidth + ' ' + this.gapInPx);
 
-    switch (this.position) {
-      case 'LEFT':
-        this.left =
-          this.toastParentDomRect.left - this.toastWidth - this.gapInPx + 'px';
-        console.log('left in switch ' + this.left);
+    if (this.testMode) {
+      console.log('entering testmode in defineCoords');
+      this.top = '105px';
+      this.left = '144px';
+    } else {
+      switch (this.position) {
+        case 'LEFT':
+          this.left =
+            this.toastParentDomRect.left -
+            this.toastWidth -
+            this.gapInPx +
+            'px';
+          console.log('left in switch ' + this.left);
 
-        this.top =
-          this.toastParentDomRect.top +
-          this.toastParentDomRect.height / 2 -
-          this.toastHeight / 2 +
-          'px';
-        break;
-      case 'RIGHT':
-        this.left =
-          this.toastParentDomRect.left +
-          this.toastParentDomRect.width +
-          this.gapInPx +
-          'px';
-        this.top =
-          this.toastParentDomRect.top +
-          this.toastParentDomRect.height / 2 -
-          this.toastHeight / 2 +
-          'px';
+          this.top =
+            this.toastParentDomRect.top +
+            this.toastParentDomRect.height / 2 -
+            this.toastHeight / 2 +
+            'px';
+          break;
+        case 'RIGHT':
+          this.left =
+            this.toastParentDomRect.left +
+            this.toastParentDomRect.width +
+            this.gapInPx +
+            'px';
+          this.top =
+            this.toastParentDomRect.top +
+            this.toastParentDomRect.height / 2 -
+            this.toastHeight / 2 +
+            'px';
 
-        break;
-      case 'TOP':
-        this.left =
-          this.toastParentDomRect.left -
-          this.toastWidth / 2 +
-          this.toastParentDomRect.width / 2 +
-          'px';
-        this.top =
-          this.toastParentDomRect.top - this.toastHeight - this.gapInPx + 'px';
-        break;
-      case 'BOTTOM':
-        this.left =
-          this.toastParentDomRect.left -
-          this.toastWidth / 2 +
-          this.toastParentDomRect.width / 2 +
-          'px';
-        this.top =
-          this.toastParentDomRect.top +
-          this.toastParentDomRect.height +
-          this.gapInPx +
-          'px';
-        break;
-      default:
-        const exhaustiveCheck: never = this.position;
-        throw new Error(exhaustiveCheck);
+          break;
+        case 'TOP':
+          this.left =
+            this.toastParentDomRect.left -
+            this.toastWidth / 2 +
+            this.toastParentDomRect.width / 2 +
+            'px';
+          this.top =
+            this.toastParentDomRect.top -
+            this.toastHeight -
+            this.gapInPx +
+            'px';
+          break;
+        case 'BOTTOM':
+          this.left =
+            this.toastParentDomRect.left -
+            this.toastWidth / 2 +
+            this.toastParentDomRect.width / 2 +
+            'px';
+          this.top =
+            this.toastParentDomRect.top +
+            this.toastParentDomRect.height +
+            this.gapInPx +
+            'px';
+          break;
+        default:
+          const exhaustiveCheck: never = this.position;
+          throw new Error(exhaustiveCheck);
+      }
     }
+
+    console.log('top + bottom + left + right');
+    console.log(
+      this.top + ' ' + this.bottom + ' ' + this.left + ' ' + this.right
+    );
   }
 
   private defineArrow() {
