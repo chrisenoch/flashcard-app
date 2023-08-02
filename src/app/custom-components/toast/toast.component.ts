@@ -110,8 +110,12 @@ export class ToastComponent
         .pipe(
           tap(() => {
             this.isResizing = true;
-            if (this.display === 'none') {
+
+            this.ngZone.run(() => {
               this.visibility = 'hidden';
+            });
+
+            if (this.display === 'none') {
               this.display = 'inline-block';
               displayChanged = true;
             }
@@ -128,9 +132,9 @@ export class ToastComponent
 
             if (displayChanged) {
               this.display = 'none';
-              this.visibility = 'visible';
               displayChanged = false;
             }
+            this.visibility = 'visible';
             this.isResizing = false;
           });
         });
