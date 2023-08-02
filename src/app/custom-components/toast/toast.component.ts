@@ -58,6 +58,9 @@ export class ToastComponent
   display = 'inline-block';
 
   @Input() animation: boolean | null = null;
+  //Used to programmatically determine if the toast is showing or not.
+
+  @Input() show = false;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
   @Input() showOnInitDelay = 0;
@@ -67,20 +70,31 @@ export class ToastComponent
   @Input() arrowRight: boolean | undefined;
   @Input() arrowTop: boolean | undefined;
   @Input() arrowBottom: boolean | undefined;
-
-  @Input() show = false;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
 
+  //Show should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
+  private updateShow(isShow: boolean) {
+    if (isShow) {
+      this.display = 'inline-block';
+    } else {
+      this.display = 'none';
+      this.show = false;
+    }
+  }
+
   @ViewChild('toast') toastVC!: ElementRef;
-  @ContentChild('accept', { descendants: true }) acceptCC:
-    | ElementRef
-    | undefined;
+  @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
+    console.log('showOnInit in ngOnInit ' + this.show);
     this.defineArrow();
     this.checkInputs();
+
+    if (this.showOnInitDelay > 0 || this.hideOnInitDelay > 0) {
+      this.show = true;
+    }
 
     // this.resizeObs$ = fromEvent(window, 'resize');
     // this.ngZone.runOutsideAngular(() => {
@@ -129,20 +143,19 @@ export class ToastComponent
 
     if (this.hideOnInitDelay > 0) {
       setTimeout(() => {
-        this.display = 'none';
-        this.show = false;
+        this.updateShow(false);
       }, this.hideOnInitDelay);
     }
   }
 
   ngAfterContentInit(): void {
-    if (this.acceptCC) {
-      console.log('acceptCC is defined');
+    if (this.showCC) {
+      console.log('showCC is defined');
       this.renderer2.listen(
-        this.acceptCC.nativeElement,
+        this.showCC.nativeElement,
         'click',
         (e: MouseEvent) => {
-          console.log('dynamically inserted accept button was clicked');
+          console.log('dynamically inserted show button was clicked');
         }
       );
     }
@@ -152,8 +165,7 @@ export class ToastComponent
         this.closeCC.nativeElement,
         'click',
         (e: MouseEvent) => {
-          this.display = 'none';
-          this.show = false;
+          this.updateShow(false);
         }
       );
     }
@@ -169,9 +181,9 @@ export class ToastComponent
       'mouseover',
       (e: MouseEvent) => {
         if (this.showDelay > 0) {
-          setTimeout(() => (this.display = 'inline-block'), this.showDelay);
+          setTimeout(() => this.updateShow(true), this.showDelay);
         } else {
-          this.display = 'inline-block';
+          this.updateShow(true);
         }
       }
     );
@@ -181,10 +193,10 @@ export class ToastComponent
       'mouseout',
       (e: MouseEvent) => {
         if (this.hideDelay > 0) {
-          setTimeout(() => (this.display = 'none'), this.hideDelay);
+          setTimeout(() => this.updateShow(false), this.hideDelay);
         } else {
           if (!this.show) {
-            this.display = 'none';
+            this.updateShow(false);
           }
         }
       }
