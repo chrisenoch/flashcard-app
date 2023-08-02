@@ -4,27 +4,46 @@ import {
   AfterViewInit,
   Component,
   ContentChild,
+  DoCheck,
   ElementRef,
   Inject,
   Input,
+  OnDestroy,
   OnInit,
   Renderer2,
   ViewChild,
+  NgZone,
 } from '@angular/core';
+import {
+  Observable,
+  Subscription,
+  fromEvent,
+  pipe,
+  debounce,
+  debounceTime,
+} from 'rxjs';
 
 @Component({
   selector: 'app-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
 })
-export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
+export class ToastComponent
+  implements OnInit, DoCheck, AfterContentInit, AfterViewInit, OnDestroy
+{
   constructor(
     @Inject(DOCUMENT) document: Document,
-    private renderer2: Renderer2
+    private renderer2: Renderer2,
+    private ngZone: NgZone
   ) {
     this.documentInjected = document;
   }
+  ngDoCheck(): void {
+    console.log('DoCheck ran');
+  }
 
+  resizeObs$!: Observable<Event>;
+  resizeSub$!: Subscription;
   documentInjected!: Document;
   toastHeight!: number;
   toastWidth!: number;
@@ -61,6 +80,15 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   ngOnInit(): void {
     this.defineArrow();
     this.checkInputs();
+
+    this.resizeObs$ = fromEvent(window, 'resize');
+    this.ngZone.runOutsideAngular(() => {
+      this.resizeSub$ = this.resizeObs$
+        .pipe(debounceTime(1000))
+        .subscribe((e) => {
+          console.log('resize event fired: ', e);
+        });
+    });
   }
 
   ngAfterViewInit(): void {
@@ -110,6 +138,10 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
         }
       );
     }
+  }
+
+  ngOnDestroy(): void {
+    this.resizeSub$.unsubscribe();
   }
 
   private addHoverEventListeners() {
