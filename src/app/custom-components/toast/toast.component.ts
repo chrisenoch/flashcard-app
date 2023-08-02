@@ -58,6 +58,8 @@ export class ToastComponent
   display = 'inline-block';
   showOnInitDelayTimer: any | undefined;
   hideOnInitDelayTimer: any | undefined;
+  hideDelayTimer: any | undefined;
+  showDelayTimer: any | undefined;
 
   @Input() animation: boolean | null = null;
   //Used to programmatically determine if the toast is showing or not.
@@ -182,8 +184,15 @@ export class ToastComponent
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
+        clearTimeout(this.hideDelayTimer);
+        clearTimeout(this.showOnInitDelayTimer);
+        clearTimeout(this.hideOnInitDelayTimer);
+
         if (this.showDelay > 0) {
-          setTimeout(() => this.updateShow(true), this.showDelay);
+          this.showDelayTimer = setTimeout(
+            () => this.updateShow(true),
+            this.showDelay
+          );
         } else {
           this.updateShow(true);
         }
@@ -194,8 +203,15 @@ export class ToastComponent
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseout',
       (e: MouseEvent) => {
+        clearTimeout(this.showDelayTimer);
+        // clearTimeout(this.showOnInitDelayTimer);
+        // clearTimeout(this.hideOnInitDelayTimer);
+
         if (this.hideDelay > 0) {
-          setTimeout(() => this.updateShow(false), this.hideDelay);
+          this.hideDelayTimer = setTimeout(
+            () => this.updateShow(false),
+            this.hideDelay
+          );
         } else {
           if (!this.show) {
             this.updateShow(false);
