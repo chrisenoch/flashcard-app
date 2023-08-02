@@ -106,14 +106,19 @@ export class ToastComponent
     this.resizeObs$ = fromEvent(window, 'resize');
     this.ngZone.runOutsideAngular(() => {
       let displayChanged = false;
+      let firstOfResizeBatch = true;
+
       this.resizeSub$ = this.resizeObs$
         .pipe(
           tap(() => {
             this.isResizing = true;
-
-            this.ngZone.run(() => {
-              this.visibility = 'hidden';
-            });
+            if (firstOfResizeBatch) {
+              this.ngZone.run(() => {
+                console.log('in ng run IF STATEMENT');
+                this.visibility = 'hidden';
+                firstOfResizeBatch = false;
+              });
+            }
 
             if (this.display === 'none') {
               this.display = 'inline-block';
@@ -136,6 +141,7 @@ export class ToastComponent
             }
             this.visibility = 'visible';
             this.isResizing = false;
+            firstOfResizeBatch = true;
           });
         });
     });
