@@ -21,6 +21,7 @@ import {
   pipe,
   debounce,
   debounceTime,
+  tap,
 } from 'rxjs';
 
 @Component({
@@ -67,7 +68,7 @@ export class ToastComponent
   @Input() arrowTop: boolean | undefined;
   @Input() arrowBottom: boolean | undefined;
 
-  @Input() showOnInit = false;
+  @Input() show = false;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
 
@@ -81,14 +82,32 @@ export class ToastComponent
     this.defineArrow();
     this.checkInputs();
 
-    this.resizeObs$ = fromEvent(window, 'resize');
-    this.ngZone.runOutsideAngular(() => {
-      this.resizeSub$ = this.resizeObs$
-        .pipe(debounceTime(1000))
-        .subscribe((e) => {
-          console.log('resize event fired: ', e);
-        });
-    });
+    // this.resizeObs$ = fromEvent(window, 'resize');
+    // this.ngZone.runOutsideAngular(() => {
+    //   let displayChanged = false;
+    //   this.resizeSub$ = this.resizeObs$
+    //     .pipe(
+    //       tap(() => {
+    //         if (this.display === 'none') {
+    //           this.visibility = 'hidden';
+    //           this.display = 'inline-block';
+    //           displayChanged = true;
+    //         }
+    //       }),
+    //       debounceTime(1000)
+    //     )
+    //     .subscribe((e) => {
+    //       console.log('resize event fired: ', e);
+
+    //       this.defineCoords();
+
+    //       if (displayChanged) {
+    //         this.visibility = 'visible';
+    //         this.display = 'none';
+    //         displayChanged = false;
+    //       }
+    //     });
+    // });
   }
 
   ngAfterViewInit(): void {
@@ -111,7 +130,7 @@ export class ToastComponent
     if (this.hideOnInitDelay > 0) {
       setTimeout(() => {
         this.display = 'none';
-        this.showOnInit = false;
+        this.show = false;
       }, this.hideOnInitDelay);
     }
   }
@@ -134,7 +153,7 @@ export class ToastComponent
         'click',
         (e: MouseEvent) => {
           this.display = 'none';
-          this.showOnInit = false;
+          this.show = false;
         }
       );
     }
@@ -164,7 +183,9 @@ export class ToastComponent
         if (this.hideDelay > 0) {
           setTimeout(() => (this.display = 'none'), this.hideDelay);
         } else {
-          this.display = 'none';
+          if (!this.show) {
+            this.display = 'none';
+          }
         }
       }
     );
@@ -192,7 +213,7 @@ export class ToastComponent
     this.toastWidth = this.toastVC.nativeElement.offsetWidth;
 
     //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
-    if (this.showOnInit) {
+    if (this.show) {
       this.display = 'inline-block';
     } else {
       this.display = 'none';
