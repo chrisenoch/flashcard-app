@@ -26,7 +26,6 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   }
 
   documentInjected!: Document;
-  toastVCCopy!: ElementRef;
   toastHeight!: number;
   toastWidth!: number;
   count = 0;
@@ -54,7 +53,9 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   @Input() gapInPx: number | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
-  @ContentChild('accept') acceptCC: ElementRef | undefined;
+  @ContentChild('accept', { descendants: true }) acceptCC:
+    | ElementRef
+    | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
@@ -63,8 +64,6 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.toastVCCopy = this.toastVC;
-
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastParentDomRect =
       this.toastVC.nativeElement.parentElement.parentElement.getBoundingClientRect();
@@ -91,6 +90,7 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
 
   ngAfterContentInit(): void {
     if (this.acceptCC) {
+      console.log('acceptCC is defined');
       this.renderer2.listen(
         this.acceptCC.nativeElement,
         'click',
@@ -100,6 +100,7 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
       );
     }
     if (this.closeCC) {
+      console.log('closeCC is defined');
       this.renderer2.listen(
         this.closeCC.nativeElement,
         'click',
@@ -113,7 +114,7 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
 
   private addHoverEventListeners() {
     this.renderer2.listen(
-      this.toastVCCopy.nativeElement.parentElement.parentElement,
+      this.toastVC.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
         if (this.showDelay > 0) {
@@ -125,12 +126,9 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
     );
 
     this.renderer2.listen(
-      this.toastVCCopy.nativeElement.parentElement.parentElement,
+      this.toastVC.nativeElement.parentElement.parentElement,
       'mouseout',
       (e: MouseEvent) => {
-        // if (!this.showOnInit) {
-        //   this.display = 'none';
-        // }
         if (this.hideDelay > 0) {
           setTimeout(() => (this.display = 'none'), this.hideDelay);
         } else {
@@ -149,7 +147,7 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
 
     this.renderer2.appendChild(
       this.documentInjected.body,
-      this.toastVCCopy.nativeElement
+      this.toastVC.nativeElement
     );
   }
 
@@ -158,8 +156,8 @@ export class ToastComponent implements OnInit, AfterContentInit, AfterViewInit {
       this.gapInPx = 8;
     }
 
-    this.toastHeight = this.toastVCCopy.nativeElement.offsetHeight;
-    this.toastWidth = this.toastVCCopy.nativeElement.offsetWidth;
+    this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+    this.toastWidth = this.toastVC.nativeElement.offsetWidth;
 
     //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
     if (this.showOnInit) {
