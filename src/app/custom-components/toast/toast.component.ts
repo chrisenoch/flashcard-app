@@ -19,7 +19,6 @@ import {
   Subscription,
   fromEvent,
   pipe,
-  timer,
   interval,
   debounce,
   debounceTime,
@@ -30,6 +29,7 @@ import {
   takeWhile,
   finalize,
 } from 'rxjs';
+import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 
 @Component({
   selector: 'app-toast',
@@ -65,10 +65,10 @@ export class ToastComponent
   right: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  showOnInitDelayTimer: any | undefined;
-  hideOnInitDelayTimer: any | undefined;
-  hideDelayTimer: any | undefined;
-  showDelayTimer: any | undefined;
+  showOnInitDelayTimer: controlledTimer | undefined;
+  hideOnInitDelayTimer: controlledTimer | undefined;
+  hideDelayTimer: controlledTimer | undefined;
+  showDelayTimer: controlledTimer | undefined;
 
   @Input() animation: boolean | null = null;
   //Used to programmatically determine if the toast is showing or not.
@@ -85,51 +85,6 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
-
-  //E.g. for a timer of 5 seconds, you would use intervalPeriod with a value of 1000 and repetitions with a value of 5.
-  timer(intervalPeriod: number, repetitions: number) {
-    //object needed so can change values with this return object from outside this function via a closure.
-    let controlObj: {
-      sub: null | Observable<number>;
-      isActive: boolean;
-      count: number;
-      pauseTimer: boolean;
-      cancelTimer: boolean;
-    } = {
-      sub: null,
-      isActive: false,
-      count: 0,
-      pauseTimer: false,
-      cancelTimer: false,
-    };
-
-    controlObj.sub = interval(intervalPeriod).pipe(
-      tap(() => {
-        if (controlObj.count === 0) {
-          controlObj.isActive = true;
-        }
-      }),
-      // map(() => 0),
-      map(() => {
-        if (controlObj.cancelTimer) {
-          return repetitions;
-        } else if (controlObj.pauseTimer) {
-          return controlObj.count;
-        } else {
-          return ++controlObj.count;
-        }
-      }),
-
-      takeWhile((val) => val < repetitions),
-      finalize(() => {
-        controlObj.isActive = false;
-        controlObj.count = 0;
-        controlObj.pauseTimer = false;
-        controlObj.cancelTimer = false;
-      })
-    );
-    return controlObj;
-  }
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
@@ -197,15 +152,35 @@ export class ToastComponent
 
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
-    this.showOnInitDelayTimer = setTimeout(() => {
-      this.defineCoords();
 
-      if (this.hideOnInitDelay > 0) {
-        this.hideOnInitDelayTimer = setTimeout(() => {
-          this.updateShow(false);
-        }, this.hideOnInitDelay);
-      }
-    }, 300 + Math.abs(this.showOnInitDelay));
+    this.showOnInitDelayTimer = this.controllableTimer(
+      300 + Math.abs(this.showOnInitDelay)
+    );
+    this.showOnInitDelayTimer.sub.subscribe({
+      complete: () => {
+        this.defineCoords();
+        if (this.hideOnInitDelay > 0) {
+          const hideOnInitDelayTimer = this.controllableTimer(
+            this.hideOnInitDelay
+          );
+          hideOnInitDelayTimer.sub.subscribe({
+            complete: () => {
+              this.updateShow(false);
+            },
+          });
+        }
+      },
+    });
+
+    // this.showOnInitDelayTimer = setTimeout(() => {
+    //   this.defineCoords();
+
+    //   if (this.hideOnInitDelay > 0) {
+    //     this.hideOnInitDelayTimer = setTimeout(() => {
+    //       this.updateShow(false);
+    //     }, this.hideOnInitDelay);
+    //   }
+    // }, 300 + Math.abs(this.showOnInitDelay));
   }
 
   ngAfterContentInit(): void {
@@ -237,6 +212,58 @@ export class ToastComponent
     this.resizeSub$.unsubscribe();
   }
 
+  //E.g. for a timer of 5 seconds, you would use intervalPeriod with a value of 1000 and repetitions with a value of 5.
+  controllableTimer(timeInMS: number): {
+    sub: Observable<number>;
+    isActive: boolean;
+    count: number;
+    pauseTimer: boolean;
+    cancelTimer: boolean;
+  } {
+    let repetitions = Math.round(timeInMS / 100);
+    //object needed so can change these values with this return object from outside this function via a closure.
+    let controlObj: {
+      sub: Observable<number>;
+      isActive: boolean;
+      count: number;
+      pauseTimer: boolean;
+      cancelTimer: boolean;
+    } = {
+      sub: new Observable(),
+      isActive: false,
+      count: 0,
+      pauseTimer: false,
+      cancelTimer: false,
+    };
+
+    controlObj.sub = interval(100).pipe(
+      tap(() => {
+        if (controlObj.count === 0) {
+          controlObj.isActive = true;
+        }
+      }),
+      map(() => {
+        if (controlObj.cancelTimer) {
+          return repetitions + 1;
+        } else if (controlObj.pauseTimer) {
+          return controlObj.count;
+        } else {
+          return ++controlObj.count;
+        }
+      }),
+
+      takeWhile((val) => val <= repetitions),
+      finalize(() => {
+        controlObj.isActive = false;
+        controlObj.count = 0;
+        controlObj.pauseTimer = false;
+        controlObj.cancelTimer = false;
+      })
+    );
+
+    return controlObj;
+  }
+
   //Show should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
   private updateShow(isShow: boolean) {
     if (isShow) {
@@ -252,15 +279,30 @@ export class ToastComponent
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
-        clearTimeout(this.hideDelayTimer);
-        clearTimeout(this.showOnInitDelayTimer);
-        clearTimeout(this.hideOnInitDelayTimer);
+        // clearTimeout(this.hideDelayTimer);
+        // clearTimeout(this.showOnInitDelayTimer);
+        // clearTimeout(this.hideOnInitDelayTimer);
+        if (this.hideDelayTimer?.isActive) {
+          console.log('this.hideDelayTimer?.isActive ');
+          console.log(this.hideDelayTimer?.isActive);
+          this.hideDelayTimer.cancelTimer = true;
+        }
+        if (this.showOnInitDelayTimer?.isActive) {
+          this.showOnInitDelayTimer.cancelTimer = true;
+        }
+        if (this.hideOnInitDelayTimer?.isActive) {
+          this.hideOnInitDelayTimer.cancelTimer = true;
+        }
 
         if (this.showDelay > 0) {
-          this.showDelayTimer = setTimeout(
-            () => this.updateShow(true),
-            this.showDelay
-          );
+          this.showDelayTimer = this.controllableTimer(this.showDelay);
+          this.showDelayTimer.sub.subscribe({
+            complete: () => this.updateShow(true),
+          });
+          // this.showDelayTimer = setTimeout(
+          //   () => this.updateShow(true),
+          //   this.showDelay
+          // );
         } else {
           this.updateShow(true);
         }
@@ -271,13 +313,22 @@ export class ToastComponent
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseout',
       (e: MouseEvent) => {
-        clearTimeout(this.showDelayTimer);
+        //clearTimeout(this.showDelayTimer);
+        if (this.showDelayTimer?.isActive) {
+          console.log('this.showDelayTimer?.isActive ');
+          console.log(this.showDelayTimer?.isActive);
+          this.showDelayTimer.cancelTimer = true;
+        }
 
         if (this.hideDelay > 0) {
-          this.hideDelayTimer = setTimeout(
-            () => this.updateShow(false),
-            this.hideDelay
-          );
+          this.hideDelayTimer = this.controllableTimer(this.hideDelay);
+          this.hideDelayTimer.sub.subscribe({
+            complete: () => this.updateShow(false),
+          });
+          // this.hideDelayTimer = setTimeout(
+          //   () => this.updateShow(false),
+          //   this.hideDelay
+          // );
         } else {
           if (!this.show) {
             this.updateShow(false);
