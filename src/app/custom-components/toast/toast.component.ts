@@ -144,7 +144,7 @@ export class ToastComponent
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastParentDomRect = this.originalToastParent.getBoundingClientRect();
 
-    console.log(this.toastParentDomRect);
+    //console.log(this.toastParentDomRect);
 
     this.addHoverEventListeners();
 
@@ -185,7 +185,6 @@ export class ToastComponent
 
   ngAfterContentInit(): void {
     if (this.showCC) {
-      console.log('showCC is defined');
       this.renderer2.listen(
         this.showCC.nativeElement,
         'click',
@@ -197,7 +196,6 @@ export class ToastComponent
       );
     }
     if (this.closeCC) {
-      console.log('closeCC is defined');
       this.renderer2.listen(
         this.closeCC.nativeElement,
         'click',
@@ -243,21 +241,32 @@ export class ToastComponent
         }
       }),
       map(() => {
-        if (controlObj.cancelTimer) {
-          return repetitions + 1;
-        } else if (controlObj.pauseTimer) {
+        if (controlObj.pauseTimer) {
           return controlObj.count;
         } else {
           return ++controlObj.count;
         }
       }),
+      map((val) => {
+        if (controlObj.cancelTimer) {
+          controlObj.count = 0;
+          controlObj.isActive = false;
+          throw Error('Observable cancelled because cancelTimer set to true');
+        } else {
+          return val;
+        }
+      }),
 
       takeWhile((val) => val <= repetitions),
       finalize(() => {
+        if ((controlObj.cancelTimer = true)) {
+          console.log('i was cancelled and finalise runs');
+        }
         controlObj.isActive = false;
         controlObj.count = 0;
         controlObj.pauseTimer = false;
         controlObj.cancelTimer = false;
+        console.log('in finalize');
       })
     );
 
@@ -279,18 +288,13 @@ export class ToastComponent
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
-        // clearTimeout(this.hideDelayTimer);
-        // clearTimeout(this.showOnInitDelayTimer);
-        // clearTimeout(this.hideOnInitDelayTimer);
-        if (this.hideDelayTimer?.isActive) {
-          console.log('this.hideDelayTimer?.isActive ');
-          console.log(this.hideDelayTimer?.isActive);
+        if (this.hideDelayTimer) {
           this.hideDelayTimer.cancelTimer = true;
         }
-        if (this.showOnInitDelayTimer?.isActive) {
+        if (this.showOnInitDelayTimer) {
           this.showOnInitDelayTimer.cancelTimer = true;
         }
-        if (this.hideOnInitDelayTimer?.isActive) {
+        if (this.hideOnInitDelayTimer) {
           this.hideOnInitDelayTimer.cancelTimer = true;
         }
 
@@ -299,10 +303,6 @@ export class ToastComponent
           this.showDelayTimer.sub.subscribe({
             complete: () => this.updateShow(true),
           });
-          // this.showDelayTimer = setTimeout(
-          //   () => this.updateShow(true),
-          //   this.showDelay
-          // );
         } else {
           this.updateShow(true);
         }
@@ -313,22 +313,21 @@ export class ToastComponent
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseout',
       (e: MouseEvent) => {
-        //clearTimeout(this.showDelayTimer);
-        if (this.showDelayTimer?.isActive) {
-          console.log('this.showDelayTimer?.isActive ');
-          console.log(this.showDelayTimer?.isActive);
+        if (this.showDelayTimer) {
           this.showDelayTimer.cancelTimer = true;
         }
 
         if (this.hideDelay > 0) {
           this.hideDelayTimer = this.controllableTimer(this.hideDelay);
           this.hideDelayTimer.sub.subscribe({
+            next: () => {
+              console.log('in hideDelayTimer ' + this.hideDelayTimer!.count);
+              console.log(
+                'showDelay isActive ' + this.showDelayTimer?.isActive
+              );
+            },
             complete: () => this.updateShow(false),
           });
-          // this.hideDelayTimer = setTimeout(
-          //   () => this.updateShow(false),
-          //   this.hideDelay
-          // );
         } else {
           if (!this.show) {
             this.updateShow(false);
@@ -369,14 +368,13 @@ export class ToastComponent
       this.visibility = 'visible';
     }
 
-    console.log('toastHeight - this.toastWidth - this.gapInPx ');
-    console.log(this.toastHeight + ' ' + this.toastWidth + ' ' + this.gapInPx);
+    // console.log('toastHeight - this.toastWidth - this.gapInPx ');
+    // console.log(this.toastHeight + ' ' + this.toastWidth + ' ' + this.gapInPx);
 
     switch (this.position) {
       case 'LEFT':
         this.left =
           this.toastParentDomRect.left - this.toastWidth - this.gapInPx + 'px';
-        console.log('left in switch ' + this.left);
 
         this.top =
           this.toastParentDomRect.top +
@@ -423,10 +421,10 @@ export class ToastComponent
         throw new Error(exhaustiveCheck);
     }
 
-    console.log('top + bottom + left + right');
-    console.log(
-      this.top + ' ' + this.bottom + ' ' + this.left + ' ' + this.right
-    );
+    // console.log('top + bottom + left + right');
+    // console.log(
+    //   this.top + ' ' + this.bottom + ' ' + this.left + ' ' + this.right
+    // );
   }
 
   private defineArrow() {
