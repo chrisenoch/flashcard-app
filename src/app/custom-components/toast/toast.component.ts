@@ -28,6 +28,7 @@ import {
   filter,
   takeUntil,
   takeWhile,
+  finalize,
 } from 'rxjs';
 
 @Component({
@@ -46,7 +47,7 @@ export class ToastComponent
     this.documentInjected = document;
   }
   ngDoCheck(): void {
-    console.log('DoCheck ran');
+    //console.log('DoCheck ran');
   }
 
   resizeObs$!: Observable<Event>;
@@ -85,34 +86,49 @@ export class ToastComponent
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
 
-  cancelTimers = false;
-  pauseTimers = false;
-  timer(time: number) {
-    const timerSub$ = interval(time).pipe(
-      map((_newNum) => 0),
-      map((val) => {
-        if (this.cancelTimers) {
-          return time;
-        } else if (this.pauseTimers) {
-          return val;
-        } else {
-          return ++val;
+  //E.g. for a timer of 5 seconds, you would use intervalPeriod with a value of 1000 and repetitions with a value of 5.
+  timer(intervalPeriod: number, repetitions: number) {
+    //object needed so can change values with this return object from outside this function via a closure.
+    let controlObj: {
+      sub: null | Observable<number>;
+      isActive: boolean;
+      count: number;
+      pauseTimer: boolean;
+      cancelTimer: boolean;
+    } = {
+      sub: null,
+      isActive: false,
+      count: 0,
+      pauseTimer: false,
+      cancelTimer: false,
+    };
+
+    controlObj.sub = interval(intervalPeriod).pipe(
+      tap(() => {
+        if (controlObj.count === 0) {
+          controlObj.isActive = true;
         }
       }),
-      takeWhile((val) => val < time)
+      // map(() => 0),
+      map(() => {
+        if (controlObj.cancelTimer) {
+          return repetitions;
+        } else if (controlObj.pauseTimer) {
+          return controlObj.count;
+        } else {
+          return ++controlObj.count;
+        }
+      }),
+
+      takeWhile((val) => val < repetitions),
+      finalize(() => {
+        controlObj.isActive = false;
+        controlObj.count = 0;
+        controlObj.pauseTimer = false;
+        controlObj.cancelTimer = false;
+      })
     );
-
-    return timerSub$;
-  }
-
-  //Show should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
-  private updateShow(isShow: boolean) {
-    if (isShow) {
-      this.display = 'inline-block';
-    } else {
-      this.display = 'none';
-      this.show = false;
-    }
+    return controlObj;
   }
 
   @ViewChild('toast') toastVC!: ElementRef;
@@ -120,7 +136,6 @@ export class ToastComponent
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
-    console.log('showOnInit in ngOnInit ' + this.show);
     this.defineArrow();
     this.checkInputs();
 
@@ -220,6 +235,16 @@ export class ToastComponent
 
   ngOnDestroy(): void {
     this.resizeSub$.unsubscribe();
+  }
+
+  //Show should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
+  private updateShow(isShow: boolean) {
+    if (isShow) {
+      this.display = 'inline-block';
+    } else {
+      this.display = 'none';
+      this.show = false;
+    }
   }
 
   private addHoverEventListeners() {
