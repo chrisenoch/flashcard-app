@@ -201,6 +201,12 @@ export class ToastComponent
         'click',
         (e: MouseEvent) => {
           this.updateShow(false);
+
+          this.cancelTimers([
+            this.hideDelayTimer,
+            this.showOnInitDelayTimer,
+            this.hideOnInitDelayTimer,
+          ]);
         }
       );
     }
@@ -259,8 +265,8 @@ export class ToastComponent
 
       takeWhile((val) => val <= repetitions),
       finalize(() => {
-        if ((controlObj.cancelTimer = true)) {
-          console.log('i was cancelled and finalise runs');
+        if (controlObj.cancelTimer === true) {
+          console.log('I was cancelled and finalize runs');
         }
         controlObj.isActive = false;
         controlObj.count = 0;
@@ -283,20 +289,24 @@ export class ToastComponent
     }
   }
 
+  private cancelTimers(timers: (controlledTimer | undefined)[]) {
+    timers.forEach((timer) => {
+      if (timer !== undefined && timer !== null) {
+        timer.cancelTimer = true;
+      }
+    });
+  }
+
   private addHoverEventListeners() {
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
-        if (this.hideDelayTimer) {
-          this.hideDelayTimer.cancelTimer = true;
-        }
-        if (this.showOnInitDelayTimer) {
-          this.showOnInitDelayTimer.cancelTimer = true;
-        }
-        if (this.hideOnInitDelayTimer) {
-          this.hideOnInitDelayTimer.cancelTimer = true;
-        }
+        this.cancelTimers([
+          this.hideDelayTimer,
+          this.showOnInitDelayTimer,
+          this.hideOnInitDelayTimer,
+        ]);
 
         if (this.showDelay > 0) {
           this.showDelayTimer = this.controllableTimer(this.showDelay);
