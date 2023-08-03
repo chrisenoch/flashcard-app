@@ -109,6 +109,16 @@ export class ToastComponent
             this.isResizing = true;
             if (firstOfResizeBatch) {
               this.ngZone.run(() => {
+                this.pauseTimers(
+                  [
+                    this.showOnInitDelayTimer,
+                    this.hideOnInitDelayTimer,
+                    this.showDelayTimer,
+                    this.hideDelayTimer,
+                  ],
+                  true
+                );
+
                 this.visibility = 'hidden';
                 firstOfResizeBatch = false;
                 if (this.display === 'none') {
@@ -126,11 +136,28 @@ export class ToastComponent
               this.originalToastParent.getBoundingClientRect();
             this.defineCoords();
 
+            //check here which are active
             if (displayChanged) {
               this.display = 'none';
               displayChanged = false;
             }
-            this.visibility = 'visible';
+            if (
+              !this.showOnInitDelayTimer?.isActive &&
+              !this.showDelayTimer?.isActive
+            ) {
+              this.visibility = 'visible';
+            }
+
+            this.pauseTimers(
+              [
+                this.showOnInitDelayTimer,
+                this.hideOnInitDelayTimer,
+                this.showDelayTimer,
+                this.hideDelayTimer,
+              ],
+              false
+            );
+
             this.isResizing = false;
             firstOfResizeBatch = true;
           });
@@ -143,8 +170,6 @@ export class ToastComponent
       this.toastVC.nativeElement.parentElement.parentElement;
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastParentDomRect = this.originalToastParent.getBoundingClientRect();
-
-    //console.log(this.toastParentDomRect);
 
     this.addHoverEventListeners();
 
@@ -265,14 +290,10 @@ export class ToastComponent
 
       takeWhile((val) => val <= repetitions),
       finalize(() => {
-        if (controlObj.cancelTimer === true) {
-          console.log('I was cancelled and finalize runs');
-        }
         controlObj.isActive = false;
         controlObj.count = 0;
         controlObj.pauseTimer = false;
         controlObj.cancelTimer = false;
-        console.log('in finalize');
       })
     );
 
@@ -293,6 +314,17 @@ export class ToastComponent
     timers.forEach((timer) => {
       if (timer !== undefined && timer !== null) {
         timer.cancelTimer = true;
+      }
+    });
+  }
+
+  private pauseTimers(
+    timers: (controlledTimer | undefined)[],
+    isPaused: boolean
+  ) {
+    timers.forEach((timer) => {
+      if (timer !== undefined && timer !== null) {
+        timer.pauseTimer = isPaused;
       }
     });
   }
@@ -330,18 +362,10 @@ export class ToastComponent
         if (this.hideDelay > 0) {
           this.hideDelayTimer = this.controllableTimer(this.hideDelay);
           this.hideDelayTimer.sub.subscribe({
-            next: () => {
-              console.log('in hideDelayTimer ' + this.hideDelayTimer!.count);
-              console.log(
-                'showDelay isActive ' + this.showDelayTimer?.isActive
-              );
-            },
             complete: () => this.updateShow(false),
           });
-        } else {
-          if (!this.show) {
-            this.updateShow(false);
-          }
+        } else if (!this.show) {
+          this.updateShow(false);
         }
       }
     );
@@ -377,9 +401,6 @@ export class ToastComponent
       }
       this.visibility = 'visible';
     }
-
-    // console.log('toastHeight - this.toastWidth - this.gapInPx ');
-    // console.log(this.toastHeight + ' ' + this.toastWidth + ' ' + this.gapInPx);
 
     switch (this.position) {
       case 'LEFT':
@@ -430,11 +451,6 @@ export class ToastComponent
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
     }
-
-    // console.log('top + bottom + left + right');
-    // console.log(
-    //   this.top + ' ' + this.bottom + ' ' + this.left + ' ' + this.right
-    // );
   }
 
   private defineArrow() {
