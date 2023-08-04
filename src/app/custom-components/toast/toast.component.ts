@@ -13,6 +13,7 @@ import {
   Renderer2,
   ViewChild,
   NgZone,
+  HostListener,
 } from '@angular/core';
 import {
   Observable,
@@ -73,11 +74,15 @@ export class ToastComponent
   showDelayTimer: controlledTimer | undefined;
 
   @Input() animation: boolean | null = null;
-  //Used to programmatically determine if the toast is showing or not.
-
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
+  //Used to programmatically determine if the toast is showing or not.
   @Input() show = false;
+  @Input() showOnHover = false;
+  @Input() hideOnHoverOut = false;
+  @Input() showOnClick = false;
+  @Input() hideOnClick = false;
+  @Input() toggleOnClick = true;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
   @Input() showOnInitDelay = 0;
@@ -230,7 +235,27 @@ export class ToastComponent
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastParentDomRect = this.originalToastParent.getBoundingClientRect();
 
-    this.addHoverEventListeners();
+    if (this.showOnHover) {
+      this.addShowToastListener('mouseover');
+    }
+    if (this.hideOnHoverOut) {
+      this.addHideToastListener('mouseout');
+    }
+    if (this.toggleOnClick) {
+      console.log('in show on click');
+      this.addToggleToastListener('click');
+    }
+    if (this.showOnClick) {
+      console.log('in hide on click');
+      this.addShowToastListener('click');
+    }
+
+    if (this.hideOnClick) {
+      console.log('in hide on click');
+      this.addHideToastListener('click');
+    }
+
+    //this.addHoverEventListeners();
 
     this.moveToastToBody();
 
@@ -299,11 +324,83 @@ export class ToastComponent
     ]);
   }
 
+  showToast() {
+    console.log('in showToast');
+    this.cancelTimers([
+      this.hideDelayTimer,
+      this.showOnInitDelayTimer,
+      this.hideOnInitDelayTimer,
+    ]);
+
+    if (this.showDelay > 0) {
+      this.showDelayTimer = this.controllableTimer(this.showDelay);
+      this.showDelayTimer.sub.subscribe({
+        complete: () => this.updateShow(true),
+      });
+    } else {
+      this.updateShow(true);
+    }
+  }
+
+  hideToast() {
+    console.log('in hideToast');
+
+    if (this.showDelayTimer) {
+      this.showDelayTimer.cancelTimer = true;
+    }
+
+    if (this.hideDelay > 0) {
+      this.hideDelayTimer = this.controllableTimer(this.hideDelay);
+      this.hideDelayTimer.sub.subscribe({
+        complete: () => this.updateShow(false),
+      });
+    } else if (!this.show) {
+      this.updateShow(false);
+    }
+  }
+
+  addToggleToastListener(eventType: string) {
+    let toggled = this.show;
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      eventType,
+      (e: Event) => {
+        if (toggled) {
+          this.hideToast();
+        } else {
+          this.showToast();
+        }
+        toggled = !toggled;
+      }
+    );
+  }
+
+  addShowToastListener(eventType: string) {
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      eventType,
+      (e: Event) => {
+        this.showToast();
+      }
+    );
+  }
+
+  addHideToastListener(eventType: string) {
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      eventType,
+      (e: Event) => {
+        this.hideToast();
+      }
+    );
+  }
+
   onHover() {
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       'mouseover',
       (e: MouseEvent) => {
+        //this.showToast();
         this.cancelTimers([
           this.hideDelayTimer,
           this.showOnInitDelayTimer,
@@ -551,6 +648,18 @@ export class ToastComponent
   }
 
   private checkInputs() {
+    if (this.toggleOnClick && (this.hideOnClick || this.showOnClick)) {
+      throw Error(
+        'You cannot define either hideOnClick or showOnClick at the same time as toggleOnClick'
+      );
+    }
+
+    if (this.hideOnClick && this.showOnClick) {
+      throw Error(
+        'You cannot define both hideOnClick and showOnClick. For toggle behaviour, define toggleOnClick and neither showOnClick nor hideOnClick'
+      );
+    }
+
     if (!this.toastId) {
       throw Error('You must set the toastId attribute');
     }
