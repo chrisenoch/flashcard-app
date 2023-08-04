@@ -94,10 +94,19 @@ export class ToastComponent
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
-    this.toastService.close$.subscribe((e) => {
+    this.toastService.closeAll$.subscribe((e) => {
       console.log('Clicked with the following event: ' + e);
       console.log({ e });
       this.onClose();
+    });
+
+    this.toastService.close$.subscribe((toastInfo) => {
+      console.log('Clicked with the following event: ' + toastInfo?.event);
+      console.log(toastInfo?.event);
+
+      if (this.toastId === toastInfo?.toastId) {
+        this.onClose();
+      }
     });
 
     this.defineArrow();

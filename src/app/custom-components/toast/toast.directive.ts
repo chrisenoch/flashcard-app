@@ -19,23 +19,14 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
     private toastService: ToastService
   ) {}
 
+  onCloseAllObs$!: Observable<Event>;
+  onCloseAllSub$!: Subscription;
   onCloseObs$!: Observable<Event>;
   onCloseSub$!: Subscription;
 
+  @Input() onCloseAll = false;
   @Input() onClose = false;
   @Input() toastId!: string;
-
-  // @HostListener('click', ['$event'])
-  // close(event: Event) {
-  //   console.log('I was clicked - close');
-  //   this.toastService.onClose(event);
-  // }
-
-  // @HostListener('click', ['$event'])
-  // open(event: Event) {
-  //   console.log('I was clicked - open');
-  //   this.toastService.onOpen(event);
-  // }
 
   ngOnInit(): void {
     if (!this.toastId) {
@@ -45,15 +36,21 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
 
   //I chose this approach instead of @HostListener, because this lets me add event listeners conditionally.
   ngAfterViewInit(): void {
+    if (this.onCloseAll) {
+      this.onCloseAllObs$ = fromEvent(this.element.nativeElement, 'click');
+      this.onCloseAllSub$ = this.onCloseAllObs$.subscribe((e) => {
+        this.toastService.onCloseAll(e);
+      });
+    }
     if (this.onClose) {
       this.onCloseObs$ = fromEvent(this.element.nativeElement, 'click');
       this.onCloseSub$ = this.onCloseObs$.subscribe((e) => {
-        this.toastService.onClose(e);
+        this.toastService.onClose(e, this.toastId);
       });
     }
   }
 
   ngOnDestroy(): void {
-    this.onCloseSub$.unsubscribe();
+    this.onCloseAllSub$.unsubscribe();
   }
 }
