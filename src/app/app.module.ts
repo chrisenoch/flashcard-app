@@ -24,6 +24,8 @@ import { SlideOptionBarComponent } from './menu/slide-option-bar/slide-option-ba
 import { AccordionComponent } from './custom-components/accordion/accordion.component';
 import { AccordionTabComponent } from './custom-components/accordion/accordion-tab/accordion-tab.component';
 import { ToastComponent } from './custom-components/toast/toast.component';
+import { ToastContentComponent } from './layout/main-nav/toast-content/toast-content.component';
+import { ToastDirective } from './custom-components/toast/toast.directive';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { ToastComponent } from './custom-components/toast/toast.component';
     AccordionComponent,
     AccordionTabComponent,
     ToastComponent,
+    ToastContentComponent,
+    ToastDirective,
   ],
   imports: [
     BrowserModule,

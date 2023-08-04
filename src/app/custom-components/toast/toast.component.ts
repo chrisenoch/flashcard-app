@@ -30,6 +30,7 @@ import {
   finalize,
 } from 'rxjs';
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
+import { ToastService } from './toast.service';
 
 @Component({
   selector: 'app-toast',
@@ -42,7 +43,8 @@ export class ToastComponent
   constructor(
     @Inject(DOCUMENT) document: Document,
     private renderer2: Renderer2,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private toastService: ToastService
   ) {
     this.documentInjected = document;
   }
@@ -91,6 +93,12 @@ export class ToastComponent
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
+    this.toastService.close$.subscribe((e) => {
+      console.log('Clicked with the following event: ' + e);
+      console.log({ e });
+      this.onClose();
+    });
+
     this.defineArrow();
     this.checkInputs();
 
@@ -177,7 +185,6 @@ export class ToastComponent
 
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
-
     this.showOnInitDelayTimer = this.controllableTimer(
       300 + Math.abs(this.showOnInitDelay)
     );
@@ -185,10 +192,10 @@ export class ToastComponent
       complete: () => {
         this.defineCoords();
         if (this.hideOnInitDelay > 0) {
-          const hideOnInitDelayTimer = this.controllableTimer(
+          this.hideOnInitDelayTimer = this.controllableTimer(
             this.hideOnInitDelay
           );
-          hideOnInitDelayTimer.sub.subscribe({
+          this.hideOnInitDelayTimer.sub.subscribe({
             complete: () => {
               this.updateShow(false);
             },
@@ -225,16 +232,64 @@ export class ToastComponent
         this.closeCC.nativeElement,
         'click',
         (e: MouseEvent) => {
-          this.updateShow(false);
-
-          this.cancelTimers([
-            this.hideDelayTimer,
-            this.showOnInitDelayTimer,
-            this.hideOnInitDelayTimer,
-          ]);
+          this.onClose();
         }
       );
     }
+  }
+
+  onClose() {
+    this.updateShow(false);
+
+    this.cancelTimers([
+      this.hideDelayTimer,
+      this.showOnInitDelayTimer,
+      this.hideOnInitDelayTimer,
+    ]);
+  }
+
+  onHover() {
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      'mouseover',
+      (e: MouseEvent) => {
+        this.cancelTimers([
+          this.hideDelayTimer,
+          this.showOnInitDelayTimer,
+          this.hideOnInitDelayTimer,
+        ]);
+
+        if (this.showDelay > 0) {
+          this.showDelayTimer = this.controllableTimer(this.showDelay);
+          this.showDelayTimer.sub.subscribe({
+            complete: () => this.updateShow(true),
+          });
+        } else {
+          this.updateShow(true);
+        }
+      }
+    );
+  }
+
+  onHoverOut() {
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      'mouseout',
+      (e: MouseEvent) => {
+        if (this.showDelayTimer) {
+          this.showDelayTimer.cancelTimer = true;
+        }
+
+        if (this.hideDelay > 0) {
+          this.hideDelayTimer = this.controllableTimer(this.hideDelay);
+          this.hideDelayTimer.sub.subscribe({
+            complete: () => this.updateShow(false),
+          });
+        } else if (!this.show) {
+          this.updateShow(false);
+        }
+      }
+    );
   }
 
   ngOnDestroy(): void {
@@ -330,45 +385,8 @@ export class ToastComponent
   }
 
   private addHoverEventListeners() {
-    this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
-      'mouseover',
-      (e: MouseEvent) => {
-        this.cancelTimers([
-          this.hideDelayTimer,
-          this.showOnInitDelayTimer,
-          this.hideOnInitDelayTimer,
-        ]);
-
-        if (this.showDelay > 0) {
-          this.showDelayTimer = this.controllableTimer(this.showDelay);
-          this.showDelayTimer.sub.subscribe({
-            complete: () => this.updateShow(true),
-          });
-        } else {
-          this.updateShow(true);
-        }
-      }
-    );
-
-    this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
-      'mouseout',
-      (e: MouseEvent) => {
-        if (this.showDelayTimer) {
-          this.showDelayTimer.cancelTimer = true;
-        }
-
-        if (this.hideDelay > 0) {
-          this.hideDelayTimer = this.controllableTimer(this.hideDelay);
-          this.hideDelayTimer.sub.subscribe({
-            complete: () => this.updateShow(false),
-          });
-        } else if (!this.show) {
-          this.updateShow(false);
-        }
-      }
-    );
+    this.onHover();
+    this.onHoverOut();
   }
 
   private moveToastToBody() {
