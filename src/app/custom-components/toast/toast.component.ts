@@ -113,57 +113,32 @@ export class ToastComponent
     this.addWindowResizeHandler();
   }
 
+  ngAfterContentInit(): void {
+    this.addConvenienceClickhandlers();
+  }
+
   ngAfterViewInit(): void {
     this.originalToastParent =
       this.toastVC.nativeElement.parentElement.parentElement;
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastParentDomRect = this.originalToastParent.getBoundingClientRect();
 
-    if (this.showOnHover) {
-      if (this.showOnHover === 'mouseenter') {
-        this.addShowToastListener('mouseenter');
-      } else {
-        this.addShowToastListener('mouseover');
-      }
-    }
-    if (this.hideOnHoverOut) {
-      if (this.hideOnHoverOut === 'mouseleave') {
-        this.addHideToastListener('mouseleave');
-      } else {
-        this.addHideToastListener('mouseout');
-      }
-    }
-    if (this.toggleOnClick) {
-      this.addToggleToastListener('click', true);
-    }
-    if (this.showOnClick) {
-      this.addShowToastListener('click');
-    }
-
-    if (this.hideOnClick) {
-      this.addHideToastListener('click', true);
-    }
-    if (this.showOnCustom) {
-      this.addShowToastListener(this.showOnCustom);
-    }
-
-    if (this.hideOnCustom) {
-      this.addHideToastListener(this.hideOnCustom, true);
-    }
-
-    if (this.toggleOnCustom) {
-      this.addToggleToastListener(this.toggleOnCustom, true);
-    }
-
-    //this.addHoverEventListeners();
+    this.addActionEventListeners();
 
     this.moveToastToBody();
 
     this.initDelayTimers();
   }
 
-  ngAfterContentInit(): void {
-    this.addConvenienceClickhandlers();
+  ngOnDestroy(): void {
+    this.resizeSub$.unsubscribe();
+    this.toastService.closeAll$.unsubscribe();
+    this.toastService.close$.unsubscribe();
+    this.toastService.closeAllInGroup$.unsubscribe();
+    this.toastService.closeAllOthers$.unsubscribe();
+    this.toastService.closeAllOthersInGroup$.unsubscribe();
+    this.toastService.showAll$.unsubscribe();
+    this.toastService.showAllOthersInGroup$.unsubscribe();
   }
 
   onClose() {
@@ -211,7 +186,7 @@ export class ToastComponent
     }
   }
 
-  addToggleToastListener(
+  private addToggleToastListener(
     eventType: string,
     overrideKeepShowing: boolean = false
   ) {
@@ -233,7 +208,7 @@ export class ToastComponent
     );
   }
 
-  addShowToastListener(eventType: string) {
+  private addShowToastListener(eventType: string) {
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       eventType,
@@ -243,7 +218,7 @@ export class ToastComponent
     );
   }
 
-  addHideToastListener(
+  private addHideToastListener(
     eventType: string,
     overrideKeepShowing: boolean = false
   ) {
@@ -259,62 +234,6 @@ export class ToastComponent
         this.hideToast();
       }
     );
-  }
-
-  onHover() {
-    this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
-      'mouseover',
-      (e: MouseEvent) => {
-        //this.showToast();
-        this.cancelTimers([
-          this.hideDelayTimer,
-          this.showOnInitDelayTimer,
-          this.hideOnInitDelayTimer,
-        ]);
-
-        if (this.showDelay > 0) {
-          this.showDelayTimer = this.controllableTimer(this.showDelay);
-          this.showDelayTimer.sub.subscribe({
-            complete: () => this.updateShowState(true),
-          });
-        } else {
-          this.updateShowState(true);
-        }
-      }
-    );
-  }
-
-  onHoverOut() {
-    this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
-      'mouseout',
-      (e: MouseEvent) => {
-        if (this.showDelayTimer) {
-          this.showDelayTimer.cancelTimer = true;
-        }
-
-        if (this.hideDelay > 0) {
-          this.hideDelayTimer = this.controllableTimer(this.hideDelay);
-          this.hideDelayTimer.sub.subscribe({
-            complete: () => this.updateShowState(false),
-          });
-        } else if (!this.keepShowing) {
-          this.updateShowState(false);
-        }
-      }
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.resizeSub$.unsubscribe();
-    this.toastService.closeAll$.unsubscribe();
-    this.toastService.close$.unsubscribe();
-    this.toastService.closeAllInGroup$.unsubscribe();
-    this.toastService.closeAllOthers$.unsubscribe();
-    this.toastService.closeAllOthersInGroup$.unsubscribe();
-    this.toastService.showAll$.unsubscribe();
-    this.toastService.showAllOthersInGroup$.unsubscribe();
   }
 
   //E.g. for a timer of 5 seconds, you would use intervalPeriod with a value of 1000 and repetitions with a value of 5.
@@ -408,9 +327,42 @@ export class ToastComponent
     });
   }
 
-  private addHoverEventListeners() {
-    this.onHover();
-    this.onHoverOut();
+  private addActionEventListeners() {
+    if (this.showOnHover) {
+      if (this.showOnHover === 'mouseenter') {
+        this.addShowToastListener('mouseenter');
+      } else {
+        this.addShowToastListener('mouseover');
+      }
+    }
+    if (this.hideOnHoverOut) {
+      if (this.hideOnHoverOut === 'mouseleave') {
+        this.addHideToastListener('mouseleave');
+      } else {
+        this.addHideToastListener('mouseout');
+      }
+    }
+    if (this.toggleOnClick) {
+      this.addToggleToastListener('click', true);
+    }
+    if (this.showOnClick) {
+      this.addShowToastListener('click');
+    }
+
+    if (this.hideOnClick) {
+      this.addHideToastListener('click', true);
+    }
+    if (this.showOnCustom) {
+      this.addShowToastListener(this.showOnCustom);
+    }
+
+    if (this.hideOnCustom) {
+      this.addHideToastListener(this.hideOnCustom, true);
+    }
+
+    if (this.toggleOnCustom) {
+      this.addToggleToastListener(this.toggleOnCustom, true);
+    }
   }
 
   private moveToastToBody() {
