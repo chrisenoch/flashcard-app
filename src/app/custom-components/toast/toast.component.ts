@@ -39,7 +39,7 @@ import { ToastService } from './toast.service';
   styleUrls: ['./toast.component.scss'],
 })
 export class ToastComponent
-  implements OnInit, DoCheck, AfterContentInit, AfterViewInit, OnDestroy
+  implements OnInit, AfterContentInit, AfterViewInit, OnDestroy
 {
   constructor(
     @Inject(DOCUMENT) document: Document,
@@ -48,9 +48,6 @@ export class ToastComponent
     private toastService: ToastService
   ) {
     this.documentInjected = document;
-  }
-  ngDoCheck(): void {
-    //console.log('DoCheck ran');
   }
 
   isShowing = false;
@@ -83,8 +80,8 @@ export class ToastComponent
   @Input() showOnHover = false;
   @Input() hideOnHoverOut = false;
   @Input() showOnClick = false;
-  @Input() hideOnClick = false;
-  @Input() toggleOnClick = true;
+  @Input() hideOnClick = true;
+  @Input() toggleOnClick = false;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
   @Input() showOnInitDelay = 0;
@@ -102,133 +99,15 @@ export class ToastComponent
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
-    this.toastService.closeAll$.subscribe((e) => {
-      this.onClose();
-    });
-
-    this.toastService.close$.subscribe((toastInfo) => {
-      if (this.toastId === toastInfo?.toastId) {
-        this.onClose();
-      }
-    });
-
-    this.toastService.closeAllOthers$.subscribe((toastInfo) => {
-      if (this.toastId !== toastInfo?.toastId) {
-        this.onClose();
-      }
-    });
-
-    if (this.toastGroupId !== undefined) {
-      this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
-        if (this.toastGroupId === toastInfo?.toastGroupId) {
-          this.onClose();
-        }
-      });
-    }
-
-    if (this.toastGroupId !== undefined) {
-      this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
-        if (
-          this.toastId !== toastInfo?.toastId &&
-          this.toastGroupId === toastInfo?.toastGroupId
-        ) {
-          this.onClose();
-        }
-      });
-    }
-
-    this.toastService.showAll$.subscribe((e) => {
-      //Must update 'show' so that if user hovers in and out, the toast does not close
-      this.keepShowing = true;
-      this.updateShowState(true);
-      if (this.showOnInitDelayTimer) {
-        this.showOnInitDelayTimer.cancelTimer = true;
-      }
-    });
-
-    this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
-      if (this.toastGroupId === toastInfo?.toastGroupId) {
-        //Must update 'show' so that if user hovers in and out, the toast does not close
-        this.keepShowing = true;
-        this.updateShowState(true);
-        if (this.showOnInitDelayTimer) {
-          this.showOnInitDelayTimer.cancelTimer = true;
-        }
-      }
-    });
-
-    this.defineArrow();
     this.checkInputs();
+    this.addDirectiveSubscriptions();
+    this.defineArrow();
 
     if (this.showOnInitDelay > 0 || this.hideOnInitDelay > 0) {
       this.keepShowing = true;
     }
 
-    this.resizeObs$ = fromEvent(window, 'resize');
-    this.ngZone.runOutsideAngular(() => {
-      let displayChanged = false;
-      let firstOfResizeBatch = true;
-
-      this.resizeSub$ = this.resizeObs$
-        .pipe(
-          tap(() => {
-            this.isResizing = true;
-            if (firstOfResizeBatch) {
-              this.ngZone.run(() => {
-                this.pauseTimers(
-                  [
-                    this.showOnInitDelayTimer,
-                    this.hideOnInitDelayTimer,
-                    this.showDelayTimer,
-                    this.hideDelayTimer,
-                  ],
-                  true
-                );
-
-                this.visibility = 'hidden';
-                firstOfResizeBatch = false;
-                if (this.display === 'none') {
-                  this.display = 'inline-block';
-                  displayChanged = true;
-                }
-              });
-            }
-          }),
-          debounceTime(1000)
-        )
-        .subscribe((e) => {
-          this.ngZone.run(() => {
-            this.toastParentDomRect =
-              this.originalToastParent.getBoundingClientRect();
-            this.defineCoords();
-
-            //check here which are active
-            if (displayChanged) {
-              this.display = 'none';
-              displayChanged = false;
-            }
-            if (
-              !this.showOnInitDelayTimer?.isActive &&
-              !this.showDelayTimer?.isActive
-            ) {
-              this.visibility = 'visible';
-            }
-
-            this.pauseTimers(
-              [
-                this.showOnInitDelayTimer,
-                this.hideOnInitDelayTimer,
-                this.showDelayTimer,
-                this.hideDelayTimer,
-              ],
-              false
-            );
-
-            this.isResizing = false;
-            firstOfResizeBatch = true;
-          });
-        });
-    });
+    this.addWindowResizeHandler();
   }
 
   ngAfterViewInit(): void {
@@ -244,16 +123,13 @@ export class ToastComponent
       this.addHideToastListener('mouseout');
     }
     if (this.toggleOnClick) {
-      console.log('in show on click');
       this.addToggleToastListener('click');
     }
     if (this.showOnClick) {
-      console.log('in hide on click');
       this.addShowToastListener('click');
     }
 
     if (this.hideOnClick) {
-      console.log('in hide on click');
       this.addHideToastListener('click');
     }
 
@@ -261,59 +137,11 @@ export class ToastComponent
 
     this.moveToastToBody();
 
-    //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
-    //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
-    this.showOnInitDelayTimer = this.controllableTimer(
-      300 + Math.abs(this.showOnInitDelay)
-    );
-    this.showOnInitDelayTimer.sub.subscribe({
-      complete: () => {
-        this.defineCoords();
-        if (this.hideOnInitDelay > 0) {
-          this.hideOnInitDelayTimer = this.controllableTimer(
-            this.hideOnInitDelay
-          );
-          this.hideOnInitDelayTimer.sub.subscribe({
-            complete: () => {
-              this.updateShowState(false);
-            },
-          });
-        }
-      },
-    });
-
-    // this.showOnInitDelayTimer = setTimeout(() => {
-    //   this.defineCoords();
-
-    //   if (this.hideOnInitDelay > 0) {
-    //     this.hideOnInitDelayTimer = setTimeout(() => {
-    //       this.updateShow(false);
-    //     }, this.hideOnInitDelay);
-    //   }
-    // }, 300 + Math.abs(this.showOnInitDelay));
+    this.initDelayTimers();
   }
 
   ngAfterContentInit(): void {
-    if (this.showCC) {
-      this.renderer2.listen(
-        this.showCC.nativeElement,
-        'click',
-        (e: MouseEvent) => {
-          console.log(
-            'dynamically inserted show button was clicked. Now setting top and left'
-          );
-        }
-      );
-    }
-    if (this.closeCC) {
-      this.renderer2.listen(
-        this.closeCC.nativeElement,
-        'click',
-        (e: MouseEvent) => {
-          this.onClose();
-        }
-      );
-    }
+    this.addConvenienceClickhandlers();
   }
 
   onClose() {
@@ -362,8 +190,8 @@ export class ToastComponent
   }
 
   addToggleToastListener(eventType: string) {
-    console.log('isshowing in addtoggle ' + this.isShowing);
-    console.log('keepShowing in addtoggle ' + this.keepShowing);
+    // console.log('isshowing in addtoggle ' + this.isShowing);
+    // console.log('keepShowing in addtoggle ' + this.keepShowing);
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       eventType,
@@ -389,6 +217,8 @@ export class ToastComponent
   }
 
   addHideToastListener(eventType: string) {
+    console.log('isshowing in addHideToastListener ' + this.isShowing);
+    console.log('keepShowing in addHideToastListener ' + this.keepShowing);
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       eventType,
@@ -651,6 +481,178 @@ export class ToastComponent
           const exhaustiveCheck: never = this.position;
           throw new Error(exhaustiveCheck);
       }
+    }
+  }
+
+  private initDelayTimers() {
+    //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
+    //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
+    this.showOnInitDelayTimer = this.controllableTimer(
+      300 + Math.abs(this.showOnInitDelay)
+    );
+    this.showOnInitDelayTimer.sub.subscribe({
+      complete: () => {
+        this.defineCoords();
+        if (this.hideOnInitDelay > 0) {
+          this.hideOnInitDelayTimer = this.controllableTimer(
+            this.hideOnInitDelay
+          );
+          this.hideOnInitDelayTimer.sub.subscribe({
+            complete: () => {
+              this.updateShowState(false);
+            },
+          });
+        }
+      },
+    });
+  }
+
+  private addDirectiveSubscriptions() {
+    this.toastService.closeAll$.subscribe((e) => {
+      this.onClose();
+    });
+
+    this.toastService.close$.subscribe((toastInfo) => {
+      if (this.toastId === toastInfo?.toastId) {
+        this.onClose();
+      }
+    });
+
+    this.toastService.closeAllOthers$.subscribe((toastInfo) => {
+      if (this.toastId !== toastInfo?.toastId) {
+        this.onClose();
+      }
+    });
+
+    if (this.toastGroupId !== undefined) {
+      this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
+        if (this.toastGroupId === toastInfo?.toastGroupId) {
+          this.onClose();
+        }
+      });
+    }
+
+    if (this.toastGroupId !== undefined) {
+      this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
+        if (
+          this.toastId !== toastInfo?.toastId &&
+          this.toastGroupId === toastInfo?.toastGroupId
+        ) {
+          this.onClose();
+        }
+      });
+    }
+
+    this.toastService.showAll$.subscribe((e) => {
+      //Must update 'show' so that if user hovers in and out, the toast does not close
+      this.keepShowing = true;
+      this.updateShowState(true);
+      if (this.showOnInitDelayTimer) {
+        this.showOnInitDelayTimer.cancelTimer = true;
+      }
+    });
+
+    this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
+      if (this.toastGroupId === toastInfo?.toastGroupId) {
+        //Must update 'show' so that if user hovers in and out, the toast does not close
+        this.keepShowing = true;
+        this.updateShowState(true);
+        if (this.showOnInitDelayTimer) {
+          this.showOnInitDelayTimer.cancelTimer = true;
+        }
+      }
+    });
+  }
+
+  private addWindowResizeHandler() {
+    this.resizeObs$ = fromEvent(window, 'resize');
+    this.ngZone.runOutsideAngular(() => {
+      let displayChanged = false;
+      let firstOfResizeBatch = true;
+
+      this.resizeSub$ = this.resizeObs$
+        .pipe(
+          tap(() => {
+            this.isResizing = true;
+            if (firstOfResizeBatch) {
+              this.ngZone.run(() => {
+                this.pauseTimers(
+                  [
+                    this.showOnInitDelayTimer,
+                    this.hideOnInitDelayTimer,
+                    this.showDelayTimer,
+                    this.hideDelayTimer,
+                  ],
+                  true
+                );
+
+                this.visibility = 'hidden';
+                firstOfResizeBatch = false;
+                if (this.display === 'none') {
+                  this.display = 'inline-block';
+                  displayChanged = true;
+                }
+              });
+            }
+          }),
+          debounceTime(1000)
+        )
+        .subscribe((e) => {
+          this.ngZone.run(() => {
+            this.toastParentDomRect =
+              this.originalToastParent.getBoundingClientRect();
+            this.defineCoords();
+
+            //check here which are active
+            if (displayChanged) {
+              this.display = 'none';
+              displayChanged = false;
+            }
+            if (
+              !this.showOnInitDelayTimer?.isActive &&
+              !this.showDelayTimer?.isActive
+            ) {
+              this.visibility = 'visible';
+            }
+
+            this.pauseTimers(
+              [
+                this.showOnInitDelayTimer,
+                this.hideOnInitDelayTimer,
+                this.showDelayTimer,
+                this.hideDelayTimer,
+              ],
+              false
+            );
+
+            this.isResizing = false;
+            firstOfResizeBatch = true;
+          });
+        });
+    });
+  }
+
+  //Can add an event to an element by adding the template reference to the element. E.g. #close. Does not work in child components.
+  private addConvenienceClickhandlers() {
+    if (this.showCC) {
+      this.renderer2.listen(
+        this.showCC.nativeElement,
+        'click',
+        (e: MouseEvent) => {
+          console.log(
+            'dynamically inserted show button was clicked. Now setting top and left'
+          );
+        }
+      );
+    }
+    if (this.closeCC) {
+      this.renderer2.listen(
+        this.closeCC.nativeElement,
+        'click',
+        (e: MouseEvent) => {
+          this.onClose();
+        }
+      );
     }
   }
 
