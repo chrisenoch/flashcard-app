@@ -7,6 +7,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 export class ToastService {
   constructor() {}
   closeAll$ = new Subject<Event | null>();
+  showAll$ = new Subject<Event | null>();
   close$ = new Subject<{ event: Event; toastId: string } | null>();
 
   onCloseAll(e: Event) {
@@ -15,5 +16,9 @@ export class ToastService {
 
   onClose(e: Event, toastId: string) {
     this.close$.next({ event: e, toastId });
+  }
+
+  onShowAll(e: Event) {
+    this.showAll$.next(e);
   }
 }

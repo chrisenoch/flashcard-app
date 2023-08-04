@@ -23,9 +23,12 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
   onCloseAllSub$!: Subscription;
   onCloseObs$!: Observable<Event>;
   onCloseSub$!: Subscription;
+  onShowAllObs$!: Observable<Event>;
+  onShowAllSub$!: Subscription;
 
   @Input() onCloseAll = false;
   @Input() onClose = false;
+  @Input() onShowAll = false;
   @Input() toastId!: string;
 
   ngOnInit(): void {
@@ -48,9 +51,18 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
         this.toastService.onClose(e, this.toastId);
       });
     }
+
+    if (this.onShowAll) {
+      this.onShowAllObs$ = fromEvent(this.element.nativeElement, 'click');
+      this.onShowAllSub$ = this.onShowAllObs$.subscribe((e) => {
+        this.toastService.onShowAll(e);
+      });
+    }
   }
 
   ngOnDestroy(): void {
     this.onCloseAllSub$.unsubscribe();
+    this.onCloseSub$.unsubscribe();
+    this.onShowAllSub$.unsubscribe();
   }
 }

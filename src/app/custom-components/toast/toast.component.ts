@@ -109,6 +109,17 @@ export class ToastComponent
       }
     });
 
+    this.toastService.showAll$.subscribe((e) => {
+      console.log('Clicked with the following event: ' + e);
+      console.log({ e });
+      //Must update 'show' so that if user hovers in and out, the toast does not close
+      this.show = true;
+      this.updateShow(true);
+      if (this.showOnInitDelayTimer) {
+        this.showOnInitDelayTimer.cancelTimer = true;
+      }
+    });
+
     this.defineArrow();
     this.checkInputs();
 

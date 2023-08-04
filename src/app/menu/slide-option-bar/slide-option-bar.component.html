@@ -42,6 +42,14 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowContentAfterWordVisited()"
   >
+    <app-toast
+      toastId="toast-3"
+      position="LEFT"
+      [show]="true"
+      [animation]="true"
+    >
+      <app-toast-content toastId="toast-3"></app-toast-content>
+    </app-toast>
     <i class="bi bi-eyeglasses font-black text-gray-900 text-3xl"></i>
   </button>
 </div>
