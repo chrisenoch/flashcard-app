@@ -105,9 +105,26 @@ export class ToastComponent
       }
     });
 
+    this.toastService.closeAllOthers$.subscribe((toastInfo) => {
+      if (this.toastId !== toastInfo?.toastId) {
+        this.onClose();
+      }
+    });
+
     if (this.toastGroupId !== undefined) {
       this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
         if (this.toastGroupId === toastInfo?.toastGroupId) {
+          this.onClose();
+        }
+      });
+    }
+
+    if (this.toastGroupId !== undefined) {
+      this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
+        if (
+          this.toastId !== toastInfo?.toastId &&
+          this.toastGroupId === toastInfo?.toastGroupId
+        ) {
           this.onClose();
         }
       });
@@ -119,6 +136,17 @@ export class ToastComponent
       this.updateShow(true);
       if (this.showOnInitDelayTimer) {
         this.showOnInitDelayTimer.cancelTimer = true;
+      }
+    });
+
+    this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
+      if (this.toastGroupId === toastInfo?.toastGroupId) {
+        //Must update 'show' so that if user hovers in and out, the toast does not close
+        this.show = true;
+        this.updateShow(true);
+        if (this.showOnInitDelayTimer) {
+          this.showOnInitDelayTimer.cancelTimer = true;
+        }
       }
     });
 

@@ -5,9 +5,21 @@
       Show All
     </button>
     <button appToast [toastId]="toastId" [onClose]="true">Close</button>
-    <button appToast [toastId]="toastId" [onCloseAll]="true">Close All</button>
+    <button appToast [toastId]="toastId" [onCloseAllOthers]="true">
+      Close All Others
+    </button>
+    <button
+      appToast
+      [toastId]="toastId"
+      onCloseAllOthersInGroup="toast-group-3"
+    >
+      CAOIG
+    </button>
     <button appToast [toastId]="toastId" onCloseAllInGroup="toast-group-3">
       C G
+    </button>
+    <button appToast [toastId]="toastId" onShowAllOthersInGroup="toast-group-3">
+      SAOG 3
     </button>
   </div>
 </div>
