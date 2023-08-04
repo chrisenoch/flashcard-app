@@ -53,6 +53,7 @@ export class ToastComponent
     //console.log('DoCheck ran');
   }
 
+  isShowing = false;
   resizeObs$!: Observable<Event>;
   resizeSub$!: Subscription;
   documentInjected!: Document;
@@ -77,7 +78,8 @@ export class ToastComponent
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
   //Used to programmatically determine if the toast is showing or not.
-  @Input() show = false;
+  //When set, toast does not hide on hover out.
+  @Input('show') keepShowing = false;
   @Input() showOnHover = false;
   @Input() hideOnHoverOut = false;
   @Input() showOnClick = false;
@@ -137,8 +139,8 @@ export class ToastComponent
 
     this.toastService.showAll$.subscribe((e) => {
       //Must update 'show' so that if user hovers in and out, the toast does not close
-      this.show = true;
-      this.updateShow(true);
+      this.keepShowing = true;
+      this.updateShowState(true);
       if (this.showOnInitDelayTimer) {
         this.showOnInitDelayTimer.cancelTimer = true;
       }
@@ -147,8 +149,8 @@ export class ToastComponent
     this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
       if (this.toastGroupId === toastInfo?.toastGroupId) {
         //Must update 'show' so that if user hovers in and out, the toast does not close
-        this.show = true;
-        this.updateShow(true);
+        this.keepShowing = true;
+        this.updateShowState(true);
         if (this.showOnInitDelayTimer) {
           this.showOnInitDelayTimer.cancelTimer = true;
         }
@@ -159,7 +161,7 @@ export class ToastComponent
     this.checkInputs();
 
     if (this.showOnInitDelay > 0 || this.hideOnInitDelay > 0) {
-      this.show = true;
+      this.keepShowing = true;
     }
 
     this.resizeObs$ = fromEvent(window, 'resize');
@@ -273,7 +275,7 @@ export class ToastComponent
           );
           this.hideOnInitDelayTimer.sub.subscribe({
             complete: () => {
-              this.updateShow(false);
+              this.updateShowState(false);
             },
           });
         }
@@ -315,7 +317,7 @@ export class ToastComponent
   }
 
   onClose() {
-    this.updateShow(false);
+    this.updateShowState(false);
 
     this.cancelTimers([
       this.hideDelayTimer,
@@ -335,10 +337,10 @@ export class ToastComponent
     if (this.showDelay > 0) {
       this.showDelayTimer = this.controllableTimer(this.showDelay);
       this.showDelayTimer.sub.subscribe({
-        complete: () => this.updateShow(true),
+        complete: () => this.updateShowState(true),
       });
     } else {
-      this.updateShow(true);
+      this.updateShowState(true);
     }
   }
 
@@ -352,25 +354,26 @@ export class ToastComponent
     if (this.hideDelay > 0) {
       this.hideDelayTimer = this.controllableTimer(this.hideDelay);
       this.hideDelayTimer.sub.subscribe({
-        complete: () => this.updateShow(false),
+        complete: () => this.updateShowState(false),
       });
-    } else if (!this.show) {
-      this.updateShow(false);
+    } else if (!this.keepShowing) {
+      this.updateShowState(false);
     }
   }
 
   addToggleToastListener(eventType: string) {
-    let toggled = this.show;
+    console.log('isshowing in addtoggle ' + this.isShowing);
+    console.log('keepShowing in addtoggle ' + this.keepShowing);
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
-        if (toggled) {
+        if (this.isShowing) {
+          this.keepShowing = false;
           this.hideToast();
         } else {
           this.showToast();
         }
-        toggled = !toggled;
       }
     );
   }
@@ -410,10 +413,10 @@ export class ToastComponent
         if (this.showDelay > 0) {
           this.showDelayTimer = this.controllableTimer(this.showDelay);
           this.showDelayTimer.sub.subscribe({
-            complete: () => this.updateShow(true),
+            complete: () => this.updateShowState(true),
           });
         } else {
-          this.updateShow(true);
+          this.updateShowState(true);
         }
       }
     );
@@ -431,10 +434,10 @@ export class ToastComponent
         if (this.hideDelay > 0) {
           this.hideDelayTimer = this.controllableTimer(this.hideDelay);
           this.hideDelayTimer.sub.subscribe({
-            complete: () => this.updateShow(false),
+            complete: () => this.updateShowState(false),
           });
-        } else if (!this.show) {
-          this.updateShow(false);
+        } else if (!this.keepShowing) {
+          this.updateShowState(false);
         }
       }
     );
@@ -503,13 +506,16 @@ export class ToastComponent
     return controlObj;
   }
 
-  //Show should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
-  private updateShow(isShow: boolean) {
+  //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
+  private updateShowState(isShow: boolean) {
     if (isShow) {
+      //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
       this.display = 'inline-block';
+      this.isShowing = true;
     } else {
       this.display = 'none';
-      this.show = false;
+      this.isShowing = false;
+      this.keepShowing = false;
     }
   }
 
@@ -560,8 +566,9 @@ export class ToastComponent
 
     if (!this.isResizing) {
       //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
-      if (this.show) {
+      if (this.keepShowing) {
         this.display = 'inline-block';
+        this.isShowing = true;
       } else {
         this.display = 'none';
       }
