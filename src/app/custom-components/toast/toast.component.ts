@@ -77,11 +77,14 @@ export class ToastComponent
   //Used to programmatically determine if the toast is showing or not.
   //When set, toast does not hide on hover out.
   @Input('show') keepShowing = false;
-  @Input() showOnHover = false;
-  @Input() hideOnHoverOut = false;
+  @Input() showOnHover: boolean | 'mouseenter' = true;
+  @Input() hideOnHoverOut: boolean | 'mouseleave' = true;
   @Input() showOnClick = false;
-  @Input() hideOnClick = true;
+  @Input() hideOnClick = false;
   @Input() toggleOnClick = false;
+  @Input() hideOnCustom: string | undefined;
+  @Input() showOnCustom: string | undefined;
+  @Input() toggleOnCustom: string | undefined;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
   @Input() showOnInitDelay = 0;
@@ -117,13 +120,21 @@ export class ToastComponent
     this.toastParentDomRect = this.originalToastParent.getBoundingClientRect();
 
     if (this.showOnHover) {
-      this.addShowToastListener('mouseover');
+      if (this.showOnHover === 'mouseenter') {
+        this.addShowToastListener('mouseenter');
+      } else {
+        this.addShowToastListener('mouseover');
+      }
     }
     if (this.hideOnHoverOut) {
-      this.addHideToastListener('mouseout');
+      if (this.hideOnHoverOut === 'mouseleave') {
+        this.addHideToastListener('mouseleave');
+      } else {
+        this.addHideToastListener('mouseout');
+      }
     }
     if (this.toggleOnClick) {
-      this.addToggleToastListener('click');
+      this.addToggleToastListener('click', true);
     }
     if (this.showOnClick) {
       this.addShowToastListener('click');
@@ -131,6 +142,17 @@ export class ToastComponent
 
     if (this.hideOnClick) {
       this.addHideToastListener('click', true);
+    }
+    if (this.showOnCustom) {
+      this.addShowToastListener(this.showOnCustom);
+    }
+
+    if (this.hideOnCustom) {
+      this.addHideToastListener(this.hideOnCustom, true);
+    }
+
+    if (this.toggleOnCustom) {
+      this.addToggleToastListener(this.toggleOnCustom, true);
     }
 
     //this.addHoverEventListeners();
@@ -189,7 +211,10 @@ export class ToastComponent
     }
   }
 
-  addToggleToastListener(eventType: string) {
+  addToggleToastListener(
+    eventType: string,
+    overrideKeepShowing: boolean = false
+  ) {
     // console.log('isshowing in addtoggle ' + this.isShowing);
     // console.log('keepShowing in addtoggle ' + this.keepShowing);
     this.renderer2.listen(
@@ -197,7 +222,9 @@ export class ToastComponent
       eventType,
       (e: Event) => {
         if (this.isShowing) {
-          this.keepShowing = false;
+          if (overrideKeepShowing) {
+            this.keepShowing = false;
+          }
           this.hideToast();
         } else {
           this.showToast();
