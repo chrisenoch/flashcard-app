@@ -281,6 +281,13 @@ export class ToastComponent
 
   ngOnDestroy(): void {
     this.resizeSub$.unsubscribe();
+    this.toastService.closeAll$.unsubscribe();
+    this.toastService.close$.unsubscribe();
+    this.toastService.closeAllInGroup$.unsubscribe();
+    this.toastService.closeAllOthers$.unsubscribe();
+    this.toastService.closeAllOthersInGroup$.unsubscribe();
+    this.toastService.showAll$.unsubscribe();
+    this.toastService.showAllOthersInGroup$.unsubscribe();
   }
 
   //E.g. for a timer of 5 seconds, you would use intervalPeriod with a value of 1000 and repetitions with a value of 5.
