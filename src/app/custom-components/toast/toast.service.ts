@@ -7,13 +7,8 @@ import { BehaviorSubject, Subject } from 'rxjs';
 export class ToastService {
   constructor() {}
   close$ = new Subject<Event | null>();
-  open$ = new Subject<Event | null>();
 
   onClose(e: Event) {
     this.close$.next(e);
-  }
-
-  onOpen(e: Event) {
-    this.open$.next(e);
   }
 }

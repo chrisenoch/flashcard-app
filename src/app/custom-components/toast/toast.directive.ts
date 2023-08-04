@@ -13,7 +13,7 @@ import { Observable, Subscription, fromEvent } from 'rxjs';
 @Directive({
   selector: '[appToast]',
 })
-export class ToastDirective implements AfterViewInit, OnDestroy {
+export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private element: ElementRef,
     private toastService: ToastService
@@ -23,6 +23,7 @@ export class ToastDirective implements AfterViewInit, OnDestroy {
   onCloseSub$!: Subscription;
 
   @Input() onClose = false;
+  @Input() toastId!: string;
 
   // @HostListener('click', ['$event'])
   // close(event: Event) {
@@ -36,10 +37,14 @@ export class ToastDirective implements AfterViewInit, OnDestroy {
   //   this.toastService.onOpen(event);
   // }
 
-  //I chose this approach instead of @HostListener, because this approach lets me add event listeners conditionally.
+  ngOnInit(): void {
+    if (!this.toastId) {
+      throw Error('You must set the toastId attribute');
+    }
+  }
+
+  //I chose this approach instead of @HostListener, because this lets me add event listeners conditionally.
   ngAfterViewInit(): void {
-    console.log('values of onClose');
-    console.log(this.onClose);
     if (this.onClose) {
       this.onCloseObs$ = fromEvent(this.element.nativeElement, 'click');
       this.onCloseSub$ = this.onCloseObs$.subscribe((e) => {

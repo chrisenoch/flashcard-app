@@ -5,15 +5,13 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowTranslation()"
   >
-    <app-toast position="LEFT" [show]="true" [animation]="true">
-      <!-- <div class="w-full h-full bg-gray-400 p-2 rounded-lg">
-        <h1>My tooltip/toast</h1>
-        <div class="flex gap-4">
-          <button #show>Show</button>
-          <button #close>Close me</button>
-        </div>
-      </div> -->
-      <app-toast-content></app-toast-content>
+    <app-toast
+      toastId="toast-1"
+      position="LEFT"
+      [show]="true"
+      [animation]="true"
+    >
+      <app-toast-content toastId="toast-1"></app-toast-content>
     </app-toast>
     <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
   </button>
@@ -21,6 +19,14 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onToggleTranslation()"
   >
+    <app-toast
+      toastId="toast-2"
+      position="RIGHT"
+      [show]="true"
+      [animation]="true"
+    >
+      <app-toast-content toastId="toast-2"></app-toast-content>
+    </app-toast>
     <i class="bi bi-arrow-repeat font-black text-gray-900 text-3xl"></i>
   </button>
   <button

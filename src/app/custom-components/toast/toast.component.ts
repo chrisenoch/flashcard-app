@@ -75,6 +75,7 @@ export class ToastComponent
   @Input() animation: boolean | null = null;
   //Used to programmatically determine if the toast is showing or not.
 
+  @Input() toastId!: string;
   @Input() show = false;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
@@ -500,6 +501,9 @@ export class ToastComponent
   }
 
   private checkInputs() {
+    if (!this.toastId) {
+      throw Error('You must set the toastId attribute');
+    }
     if (this.hideDelay < 0) {
       throw Error('hideDelay must not be less than 0.');
     }

@@ -2,6 +2,8 @@
   <h1>My tooltip/toast</h1>
   <div class="flex gap-4">
     <button #show>Show</button>
-    <button #close appToast [onClose]="true">Close me</button>
+    <button #close appToast [toastId]="toastId" [onClose]="true">
+      Close me
+    </button>
   </div>
 </div>
