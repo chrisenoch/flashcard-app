@@ -130,7 +130,7 @@ export class ToastComponent
     }
 
     if (this.hideOnClick) {
-      this.addHideToastListener('click');
+      this.addHideToastListener('click', true);
     }
 
     //this.addHoverEventListeners();
@@ -216,13 +216,19 @@ export class ToastComponent
     );
   }
 
-  addHideToastListener(eventType: string) {
+  addHideToastListener(
+    eventType: string,
+    overrideKeepShowing: boolean = false
+  ) {
     console.log('isshowing in addHideToastListener ' + this.isShowing);
     console.log('keepShowing in addHideToastListener ' + this.keepShowing);
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
+        if (overrideKeepShowing) {
+          this.keepShowing = false;
+        }
         this.hideToast();
       }
     );
