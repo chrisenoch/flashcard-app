@@ -76,6 +76,7 @@ export class ToastComponent
   //Used to programmatically determine if the toast is showing or not.
 
   @Input() toastId!: string;
+  @Input() toastGroupId: string | undefined;
   @Input() show = false;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
@@ -95,23 +96,24 @@ export class ToastComponent
 
   ngOnInit(): void {
     this.toastService.closeAll$.subscribe((e) => {
-      console.log('Clicked with the following event: ' + e);
-      console.log({ e });
       this.onClose();
     });
 
     this.toastService.close$.subscribe((toastInfo) => {
-      console.log('Clicked with the following event: ' + toastInfo?.event);
-      console.log(toastInfo?.event);
-
       if (this.toastId === toastInfo?.toastId) {
         this.onClose();
       }
     });
 
+    if (this.toastGroupId !== undefined) {
+      this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
+        if (this.toastGroupId === toastInfo?.toastGroupId) {
+          this.onClose();
+        }
+      });
+    }
+
     this.toastService.showAll$.subscribe((e) => {
-      console.log('Clicked with the following event: ' + e);
-      console.log({ e });
       //Must update 'show' so that if user hovers in and out, the toast does not close
       this.show = true;
       this.updateShow(true);

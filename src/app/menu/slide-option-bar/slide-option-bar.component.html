@@ -7,6 +7,7 @@
   >
     <app-toast
       toastId="toast-1"
+      toastGroupId="toast-group-1"
       position="LEFT"
       [show]="true"
       [animation]="true"
@@ -21,6 +22,7 @@
   >
     <app-toast
       toastId="toast-2"
+      toastGroupId="toast-group-1"
       position="RIGHT"
       [show]="true"
       [animation]="true"
@@ -44,6 +46,7 @@
   >
     <app-toast
       toastId="toast-3"
+      toastGroupId="toast-group-3"
       position="LEFT"
       [show]="true"
       [animation]="true"
@@ -60,6 +63,15 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowAllExerciseAnswers()"
   >
+    <app-toast
+      toastId="toast-4"
+      toastGroupId="toast-group-3"
+      position="RIGHT"
+      [show]="true"
+      [animation]="true"
+    >
+      <app-toast-content toastId="toast-4"></app-toast-content>
+    </app-toast>
     <i class="bi bi-eye font-black text-gray-900 text-3xl"></i>
   </button>
   <button
