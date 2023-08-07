@@ -5,7 +5,7 @@
       Show All
     </button>
     <button appToast [toastId]="toastId" [onClose]="true">Close</button>
-    <button appToast [toastId]="toastId" [onCloseAllOthers]="true">
+    <!-- <button appToast [toastId]="toastId" [onCloseAllOthers]="true">
       Close All Others
     </button>
     <button
@@ -14,12 +14,12 @@
       onCloseAllOthersInGroup="toast-group-3"
     >
       CAOIG
+    </button> -->
+    <button appToast [toastId]="toastId" onGoToNextId="toast-destination-2">
+      Next d
     </button>
-    <button appToast [toastId]="toastId" onCloseAllInGroup="toast-group-3">
-      C G
-    </button>
-    <button appToast [toastId]="toastId" onShowAllOthersInGroup="toast-group-3">
+    <!-- <button appToast [toastId]="toastId" onShowAllOthersInGroup="toast-group-3">
       SAOG 3
-    </button>
+    </button> -->
   </div>
 </div>

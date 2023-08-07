@@ -33,6 +33,8 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
   onShowAllSub$!: Subscription;
   onShowAllOthersInGroupObs$!: Observable<Event>;
   onShowAllOthersInGroupSub$!: Subscription;
+  onGoToNextIdObs$!: Observable<Event>;
+  onGoToNextIdSub$!: Subscription;
 
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
@@ -43,6 +45,7 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
   @Input() onCloseAllOthersInGroup: string | undefined;
   @Input() onShowAll = false;
   @Input() onShowAllOthersInGroup: string | undefined;
+  @Input() onGoToNextId: string | undefined;
 
   ngOnInit(): void {
     if (!this.toastId) {
@@ -119,6 +122,13 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
       );
       this.onCloseAllInGroupSub$ = this.onCloseAllInGroupObs$.subscribe((e) => {
         this.toastService.onCloseAllInGroup(e, this.onCloseAllInGroup!);
+      });
+    }
+
+    if (this.onGoToNextId !== undefined) {
+      this.onGoToNextIdObs$ = fromEvent(this.element.nativeElement, 'click');
+      this.onGoToNextIdSub$ = this.onGoToNextIdObs$.subscribe((e) => {
+        this.toastService.onGoToNextId(e);
       });
     }
   }

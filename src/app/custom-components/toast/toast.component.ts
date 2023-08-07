@@ -57,7 +57,7 @@ export class ToastComponent
   toastHeight!: number;
   toastWidth!: number;
   count = 0;
-  toastParentDomRect!: DOMRect;
+  toastDestinationDomRect!: DOMRect;
   originalToastParent!: Element;
   top: string | null = '0px';
   bottom: string | null = null;
@@ -102,10 +102,11 @@ export class ToastComponent
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   goToNextElement(nextElementId: string) {
+    console.log('nextElementId: ' + nextElementId);
     const nextEle = this.documentInjected.getElementById(nextElementId);
     if (nextEle) {
-      const toastDomRect = nextEle.getBoundingClientRect();
-      //this.defineCoords(toastDomRect);
+      const eleDomRect = nextEle.getBoundingClientRect();
+      this.defineCoords(this.toastVC, eleDomRect);
     }
   }
 
@@ -129,13 +130,14 @@ export class ToastComponent
     this.originalToastParent =
       this.toastVC.nativeElement.parentElement.parentElement;
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
-    this.toastParentDomRect = this.originalToastParent.getBoundingClientRect();
+    this.toastDestinationDomRect =
+      this.originalToastParent.getBoundingClientRect();
 
     this.addActionEventListeners();
 
     this.moveToastToBody();
 
-    this.initDelayTimers(this.toastVC);
+    this.initDelayTimers(this.toastVC, this.toastDestinationDomRect);
   }
 
   ngOnDestroy(): void {
@@ -397,7 +399,7 @@ export class ToastComponent
     this.visibility = 'visible';
   }
 
-  private defineCoords(toast: ElementRef) {
+  private defineCoords(toast: ElementRef, destinationDomRect: DOMRect) {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
@@ -408,45 +410,45 @@ export class ToastComponent
     switch (this.position) {
       case 'LEFT':
         this.left =
-          this.toastParentDomRect.left - this.toastWidth - this.gapInPx + 'px';
+          destinationDomRect.left - this.toastWidth - this.gapInPx + 'px';
 
         this.top =
-          this.toastParentDomRect.top +
-          this.toastParentDomRect.height / 2 -
+          destinationDomRect.top +
+          destinationDomRect.height / 2 -
           this.toastHeight / 2 +
           'px';
         break;
       case 'RIGHT':
         this.left =
-          this.toastParentDomRect.left +
-          this.toastParentDomRect.width +
+          destinationDomRect.left +
+          destinationDomRect.width +
           this.gapInPx +
           'px';
         this.top =
-          this.toastParentDomRect.top +
-          this.toastParentDomRect.height / 2 -
+          destinationDomRect.top +
+          destinationDomRect.height / 2 -
           this.toastHeight / 2 +
           'px';
 
         break;
       case 'TOP':
         this.left =
-          this.toastParentDomRect.left -
+          destinationDomRect.left -
           this.toastWidth / 2 +
-          this.toastParentDomRect.width / 2 +
+          destinationDomRect.width / 2 +
           'px';
         this.top =
-          this.toastParentDomRect.top - this.toastHeight - this.gapInPx + 'px';
+          destinationDomRect.top - this.toastHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
         this.left =
-          this.toastParentDomRect.left -
+          destinationDomRect.left -
           this.toastWidth / 2 +
-          this.toastParentDomRect.width / 2 +
+          destinationDomRect.width / 2 +
           'px';
         this.top =
-          this.toastParentDomRect.top +
-          this.toastParentDomRect.height +
+          destinationDomRect.top +
+          destinationDomRect.height +
           this.gapInPx +
           'px';
         break;
@@ -484,7 +486,7 @@ export class ToastComponent
     }
   }
 
-  private initDelayTimers(toast: ElementRef) {
+  private initDelayTimers(toast: ElementRef, destinationDomRect: DOMRect) {
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     this.showOnInitDelayTimer = this.controllableTimer(
@@ -493,7 +495,7 @@ export class ToastComponent
     this.showOnInitDelayTimer.sub.subscribe({
       complete: () => {
         this.initDisplayAndVisibility();
-        this.defineCoords(toast);
+        this.defineCoords(toast, destinationDomRect);
         if (this.hideOnInitDelay > 0) {
           this.hideOnInitDelayTimer = this.controllableTimer(
             this.hideOnInitDelay
@@ -509,6 +511,12 @@ export class ToastComponent
   }
 
   private addDirectiveSubscriptions() {
+    if (this.toastGroupId !== undefined) {
+      this.toastService.goToNextId$.subscribe((e) => {
+        this.goToNextElement(this.nextElementId!);
+      });
+    }
+
     this.toastService.closeAll$.subscribe((e) => {
       this.onClose();
     });
@@ -599,9 +607,9 @@ export class ToastComponent
         )
         .subscribe((e) => {
           this.ngZone.run(() => {
-            this.toastParentDomRect =
+            this.toastDestinationDomRect =
               this.originalToastParent.getBoundingClientRect();
-            this.defineCoords(this.toastVC);
+            this.defineCoords(this.toastVC, this.toastDestinationDomRect);
 
             //check here which are active
             if (displayChanged) {

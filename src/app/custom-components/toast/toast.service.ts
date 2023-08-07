@@ -28,6 +28,12 @@ export class ToastService {
     toastGroupId: string;
   } | null>();
 
+  goToNextId$ = new Subject<Event | null>();
+
+  onGoToNextId(e: Event) {
+    this.goToNextId$.next(e);
+  }
+
   onCloseAll(e: Event) {
     this.closeAll$.next(e);
   }
