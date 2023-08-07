@@ -57,7 +57,6 @@ export class ToastComponent
   toastHeight!: number;
   toastWidth!: number;
   count = 0;
-  isResizing = false;
   toastParentDomRect!: DOMRect;
   originalToastParent!: Element;
   top: string | null = '0px';
@@ -378,6 +377,17 @@ export class ToastComponent
     );
   }
 
+  private initDisplayAndVisibility() {
+    //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
+    if (this.keepShowing) {
+      this.display = 'inline-block';
+      this.isShowing = true;
+    } else {
+      this.display = 'none';
+    }
+    this.visibility = 'visible';
+  }
+
   private defineCoords() {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
@@ -385,17 +395,6 @@ export class ToastComponent
 
     this.toastHeight = this.toastVC.nativeElement.offsetHeight;
     this.toastWidth = this.toastVC.nativeElement.offsetWidth;
-
-    if (!this.isResizing) {
-      //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
-      if (this.keepShowing) {
-        this.display = 'inline-block';
-        this.isShowing = true;
-      } else {
-        this.display = 'none';
-      }
-      this.visibility = 'visible';
-    }
 
     switch (this.position) {
       case 'LEFT':
@@ -484,6 +483,7 @@ export class ToastComponent
     );
     this.showOnInitDelayTimer.sub.subscribe({
       complete: () => {
+        this.initDisplayAndVisibility();
         this.defineCoords();
         if (this.hideOnInitDelay > 0) {
           this.hideOnInitDelayTimer = this.controllableTimer(
@@ -565,7 +565,6 @@ export class ToastComponent
       this.resizeSub$ = this.resizeObs$
         .pipe(
           tap(() => {
-            this.isResizing = true;
             if (firstOfResizeBatch) {
               this.ngZone.run(() => {
                 this.pauseTimers(
@@ -617,7 +616,6 @@ export class ToastComponent
               false
             );
 
-            this.isResizing = false;
             firstOfResizeBatch = true;
           });
         });
