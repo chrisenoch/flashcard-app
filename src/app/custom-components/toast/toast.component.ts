@@ -95,10 +95,19 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
+  @Input() nextElementId: string | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
+
+  goToNextElement(nextElementId: string) {
+    const nextEle = this.documentInjected.getElementById(nextElementId);
+    if (nextEle) {
+      const toastDomRect = nextEle.getBoundingClientRect();
+      //this.defineCoords(toastDomRect);
+    }
+  }
 
   ngOnInit(): void {
     this.checkInputs();
@@ -126,7 +135,7 @@ export class ToastComponent
 
     this.moveToastToBody();
 
-    this.initDelayTimers();
+    this.initDelayTimers(this.toastVC);
   }
 
   ngOnDestroy(): void {
@@ -388,13 +397,13 @@ export class ToastComponent
     this.visibility = 'visible';
   }
 
-  private defineCoords() {
+  private defineCoords(toast: ElementRef) {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
 
-    this.toastHeight = this.toastVC.nativeElement.offsetHeight;
-    this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+    this.toastHeight = toast.nativeElement.offsetHeight;
+    this.toastWidth = toast.nativeElement.offsetWidth;
 
     switch (this.position) {
       case 'LEFT':
@@ -475,7 +484,7 @@ export class ToastComponent
     }
   }
 
-  private initDelayTimers() {
+  private initDelayTimers(toast: ElementRef) {
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     this.showOnInitDelayTimer = this.controllableTimer(
@@ -484,7 +493,7 @@ export class ToastComponent
     this.showOnInitDelayTimer.sub.subscribe({
       complete: () => {
         this.initDisplayAndVisibility();
-        this.defineCoords();
+        this.defineCoords(toast);
         if (this.hideOnInitDelay > 0) {
           this.hideOnInitDelayTimer = this.controllableTimer(
             this.hideOnInitDelay
@@ -592,7 +601,7 @@ export class ToastComponent
           this.ngZone.run(() => {
             this.toastParentDomRect =
               this.originalToastParent.getBoundingClientRect();
-            this.defineCoords();
+            this.defineCoords(this.toastVC);
 
             //check here which are active
             if (displayChanged) {
