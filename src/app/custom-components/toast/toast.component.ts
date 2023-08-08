@@ -30,6 +30,8 @@ import {
   takeUntil,
   takeWhile,
   finalize,
+  Subject,
+  take,
 } from 'rxjs';
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 import { ToastService } from './toast.service';
@@ -77,7 +79,7 @@ export class ToastComponent
   showDelayTimer: controlledTimer | undefined;
   displayChanged = false;
   firstOfResizeBatch = true;
-  runRedefineCoords = false;
+  afterViewChecked$ = new Subject<boolean>();
 
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
@@ -120,19 +122,8 @@ export class ToastComponent
   }
 
   ngAfterViewChecked(): void {
-    if (this.runRedefineCoords) {
-      //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
-      setTimeout(() => {
-        //console.log('in first SetTimeout');
-        //this.redefineCoords();
-
-        setTimeout(() => {
-          console.log('in second SetTimeout');
-          this.redefineCoords();
-          this.runRedefineCoords = false;
-        }, 0);
-      }, 0);
-    }
+    console.log('in AfterViewChecked');
+    this.afterViewChecked$.next(true);
   }
 
   ngOnInit(): void {
@@ -641,7 +632,18 @@ export class ToastComponent
         )
         .subscribe((e) => {
           this.ngZone.run(() => {
-            this.runRedefineCoords = true;
+            this.afterViewChecked$.pipe(take(1)).subscribe(() => {
+              console.log(
+                '********in afterViewChecked sub in addWindowResizehandler'
+              );
+              //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
+              setTimeout(() => {
+                setTimeout(() => {
+                  console.log('in second SetTimeout');
+                  this.redefineCoords();
+                }, 0);
+              }, 0);
+            });
           });
         });
     });
