@@ -163,16 +163,12 @@ export class ToastComponent
 
     this.moveToastToBody();
 
-    //defineCoords
-
-    //if no showOnInitdelaytimer
-    //initDisplayAndVisibility
-    //check if hideOnInit and if so init it.
-
-    //else showOnItDelay followed by hideOnOnitDelay
-    // in show part, updateshow
-
-    this.initDelayTimers(this.toastVC);
+    //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
+    //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
+    setTimeout(() => {
+      this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+      this.initDelayTimers();
+    }, 300);
   }
 
   ngOnDestroy(): void {
@@ -522,39 +518,42 @@ export class ToastComponent
     }
   }
 
-  private initDelayTimers(toast: ElementRef) {
-    //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
-    //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
+  private defineHideOnInitDelay() {
+    if (this.hideOnInitDelay > 0) {
+      this.hideOnInitDelayTimer = this.controllableTimer(this.hideOnInitDelay);
+      this.hideOnInitDelayTimer.sub.subscribe({
+        complete: () => {
+          this.updateShowState(false);
+        },
+      });
+    }
+  }
 
-    this.showOnInitDelayTimer = this.controllableTimer(
-      300 + Math.abs(this.showOnInitDelay)
-    );
-    this.showOnInitDelayTimer.sub.subscribe({
-      complete: () => {
-        this.initDisplayAndVisibility();
-        this.defineCoords(toast, this.toastDestinationDomRect);
-        if (this.hideOnInitDelay > 0) {
-          this.hideOnInitDelayTimer = this.controllableTimer(
-            this.hideOnInitDelay
-          );
-          this.hideOnInitDelayTimer.sub.subscribe({
-            complete: () => {
-              this.updateShowState(false);
-            },
-          });
-        }
-      },
-      error: (e: Error) => {
-        if (
-          e.message === 'Observable cancelled because cancelTimer set to true'
-        ) {
-          console.log('in showOnInitDelayTimer Error');
+  private initDelayTimers() {
+    if (this.showOnInitDelay <= 0) {
+      this.initDisplayAndVisibility();
+      this.defineHideOnInitDelay();
+    } else {
+      this.showOnInitDelayTimer = this.controllableTimer(
+        Math.abs(this.showOnInitDelay)
+      );
+      this.showOnInitDelayTimer.sub.subscribe({
+        complete: () => {
           this.initDisplayAndVisibility();
-          this.defineCoords(toast, this.toastDestinationDomRect);
-          this.keepShowing = false;
-        }
-      },
-    });
+          this.defineHideOnInitDelay();
+        },
+        error: (e: Error) => {
+          //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
+          if (
+            e.message === 'Observable cancelled because cancelTimer set to true'
+          ) {
+            this.initDisplayAndVisibility();
+            //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled. Thus we don't call defineHideOninitDelay here
+            this.keepShowing = false; //So that if hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
+          }
+        },
+      });
+    }
   }
 
   private addDirectiveSubscriptions() {
