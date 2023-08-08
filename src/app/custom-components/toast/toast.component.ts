@@ -121,8 +121,13 @@ export class ToastComponent
 
   ngAfterViewChecked(): void {
     if (this.runRedefineCoords) {
+      //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
       setTimeout(() => {
+        //console.log('in first SetTimeout');
+        //this.redefineCoords();
+
         setTimeout(() => {
+          console.log('in second SetTimeout');
           this.redefineCoords();
           this.runRedefineCoords = false;
         }, 0);
@@ -149,9 +154,15 @@ export class ToastComponent
   ngAfterViewInit(): void {
     this.originalToastParent =
       this.toastVC.nativeElement.parentElement.parentElement;
+    console.log('originalToastParent ');
+    console.log(this.originalToastParent);
+
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastDestinationDomRect =
       this.originalToastParent.getBoundingClientRect();
+
+    console.log('toastDestDOMRect in AfterViewInit');
+    console.log(this.toastDestinationDomRect);
 
     this.addActionEventListeners();
 
@@ -427,6 +438,9 @@ export class ToastComponent
     this.toastHeight = toast.nativeElement.offsetHeight;
     this.toastWidth = toast.nativeElement.offsetWidth;
 
+    console.log('toastWidth and toastHeight');
+    console.log(this.toastWidth + ' ' + this.toastHeight);
+
     switch (this.position) {
       case 'LEFT':
         this.left =
@@ -611,6 +625,9 @@ export class ToastComponent
                   true
                 );
 
+                console.log('display val in addWindowresizeHandler');
+                console.log(this.display);
+
                 this.visibility = 'hidden';
                 this.firstOfResizeBatch = false;
                 if (this.display === 'none') {
@@ -625,31 +642,6 @@ export class ToastComponent
         .subscribe((e) => {
           this.ngZone.run(() => {
             this.runRedefineCoords = true;
-
-            // this.toastDestinationDomRect =
-            //   this.originalToastParent.getBoundingClientRect();
-            // this.defineCoords(this.toastVC, this.toastDestinationDomRect);
-            // //check here which are active
-            // if (this.displayChanged) {
-            //   this.display = 'none';
-            //   this.displayChanged = false;
-            // }
-            // if (
-            //   !this.showOnInitDelayTimer?.isActive &&
-            //   !this.showDelayTimer?.isActive
-            // ) {
-            //   this.visibility = 'visible';
-            // }
-            // this.pauseTimers(
-            //   [
-            //     this.showOnInitDelayTimer,
-            //     this.hideOnInitDelayTimer,
-            //     this.showDelayTimer,
-            //     this.hideDelayTimer,
-            //   ],
-            //   false
-            // );
-            // this.firstOfResizeBatch = true;
           });
         });
     });
@@ -658,7 +650,15 @@ export class ToastComponent
   private redefineCoords() {
     this.toastDestinationDomRect =
       this.originalToastParent.getBoundingClientRect();
+
     this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+
+    console.log('toastDestinationDomRect in redefineCoords ');
+    console.log(JSON.stringify(this.toastDestinationDomRect));
+
+    console.log('displayChanged in redefine coords');
+    console.log(this.displayChanged);
+    console.log(this.display);
 
     //check here which are active
     if (this.displayChanged) {
