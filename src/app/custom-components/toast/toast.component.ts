@@ -163,6 +163,15 @@ export class ToastComponent
 
     this.moveToastToBody();
 
+    //defineCoords
+
+    //if no showOnInitdelaytimer
+    //initDisplayAndVisibility
+    //check if hideOnInit and if so init it.
+
+    //else showOnItDelay followed by hideOnOnitDelay
+    // in show part, updateshow
+
     this.initDelayTimers(this.toastVC);
   }
 
@@ -516,6 +525,7 @@ export class ToastComponent
   private initDelayTimers(toast: ElementRef) {
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
+
     this.showOnInitDelayTimer = this.controllableTimer(
       300 + Math.abs(this.showOnInitDelay)
     );
@@ -532,6 +542,16 @@ export class ToastComponent
               this.updateShowState(false);
             },
           });
+        }
+      },
+      error: (e: Error) => {
+        if (
+          e.message === 'Observable cancelled because cancelTimer set to true'
+        ) {
+          console.log('in showOnInitDelayTimer Error');
+          this.initDisplayAndVisibility();
+          this.defineCoords(toast, this.toastDestinationDomRect);
+          this.keepShowing = false;
         }
       },
     });
