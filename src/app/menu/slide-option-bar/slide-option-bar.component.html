@@ -5,19 +5,17 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowTranslation()"
   >
-    <!-- <app-toast
+    <app-toast
       toastId="toast-1"
       toastGroupId="toast-group-1"
       position="LEFT"
       [show]="true"
-      [toggleOnClick]="true"
+      [showOnInitDelay]="3000"
       nextElementId="toast-destination-2"
-      [showOnHover]="false"
-      [hideOnHoverOut]="false"
       [animation]="true"
     >
       <app-toast-content toastId="toast-1"></app-toast-content>
-    </app-toast> -->
+    </app-toast>
     <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
   </button>
   <button

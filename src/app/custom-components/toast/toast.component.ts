@@ -80,6 +80,7 @@ export class ToastComponent
   displayChanged = false;
   firstOfResizeBatch = true;
   afterViewChecked$ = new Subject<boolean>();
+  runAfterViewCheckedSub = false;
 
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
@@ -122,8 +123,11 @@ export class ToastComponent
   }
 
   ngAfterViewChecked(): void {
-    console.log('in AfterViewChecked');
-    this.afterViewChecked$.next(true);
+    if (this.runAfterViewCheckedSub) {
+      console.log('in AfterViewChecked');
+      this.afterViewChecked$.next(true);
+      this.runAfterViewCheckedSub = false;
+    }
   }
 
   ngOnInit(): void {
@@ -626,8 +630,10 @@ export class ToastComponent
           debounceTime(1000)
         )
         .subscribe((e) => {
+          this.runAfterViewCheckedSub = true;
           this.ngZone.run(() => {
             this.afterViewChecked$.pipe(take(1)).subscribe(() => {
+              console.log('********in afterViewCheckedSub');
               //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
               setTimeout(() => {
                 setTimeout(() => {
