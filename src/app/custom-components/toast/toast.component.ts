@@ -14,6 +14,7 @@ import {
   ViewChild,
   NgZone,
   HostListener,
+  AfterViewChecked,
 } from '@angular/core';
 import {
   Observable,
@@ -39,7 +40,12 @@ import { ToastService } from './toast.service';
   styleUrls: ['./toast.component.scss'],
 })
 export class ToastComponent
-  implements OnInit, AfterContentInit, AfterViewInit, OnDestroy
+  implements
+    OnInit,
+    AfterContentInit,
+    AfterViewInit,
+    AfterViewChecked,
+    OnDestroy
 {
   constructor(
     @Inject(DOCUMENT) document: Document,
@@ -69,6 +75,9 @@ export class ToastComponent
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
+  displayChanged = false;
+  firstOfResizeBatch = true;
+  runRedefineCoords = false;
 
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
@@ -107,6 +116,17 @@ export class ToastComponent
     if (nextEle) {
       const eleDomRect = nextEle.getBoundingClientRect();
       this.defineCoords(this.toastVC, eleDomRect);
+    }
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.runRedefineCoords) {
+      setTimeout(() => {
+        setTimeout(() => {
+          this.redefineCoords();
+          this.runRedefineCoords = false;
+        }, 0);
+      }, 0);
     }
   }
 
@@ -576,13 +596,10 @@ export class ToastComponent
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
     this.ngZone.runOutsideAngular(() => {
-      let displayChanged = false;
-      let firstOfResizeBatch = true;
-
       this.resizeSub$ = this.resizeObs$
         .pipe(
           tap(() => {
-            if (firstOfResizeBatch) {
+            if (this.firstOfResizeBatch) {
               this.ngZone.run(() => {
                 this.pauseTimers(
                   [
@@ -595,10 +612,10 @@ export class ToastComponent
                 );
 
                 this.visibility = 'hidden';
-                firstOfResizeBatch = false;
+                this.firstOfResizeBatch = false;
                 if (this.display === 'none') {
                   this.display = 'inline-block';
-                  displayChanged = true;
+                  this.displayChanged = true;
                 }
               });
             }
@@ -607,36 +624,65 @@ export class ToastComponent
         )
         .subscribe((e) => {
           this.ngZone.run(() => {
-            this.toastDestinationDomRect =
-              this.originalToastParent.getBoundingClientRect();
-            this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+            this.runRedefineCoords = true;
 
-            //check here which are active
-            if (displayChanged) {
-              this.display = 'none';
-              displayChanged = false;
-            }
-            if (
-              !this.showOnInitDelayTimer?.isActive &&
-              !this.showDelayTimer?.isActive
-            ) {
-              this.visibility = 'visible';
-            }
-
-            this.pauseTimers(
-              [
-                this.showOnInitDelayTimer,
-                this.hideOnInitDelayTimer,
-                this.showDelayTimer,
-                this.hideDelayTimer,
-              ],
-              false
-            );
-
-            firstOfResizeBatch = true;
+            // this.toastDestinationDomRect =
+            //   this.originalToastParent.getBoundingClientRect();
+            // this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+            // //check here which are active
+            // if (this.displayChanged) {
+            //   this.display = 'none';
+            //   this.displayChanged = false;
+            // }
+            // if (
+            //   !this.showOnInitDelayTimer?.isActive &&
+            //   !this.showDelayTimer?.isActive
+            // ) {
+            //   this.visibility = 'visible';
+            // }
+            // this.pauseTimers(
+            //   [
+            //     this.showOnInitDelayTimer,
+            //     this.hideOnInitDelayTimer,
+            //     this.showDelayTimer,
+            //     this.hideDelayTimer,
+            //   ],
+            //   false
+            // );
+            // this.firstOfResizeBatch = true;
           });
         });
     });
+  }
+
+  private redefineCoords() {
+    this.toastDestinationDomRect =
+      this.originalToastParent.getBoundingClientRect();
+    this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+
+    //check here which are active
+    if (this.displayChanged) {
+      this.display = 'none';
+      this.displayChanged = false;
+    }
+    if (
+      !this.showOnInitDelayTimer?.isActive &&
+      !this.showDelayTimer?.isActive
+    ) {
+      this.visibility = 'visible';
+    }
+
+    this.pauseTimers(
+      [
+        this.showOnInitDelayTimer,
+        this.hideOnInitDelayTimer,
+        this.showDelayTimer,
+        this.hideDelayTimer,
+      ],
+      false
+    );
+
+    this.firstOfResizeBatch = true;
   }
 
   //Can add an event to an element by adding the template reference to the element. E.g. #close. Does not work in child components.

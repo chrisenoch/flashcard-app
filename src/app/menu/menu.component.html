@@ -81,6 +81,23 @@
     }"
   >
     <div class="flex gap-4 justify-center w-[30rem]">
+      <button class="p-4 bg-green-600 rounded-lg">
+        Test
+
+        <app-toast
+          toastId="toast-1"
+          toastGroupId="toast-group-1"
+          position="LEFT"
+          [show]="true"
+          [toggleOnClick]="true"
+          nextElementId="toast-destination-2"
+          [showOnHover]="false"
+          [hideOnHoverOut]="false"
+          [animation]="true"
+        >
+          <app-toast-content toastId="toast-1"></app-toast-content>
+        </app-toast>
+      </button>
       <p-button
         id="toast-destination-2"
         label="Start"
