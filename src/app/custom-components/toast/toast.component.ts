@@ -152,14 +152,14 @@ export class ToastComponent
     this.toastDestinationDomRect =
       this.originalToastParent.getBoundingClientRect();
 
-    console.log('toastDestDOMRect in AfterViewInit');
+    console.log('toastDestinationDOMRect in AfterViewInit');
     console.log(this.toastDestinationDomRect);
 
     this.addActionEventListeners();
 
     this.moveToastToBody();
 
-    this.initDelayTimers(this.toastVC, this.toastDestinationDomRect);
+    this.initDelayTimers(this.toastVC);
   }
 
   ngOnDestroy(): void {
@@ -254,8 +254,6 @@ export class ToastComponent
     eventType: string,
     overrideKeepShowing: boolean = false
   ) {
-    console.log('isshowing in addHideToastListener ' + this.isShowing);
-    console.log('keepShowing in addHideToastListener ' + this.keepShowing);
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       eventType,
@@ -511,7 +509,7 @@ export class ToastComponent
     }
   }
 
-  private initDelayTimers(toast: ElementRef, destinationDomRect: DOMRect) {
+  private initDelayTimers(toast: ElementRef) {
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     this.showOnInitDelayTimer = this.controllableTimer(
@@ -520,7 +518,7 @@ export class ToastComponent
     this.showOnInitDelayTimer.sub.subscribe({
       complete: () => {
         this.initDisplayAndVisibility();
-        this.defineCoords(toast, destinationDomRect);
+        this.defineCoords(toast, this.toastDestinationDomRect);
         if (this.hideOnInitDelay > 0) {
           this.hideOnInitDelayTimer = this.controllableTimer(
             this.hideOnInitDelay
@@ -616,9 +614,6 @@ export class ToastComponent
                   true
                 );
 
-                console.log('display val in addWindowresizeHandler');
-                console.log(this.display);
-
                 this.visibility = 'hidden';
                 this.firstOfResizeBatch = false;
                 if (this.display === 'none') {
@@ -633,13 +628,9 @@ export class ToastComponent
         .subscribe((e) => {
           this.ngZone.run(() => {
             this.afterViewChecked$.pipe(take(1)).subscribe(() => {
-              console.log(
-                '********in afterViewChecked sub in addWindowResizehandler'
-              );
               //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
               setTimeout(() => {
                 setTimeout(() => {
-                  console.log('in second SetTimeout');
                   this.redefineCoords();
                 }, 0);
               }, 0);
@@ -657,10 +648,6 @@ export class ToastComponent
 
     console.log('toastDestinationDomRect in redefineCoords ');
     console.log(JSON.stringify(this.toastDestinationDomRect));
-
-    console.log('displayChanged in redefine coords');
-    console.log(this.displayChanged);
-    console.log(this.display);
 
     //check here which are active
     if (this.displayChanged) {
