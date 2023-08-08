@@ -149,15 +149,10 @@ export class ToastComponent
   ngAfterViewInit(): void {
     this.originalToastParent =
       this.toastVC.nativeElement.parentElement.parentElement;
-    console.log('originalToastParent ');
-    console.log(this.originalToastParent);
 
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastDestinationDomRect =
       this.originalToastParent.getBoundingClientRect();
-
-    console.log('toastDestinationDOMRect in AfterViewInit');
-    console.log(this.toastDestinationDomRect);
 
     this.addActionEventListeners();
 
@@ -231,8 +226,6 @@ export class ToastComponent
     eventType: string,
     overrideKeepShowing: boolean = false
   ) {
-    // console.log('isshowing in addtoggle ' + this.isShowing);
-    // console.log('keepShowing in addtoggle ' + this.keepShowing);
     this.renderer2.listen(
       this.toastVC.nativeElement.parentElement.parentElement,
       eventType,
@@ -436,9 +429,6 @@ export class ToastComponent
     this.toastHeight = toast.nativeElement.offsetHeight;
     this.toastWidth = toast.nativeElement.offsetWidth;
 
-    console.log('toastWidth and toastHeight');
-    console.log(this.toastWidth + ' ' + this.toastHeight);
-
     switch (this.position) {
       case 'LEFT':
         this.left =
@@ -549,7 +539,7 @@ export class ToastComponent
           ) {
             this.initDisplayAndVisibility();
             //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled. Thus we don't call defineHideOninitDelay here
-            this.keepShowing = false; //So that if hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
+            this.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
           }
         },
       });
@@ -652,7 +642,6 @@ export class ToastComponent
           this.runAfterViewCheckedSub = true;
           this.ngZone.run(() => {
             this.afterViewChecked$.pipe(take(1)).subscribe(() => {
-              console.log('********in afterViewCheckedSub');
               //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
               setTimeout(() => {
                 setTimeout(() => {
@@ -670,9 +659,6 @@ export class ToastComponent
       this.originalToastParent.getBoundingClientRect();
 
     this.defineCoords(this.toastVC, this.toastDestinationDomRect);
-
-    console.log('toastDestinationDomRect in redefineCoords ');
-    console.log(JSON.stringify(this.toastDestinationDomRect));
 
     //check here which are active
     if (this.displayChanged) {
