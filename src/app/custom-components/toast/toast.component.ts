@@ -64,9 +64,18 @@ export class ToastComponent
   documentInjected!: Document;
   toastHeight!: number;
   toastWidth!: number;
-  count = 0;
+  //count = 0;
+  currentNextElementIndex = 0;
   toastDestinationDomRect!: DOMRect;
-  toastDestinations = new Map<string, ElementRef>();
+
+  toastDestinations!: [
+    {
+      id: string;
+      element: Element;
+    }
+  ];
+
+  //new Map<string, Element>();
   toastDestination!: Element;
   top: string | null = '0px';
   bottom: string | null = null;
@@ -115,14 +124,27 @@ export class ToastComponent
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
 
-  goToNextElement(nextElementId: string) {
-    console.log('nextElementId: ' + nextElementId);
-    const nextEle = this.documentInjected.getElementById(nextElementId);
-    if (nextEle) {
-      this.toastDestination = nextEle;
-      const eleDomRect = nextEle.getBoundingClientRect();
-      //this.toastDestinationDomRect = eleDomRect; //maybe can remove
-      this.defineCoords(this.toastVC, eleDomRect);
+  goToNextElement() {
+    //Not totally correct because we will be iterating through the Map, not the array
+    //get next elementId from array and when reach the end, go back to the start
+    if (this.nextElementIds) {
+      let nextElementIndex = this.currentNextElementIndex + 1;
+      if (nextElementIndex > this.nextElementIds.length - 1) {
+        nextElementIndex = 0;
+      }
+
+      const nextElementId = this.nextElementIds[this.currentNextElementIndex];
+    }
+
+    if (this.nextElementId) {
+      const nextEle = this.documentInjected.getElementById(this.nextElementId);
+      if (nextEle) {
+        this.toastDestination = nextEle;
+        this.toastDestinations.set(this.nextElementId, nextEle);
+        const eleDomRect = nextEle.getBoundingClientRect();
+        //this.toastDestinationDomRect = eleDomRect; //maybe can remove
+        this.defineCoords(this.toastVC, eleDomRect);
+      }
     }
   }
 
@@ -161,9 +183,8 @@ export class ToastComponent
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
       this.defineCoords(this.toastVC, this.toastDestinationDomRect);
-      //add to Map, so that if user navigates to a different toast, we can come back to the first one.
-      this.toastDestinations.set('FIRST', this.toastVC);
       this.initDelayTimers();
+      this.initToastDestinations();
     }, 300);
   }
 
@@ -558,7 +579,7 @@ export class ToastComponent
   private addDirectiveSubscriptions() {
     if (this.toastGroupId !== undefined) {
       this.toastService.goToNextId$.subscribe((e) => {
-        this.goToNextElement(this.nextElementId!);
+        this.goToNextElement();
       });
     }
 
@@ -692,6 +713,26 @@ export class ToastComponent
     );
 
     this.firstOfResizeBatch = true;
+  }
+
+  private initToastDestinations() {
+    this.toastDestinations.push({
+      id: 'FIRST',
+      element: this.toastVC.nativeElement,
+    });
+    if (this.nextElementIds && this.nextElementIds.length > 0) {
+      this.nextElementIds.forEach((id) => {
+        if (id.toUpperCase() === 'FIRST') {
+          throw Error(
+            'Cannot have id named FIRST in nextElementIds, as the nextElementId FIRST is reserved for the initial toastDestination.'
+          );
+        }
+        const nextEle = this.documentInjected.getElementById(id);
+        if (nextEle) {
+          this.toastDestinations.push({ id, element: nextEle });
+        }
+      });
+    }
   }
 
   //Can add an event to an element by adding the template reference to the element. E.g. #close. Does not work in child components.
