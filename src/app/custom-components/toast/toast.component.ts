@@ -74,8 +74,6 @@ export class ToastComponent
       element: Element;
     }
   ];
-
-  //new Map<string, Element>();
   toastDestination!: Element;
   top: string | null = '0px';
   bottom: string | null = null;
@@ -753,16 +751,16 @@ export class ToastComponent
   private initToastDestinations() {
     this.toastDestinations = [
       {
-        id: 'FIRST',
+        id: this.toastId,
         element: this.toastDestination,
       },
     ];
 
     if (this.nextElementIds && this.nextElementIds.length > 0) {
       this.nextElementIds.forEach((id) => {
-        if (id.toUpperCase() === 'FIRST') {
+        if (id.toUpperCase() === this.toastId.toUpperCase()) {
           throw Error(
-            'Cannot have id named FIRST in nextElementIds, as the nextElementId FIRST is reserved for the initial toastDestination.'
+            `Cannot have an id in nextElementIds that is named the same as the toastID (${this.toastId}) , as the toastId is reserved for the initial toastDestination.`
           );
         }
         const nextEle = this.documentInjected.getElementById(id);
