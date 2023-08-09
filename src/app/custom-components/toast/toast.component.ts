@@ -35,6 +35,7 @@ import {
 } from 'rxjs';
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 import { ToastService } from './toast.service';
+import { Position } from './models/position';
 
 @Component({
   selector: 'app-toast',
@@ -68,12 +69,11 @@ export class ToastComponent
   currentNextElementIndex = 0;
   toastDestinationDomRect!: DOMRect;
 
-  toastDestinations!: [
-    {
-      id: string;
-      element: Element;
-    }
-  ];
+  toastDestinations!: {
+    id: string;
+    element: Element;
+    position: Position;
+  }[];
   toastDestination!: Element;
   top: string | null = '0px';
   bottom: string | null = null;
@@ -113,10 +113,10 @@ export class ToastComponent
   @Input() arrowRight: boolean | undefined;
   @Input() arrowTop: boolean | undefined;
   @Input() arrowBottom: boolean | undefined;
-  @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
+  @Input() position: Position = 'RIGHT';
   @Input() gapInPx: number | undefined;
   // @Input() nextElementId: string | undefined;
-  @Input() nextElementIds: string[] | undefined;
+  @Input() nextElementIds: { id: string; position: Position }[] | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
@@ -125,7 +125,7 @@ export class ToastComponent
   ngOnInit(): void {
     this.checkInputs();
     this.addDirectiveSubscriptions();
-    this.defineArrow();
+    this.initArrow();
 
     if (this.showOnInitDelay > 0 || this.hideOnInitDelay > 0) {
       this.keepShowing = true;
@@ -526,37 +526,52 @@ export class ToastComponent
     }
   }
 
-  private defineArrow() {
+  private initArrow() {
     if (
       this.arrowTop === undefined &&
       this.arrowBottom === undefined &&
       this.arrowLeft === undefined &&
       this.arrowRight === undefined
     ) {
-      switch (this.position) {
-        case 'LEFT':
-          this.arrowRight = true;
-          break;
-        case 'RIGHT':
-          this.arrowLeft = true;
-          break;
+      this.defineArrow();
+    }
+  }
 
-        case 'TOP':
-          this.arrowBottom = true;
-          break;
-        case 'BOTTOM':
-          this.arrowTop = true;
-          break;
-        default:
-          const exhaustiveCheck: never = this.position;
-          throw new Error(exhaustiveCheck);
-      }
+  private defineArrow() {
+    switch (this.position) {
+      case 'LEFT':
+        this.arrowRight = true;
+        break;
+      case 'RIGHT':
+        this.arrowLeft = true;
+        break;
+
+      case 'TOP':
+        this.arrowBottom = true;
+        break;
+      case 'BOTTOM':
+        this.arrowTop = true;
+        break;
+      default:
+        const exhaustiveCheck: never = this.position;
+        throw new Error(exhaustiveCheck);
     }
   }
 
   private defineNextElement() {
     this.toastDestination =
       this.toastDestinations[this.currentNextElementIndex].element;
+    this.position =
+      this.toastDestinations[this.currentNextElementIndex].position;
+
+    //ensure previous arrow is unset
+    this.arrowTop = false;
+    this.arrowBottom = false;
+    this.arrowLeft = false;
+    this.arrowRight = false;
+
+    this.defineArrow();
+
     const eleDomRect = this.toastDestination.getBoundingClientRect();
     //this.toastDestinationDomRect = eleDomRect; //maybe can remove
     this.defineCoords(this.toastVC, eleDomRect);
@@ -753,11 +768,13 @@ export class ToastComponent
       {
         id: this.toastId,
         element: this.toastDestination,
+        position: this.position,
       },
     ];
 
     if (this.nextElementIds && this.nextElementIds.length > 0) {
-      this.nextElementIds.forEach((id) => {
+      this.nextElementIds.forEach((ele) => {
+        const id = ele.id;
         if (id.toUpperCase() === this.toastId.toUpperCase()) {
           throw Error(
             `Cannot have an id in nextElementIds that is named the same as the toastID (${this.toastId}) , as the toastId is reserved for the initial toastDestination.`
@@ -765,7 +782,11 @@ export class ToastComponent
         }
         const nextEle = this.documentInjected.getElementById(id);
         if (nextEle) {
-          this.toastDestinations.push({ id, element: nextEle });
+          this.toastDestinations.push({
+            id,
+            element: nextEle,
+            position: ele.position,
+          });
         }
       });
     }

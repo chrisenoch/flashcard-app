@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Position } from 'src/app/custom-components/toast/models/position';
 
 @Component({
   selector: 'app-slide-option-bar',
@@ -19,7 +20,18 @@ export class SlideOptionBarComponent {
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   //to test custom toast component
-  nextElementIds = ['toast-destination-2', 'toast-destination-3'];
+  nextElementIds: { id: string; position: Position }[] = [
+    { id: 'toast-destination-2', position: 'RIGHT' },
+    { id: 'toast-destination-3', position: 'TOP' },
+  ];
+
+  toastDestinations!: [
+    {
+      id: string;
+      element: Element;
+      position: Position;
+    }
+  ];
 
   onShowContentAfterWordVisited() {
     this.updateShowContentAfterWordVisited.emit();
