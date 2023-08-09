@@ -36,6 +36,7 @@ import {
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 import { ToastService } from './toast.service';
 import { Position } from './models/position';
+import { ArrowPosition, Arrows } from './models/arrows';
 
 @Component({
   selector: 'app-toast',
@@ -65,7 +66,6 @@ export class ToastComponent
   documentInjected!: Document;
   toastHeight!: number;
   toastWidth!: number;
-  //count = 0;
   currentNextElementIndex = 0;
   toastDestinationDomRect!: DOMRect;
 
@@ -73,6 +73,7 @@ export class ToastComponent
     id: string;
     element: Element;
     position: Position;
+    arrows?: Arrows;
   }[];
   toastDestination!: Element;
   top: string | null = '0px';
@@ -93,7 +94,6 @@ export class ToastComponent
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
-  //Used to programmatically determine if the toast is showing or not.
   //When set, toast does not hide on hover out.
   @Input('show') keepShowing = false;
   @Input() showOnHover: boolean | 'mouseenter' = true;
@@ -115,8 +115,13 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: Position = 'RIGHT';
   @Input() gapInPx: number | undefined;
-  // @Input() nextElementId: string | undefined;
-  @Input() nextElementIds: { id: string; position: Position }[] | undefined;
+  @Input() nextElements:
+    | {
+        id: string;
+        position: Position;
+        arrows?: Arrows;
+      }[]
+    | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
@@ -533,11 +538,11 @@ export class ToastComponent
       this.arrowLeft === undefined &&
       this.arrowRight === undefined
     ) {
-      this.defineArrow();
+      this.autoDefineArrow();
     }
   }
 
-  private defineArrow() {
+  private autoDefineArrow() {
     switch (this.position) {
       case 'LEFT':
         this.arrowRight = true;
@@ -559,18 +564,35 @@ export class ToastComponent
   }
 
   private defineNextElement() {
+    const toastDestinationArrows =
+      this.toastDestinations[this.currentNextElementIndex].arrows;
     this.toastDestination =
       this.toastDestinations[this.currentNextElementIndex].element;
     this.position =
       this.toastDestinations[this.currentNextElementIndex].position;
 
-    //ensure previous arrow is unset
+    //ensure previous arrowa are unset
     this.arrowTop = false;
     this.arrowBottom = false;
     this.arrowLeft = false;
     this.arrowRight = false;
 
-    this.defineArrow();
+    if (toastDestinationArrows === undefined) {
+      this.autoDefineArrow();
+    } else if (!toastDestinationArrows.includes('NONE')) {
+      if (toastDestinationArrows.includes('TOP')) {
+        this.arrowTop = true;
+      }
+      if (toastDestinationArrows.includes('BOTTOM')) {
+        this.arrowBottom = true;
+      }
+      if (toastDestinationArrows.includes('RIGHT')) {
+        this.arrowRight = true;
+      }
+      if (toastDestinationArrows.includes('LEFT')) {
+        this.arrowLeft = true;
+      }
+    }
 
     const eleDomRect = this.toastDestination.getBoundingClientRect();
     //this.toastDestinationDomRect = eleDomRect; //maybe can remove
@@ -616,7 +638,7 @@ export class ToastComponent
   }
 
   private addDirectiveSubscriptions() {
-    if (this.nextElementIds !== undefined) {
+    if (this.nextElements !== undefined) {
       this.toastService.goToNextId$.subscribe((e) => {
         this.goToNextElement();
       });
@@ -764,20 +786,40 @@ export class ToastComponent
   }
 
   private initToastDestinations() {
+    //get arrows of initial toast in case user set custom arrows
+    const arrows: ArrowPosition[] = [];
+    if (this.arrowTop) {
+      arrows.push('TOP');
+    }
+    if (this.arrowBottom) {
+      arrows.push('BOTTOM');
+    }
+    if (this.arrowLeft) {
+      arrows.push('LEFT');
+    }
+    if (this.arrowRight) {
+      arrows.push('RIGHT');
+    }
+    if (!this.showArrow) {
+      arrows.push('NONE');
+    }
+
     this.toastDestinations = [
       {
         id: this.toastId,
         element: this.toastDestination,
         position: this.position,
+        //arrows must be an array of at least one value or undefined
+        arrows: arrows.length > 0 ? (arrows as Arrows) : undefined,
       },
     ];
 
-    if (this.nextElementIds && this.nextElementIds.length > 0) {
-      this.nextElementIds.forEach((ele) => {
+    if (this.nextElements && this.nextElements.length > 0) {
+      this.nextElements.forEach((ele) => {
         const id = ele.id;
         if (id.toUpperCase() === this.toastId.toUpperCase()) {
           throw Error(
-            `Cannot have an id in nextElementIds that is named the same as the toastID (${this.toastId}) , as the toastId is reserved for the initial toastDestination.`
+            `Cannot have an id in nextElements that is named the same as the toastID (${this.toastId}) , as the toastId is reserved for the initial toastDestination.`
           );
         }
         const nextEle = this.documentInjected.getElementById(id);
@@ -786,9 +828,12 @@ export class ToastComponent
             id,
             element: nextEle,
             position: ele.position,
+            arrows: ele.arrows,
           });
         }
       });
+      console.log('toast destinations array');
+      console.log(this.toastDestinations);
     }
   }
 

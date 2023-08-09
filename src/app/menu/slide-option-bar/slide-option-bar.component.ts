@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Arrows } from 'src/app/custom-components/toast/models/arrows';
 import { Position } from 'src/app/custom-components/toast/models/position';
 
 @Component({
@@ -20,9 +21,13 @@ export class SlideOptionBarComponent {
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
   //to test custom toast component
-  nextElementIds: { id: string; position: Position }[] = [
+  nextElements: {
+    id: string;
+    position: Position;
+    arrows?: Arrows;
+  }[] = [
     { id: 'toast-destination-2', position: 'RIGHT' },
-    { id: 'toast-destination-3', position: 'TOP' },
+    { id: 'toast-destination-3', position: 'TOP', arrows: ['TOP', 'BOTTOM'] },
   ];
 
   toastDestinations!: [
