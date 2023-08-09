@@ -15,9 +15,12 @@
     >
       CAOIG
     </button> -->
-    <button appToast [toastId]="toastId" onGoToNextId="toast-destination-2">
-      Next d
+    <button appToast [toastId]="toastId" [onGoToNextId]="true">Next d</button>
+    <button appToast [toastId]="toastId" [onGoToPreviousId]="true">
+      Pre d
     </button>
+    <button appToast [toastId]="toastId" [onGoToFirstId]="true">Fir d</button>
+    <button appToast [toastId]="toastId" [onGoToLastId]="true">Las d</button>
     <!-- <button appToast [toastId]="toastId" onShowAllOthersInGroup="toast-group-3">
       SAOG 3
     </button> -->

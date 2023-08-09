@@ -35,6 +35,12 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
   onShowAllOthersInGroupSub$!: Subscription;
   onGoToNextIdObs$!: Observable<Event>;
   onGoToNextIdSub$!: Subscription;
+  onGoToPreviousIdObs$!: Observable<Event>;
+  onGoToPreviousIdSub$!: Subscription;
+  onGoToFirstIdObs$!: Observable<Event>;
+  onGoToFirstIdSub$!: Subscription;
+  onGoToLastIdObs$!: Observable<Event>;
+  onGoToLastIdSub$!: Subscription;
 
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
@@ -45,7 +51,10 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
   @Input() onCloseAllOthersInGroup: string | undefined;
   @Input() onShowAll = false;
   @Input() onShowAllOthersInGroup: string | undefined;
-  @Input() onGoToNextId: string | undefined;
+  @Input() onGoToNextId: true | undefined;
+  @Input() onGoToPreviousId: true | undefined;
+  @Input() onGoToFirstId: true | undefined;
+  @Input() onGoToLastId: true | undefined;
 
   ngOnInit(): void {
     if (!this.toastId) {
@@ -131,6 +140,30 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
         this.toastService.onGoToNextId(e);
       });
     }
+
+    if (this.onGoToPreviousId !== undefined) {
+      this.onGoToPreviousIdObs$ = fromEvent(
+        this.element.nativeElement,
+        'click'
+      );
+      this.onGoToPreviousIdSub$ = this.onGoToPreviousIdObs$.subscribe((e) => {
+        this.toastService.onGoToPreviousId(e);
+      });
+    }
+
+    if (this.onGoToFirstId !== undefined) {
+      this.onGoToFirstIdObs$ = fromEvent(this.element.nativeElement, 'click');
+      this.onGoToFirstIdSub$ = this.onGoToFirstIdObs$.subscribe((e) => {
+        this.toastService.onGoToFirstId(e);
+      });
+    }
+
+    if (this.onGoToLastId !== undefined) {
+      this.onGoToLastIdObs$ = fromEvent(this.element.nativeElement, 'click');
+      this.onGoToLastIdSub$ = this.onGoToLastIdObs$.subscribe((e) => {
+        this.toastService.onGoToLastId(e);
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -141,5 +174,9 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
     this.onCloseSub$.unsubscribe();
     this.onShowAllSub$.unsubscribe();
     this.onShowAllOthersInGroupSub$.unsubscribe();
+    this.onGoToNextIdSub$.unsubscribe();
+    this.onGoToPreviousIdSub$.unsubscribe();
+    this.onGoToFirstIdSub$.unsubscribe();
+    this.onGoToLastIdSub$.unsubscribe();
   }
 }

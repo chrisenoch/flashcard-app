@@ -29,9 +29,23 @@ export class ToastService {
   } | null>();
 
   goToNextId$ = new Subject<Event | null>();
+  goToPreviousId$ = new Subject<Event | null>();
+  goToFirstId$ = new Subject<Event | null>();
+  goToLastId$ = new Subject<Event | null>();
 
   onGoToNextId(e: Event) {
     this.goToNextId$.next(e);
+  }
+  onGoToPreviousId(e: Event) {
+    this.goToPreviousId$.next(e);
+  }
+
+  onGoToFirstId(e: Event) {
+    this.goToFirstId$.next(e);
+  }
+
+  onGoToLastId(e: Event) {
+    this.goToLastId$.next(e);
   }
 
   onCloseAll(e: Event) {

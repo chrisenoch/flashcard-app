@@ -124,26 +124,6 @@ export class ToastComponent
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
 
-  goToNextElement() {
-    if (this.toastDestinations.length > 1) {
-      //get next object from array and when reach the end, go back to the start
-      let nextElementIndex = this.currentNextElementIndex + 1;
-      if (nextElementIndex > this.toastDestinations.length - 1) {
-        this.currentNextElementIndex = 0;
-      } else {
-        this.currentNextElementIndex = nextElementIndex;
-      }
-
-      this.toastDestination =
-        this.toastDestinations[this.currentNextElementIndex].element;
-      console.log('toastDest in goToNextElement');
-      console.log(this.toastDestination);
-      const eleDomRect = this.toastDestination.getBoundingClientRect();
-      //this.toastDestinationDomRect = eleDomRect; //maybe can remove
-      this.defineCoords(this.toastVC, eleDomRect);
-    }
-  }
-
   ngOnInit(): void {
     this.checkInputs();
     this.addDirectiveSubscriptions();
@@ -201,6 +181,10 @@ export class ToastComponent
     this.toastService.closeAllOthersInGroup$.unsubscribe();
     this.toastService.showAll$.unsubscribe();
     this.toastService.showAllOthersInGroup$.unsubscribe();
+    this.toastService.goToNextId$.unsubscribe();
+    this.toastService.goToPreviousId$.unsubscribe();
+    this.toastService.goToFirstId$.unsubscribe();
+    this.toastService.goToLastId$.unsubscribe();
   }
 
   onClose() {
@@ -214,7 +198,6 @@ export class ToastComponent
   }
 
   showToast() {
-    console.log('in showToast');
     this.cancelTimers([
       this.hideDelayTimer,
       this.showOnInitDelayTimer,
@@ -232,8 +215,6 @@ export class ToastComponent
   }
 
   hideToast() {
-    console.log('in hideToast');
-
     if (this.showDelayTimer) {
       this.showDelayTimer.cancelTimer = true;
     }
@@ -248,50 +229,45 @@ export class ToastComponent
     }
   }
 
-  private addToggleToastListener(
-    eventType: string,
-    overrideKeepShowing: boolean = false
-  ) {
-    this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
-      eventType,
-      (e: Event) => {
-        if (this.isShowing) {
-          if (overrideKeepShowing) {
-            this.keepShowing = false;
-          }
-          this.hideToast();
-        } else {
-          this.showToast();
-        }
-      }
-    );
+  goToFirstElement() {
+    if (this.toastDestinations.length > 1) {
+      this.currentNextElementIndex = 0;
+      this.defineNextElement();
+    }
   }
 
-  private addShowToastListener(eventType: string) {
-    this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
-      eventType,
-      (e: Event) => {
-        this.showToast();
-      }
-    );
+  goToLastElement() {
+    if (this.toastDestinations.length > 1) {
+      this.currentNextElementIndex = this.toastDestinations.length - 1;
+      this.defineNextElement();
+    }
   }
 
-  private addHideToastListener(
-    eventType: string,
-    overrideKeepShowing: boolean = false
-  ) {
-    this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
-      eventType,
-      (e: Event) => {
-        if (overrideKeepShowing) {
-          this.keepShowing = false;
-        }
-        this.hideToast();
+  goToPreviousElement() {
+    if (this.toastDestinations.length > 1) {
+      let nextElementIndex = this.currentNextElementIndex - 1;
+      if (nextElementIndex < 0) {
+        return;
+      } else {
+        this.currentNextElementIndex = nextElementIndex;
       }
-    );
+
+      this.defineNextElement();
+    }
+  }
+
+  goToNextElement() {
+    if (this.toastDestinations.length > 1) {
+      //get next object from array and when reach the end, go back to the start
+      let nextElementIndex = this.currentNextElementIndex + 1;
+      if (nextElementIndex > this.toastDestinations.length - 1) {
+        this.currentNextElementIndex = 0;
+      } else {
+        this.currentNextElementIndex = nextElementIndex;
+      }
+
+      this.defineNextElement();
+    }
   }
 
   //E.g. for a timer of 5 seconds, you would use intervalPeriod with a value of 1000 and repetitions with a value of 5.
@@ -351,6 +327,52 @@ export class ToastComponent
     );
 
     return controlObj;
+  }
+
+  private addToggleToastListener(
+    eventType: string,
+    overrideKeepShowing: boolean = false
+  ) {
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      eventType,
+      (e: Event) => {
+        if (this.isShowing) {
+          if (overrideKeepShowing) {
+            this.keepShowing = false;
+          }
+          this.hideToast();
+        } else {
+          this.showToast();
+        }
+      }
+    );
+  }
+
+  private addShowToastListener(eventType: string) {
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      eventType,
+      (e: Event) => {
+        this.showToast();
+      }
+    );
+  }
+
+  private addHideToastListener(
+    eventType: string,
+    overrideKeepShowing: boolean = false
+  ) {
+    this.renderer2.listen(
+      this.toastVC.nativeElement.parentElement.parentElement,
+      eventType,
+      (e: Event) => {
+        if (overrideKeepShowing) {
+          this.keepShowing = false;
+        }
+        this.hideToast();
+      }
+    );
   }
 
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
@@ -534,6 +556,14 @@ export class ToastComponent
     }
   }
 
+  private defineNextElement() {
+    this.toastDestination =
+      this.toastDestinations[this.currentNextElementIndex].element;
+    const eleDomRect = this.toastDestination.getBoundingClientRect();
+    //this.toastDestinationDomRect = eleDomRect; //maybe can remove
+    this.defineCoords(this.toastVC, eleDomRect);
+  }
+
   private defineHideOnInitDelay() {
     if (this.hideOnInitDelay > 0) {
       this.hideOnInitDelayTimer = this.controllableTimer(this.hideOnInitDelay);
@@ -573,9 +603,18 @@ export class ToastComponent
   }
 
   private addDirectiveSubscriptions() {
-    if (this.toastGroupId !== undefined) {
+    if (this.nextElementIds !== undefined) {
       this.toastService.goToNextId$.subscribe((e) => {
         this.goToNextElement();
+      });
+      this.toastService.goToPreviousId$.subscribe((e) => {
+        this.goToPreviousElement();
+      });
+      this.toastService.goToFirstId$.subscribe((e) => {
+        this.goToFirstElement();
+      });
+      this.toastService.goToLastId$.subscribe((e) => {
+        this.goToLastElement();
       });
     }
 
@@ -715,15 +754,9 @@ export class ToastComponent
     this.toastDestinations = [
       {
         id: 'FIRST',
-        element: this.toastVC.nativeElement,
+        element: this.toastDestination,
       },
     ];
-    // this.toastDestinations.push({
-    //   id: 'FIRST',
-    //   element: this.toastVC.nativeElement,
-    // });
-    console.log('toastDestinations in initToastDestinations');
-    console.log(this.toastDestinations);
 
     if (this.nextElementIds && this.nextElementIds.length > 0) {
       this.nextElementIds.forEach((id) => {
