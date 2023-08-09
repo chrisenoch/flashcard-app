@@ -66,7 +66,8 @@ export class ToastComponent
   toastWidth!: number;
   count = 0;
   toastDestinationDomRect!: DOMRect;
-  originalToastParent!: Element;
+  toastDestinations = new Map<string, ElementRef>();
+  toastDestination!: Element;
   top: string | null = '0px';
   bottom: string | null = null;
   left: string | null = '0px';
@@ -108,6 +109,7 @@ export class ToastComponent
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
   @Input() nextElementId: string | undefined;
+  @Input() nextElementIds: string[] | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
@@ -117,16 +119,10 @@ export class ToastComponent
     console.log('nextElementId: ' + nextElementId);
     const nextEle = this.documentInjected.getElementById(nextElementId);
     if (nextEle) {
+      this.toastDestination = nextEle;
       const eleDomRect = nextEle.getBoundingClientRect();
+      //this.toastDestinationDomRect = eleDomRect; //maybe can remove
       this.defineCoords(this.toastVC, eleDomRect);
-    }
-  }
-
-  ngAfterViewChecked(): void {
-    if (this.runAfterViewCheckedSub) {
-      console.log('in AfterViewChecked');
-      this.afterViewChecked$.next(true);
-      this.runAfterViewCheckedSub = false;
     }
   }
 
@@ -147,12 +143,15 @@ export class ToastComponent
   }
 
   ngAfterViewInit(): void {
-    this.originalToastParent =
+    this.toastDestination =
       this.toastVC.nativeElement.parentElement.parentElement;
+
+    console.log('originalToastParent');
+    console.log(this.toastDestination);
 
     //get coords of the parent to <app-toast>. Toast should show upon hovering this.
     this.toastDestinationDomRect =
-      this.originalToastParent.getBoundingClientRect();
+      this.toastDestination.getBoundingClientRect();
 
     this.addActionEventListeners();
 
@@ -162,8 +161,18 @@ export class ToastComponent
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
       this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+      //add to Map, so that if user navigates to a different toast, we can come back to the first one.
+      this.toastDestinations.set('FIRST', this.toastVC);
       this.initDelayTimers();
     }, 300);
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.runAfterViewCheckedSub) {
+      console.log('in AfterViewChecked');
+      this.afterViewChecked$.next(true);
+      this.runAfterViewCheckedSub = false;
+    }
   }
 
   ngOnDestroy(): void {
@@ -656,7 +665,7 @@ export class ToastComponent
 
   private redefineCoords() {
     this.toastDestinationDomRect =
-      this.originalToastParent.getBoundingClientRect();
+      this.toastDestination.getBoundingClientRect();
 
     this.defineCoords(this.toastVC, this.toastDestinationDomRect);
 
