@@ -37,6 +37,7 @@ import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 import { ToastService } from './toast.service';
 import { Position } from './models/position';
 import { ArrowPosition, Arrows } from './models/arrows';
+import { ControlledError } from '../errors/ControlledError';
 
 @Component({
   selector: 'app-toast',
@@ -314,7 +315,9 @@ export class ToastComponent
         if (controlObj.cancelTimer) {
           controlObj.count = 0;
           controlObj.isActive = false;
-          throw Error('Observable cancelled because cancelTimer set to true');
+          throw new ControlledError(
+            'Observable cancelled because cancelTimer set to true'
+          );
         } else {
           return val;
         }
@@ -625,9 +628,7 @@ export class ToastComponent
         },
         error: (e: Error) => {
           //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
-          if (
-            e.message === 'Observable cancelled because cancelTimer set to true'
-          ) {
+          if (e instanceof ControlledError) {
             this.initDisplayAndVisibility();
             //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled. Thus we don't call defineHideOninitDelay here
             this.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
