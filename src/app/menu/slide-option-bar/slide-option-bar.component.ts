@@ -18,6 +18,9 @@ export class SlideOptionBarComponent {
   @Input() sidebarsOnRight = false;
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
+  //to test custom toast component
+  nextElementIds = ['toast-destination-2'];
+
   onShowContentAfterWordVisited() {
     this.updateShowContentAfterWordVisited.emit();
   }

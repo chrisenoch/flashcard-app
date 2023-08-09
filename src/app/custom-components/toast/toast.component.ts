@@ -117,7 +117,7 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM' = 'RIGHT';
   @Input() gapInPx: number | undefined;
-  @Input() nextElementId: string | undefined;
+  // @Input() nextElementId: string | undefined;
   @Input() nextElementIds: string[] | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
@@ -125,26 +125,22 @@ export class ToastComponent
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   goToNextElement() {
-    //Not totally correct because we will be iterating through the Map, not the array
-    //get next elementId from array and when reach the end, go back to the start
-    if (this.nextElementIds) {
+    if (this.toastDestinations.length > 1) {
+      //get next object from array and when reach the end, go back to the start
       let nextElementIndex = this.currentNextElementIndex + 1;
-      if (nextElementIndex > this.nextElementIds.length - 1) {
-        nextElementIndex = 0;
+      if (nextElementIndex > this.toastDestinations.length - 1) {
+        this.currentNextElementIndex = 0;
+      } else {
+        this.currentNextElementIndex = nextElementIndex;
       }
 
-      const nextElementId = this.nextElementIds[this.currentNextElementIndex];
-    }
-
-    if (this.nextElementId) {
-      const nextEle = this.documentInjected.getElementById(this.nextElementId);
-      if (nextEle) {
-        this.toastDestination = nextEle;
-        this.toastDestinations.set(this.nextElementId, nextEle);
-        const eleDomRect = nextEle.getBoundingClientRect();
-        //this.toastDestinationDomRect = eleDomRect; //maybe can remove
-        this.defineCoords(this.toastVC, eleDomRect);
-      }
+      this.toastDestination =
+        this.toastDestinations[this.currentNextElementIndex].element;
+      console.log('toastDest in goToNextElement');
+      console.log(this.toastDestination);
+      const eleDomRect = this.toastDestination.getBoundingClientRect();
+      //this.toastDestinationDomRect = eleDomRect; //maybe can remove
+      this.defineCoords(this.toastVC, eleDomRect);
     }
   }
 
@@ -716,10 +712,19 @@ export class ToastComponent
   }
 
   private initToastDestinations() {
-    this.toastDestinations.push({
-      id: 'FIRST',
-      element: this.toastVC.nativeElement,
-    });
+    this.toastDestinations = [
+      {
+        id: 'FIRST',
+        element: this.toastVC.nativeElement,
+      },
+    ];
+    // this.toastDestinations.push({
+    //   id: 'FIRST',
+    //   element: this.toastVC.nativeElement,
+    // });
+    console.log('toastDestinations in initToastDestinations');
+    console.log(this.toastDestinations);
+
     if (this.nextElementIds && this.nextElementIds.length > 0) {
       this.nextElementIds.forEach((id) => {
         if (id.toUpperCase() === 'FIRST') {
