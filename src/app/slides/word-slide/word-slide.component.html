@@ -24,20 +24,25 @@
       class="bi bi-diamond-fill text-orange-500"
     ></i>
 
-    <p class="text-8xl" *ngIf="!showPrimaryWordFirst">
+    <p
+      class="text-8xl"
+      *ngIf="!showPrimaryWordFirst"
+      id="toast-destination-test"
+    >
       {{ secondaryWord }}
-      <app-toast
+      <!-- <app-toast
         toastId="toast-15"
         toastGroupId="toast-group-15"
-        position="LEFT"
+        position="RIGHT"
         [show]="true"
         [toggleOnClick]="true"
         [showOnHover]="false"
+        [nextElements]="nextElements"
         [hideOnHoverOut]="false"
         [animation]="true"
       >
-        <app-toast-content toastId="toast-12"></app-toast-content>
-      </app-toast>
+        <app-toast-content toastId="toast-15"></app-toast-content>
+      </app-toast> -->
     </p>
   </ng-container>
   <ng-container *ngIf="showTranslation">
@@ -60,8 +65,21 @@
   >
     <p
       class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
+      id="toast-destination-test-2"
     >
       {{ explanation }}
+      <!-- <app-toast
+        toastId="toast-16"
+        toastGroupId="toast-group-16"
+        position="RIGHT"
+        [show]="true"
+        [toggleOnClick]="true"
+        [showOnHover]="false"
+        [hideOnHoverOut]="false"
+        [animation]="true"
+      >
+        <app-toast-content toastId="toast-16"></app-toast-content>
+      </app-toast> -->
     </p>
   </div>
 </div>

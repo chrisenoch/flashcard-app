@@ -15,6 +15,7 @@ import {
   NgZone,
   HostListener,
   AfterViewChecked,
+  AfterContentChecked,
 } from '@angular/core';
 import {
   Observable,
@@ -72,11 +73,11 @@ export class ToastComponent
 
   toastDestinations!: {
     id: string;
-    element: Element;
+    element: HTMLElement;
     position: Position;
     arrows?: Arrows;
   }[];
-  toastDestination!: Element;
+  toastDestination!: HTMLElement;
   top: string | null = '0px';
   bottom: string | null = null;
   left: string | null = '0px';
@@ -169,7 +170,10 @@ export class ToastComponent
       //get coords of the parent to <app-toast>. Toast should show upon hovering this.
       this.toastDestinationDomRect =
         this.toastDestination.getBoundingClientRect();
-      this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+
+      this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+      this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+      this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
     }, 300);
@@ -177,7 +181,6 @@ export class ToastComponent
 
   ngAfterViewChecked(): void {
     if (this.runAfterViewCheckedSub) {
-      console.log('in AfterViewChecked');
       this.afterViewChecked$.next(true);
       this.runAfterViewCheckedSub = false;
     }
@@ -482,13 +485,13 @@ export class ToastComponent
     this.visibility = 'visible';
   }
 
-  private defineCoords(toast: ElementRef, destinationDomRect: DOMRect) {
+  private defineCoords(destinationDomRect: DOMRect) {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
 
-    this.toastHeight = toast.nativeElement.offsetHeight;
-    this.toastWidth = toast.nativeElement.offsetWidth;
+    // this.toastHeight = toast.nativeElement.offsetHeight;
+    // this.toastWidth = toast.nativeElement.offsetWidth;
 
     switch (this.position) {
       case 'LEFT':
@@ -581,6 +584,11 @@ export class ToastComponent
     this.position =
       this.toastDestinations[this.currentNextElementIndex].position;
 
+    //get the toast dimensions in case they have changed.
+    //Perhaps dynamic content was added.
+    this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+    this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+
     //ensure previous arrowa are unset
     this.arrowTop = false;
     this.arrowBottom = false;
@@ -606,7 +614,7 @@ export class ToastComponent
 
     const eleDomRect = this.toastDestination.getBoundingClientRect();
     //this.toastDestinationDomRect = eleDomRect; //maybe can remove
-    this.defineCoords(this.toastVC, eleDomRect);
+    this.defineCoords(eleDomRect);
   }
 
   private defineHideOnInitDelay() {
@@ -735,12 +743,14 @@ export class ToastComponent
                   true
                 );
 
-                this.visibility = 'hidden';
-                this.firstOfResizeBatch = false;
                 if (this.display === 'none') {
-                  this.display = 'inline-block';
+                  //this.display = 'inline-block';
                   this.displayChanged = true;
                 }
+
+                this.visibility = 'hidden';
+                this.display = 'none';
+                this.firstOfResizeBatch = false;
               });
             }
           }),
@@ -766,13 +776,22 @@ export class ToastComponent
     this.toastDestinationDomRect =
       this.toastDestination.getBoundingClientRect();
 
-    this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+    console.log('toadtDest in redefinecoords');
+    console.log(this.toastDestination);
+
+    console.log('bounding rect in redefine coords');
+    console.log(this.toastDestinationDomRect);
+
+    this.defineCoords(this.toastDestinationDomRect);
 
     //check here which are active
     if (this.displayChanged) {
       this.display = 'none';
       this.displayChanged = false;
+    } else {
+      this.display = 'inline-block';
     }
+
     if (
       !this.showOnInitDelayTimer?.isActive &&
       !this.showDelayTimer?.isActive
@@ -831,6 +850,8 @@ export class ToastComponent
           );
         }
         const nextEle = this.documentInjected.getElementById(id);
+        console.log('element with id ' + id);
+        console.log(nextEle);
         if (nextEle) {
           this.toastDestinations.push({
             id,
