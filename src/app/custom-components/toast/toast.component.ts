@@ -151,17 +151,24 @@ export class ToastComponent
     console.log('originalToastParent');
     console.log(this.toastDestination);
 
-    //get coords of the parent to <app-toast>. Toast should show upon hovering this.
-    this.toastDestinationDomRect =
-      this.toastDestination.getBoundingClientRect();
+    // //get coords of the parent to <app-toast>. Toast should show upon hovering this.
+    // this.toastDestinationDomRect =
+    //   this.toastDestination.getBoundingClientRect();
 
     this.addActionEventListeners();
 
     this.moveToastToBody();
 
+    console.log(
+      'display and visibility ' + this.display + ' ' + this.visibility
+    );
+
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
+      //get coords of the parent to <app-toast>. Toast should show upon hovering this.
+      this.toastDestinationDomRect =
+        this.toastDestination.getBoundingClientRect();
       this.defineCoords(this.toastVC, this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();

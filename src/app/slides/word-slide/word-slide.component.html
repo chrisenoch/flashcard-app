@@ -26,6 +26,18 @@
 
     <p class="text-8xl" *ngIf="!showPrimaryWordFirst">
       {{ secondaryWord }}
+      <app-toast
+        toastId="toast-15"
+        toastGroupId="toast-group-15"
+        position="LEFT"
+        [show]="true"
+        [toggleOnClick]="true"
+        [showOnHover]="false"
+        [hideOnHoverOut]="false"
+        [animation]="true"
+      >
+        <app-toast-content toastId="toast-12"></app-toast-content>
+      </app-toast>
     </p>
   </ng-container>
   <ng-container *ngIf="showTranslation">
