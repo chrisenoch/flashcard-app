@@ -88,7 +88,7 @@ export class ToastComponent
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
-  displayChanged = false;
+  displayWasNoneAtStartOfWindowResize = false;
   firstOfResizeBatch = true;
   afterViewChecked$ = new Subject<boolean>();
   runAfterViewCheckedSub = false;
@@ -744,8 +744,7 @@ export class ToastComponent
                 );
 
                 if (this.display === 'none') {
-                  //this.display = 'inline-block';
-                  this.displayChanged = true;
+                  this.displayWasNoneAtStartOfWindowResize = true;
                 }
 
                 this.visibility = 'hidden';
@@ -785,9 +784,9 @@ export class ToastComponent
     this.defineCoords(this.toastDestinationDomRect);
 
     //check here which are active
-    if (this.displayChanged) {
+    if (this.displayWasNoneAtStartOfWindowResize) {
       this.display = 'none';
-      this.displayChanged = false;
+      this.displayWasNoneAtStartOfWindowResize = false;
     } else {
       this.display = 'inline-block';
     }
