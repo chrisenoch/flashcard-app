@@ -19,28 +19,28 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
     private toastService: ToastService
   ) {}
 
-  onCloseAllObs$: Observable<Event> | undefined;
-  onCloseAllSub$: Subscription | undefined;
-  onCloseAllOthersObs$: Observable<Event> | undefined;
-  onCloseAllOthersSub$: Subscription | undefined;
-  onCloseAllOthersInGroupObs$: Observable<Event> | undefined;
-  onCloseAllOthersInGroupSub$: Subscription | undefined;
-  onCloseAllInGroupObs$: Observable<Event> | undefined;
-  onCloseAllInGroupSub$: Subscription | undefined;
-  onCloseObs$: Observable<Event> | undefined;
-  onCloseSub$: Subscription | undefined;
-  onShowAllObs$: Observable<Event> | undefined;
-  onShowAllSub$: Subscription | undefined;
-  onShowAllOthersInGroupObs$: Observable<Event> | undefined;
-  onShowAllOthersInGroupSub$: Subscription | undefined;
-  onGoToNextIdObs$: Observable<Event> | undefined;
-  onGoToNextIdSub$: Subscription | undefined;
-  onGoToPreviousIdObs$: Observable<Event> | undefined;
-  onGoToPreviousIdSub$: Subscription | undefined;
-  onGoToFirstIdObs$: Observable<Event> | undefined;
-  onGoToFirstIdSub$: Subscription | undefined;
-  onGoToLastIdObs$: Observable<Event> | undefined;
-  onGoToLastIdSub$: Subscription | undefined;
+  private onCloseAllObs$: Observable<Event> | undefined;
+  private onCloseAllSub$: Subscription | undefined;
+  private onCloseAllOthersObs$: Observable<Event> | undefined;
+  private onCloseAllOthersSub$: Subscription | undefined;
+  private onCloseAllOthersInGroupObs$: Observable<Event> | undefined;
+  private onCloseAllOthersInGroupSub$: Subscription | undefined;
+  private onCloseAllInGroupObs$: Observable<Event> | undefined;
+  private onCloseAllInGroupSub$: Subscription | undefined;
+  private onCloseObs$: Observable<Event> | undefined;
+  private onCloseSub$: Subscription | undefined;
+  private onShowAllObs$: Observable<Event> | undefined;
+  private onShowAllSub$: Subscription | undefined;
+  private onShowAllOthersInGroupObs$: Observable<Event> | undefined;
+  private onShowAllOthersInGroupSub$: Subscription | undefined;
+  private onGoToNextIdObs$: Observable<Event> | undefined;
+  private onGoToNextIdSub$: Subscription | undefined;
+  private onGoToPreviousIdObs$: Observable<Event> | undefined;
+  private onGoToPreviousIdSub$: Subscription | undefined;
+  private onGoToFirstIdObs$: Observable<Event> | undefined;
+  private onGoToFirstIdSub$: Subscription | undefined;
+  private onGoToLastIdObs$: Observable<Event> | undefined;
+  private onGoToLastIdSub$: Subscription | undefined;
 
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;

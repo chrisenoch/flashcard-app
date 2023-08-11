@@ -62,47 +62,51 @@ export class ToastComponent
     this.documentInjected = document;
   }
 
-  isShowing = false;
-  resizeObs$!: Observable<Event>;
-  resizeSub$!: Subscription;
-  closeAll$: Subscription | undefined;
-  close$: Subscription | undefined;
-  closeAllInGroup$: Subscription | undefined;
-  closeAllOthers$: Subscription | undefined;
-  closeAllOthersInGroup$: Subscription | undefined;
-  showAll$: Subscription | undefined;
-  showAllOthersInGroup$: Subscription | undefined;
-  goToNextId$: Subscription | undefined;
-  goToPreviousId$: Subscription | undefined;
-  goToFirstId$: Subscription | undefined;
-  goToLastId$: Subscription | undefined;
-  documentInjected!: Document;
-  toastHeight!: number;
-  toastWidth!: number;
-  currentNextElementIndex = 0;
-  toastDestinationDomRect!: DOMRect;
-
-  toastDestinations!: {
-    id: string;
-    element: HTMLElement;
-    position: Position;
-    arrows?: Arrows;
-  }[];
-  toastDestination!: HTMLElement;
   top: string | null = '0px';
   bottom: string | null = null;
   left: string | null = '0px';
   right: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  showOnInitDelayTimer: controlledTimer | undefined;
-  hideOnInitDelayTimer: controlledTimer | undefined;
-  hideDelayTimer: controlledTimer | undefined;
-  showDelayTimer: controlledTimer | undefined;
-  displayWasNoneAtStartOfWindowResize = false;
-  firstOfResizeBatch = true;
-  afterViewChecked$ = new Subject<boolean>();
-  runAfterViewCheckedSub = false;
+
+  private isShowing = false;
+  private resizeObs$!: Observable<Event>;
+  private resizeSub$!: Subscription | undefined;
+  private closeAll$: Subscription | undefined;
+  private close$: Subscription | undefined;
+  private closeAllInGroup$: Subscription | undefined;
+  private closeAllOthers$: Subscription | undefined;
+  private closeAllOthersInGroup$: Subscription | undefined;
+  private showAll$: Subscription | undefined;
+  private showAllOthersInGroup$: Subscription | undefined;
+  private goToNextId$: Subscription | undefined;
+  private goToPreviousId$: Subscription | undefined;
+  private goToFirstId$: Subscription | undefined;
+  private goToLastId$: Subscription | undefined;
+  private documentInjected!: Document;
+  private toastHeight!: number;
+  private toastWidth!: number;
+  private currentNextElementIndex = 0;
+  private toastDestinationDomRect!: DOMRect;
+  private bodyOverflowX!: number;
+
+  private toastDestinations!: {
+    id: string;
+    element: HTMLElement;
+    position: Position;
+    arrows?: Arrows;
+  }[];
+  private toastDestination!: HTMLElement;
+
+  private showOnInitDelayTimer: controlledTimer | undefined;
+  private hideOnInitDelayTimer: controlledTimer | undefined;
+  private hideDelayTimer: controlledTimer | undefined;
+  private showDelayTimer: controlledTimer | undefined;
+  private displayWasNoneAtStartOfWindowResize = false;
+  private firstOfResizeBatch = true;
+  private afterViewChecked$ = new Subject<boolean>();
+  private runAfterViewCheckedSub = false;
+  private viewInitTimeoutFinished = false;
 
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
@@ -164,13 +168,12 @@ export class ToastComponent
 
     this.moveToastToBody();
 
-    console.log(
-      'display and visibility ' + this.display + ' ' + this.visibility
-    );
-
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
+      console.log('toastId in AfterViewInit ' + this.toastId);
+      this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      console.log('bodyOverflow ' + this.bodyOverflowX);
       //get coords of the parent to <app-toast>. Toast should show upon hovering this.
       this.toastDestinationDomRect =
         this.toastDestination.getBoundingClientRect();
@@ -180,10 +183,34 @@ export class ToastComponent
       this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
+      this.viewInitTimeoutFinished = true;
     }, 300);
   }
 
+  private calcBodyOverflowXWidth() {
+    return (
+      this.documentInjected.body.scrollWidth -
+      this.documentInjected.body.clientWidth
+    );
+  }
+
   ngAfterViewChecked(): void {
+    if (this.viewInitTimeoutFinished) {
+      console.log('toastId in AfterViewChecked' + this.toastId);
+      console.log('bodyOverflow in AfterViewChecked');
+      let newBodyOverflowXwidth = this.calcBodyOverflowXWidth();
+      if (newBodyOverflowXwidth !== this.bodyOverflowX) {
+        console.log(
+          'in if - newBodyOverflowXwidth !== this.bodyOverflowX in AfterViewChecked'
+        );
+        this.toastDestinationDomRect =
+          this.toastDestination.getBoundingClientRect();
+        this.defineCoords(this.toastDestinationDomRect);
+        this.initDelayTimers();
+        this.initToastDestinations();
+      }
+    }
+
     if (this.runAfterViewCheckedSub) {
       this.afterViewChecked$.next(true);
       this.runAfterViewCheckedSub = false;
@@ -191,6 +218,7 @@ export class ToastComponent
   }
 
   ngOnDestroy(): void {
+    this.resizeSub$ && this.resizeSub$.unsubscribe();
     this.closeAll$ && this.closeAll$.unsubscribe();
     this.close$ && this.close$.unsubscribe();
     this.closeAllInGroup$ && this.closeAllInGroup$.unsubscribe();
@@ -800,7 +828,6 @@ export class ToastComponent
 
     this.defineCoords(this.toastDestinationDomRect);
 
-    //check here which are active
     if (this.displayWasNoneAtStartOfWindowResize) {
       this.display = 'none';
       this.displayWasNoneAtStartOfWindowResize = false;

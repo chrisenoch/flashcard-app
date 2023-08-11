@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
-  constructor() {}
   close$ = new Subject<{ event: Event; toastId: string } | null>();
   closeAll$ = new Subject<Event | null>();
   closeAllOthers$ = new Subject<{ event: Event; toastId: string } | null>();
@@ -32,8 +31,6 @@ export class ToastService {
   goToPreviousId$ = new Subject<Event | null>();
   goToFirstId$ = new Subject<Event | null>();
   goToLastId$ = new Subject<Event | null>();
-
-  // closeObs$ = this.close$.asObservable;
 
   onGoToNextId(e: Event) {
     this.goToNextId$.next(e);
