@@ -149,13 +149,6 @@ export class ToastComponent
     this.toastDestination =
       this.toastVC.nativeElement.parentElement.parentElement;
 
-    console.log('originalToastParent');
-    console.log(this.toastDestination);
-
-    // //get coords of the parent to <app-toast>. Toast should show upon hovering this.
-    // this.toastDestinationDomRect =
-    //   this.toastDestination.getBoundingClientRect();
-
     this.addActionEventListeners();
 
     this.moveToastToBody();
@@ -502,6 +495,7 @@ export class ToastComponent
           destinationDomRect.top +
           destinationDomRect.height / 2 -
           this.toastHeight / 2 +
+          window.scrollY +
           'px';
         break;
       case 'RIGHT':
@@ -514,6 +508,7 @@ export class ToastComponent
           destinationDomRect.top +
           destinationDomRect.height / 2 -
           this.toastHeight / 2 +
+          window.scrollY +
           'px';
 
         break;
@@ -524,7 +519,11 @@ export class ToastComponent
           destinationDomRect.width / 2 +
           'px';
         this.top =
-          destinationDomRect.top - this.toastHeight - this.gapInPx + 'px';
+          destinationDomRect.top -
+          this.toastHeight -
+          this.gapInPx +
+          window.scrollY +
+          'px';
         break;
       case 'BOTTOM':
         this.left =
@@ -535,6 +534,7 @@ export class ToastComponent
         this.top =
           destinationDomRect.top +
           destinationDomRect.height +
+          window.scrollY +
           this.gapInPx +
           'px';
         break;
@@ -746,7 +746,6 @@ export class ToastComponent
                 if (this.display === 'none') {
                   this.displayWasNoneAtStartOfWindowResize = true;
                 }
-
                 this.visibility = 'hidden';
                 this.display = 'none';
                 this.firstOfResizeBatch = false;
@@ -849,8 +848,6 @@ export class ToastComponent
           );
         }
         const nextEle = this.documentInjected.getElementById(id);
-        console.log('element with id ' + id);
-        console.log(nextEle);
         if (nextEle) {
           this.toastDestinations.push({
             id,
@@ -860,8 +857,6 @@ export class ToastComponent
           });
         }
       });
-      console.log('toast destinations array');
-      console.log(this.toastDestinations);
     }
   }
 
