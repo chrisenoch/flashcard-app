@@ -33,6 +33,8 @@ export class ToastService {
   goToFirstId$ = new Subject<Event | null>();
   goToLastId$ = new Subject<Event | null>();
 
+  // closeObs$ = this.close$.asObservable;
+
   onGoToNextId(e: Event) {
     this.goToNextId$.next(e);
   }

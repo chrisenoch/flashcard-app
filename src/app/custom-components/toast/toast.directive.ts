@@ -19,28 +19,28 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
     private toastService: ToastService
   ) {}
 
-  onCloseAllObs$!: Observable<Event>;
-  onCloseAllSub$!: Subscription;
-  onCloseAllOthersObs$!: Observable<Event>;
-  onCloseAllOthersSub$!: Subscription;
-  onCloseAllOthersInGroupObs$!: Observable<Event>;
-  onCloseAllOthersInGroupSub$!: Subscription;
-  onCloseAllInGroupObs$!: Observable<Event>;
-  onCloseAllInGroupSub$!: Subscription;
-  onCloseObs$!: Observable<Event>;
-  onCloseSub$!: Subscription;
-  onShowAllObs$!: Observable<Event>;
-  onShowAllSub$!: Subscription;
-  onShowAllOthersInGroupObs$!: Observable<Event>;
-  onShowAllOthersInGroupSub$!: Subscription;
-  onGoToNextIdObs$!: Observable<Event>;
-  onGoToNextIdSub$!: Subscription;
-  onGoToPreviousIdObs$!: Observable<Event>;
-  onGoToPreviousIdSub$!: Subscription;
-  onGoToFirstIdObs$!: Observable<Event>;
-  onGoToFirstIdSub$!: Subscription;
-  onGoToLastIdObs$!: Observable<Event>;
-  onGoToLastIdSub$!: Subscription;
+  onCloseAllObs$: Observable<Event> | undefined;
+  onCloseAllSub$: Subscription | undefined;
+  onCloseAllOthersObs$: Observable<Event> | undefined;
+  onCloseAllOthersSub$: Subscription | undefined;
+  onCloseAllOthersInGroupObs$: Observable<Event> | undefined;
+  onCloseAllOthersInGroupSub$: Subscription | undefined;
+  onCloseAllInGroupObs$: Observable<Event> | undefined;
+  onCloseAllInGroupSub$: Subscription | undefined;
+  onCloseObs$: Observable<Event> | undefined;
+  onCloseSub$: Subscription | undefined;
+  onShowAllObs$: Observable<Event> | undefined;
+  onShowAllSub$: Subscription | undefined;
+  onShowAllOthersInGroupObs$: Observable<Event> | undefined;
+  onShowAllOthersInGroupSub$: Subscription | undefined;
+  onGoToNextIdObs$: Observable<Event> | undefined;
+  onGoToNextIdSub$: Subscription | undefined;
+  onGoToPreviousIdObs$: Observable<Event> | undefined;
+  onGoToPreviousIdSub$: Subscription | undefined;
+  onGoToFirstIdObs$: Observable<Event> | undefined;
+  onGoToFirstIdSub$: Subscription | undefined;
+  onGoToLastIdObs$: Observable<Event> | undefined;
+  onGoToLastIdSub$: Subscription | undefined;
 
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
@@ -167,16 +167,20 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.onCloseAllSub$.unsubscribe();
-    this.onCloseAllOthersSub$.unsubscribe();
-    this.onCloseAllOthersInGroupSub$.unsubscribe();
-    this.onCloseAllInGroupSub$.unsubscribe();
-    this.onCloseSub$.unsubscribe();
-    this.onShowAllSub$.unsubscribe();
-    this.onShowAllOthersInGroupSub$.unsubscribe();
-    this.onGoToNextIdSub$.unsubscribe();
-    this.onGoToPreviousIdSub$.unsubscribe();
-    this.onGoToFirstIdSub$.unsubscribe();
-    this.onGoToLastIdSub$.unsubscribe();
+    console.log('ngONDestroy entered in toast directive');
+    this.onCloseAllSub$ && this.onCloseAllSub$.unsubscribe();
+    this.onCloseAllOthersSub$ && this.onCloseAllOthersSub$.unsubscribe();
+    this.onCloseAllOthersInGroupSub$ &&
+      this.onCloseAllOthersInGroupSub$.unsubscribe();
+    this.onCloseAllInGroupSub$ && this.onCloseAllInGroupSub$.unsubscribe();
+    this.onCloseSub$ && this.onCloseSub$.unsubscribe();
+    this.onShowAllSub$ && this.onShowAllSub$.unsubscribe();
+    this.onShowAllOthersInGroupSub$ &&
+      this.onShowAllOthersInGroupSub$.unsubscribe();
+    this.onGoToNextIdSub$ && this.onGoToNextIdSub$.unsubscribe();
+    this.onGoToPreviousIdSub$ && this.onGoToPreviousIdSub$.unsubscribe();
+    this.onGoToFirstIdSub$ && this.onGoToFirstIdSub$.unsubscribe();
+    this.onGoToLastIdSub$ && this.onGoToLastIdSub$.unsubscribe();
+    console.log('end of ngONDestroy entered in toast directive');
   }
 }

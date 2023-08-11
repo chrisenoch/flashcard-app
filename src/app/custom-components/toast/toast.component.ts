@@ -65,6 +65,17 @@ export class ToastComponent
   isShowing = false;
   resizeObs$!: Observable<Event>;
   resizeSub$!: Subscription;
+  closeAll$: Subscription | undefined;
+  close$: Subscription | undefined;
+  closeAllInGroup$: Subscription | undefined;
+  closeAllOthers$: Subscription | undefined;
+  closeAllOthersInGroup$: Subscription | undefined;
+  showAll$: Subscription | undefined;
+  showAllOthersInGroup$: Subscription | undefined;
+  goToNextId$: Subscription | undefined;
+  goToPreviousId$: Subscription | undefined;
+  goToFirstId$: Subscription | undefined;
+  goToLastId$: Subscription | undefined;
   documentInjected!: Document;
   toastHeight!: number;
   toastWidth!: number;
@@ -180,18 +191,17 @@ export class ToastComponent
   }
 
   ngOnDestroy(): void {
-    this.resizeSub$.unsubscribe();
-    this.toastService.closeAll$.unsubscribe();
-    this.toastService.close$.unsubscribe();
-    this.toastService.closeAllInGroup$.unsubscribe();
-    this.toastService.closeAllOthers$.unsubscribe();
-    this.toastService.closeAllOthersInGroup$.unsubscribe();
-    this.toastService.showAll$.unsubscribe();
-    this.toastService.showAllOthersInGroup$.unsubscribe();
-    this.toastService.goToNextId$.unsubscribe();
-    this.toastService.goToPreviousId$.unsubscribe();
-    this.toastService.goToFirstId$.unsubscribe();
-    this.toastService.goToLastId$.unsubscribe();
+    this.closeAll$ && this.closeAll$.unsubscribe();
+    this.close$ && this.close$.unsubscribe();
+    this.closeAllInGroup$ && this.closeAllInGroup$.unsubscribe();
+    this.closeAllOthers$ && this.closeAllOthers$.unsubscribe();
+    this.closeAllOthersInGroup$ && this.closeAllOthersInGroup$.unsubscribe();
+    this.showAll$ && this.showAll$.unsubscribe();
+    this.showAllOthersInGroup$ && this.showAllOthersInGroup$.unsubscribe();
+    this.goToNextId$ && this.goToNextId$.unsubscribe();
+    this.goToPreviousId$ && this.goToPreviousId$.unsubscribe();
+    this.goToFirstId$ && this.goToFirstId$.unsubscribe();
+    this.goToLastId$ && this.goToLastId$.unsubscribe();
   }
 
   onClose() {
@@ -655,57 +665,64 @@ export class ToastComponent
 
   private addDirectiveSubscriptions() {
     if (this.nextElements !== undefined) {
-      this.toastService.goToNextId$.subscribe((e) => {
+      this.goToNextId$ = this.toastService.goToNextId$.subscribe((e) => {
         this.goToNextElement();
       });
-      this.toastService.goToPreviousId$.subscribe((e) => {
-        this.goToPreviousElement();
-      });
-      this.toastService.goToFirstId$.subscribe((e) => {
+      this.goToPreviousId$ = this.toastService.goToPreviousId$.subscribe(
+        (e) => {
+          this.goToPreviousElement();
+        }
+      );
+      this.goToFirstId$ = this.toastService.goToFirstId$.subscribe((e) => {
         this.goToFirstElement();
       });
-      this.toastService.goToLastId$.subscribe((e) => {
+      this.goToLastId$ = this.toastService.goToLastId$.subscribe((e) => {
         this.goToLastElement();
       });
     }
 
-    this.toastService.closeAll$.subscribe((e) => {
+    this.closeAll$ = this.toastService.closeAll$.subscribe((e) => {
       this.onClose();
     });
 
-    this.toastService.close$.subscribe((toastInfo) => {
+    this.close$ = this.toastService.close$.subscribe((toastInfo) => {
       if (this.toastId === toastInfo?.toastId) {
         this.onClose();
       }
     });
 
-    this.toastService.closeAllOthers$.subscribe((toastInfo) => {
-      if (this.toastId !== toastInfo?.toastId) {
-        this.onClose();
+    this.closeAllOthers$ = this.toastService.closeAllOthers$.subscribe(
+      (toastInfo) => {
+        if (this.toastId !== toastInfo?.toastId) {
+          this.onClose();
+        }
       }
-    });
+    );
 
     if (this.toastGroupId !== undefined) {
-      this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
-        if (this.toastGroupId === toastInfo?.toastGroupId) {
-          this.onClose();
+      this.closeAllInGroup$ = this.toastService.closeAllInGroup$.subscribe(
+        (toastInfo) => {
+          if (this.toastGroupId === toastInfo?.toastGroupId) {
+            this.onClose();
+          }
         }
-      });
+      );
     }
 
     if (this.toastGroupId !== undefined) {
-      this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
-        if (
-          this.toastId !== toastInfo?.toastId &&
-          this.toastGroupId === toastInfo?.toastGroupId
-        ) {
-          this.onClose();
-        }
-      });
+      this.closeAllOthersInGroup$ =
+        this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
+          if (
+            this.toastId !== toastInfo?.toastId &&
+            this.toastGroupId === toastInfo?.toastGroupId
+          ) {
+            this.onClose();
+          }
+        });
     }
 
-    this.toastService.showAll$.subscribe((e) => {
-      //Must update 'show' so that if user hovers in and out, the toast does not close
+    this.showAll$ = this.toastService.showAll$.subscribe((e) => {
+      //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
       this.keepShowing = true;
       this.updateShowState(true);
       if (this.showOnInitDelayTimer) {
@@ -713,16 +730,17 @@ export class ToastComponent
       }
     });
 
-    this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
-      if (this.toastGroupId === toastInfo?.toastGroupId) {
-        //Must update 'show' so that if user hovers in and out, the toast does not close
-        this.keepShowing = true;
-        this.updateShowState(true);
-        if (this.showOnInitDelayTimer) {
-          this.showOnInitDelayTimer.cancelTimer = true;
+    this.showAllOthersInGroup$ =
+      this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
+        if (this.toastGroupId === toastInfo?.toastGroupId) {
+          //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
+          this.keepShowing = true;
+          this.updateShowState(true);
+          if (this.showOnInitDelayTimer) {
+            this.showOnInitDelayTimer.cancelTimer = true;
+          }
         }
-      }
-    });
+      });
   }
 
   private addWindowResizeHandler() {
