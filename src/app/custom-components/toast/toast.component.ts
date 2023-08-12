@@ -71,6 +71,7 @@ export class ToastComponent
 
   private isShowing = false;
   private accountForOverflowXContentPushingContent$!: Subscription;
+  private newBodyOverflowX$!: Subscription;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private closeAll$: Subscription | undefined;
@@ -108,7 +109,7 @@ export class ToastComponent
   private firstOfResizeBatch = true;
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
-  private runCheckBodyOverflowX = false;
+  private updateBodyOverflowX = false;
 
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
@@ -156,6 +157,12 @@ export class ToastComponent
         }
       );
 
+    this.newBodyOverflowX$ = this.toastService.newBodyOverflowX$.subscribe(
+      () => {
+        this.accountForOverflowXContentPushingContent();
+      }
+    );
+
     this.addDirectiveSubscriptions();
     this.initArrow();
 
@@ -171,7 +178,7 @@ export class ToastComponent
   }
 
   ngAfterViewInit(): void {
-    console.log('****IN VIEWONINIT');
+    console.log('In ViewOnInit');
     this.toastDestination =
       this.toastVC.nativeElement.parentElement.parentElement;
 
@@ -183,7 +190,7 @@ export class ToastComponent
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
       this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      this.previousBodyOverflowX = this.bodyOverflowX;
+      this.toastService.updateBodyOverflowX(this.bodyOverflowX);
 
       //get coords of the parent to <app-toast>. Toast should show upon hovering this.
       this.toastDestinationDomRect =
@@ -194,43 +201,50 @@ export class ToastComponent
       this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
-      this.runCheckBodyOverflowX = true;
+      //this.runCheckBodyOverflowX = true;
       console.log('**setTimeout in ngAfterViewInit finished');
     }, 300);
   }
 
   private accountForOverflowXContentPushingContent() {
     console.log(
-      'in accountForOverflowXContentPushingContent() toastId ' + this.toastId
+      '######In ACCOUNTFOROverflowXContentPushingContent() toastId ' +
+        this.toastId
     );
     this.bodyOverflowX = this.calcBodyOverflowXWidth();
-    //if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-    console.log(
-      '******* IN IF - toastId ' +
-        this.toastId +
-        '  this.bodyOverflowX !== this.previousBodyOverflowX'
-    );
+    // this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+      console.log(
+        '******* IN IF - toastId ' +
+          this.toastId +
+          '  this.bodyOverflowX !== this.previousBodyOverflowX'
+      );
 
-    setTimeout(() => {
-      this.toastDestinationDomRect =
-        this.toastDestination.getBoundingClientRect();
+      setTimeout(() => {
+        this.toastDestinationDomRect =
+          this.toastDestination.getBoundingClientRect();
 
-      this.defineCoords(this.toastDestinationDomRect);
-      this.initToastDestinations();
-      this.previousBodyOverflowX = this.bodyOverflowX;
-    }, 0);
-    this.runCheckBodyOverflowX = false;
-    //}
+        this.defineCoords(this.toastDestinationDomRect);
+        this.initToastDestinations();
+        this.previousBodyOverflowX = this.bodyOverflowX;
+        this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+      }, 0);
+    }
+  }
+
+  private updateBodyOverflowXIfChanged() {
+    this.bodyOverflowX = this.calcBodyOverflowXWidth();
+    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+      this.toastService.updateBodyOverflowX(this.calcBodyOverflowXWidth());
+    }
   }
 
   ngAfterViewChecked(): void {
     console.log('in ngViewChecked - toastId ' + this.toastId);
 
-    if (this.runCheckBodyOverflowX) {
-      //When we get to here the first time it runs after AfterViewInit, all the other toasts
-      //should have rendered by now due to the 300 delay in ngViewInit. If the toastDestination has been moved due to overflowing
-      //elements, the toastDestination will now be in the correct place and we can re-render the toast in the correct position.
-      this.accountForOverflowXContentPushingContent();
+    if (this.updateBodyOverflowX) {
+      this.updateBodyOverflowXIfChanged();
+      this.updateBodyOverflowX = false;
     }
 
     if (this.runAfterViewCheckedSub) {
@@ -241,6 +255,9 @@ export class ToastComponent
 
   ngOnDestroy(): void {
     this.resizeSub$ && this.resizeSub$.unsubscribe();
+    this.accountForOverflowXContentPushingContent$ &&
+      this.accountForOverflowXContentPushingContent$.unsubscribe();
+    this.newBodyOverflowX$ && this.newBodyOverflowX$.unsubscribe();
     this.closeAll$ && this.closeAll$.unsubscribe();
     this.close$ && this.close$.unsubscribe();
     this.closeAllInGroup$ && this.closeAllInGroup$.unsubscribe();
@@ -454,27 +471,28 @@ export class ToastComponent
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
   private updateShowState(isShow: boolean) {
     if (isShow) {
-      // this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      // this.previousBodyOverflowX = this.bodyOverflowX;
-      this.toastService.runAccountForOverflowXContentPushingContent$();
+      this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      this.previousBodyOverflowX = this.bodyOverflowX;
+
       //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
       this.display = 'inline-block';
       this.isShowing = true;
-      this.runCheckBodyOverflowX = true;
+
+      setTimeout(() => {
+        this.updateBodyOverflowX = true;
+      }, 0);
     } else {
-      // this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      // this.previousBodyOverflowX = this.bodyOverflowX;
-      this.toastService.runAccountForOverflowXContentPushingContent$();
+      this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      this.previousBodyOverflowX = this.bodyOverflowX;
+
+      //this.toastService.runAccountForOverflowXContentPushingContent$();
       this.display = 'none';
       this.isShowing = false;
       this.keepShowing = false;
-      //this.runCheckBodyOverflowX = true;
-      // setTimeout(() => {
-      //   setTimeout(() => {
-      //     this.runCheckBodyOverflowX = true;
-      //   }, 5000);
-      //   //(this.runCheckBodyOverflowX = true);
-      // }, 0);
+
+      setTimeout(() => {
+        this.updateBodyOverflowX = true;
+      }, 0);
     }
   }
 
@@ -853,7 +871,7 @@ export class ToastComponent
                   this.redefineCoords();
                   this.bodyOverflowX = this.calcBodyOverflowXWidth();
                   this.previousBodyOverflowX = this.bodyOverflowX;
-                  this.runCheckBodyOverflowX = true;
+                  this.toastService.updateBodyOverflowX(this.bodyOverflowX);
                 }, 0);
               }, 0);
             });

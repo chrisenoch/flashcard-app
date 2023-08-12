@@ -33,6 +33,15 @@ export class ToastService {
   goToLastId$ = new Subject<Event | null>();
 
   accountForOverflowXContentPushingContent$ = new Subject<boolean>();
+  newBodyOverflowX$ = new Subject<boolean>();
+  bodyOverflowX: number | undefined;
+
+  updateBodyOverflowX(newBodyOverflowX: number) {
+    if (this.bodyOverflowX !== newBodyOverflowX) {
+      this.newBodyOverflowX$.next(true);
+      this.bodyOverflowX = newBodyOverflowX;
+    }
+  }
 
   runAccountForOverflowXContentPushingContent$() {
     this.accountForOverflowXContentPushingContent$.next(true);
