@@ -186,50 +186,40 @@ export class ToastComponent
       this.initDelayTimers();
       this.initToastDestinations();
       this.runCheckBodyOverflowX = true;
+      console.log('**setTimeout in ngAfterViewInit finished');
     }, 300);
   }
 
-  private calcBodyOverflowXWidth() {
-    return (
-      this.documentInjected.body.scrollWidth -
-      this.documentInjected.body.clientWidth
-    );
+  private accountForOverflowXContentPushingContent() {
+    console.log('in accountForOverflowXContentPushingContent()');
+    this.bodyOverflowX = this.calcBodyOverflowXWidth();
+    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+      console.log('in if - this.bodyOverflowX !== this.previousBodyOverflowX');
+
+      setTimeout(() => {
+        this.toastDestinationDomRect =
+          this.toastDestination.getBoundingClientRect();
+
+        // this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+        // this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+        console.log(
+          '### toastHeight and toastWidth in accountForOverflowXContentPushingContent ' +
+            this.toastHeight +
+            ' ' +
+            this.toastWidth
+        );
+        this.defineCoords(this.toastDestinationDomRect);
+        this.initToastDestinations();
+        this.previousBodyOverflowX = this.bodyOverflowX;
+      }, 0);
+      this.runCheckBodyOverflowX = false;
+    }
   }
 
   ngAfterViewChecked(): void {
     console.log('in ngViewChecked');
-    console.log(
-      'toastId ' +
-        this.toastId +
-        'runCheckBodyOverflow ' +
-        this.runCheckBodyOverflowX
-    );
     if (this.runCheckBodyOverflowX) {
-      this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-        console.log(
-          'in if - this.bodyOverflowX !== this.previousBodyOverflowX'
-        );
-
-        setTimeout(() => {
-          this.toastDestinationDomRect =
-            this.toastDestination.getBoundingClientRect();
-
-          this.toastHeight = this.toastVC.nativeElement.offsetHeight;
-          this.toastWidth = this.toastVC.nativeElement.offsetWidth;
-          this.defineCoords(this.toastDestinationDomRect);
-          this.initToastDestinations();
-          this.previousBodyOverflowX = this.bodyOverflowX;
-          this.runCheckBodyOverflowX = false;
-          console.log(
-            'toastId end AfterViewChecked ' +
-              this.toastId +
-              'runCheckBodyOverflow ' +
-              this.runCheckBodyOverflowX
-          );
-        }, 0);
-        //this.runCheckBodyOverflowX = false;
-      }
+      this.accountForOverflowXContentPushingContent();
     }
 
     if (this.runAfterViewCheckedSub) {
@@ -395,6 +385,13 @@ export class ToastComponent
     );
 
     return controlObj;
+  }
+
+  private calcBodyOverflowXWidth() {
+    return (
+      this.documentInjected.body.scrollWidth -
+      this.documentInjected.body.clientWidth
+    );
   }
 
   private addToggleToastListener(
@@ -829,6 +826,7 @@ export class ToastComponent
               setTimeout(() => {
                 setTimeout(() => {
                   this.redefineCoords();
+                  this.runCheckBodyOverflowX = true;
                 }, 0);
               }, 0);
             });
