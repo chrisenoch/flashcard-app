@@ -70,7 +70,6 @@ export class ToastComponent
   display = 'inline-block';
 
   private isShowing = false;
-  private accountForOverflowXContentPushingContent$!: Subscription;
   private newBodyOverflowX$!: Subscription;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
@@ -150,13 +149,6 @@ export class ToastComponent
   ngOnInit(): void {
     this.checkInputs();
 
-    this.accountForOverflowXContentPushingContent$ =
-      this.toastService.accountForOverflowXContentPushingContent$.subscribe(
-        () => {
-          this.accountForOverflowXContentPushingContent();
-        }
-      );
-
     this.newBodyOverflowX$ = this.toastService.newBodyOverflowX$.subscribe(
       () => {
         this.accountForOverflowXContentPushingContent();
@@ -201,25 +193,14 @@ export class ToastComponent
       this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
-      //this.runCheckBodyOverflowX = true;
       console.log('**setTimeout in ngAfterViewInit finished');
     }, 300);
   }
 
   private accountForOverflowXContentPushingContent() {
-    console.log(
-      '######In ACCOUNTFOROverflowXContentPushingContent() toastId ' +
-        this.toastId
-    );
     this.bodyOverflowX = this.calcBodyOverflowXWidth();
     // this.toastService.updateBodyOverflowX(this.bodyOverflowX);
     if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-      console.log(
-        '******* IN IF - toastId ' +
-          this.toastId +
-          '  this.bodyOverflowX !== this.previousBodyOverflowX'
-      );
-
       setTimeout(() => {
         this.toastDestinationDomRect =
           this.toastDestination.getBoundingClientRect();
@@ -255,8 +236,6 @@ export class ToastComponent
 
   ngOnDestroy(): void {
     this.resizeSub$ && this.resizeSub$.unsubscribe();
-    this.accountForOverflowXContentPushingContent$ &&
-      this.accountForOverflowXContentPushingContent$.unsubscribe();
     this.newBodyOverflowX$ && this.newBodyOverflowX$.unsubscribe();
     this.closeAll$ && this.closeAll$.unsubscribe();
     this.close$ && this.close$.unsubscribe();
@@ -485,7 +464,6 @@ export class ToastComponent
       this.bodyOverflowX = this.calcBodyOverflowXWidth();
       this.previousBodyOverflowX = this.bodyOverflowX;
 
-      //this.toastService.runAccountForOverflowXContentPushingContent$();
       this.display = 'none';
       this.isShowing = false;
       this.keepShowing = false;
@@ -976,9 +954,7 @@ export class ToastComponent
         this.showCC.nativeElement,
         'click',
         (e: MouseEvent) => {
-          console.log(
-            'dynamically inserted show button was clicked. Now setting top and left'
-          );
+          console.log('dynamically inserted show button was clicked.');
         }
       );
     }
