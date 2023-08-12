@@ -204,28 +204,32 @@ export class ToastComponent
       'in accountForOverflowXContentPushingContent() toastId ' + this.toastId
     );
     this.bodyOverflowX = this.calcBodyOverflowXWidth();
-    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-      console.log(
-        '******* IN IF - toastId ' +
-          this.toastId +
-          '  this.bodyOverflowX !== this.previousBodyOverflowX'
-      );
+    //if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+    console.log(
+      '******* IN IF - toastId ' +
+        this.toastId +
+        '  this.bodyOverflowX !== this.previousBodyOverflowX'
+    );
 
-      setTimeout(() => {
-        this.toastDestinationDomRect =
-          this.toastDestination.getBoundingClientRect();
+    setTimeout(() => {
+      this.toastDestinationDomRect =
+        this.toastDestination.getBoundingClientRect();
 
-        this.defineCoords(this.toastDestinationDomRect);
-        this.initToastDestinations();
-        this.previousBodyOverflowX = this.bodyOverflowX;
-      }, 0);
-      this.runCheckBodyOverflowX = false;
-    }
+      this.defineCoords(this.toastDestinationDomRect);
+      this.initToastDestinations();
+      this.previousBodyOverflowX = this.bodyOverflowX;
+    }, 0);
+    this.runCheckBodyOverflowX = false;
+    //}
   }
 
   ngAfterViewChecked(): void {
     console.log('in ngViewChecked - toastId ' + this.toastId);
+
     if (this.runCheckBodyOverflowX) {
+      //When we get to here the first time it runs after AfterViewInit, all the other toasts
+      //should have rendered by now due to the 300 delay in ngViewInit. If the toastDestination has been moved due to overflowing
+      //elements, the toastDestination will now be in the correct place and we can re-render the toast in the correct position.
       this.accountForOverflowXContentPushingContent();
     }
 
