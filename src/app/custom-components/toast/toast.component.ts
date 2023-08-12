@@ -89,6 +89,7 @@ export class ToastComponent
   private currentNextElementIndex = 0;
   private toastDestinationDomRect!: DOMRect;
   private bodyOverflowX!: number;
+  private previousBodyOverflowX!: number;
 
   private toastDestinations!: {
     id: string;
@@ -106,7 +107,7 @@ export class ToastComponent
   private firstOfResizeBatch = true;
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
-  private viewInitTimeoutFinished = false;
+  private runCheckBodyOverflowX = false;
 
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
@@ -161,6 +162,7 @@ export class ToastComponent
   }
 
   ngAfterViewInit(): void {
+    console.log('****IN VIEWONINIT');
     this.toastDestination =
       this.toastVC.nativeElement.parentElement.parentElement;
 
@@ -171,9 +173,9 @@ export class ToastComponent
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
-      console.log('toastId in AfterViewInit ' + this.toastId);
       this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      console.log('bodyOverflow ' + this.bodyOverflowX);
+      this.previousBodyOverflowX = this.bodyOverflowX;
+
       //get coords of the parent to <app-toast>. Toast should show upon hovering this.
       this.toastDestinationDomRect =
         this.toastDestination.getBoundingClientRect();
@@ -183,7 +185,7 @@ export class ToastComponent
       this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
-      this.viewInitTimeoutFinished = true;
+      this.runCheckBodyOverflowX = true;
     }, 300);
   }
 
@@ -195,19 +197,38 @@ export class ToastComponent
   }
 
   ngAfterViewChecked(): void {
-    if (this.viewInitTimeoutFinished) {
-      console.log('toastId in AfterViewChecked' + this.toastId);
-      console.log('bodyOverflow in AfterViewChecked');
-      let newBodyOverflowXwidth = this.calcBodyOverflowXWidth();
-      if (newBodyOverflowXwidth !== this.bodyOverflowX) {
+    console.log('in ngViewChecked');
+    console.log(
+      'toastId ' +
+        this.toastId +
+        'runCheckBodyOverflow ' +
+        this.runCheckBodyOverflowX
+    );
+    if (this.runCheckBodyOverflowX) {
+      this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      if (this.bodyOverflowX !== this.previousBodyOverflowX) {
         console.log(
-          'in if - newBodyOverflowXwidth !== this.bodyOverflowX in AfterViewChecked'
+          'in if - this.bodyOverflowX !== this.previousBodyOverflowX'
         );
-        this.toastDestinationDomRect =
-          this.toastDestination.getBoundingClientRect();
-        this.defineCoords(this.toastDestinationDomRect);
-        this.initDelayTimers();
-        this.initToastDestinations();
+
+        setTimeout(() => {
+          this.toastDestinationDomRect =
+            this.toastDestination.getBoundingClientRect();
+
+          this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+          this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+          this.defineCoords(this.toastDestinationDomRect);
+          this.initToastDestinations();
+          this.previousBodyOverflowX = this.bodyOverflowX;
+          this.runCheckBodyOverflowX = false;
+          console.log(
+            'toastId end AfterViewChecked ' +
+              this.toastId +
+              'runCheckBodyOverflow ' +
+              this.runCheckBodyOverflowX
+          );
+        }, 0);
+        //this.runCheckBodyOverflowX = false;
       }
     }
 
