@@ -32,6 +32,12 @@ export class ToastService {
   goToFirstId$ = new Subject<Event | null>();
   goToLastId$ = new Subject<Event | null>();
 
+  accountForOverflowXContentPushingContent$ = new Subject<boolean>();
+
+  runAccountForOverflowXContentPushingContent$() {
+    this.accountForOverflowXContentPushingContent$.next(true);
+  }
+
   onGoToNextId(e: Event) {
     this.goToNextId$.next(e);
   }

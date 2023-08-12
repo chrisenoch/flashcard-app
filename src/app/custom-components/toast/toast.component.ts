@@ -70,6 +70,7 @@ export class ToastComponent
   display = 'inline-block';
 
   private isShowing = false;
+  private accountForOverflowXContentPushingContent$!: Subscription;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private closeAll$: Subscription | undefined;
@@ -147,6 +148,14 @@ export class ToastComponent
 
   ngOnInit(): void {
     this.checkInputs();
+
+    this.accountForOverflowXContentPushingContent$ =
+      this.toastService.accountForOverflowXContentPushingContent$.subscribe(
+        () => {
+          this.accountForOverflowXContentPushingContent();
+        }
+      );
+
     this.addDirectiveSubscriptions();
     this.initArrow();
 
@@ -191,23 +200,21 @@ export class ToastComponent
   }
 
   private accountForOverflowXContentPushingContent() {
-    console.log('in accountForOverflowXContentPushingContent()');
+    console.log(
+      'in accountForOverflowXContentPushingContent() toastId ' + this.toastId
+    );
     this.bodyOverflowX = this.calcBodyOverflowXWidth();
     if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-      console.log('in if - this.bodyOverflowX !== this.previousBodyOverflowX');
+      console.log(
+        '******* IN IF - toastId ' +
+          this.toastId +
+          '  this.bodyOverflowX !== this.previousBodyOverflowX'
+      );
 
       setTimeout(() => {
         this.toastDestinationDomRect =
           this.toastDestination.getBoundingClientRect();
 
-        // this.toastHeight = this.toastVC.nativeElement.offsetHeight;
-        // this.toastWidth = this.toastVC.nativeElement.offsetWidth;
-        console.log(
-          '### toastHeight and toastWidth in accountForOverflowXContentPushingContent ' +
-            this.toastHeight +
-            ' ' +
-            this.toastWidth
-        );
         this.defineCoords(this.toastDestinationDomRect);
         this.initToastDestinations();
         this.previousBodyOverflowX = this.bodyOverflowX;
@@ -217,7 +224,7 @@ export class ToastComponent
   }
 
   ngAfterViewChecked(): void {
-    console.log('in ngViewChecked');
+    console.log('in ngViewChecked - toastId ' + this.toastId);
     if (this.runCheckBodyOverflowX) {
       this.accountForOverflowXContentPushingContent();
     }
@@ -443,13 +450,27 @@ export class ToastComponent
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
   private updateShowState(isShow: boolean) {
     if (isShow) {
+      // this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      // this.previousBodyOverflowX = this.bodyOverflowX;
+      this.toastService.runAccountForOverflowXContentPushingContent$();
       //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
       this.display = 'inline-block';
       this.isShowing = true;
+      this.runCheckBodyOverflowX = true;
     } else {
+      // this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      // this.previousBodyOverflowX = this.bodyOverflowX;
+      this.toastService.runAccountForOverflowXContentPushingContent$();
       this.display = 'none';
       this.isShowing = false;
       this.keepShowing = false;
+      //this.runCheckBodyOverflowX = true;
+      // setTimeout(() => {
+      //   setTimeout(() => {
+      //     this.runCheckBodyOverflowX = true;
+      //   }, 5000);
+      //   //(this.runCheckBodyOverflowX = true);
+      // }, 0);
     }
   }
 
@@ -826,6 +847,8 @@ export class ToastComponent
               setTimeout(() => {
                 setTimeout(() => {
                   this.redefineCoords();
+                  this.bodyOverflowX = this.calcBodyOverflowXWidth();
+                  this.previousBodyOverflowX = this.bodyOverflowX;
                   this.runCheckBodyOverflowX = true;
                 }, 0);
               }, 0);
