@@ -150,8 +150,10 @@ export class ToastComponent
     this.checkInputs();
 
     this.newBodyOverflowX$ = this.toastService.newBodyOverflowX$.subscribe(
-      () => {
-        this.accountForOverflowXContentPushingContent();
+      (newBodyOverflow) => {
+        if (newBodyOverflow !== this.bodyOverflowX) {
+          this.accountForOverflowXContentPushingContent();
+        }
       }
     );
 
