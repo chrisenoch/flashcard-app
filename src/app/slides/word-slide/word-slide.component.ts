@@ -15,6 +15,8 @@ export class WordSlideComponent {
   @Input() showTranslation: boolean = true;
   @Input() showExplanation: boolean = true;
 
+  showTest = false;
+
   //to test custom toast component
   nextElements: {
     id: string;
