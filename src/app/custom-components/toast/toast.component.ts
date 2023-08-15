@@ -91,6 +91,8 @@ export class ToastComponent
   private toastDestinationDomRect!: DOMRect;
   private bodyOverflowX!: number;
   private previousBodyOverflowX!: number;
+  private isCheckingCoords = false;
+  private count = 0;
 
   private toastDestinations!: {
     id: string;
@@ -195,35 +197,80 @@ export class ToastComponent
       this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
+
       console.log('**setTimeout in ngAfterViewInit finished');
     }, 300);
   }
 
-  private accountForOverflowXContentPushingContent() {
-    this.bodyOverflowX = this.calcBodyOverflowXWidth();
-    // this.toastService.updateBodyOverflowX(this.bodyOverflowX);
-    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-      setTimeout(() => {
-        this.toastDestinationDomRect =
-          this.toastDestination.getBoundingClientRect();
+  private compareDOMRectValues(domRectFirst: any, domRectSecond: any) {
+    console.log('inside compare ----------');
+    const { x, y, width, height, top, right, bottom, left } = domRectFirst;
+    const {
+      x: x2,
+      y: y2,
+      width: width2,
+      height: height2,
+      top: top2,
+      right: right2,
+      bottom: bottom2,
+      left: left2,
+    } = domRectSecond;
 
-        this.defineCoords(this.toastDestinationDomRect);
-        this.initToastDestinations();
-        this.previousBodyOverflowX = this.bodyOverflowX;
-        this.toastService.updateBodyOverflowX(this.bodyOverflowX);
-      }, 0);
+    if (x !== x2) {
+      return false;
     }
-  }
+    if (y !== y2) {
+      return false;
+    }
 
-  private updateBodyOverflowXIfChanged() {
-    this.bodyOverflowX = this.calcBodyOverflowXWidth();
-    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-      this.toastService.updateBodyOverflowX(this.calcBodyOverflowXWidth());
+    if (width !== width2) {
+      return false;
     }
+
+    if (height !== height2) {
+      return false;
+    }
+
+    if (top !== top2) {
+      return false;
+    }
+
+    if (right !== right2) {
+      return false;
+    }
+
+    if (bottom !== bottom2) {
+      return false;
+    }
+
+    if (left !== left2) {
+      return false;
+    }
+
+    console.log('########returning true from method');
+    return true;
   }
 
   ngAfterViewChecked(): void {
     console.log('in ngViewChecked - toastId ' + this.toastId);
+    this.count++;
+
+    //In case the toast content is resized or moved.
+    if (this.toastDestinationDomRect) {
+      const newToastDestinationDomRect =
+        this.toastDestination.getBoundingClientRect();
+
+      const domRectsAreEqual = this.compareDOMRectValues(
+        this.toastDestinationDomRect,
+        newToastDestinationDomRect
+      );
+      if (!domRectsAreEqual) {
+        this.toastDestinationDomRect = newToastDestinationDomRect;
+        setTimeout(() => {
+          this.defineCoords(this.toastDestinationDomRect);
+        }, 0);
+      }
+    }
 
     if (this.updateBodyOverflowX) {
       this.updateBodyOverflowXIfChanged();
@@ -394,6 +441,29 @@ export class ToastComponent
     );
 
     return controlObj;
+  }
+
+  private accountForOverflowXContentPushingContent() {
+    this.bodyOverflowX = this.calcBodyOverflowXWidth();
+    // this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+      setTimeout(() => {
+        this.toastDestinationDomRect =
+          this.toastDestination.getBoundingClientRect();
+
+        this.defineCoords(this.toastDestinationDomRect);
+        this.initToastDestinations();
+        this.previousBodyOverflowX = this.bodyOverflowX;
+        this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+      }, 0);
+    }
+  }
+
+  private updateBodyOverflowXIfChanged() {
+    this.bodyOverflowX = this.calcBodyOverflowXWidth();
+    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+      this.toastService.updateBodyOverflowX(this.calcBodyOverflowXWidth());
+    }
   }
 
   private calcBodyOverflowXWidth() {
@@ -621,6 +691,12 @@ export class ToastComponent
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
     }
+
+    console.log('in defineCoords - toastID ' + this.toastId);
+    console.log('newToastDestinationDomRect ');
+    console.log(destinationDomRect);
+    console.log('ToastDestinationDomRect ');
+    console.log(this.toastDestinationDomRect);
   }
 
   private initArrow() {
