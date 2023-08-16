@@ -79,6 +79,7 @@ export class ToastComponent
   private closeAllInGroup$: Subscription | undefined;
   private closeAllOthers$: Subscription | undefined;
   private closeAllOthersInGroup$: Subscription | undefined;
+  private show$: Subscription | undefined;
   private showAll$: Subscription | undefined;
   private showAllOthersInGroup$: Subscription | undefined;
   private goToNextId$: Subscription | undefined;
@@ -86,7 +87,6 @@ export class ToastComponent
   private goToFirstId$: Subscription | undefined;
   private goToLastId$: Subscription | undefined;
   private documentInjected!: Document;
-  private windowInjected!: (Window & typeof globalThis) | null;
   private toastHeight!: number;
   private toastWidth!: number;
   private currentNextElementIndex = 0;
@@ -121,6 +121,7 @@ export class ToastComponent
   @Input() effectivePosition: 'other' | 'fixed' | 'sticky' | undefined;
   //When set, toast does not hide on hover out.
   @Input('show') keepShowing = false;
+
   @Input() showOnHover: boolean | 'mouseenter' = true;
   @Input() hideOnHoverOut: boolean | 'mouseleave' = true;
   @Input() showOnClick = false;
@@ -140,6 +141,7 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: Position = 'RIGHT';
   @Input() gapInPx: number | undefined;
+
   @Input() nextElements:
     | {
         id: string;
@@ -199,8 +201,6 @@ export class ToastComponent
       this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
-
-      console.log('**setTimeout in ngAfterViewInit finished');
     }, 300);
   }
 
@@ -229,6 +229,7 @@ export class ToastComponent
     this.closeAllInGroup$ && this.closeAllInGroup$.unsubscribe();
     this.closeAllOthers$ && this.closeAllOthers$.unsubscribe();
     this.closeAllOthersInGroup$ && this.closeAllOthersInGroup$.unsubscribe();
+    this.show$ && this.show$.unsubscribe();
     this.showAll$ && this.showAll$.unsubscribe();
     this.showAllOthersInGroup$ && this.showAllOthersInGroup$.unsubscribe();
     this.goToNextId$ && this.goToNextId$.unsubscribe();
@@ -248,6 +249,7 @@ export class ToastComponent
   }
 
   showToast() {
+    //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
     this.cancelTimers([
       this.hideDelayTimer,
       this.showOnInitDelayTimer,
@@ -272,7 +274,9 @@ export class ToastComponent
     if (this.hideDelay > 0) {
       this.hideDelayTimer = this.controllableTimer(this.hideDelay);
       this.hideDelayTimer.sub.subscribe({
-        complete: () => this.updateShowState(false),
+        complete: () => {
+          this.updateShowState(false);
+        },
       });
     } else if (!this.keepShowing) {
       this.updateShowState(false);
@@ -404,7 +408,6 @@ export class ToastComponent
   }
 
   private compareDOMRectValues(domRectFirst: any, domRectSecond: any) {
-    console.log('inside compare ----------');
     const { x, y, width, height, top, right, bottom, left } = domRectFirst;
     const {
       x: x2,
@@ -448,7 +451,6 @@ export class ToastComponent
       return false;
     }
 
-    console.log('########returning true from method');
     return true;
   }
 
@@ -718,12 +720,6 @@ export class ToastComponent
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
     }
-
-    console.log('in defineCoords - toastID ' + this.toastId);
-    console.log('newToastDestinationDomRect ');
-    console.log(destinationDomRect);
-    console.log('ToastDestinationDomRect ');
-    console.log(this.toastDestinationDomRect);
   }
 
   private initArrow() {
@@ -835,6 +831,15 @@ export class ToastComponent
     }
   }
 
+  private showToastFromDirective() {
+    //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
+    this.keepShowing = true;
+    this.updateShowState(true);
+    if (this.showOnInitDelayTimer) {
+      this.showOnInitDelayTimer.cancelTimer = true;
+    }
+  }
+
   private addDirectiveSubscriptions() {
     if (this.nextElements !== undefined) {
       this.goToNextId$ = this.toastService.goToNextId$.subscribe((e) => {
@@ -893,24 +898,20 @@ export class ToastComponent
         });
     }
 
-    this.showAll$ = this.toastService.showAll$.subscribe((e) => {
-      //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
-      this.keepShowing = true;
-      this.updateShowState(true);
-      if (this.showOnInitDelayTimer) {
-        this.showOnInitDelayTimer.cancelTimer = true;
+    this.show$ = this.toastService.show$.subscribe((toastInfo) => {
+      if (this.toastId === toastInfo?.toastId) {
+        this.showToastFromDirective();
       }
+    });
+
+    this.showAll$ = this.toastService.showAll$.subscribe((toastInfo) => {
+      this.showToastFromDirective();
     });
 
     this.showAllOthersInGroup$ =
       this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
         if (this.toastGroupId === toastInfo?.toastGroupId) {
-          //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
-          this.keepShowing = true;
-          this.updateShowState(true);
-          if (this.showOnInitDelayTimer) {
-            this.showOnInitDelayTimer.cancelTimer = true;
-          }
+          this.showToastFromDirective();
         }
       });
   }
@@ -968,12 +969,6 @@ export class ToastComponent
   private redefineCoords() {
     this.toastDestinationDomRect =
       this.toastDestination.getBoundingClientRect();
-
-    console.log('toadtDest in redefinecoords');
-    console.log(this.toastDestination);
-
-    console.log('bounding rect in redefine coords');
-    console.log(this.toastDestinationDomRect);
 
     this.defineCoords(this.toastDestinationDomRect);
 
