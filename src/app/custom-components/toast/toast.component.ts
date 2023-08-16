@@ -249,6 +249,7 @@ export class ToastComponent
   }
 
   showToast() {
+    //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
     this.cancelTimers([
       this.hideDelayTimer,
       this.showOnInitDelayTimer,
@@ -828,6 +829,15 @@ export class ToastComponent
     }
   }
 
+  private showToastFromDirective() {
+    //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
+    this.keepShowing = true;
+    this.updateShowState(true);
+    if (this.showOnInitDelayTimer) {
+      this.showOnInitDelayTimer.cancelTimer = true;
+    }
+  }
+
   private addDirectiveSubscriptions() {
     if (this.nextElements !== undefined) {
       this.goToNextId$ = this.toastService.goToNextId$.subscribe((e) => {
@@ -887,34 +897,19 @@ export class ToastComponent
     }
 
     this.show$ = this.toastService.show$.subscribe((toastInfo) => {
-      //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
       if (this.toastId === toastInfo?.toastId) {
-        this.keepShowing = true;
-        this.updateShowState(true);
-        if (this.showOnInitDelayTimer) {
-          this.showOnInitDelayTimer.cancelTimer = true;
-        }
+        this.showToastFromDirective();
       }
     });
 
     this.showAll$ = this.toastService.showAll$.subscribe((e) => {
-      //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
-      this.keepShowing = true;
-      this.updateShowState(true);
-      if (this.showOnInitDelayTimer) {
-        this.showOnInitDelayTimer.cancelTimer = true;
-      }
+      this.showToastFromDirective();
     });
 
     this.showAllOthersInGroup$ =
       this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
         if (this.toastGroupId === toastInfo?.toastGroupId) {
-          //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
-          this.keepShowing = true;
-          this.updateShowState(true);
-          if (this.showOnInitDelayTimer) {
-            this.showOnInitDelayTimer.cancelTimer = true;
-          }
+          this.showToastFromDirective();
         }
       });
   }
