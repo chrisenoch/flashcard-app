@@ -5,17 +5,16 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowTranslation()"
   >
-    <app-toast
+    <!-- <app-toast
       toastId="toast-1"
       toastGroupId="toast-group-1"
       position="LEFT"
       [show]="true"
-      [showOnInitDelay]="4000"
       [nextElements]="nextElements"
       [animation]="true"
     >
       <app-toast-content toastId="toast-1"></app-toast-content>
-    </app-toast>
+    </app-toast> -->
     <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
   </button>
   <button
@@ -47,18 +46,17 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowAllExerciseAnswers()"
   >
-    <!-- <app-toast
-      toastId="toast-4"
-      toastGroupId="toast-group-3"
+    <app-toast
+      toastId="toast-1"
+      toastGroupId="toast-group-1"
+      effectivePosition="other"
       position="LEFT"
       [show]="true"
-      [toggleOnClick]="true"
-      [showOnHover]="false"
-      [hideOnHoverOut]="false"
+      [nextElements]="nextElements"
       [animation]="true"
     >
-      <app-toast-content toastId="toast-4"></app-toast-content>
-    </app-toast> -->
+      <app-toast-content toastId="toast-1"></app-toast-content>
+    </app-toast>
     <i class="bi bi-eye font-black text-gray-900 text-3xl"></i>
   </button>
   <button

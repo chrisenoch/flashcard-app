@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
-  constructor() {}
   close$ = new Subject<{ event: Event; toastId: string } | null>();
   closeAll$ = new Subject<Event | null>();
   closeAllOthers$ = new Subject<{ event: Event; toastId: string } | null>();
@@ -32,6 +31,21 @@ export class ToastService {
   goToPreviousId$ = new Subject<Event | null>();
   goToFirstId$ = new Subject<Event | null>();
   goToLastId$ = new Subject<Event | null>();
+
+  accountForOverflowXContentPushingContent$ = new Subject<boolean>();
+  newBodyOverflowX$ = new Subject<number>();
+  bodyOverflowX: number | undefined;
+
+  updateBodyOverflowX(newBodyOverflowX: number) {
+    if (this.bodyOverflowX !== newBodyOverflowX) {
+      this.newBodyOverflowX$.next(newBodyOverflowX);
+      this.bodyOverflowX = newBodyOverflowX;
+    }
+  }
+
+  runAccountForOverflowXContentPushingContent$() {
+    this.accountForOverflowXContentPushingContent$.next(true);
+  }
 
   onGoToNextId(e: Event) {
     this.goToNextId$.next(e);

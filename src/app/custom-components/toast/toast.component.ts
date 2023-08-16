@@ -15,6 +15,7 @@ import {
   NgZone,
   HostListener,
   AfterViewChecked,
+  AfterContentChecked,
 } from '@angular/core';
 import {
   Observable,
@@ -61,40 +62,63 @@ export class ToastComponent
     this.documentInjected = document;
   }
 
-  isShowing = false;
-  resizeObs$!: Observable<Event>;
-  resizeSub$!: Subscription;
-  documentInjected!: Document;
-  toastHeight!: number;
-  toastWidth!: number;
-  currentNextElementIndex = 0;
-  toastDestinationDomRect!: DOMRect;
-
-  toastDestinations!: {
-    id: string;
-    element: Element;
-    position: Position;
-    arrows?: Arrows;
-  }[];
-  toastDestination!: Element;
   top: string | null = '0px';
   bottom: string | null = null;
   left: string | null = '0px';
   right: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  showOnInitDelayTimer: controlledTimer | undefined;
-  hideOnInitDelayTimer: controlledTimer | undefined;
-  hideDelayTimer: controlledTimer | undefined;
-  showDelayTimer: controlledTimer | undefined;
-  displayChanged = false;
-  firstOfResizeBatch = true;
-  afterViewChecked$ = new Subject<boolean>();
-  runAfterViewCheckedSub = false;
+  positionType = 'absolute';
+
+  private isShowing = false;
+  private newBodyOverflowX$!: Subscription;
+  private resizeObs$!: Observable<Event>;
+  private resizeSub$!: Subscription | undefined;
+  private closeAll$: Subscription | undefined;
+  private close$: Subscription | undefined;
+  private closeAllInGroup$: Subscription | undefined;
+  private closeAllOthers$: Subscription | undefined;
+  private closeAllOthersInGroup$: Subscription | undefined;
+  private showAll$: Subscription | undefined;
+  private showAllOthersInGroup$: Subscription | undefined;
+  private goToNextId$: Subscription | undefined;
+  private goToPreviousId$: Subscription | undefined;
+  private goToFirstId$: Subscription | undefined;
+  private goToLastId$: Subscription | undefined;
+  private documentInjected!: Document;
+  private windowInjected!: (Window & typeof globalThis) | null;
+  private toastHeight!: number;
+  private toastWidth!: number;
+  private currentNextElementIndex = 0;
+  private toastDestinationDomRect!: DOMRect;
+  private bodyOverflowX!: number;
+  private previousBodyOverflowX!: number;
+  private isResizing = false;
+
+  private toastDestinations!: {
+    id: string;
+    element: HTMLElement;
+    position: Position;
+    arrows?: Arrows;
+  }[];
+  private toastDestination!: HTMLElement;
+
+  private showOnInitDelayTimer: controlledTimer | undefined;
+  private hideOnInitDelayTimer: controlledTimer | undefined;
+  private hideDelayTimer: controlledTimer | undefined;
+  private showDelayTimer: controlledTimer | undefined;
+  private displayWasNoneAtStartOfWindowResize = false;
+  private firstOfResizeBatch = true;
+  private afterViewChecked$ = new Subject<boolean>();
+  private runAfterViewCheckedSub = false;
+  private updateBodyOverflowX = false;
 
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
+  //E.g. if a button has position static but is inside a container with position fixed. The effectivePosition would be 'fixed.'
+  //This could be calculated. But I don't think traversing parent elements recursively, is good for performance if the developer can easily just add it.
+  @Input() effectivePosition: 'other' | 'fixed' | 'sticky' | undefined;
   //When set, toast does not hide on hover out.
   @Input('show') keepShowing = false;
   @Input() showOnHover: boolean | 'mouseenter' = true;
@@ -130,6 +154,13 @@ export class ToastComponent
 
   ngOnInit(): void {
     this.checkInputs();
+
+    //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
+    this.initPositionType();
+
+    //When a toast appears, overflow may happen, which can push content. The toast position may need to be updated to account for this.
+    this.initBodyOverFlowXUpdates();
+
     this.addDirectiveSubscriptions();
     this.initArrow();
 
@@ -145,15 +176,9 @@ export class ToastComponent
   }
 
   ngAfterViewInit(): void {
+    console.log('In ViewOnInit');
     this.toastDestination =
       this.toastVC.nativeElement.parentElement.parentElement;
-
-    console.log('originalToastParent');
-    console.log(this.toastDestination);
-
-    //get coords of the parent to <app-toast>. Toast should show upon hovering this.
-    this.toastDestinationDomRect =
-      this.toastDestination.getBoundingClientRect();
 
     this.addActionEventListeners();
 
@@ -162,33 +187,54 @@ export class ToastComponent
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
-      this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+      this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+
+      //get coords of the parent to <app-toast>. Toast should show upon hovering this.
+      this.toastDestinationDomRect =
+        this.toastDestination.getBoundingClientRect();
+
+      this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+      this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+      this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
       this.initToastDestinations();
+
+      console.log('**setTimeout in ngAfterViewInit finished');
     }, 300);
   }
 
   ngAfterViewChecked(): void {
+    console.log('in ngViewChecked - toastId ' + this.toastId);
+
+    //In case the toast content is resized or moved.
+    this.updateToastDestinationDomRectIfChanged();
+
+    if (this.updateBodyOverflowX) {
+      this.updateBodyOverflowXIfChanged();
+      this.updateBodyOverflowX = false;
+    }
+
     if (this.runAfterViewCheckedSub) {
-      console.log('in AfterViewChecked');
       this.afterViewChecked$.next(true);
       this.runAfterViewCheckedSub = false;
     }
   }
 
   ngOnDestroy(): void {
-    this.resizeSub$.unsubscribe();
-    this.toastService.closeAll$.unsubscribe();
-    this.toastService.close$.unsubscribe();
-    this.toastService.closeAllInGroup$.unsubscribe();
-    this.toastService.closeAllOthers$.unsubscribe();
-    this.toastService.closeAllOthersInGroup$.unsubscribe();
-    this.toastService.showAll$.unsubscribe();
-    this.toastService.showAllOthersInGroup$.unsubscribe();
-    this.toastService.goToNextId$.unsubscribe();
-    this.toastService.goToPreviousId$.unsubscribe();
-    this.toastService.goToFirstId$.unsubscribe();
-    this.toastService.goToLastId$.unsubscribe();
+    this.resizeSub$ && this.resizeSub$.unsubscribe();
+    this.newBodyOverflowX$ && this.newBodyOverflowX$.unsubscribe();
+    this.closeAll$ && this.closeAll$.unsubscribe();
+    this.close$ && this.close$.unsubscribe();
+    this.closeAllInGroup$ && this.closeAllInGroup$.unsubscribe();
+    this.closeAllOthers$ && this.closeAllOthers$.unsubscribe();
+    this.closeAllOthersInGroup$ && this.closeAllOthersInGroup$.unsubscribe();
+    this.showAll$ && this.showAll$.unsubscribe();
+    this.showAllOthersInGroup$ && this.showAllOthersInGroup$.unsubscribe();
+    this.goToNextId$ && this.goToNextId$.unsubscribe();
+    this.goToPreviousId$ && this.goToPreviousId$.unsubscribe();
+    this.goToFirstId$ && this.goToFirstId$.unsubscribe();
+    this.goToLastId$ && this.goToLastId$.unsubscribe();
   }
 
   onClose() {
@@ -335,6 +381,125 @@ export class ToastComponent
     return controlObj;
   }
 
+  private initPositionType() {
+    if (
+      this.effectivePosition &&
+      (this.effectivePosition.toLowerCase() === 'fixed' ||
+        this.effectivePosition.toLowerCase() === 'sticky')
+    ) {
+      this.positionType = this.effectivePosition;
+    } else {
+      this.positionType = 'absolute';
+    }
+  }
+
+  private initBodyOverFlowXUpdates() {
+    this.newBodyOverflowX$ = this.toastService.newBodyOverflowX$.subscribe(
+      (newBodyOverflow) => {
+        if (newBodyOverflow !== this.bodyOverflowX) {
+          this.accountForOverflowXContentPushingContent();
+        }
+      }
+    );
+  }
+
+  private compareDOMRectValues(domRectFirst: any, domRectSecond: any) {
+    console.log('inside compare ----------');
+    const { x, y, width, height, top, right, bottom, left } = domRectFirst;
+    const {
+      x: x2,
+      y: y2,
+      width: width2,
+      height: height2,
+      top: top2,
+      right: right2,
+      bottom: bottom2,
+      left: left2,
+    } = domRectSecond;
+
+    if (x !== x2) {
+      return false;
+    }
+    if (y !== y2) {
+      return false;
+    }
+
+    if (width !== width2) {
+      return false;
+    }
+
+    if (height !== height2) {
+      return false;
+    }
+
+    if (top !== top2) {
+      return false;
+    }
+
+    if (right !== right2) {
+      return false;
+    }
+
+    if (bottom !== bottom2) {
+      return false;
+    }
+
+    if (left !== left2) {
+      return false;
+    }
+
+    console.log('########returning true from method');
+    return true;
+  }
+
+  private updateToastDestinationDomRectIfChanged() {
+    if (this.toastDestinationDomRect && this.isResizing) {
+      const newToastDestinationDomRect =
+        this.toastDestination.getBoundingClientRect();
+
+      const domRectsAreEqual = this.compareDOMRectValues(
+        this.toastDestinationDomRect,
+        newToastDestinationDomRect
+      );
+      if (!domRectsAreEqual) {
+        this.toastDestinationDomRect = newToastDestinationDomRect;
+        setTimeout(() => {
+          this.defineCoords(this.toastDestinationDomRect);
+        }, 0);
+      }
+    }
+  }
+
+  private accountForOverflowXContentPushingContent() {
+    this.bodyOverflowX = this.calcBodyOverflowXWidth();
+    // this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+      setTimeout(() => {
+        this.toastDestinationDomRect =
+          this.toastDestination.getBoundingClientRect();
+
+        this.defineCoords(this.toastDestinationDomRect);
+        this.initToastDestinations();
+        this.previousBodyOverflowX = this.bodyOverflowX;
+        this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+      }, 0);
+    }
+  }
+
+  private updateBodyOverflowXIfChanged() {
+    this.bodyOverflowX = this.calcBodyOverflowXWidth();
+    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
+      this.toastService.updateBodyOverflowX(this.calcBodyOverflowXWidth());
+    }
+  }
+
+  private calcBodyOverflowXWidth() {
+    return (
+      this.documentInjected.body.scrollWidth -
+      this.documentInjected.body.clientWidth
+    );
+  }
+
   private addToggleToastListener(
     eventType: string,
     overrideKeepShowing: boolean = false
@@ -384,13 +549,27 @@ export class ToastComponent
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
   private updateShowState(isShow: boolean) {
     if (isShow) {
+      this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      this.previousBodyOverflowX = this.bodyOverflowX;
+
       //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
       this.display = 'inline-block';
       this.isShowing = true;
+
+      setTimeout(() => {
+        this.updateBodyOverflowX = true;
+      }, 0);
     } else {
+      this.bodyOverflowX = this.calcBodyOverflowXWidth();
+      this.previousBodyOverflowX = this.bodyOverflowX;
+
       this.display = 'none';
       this.isShowing = false;
       this.keepShowing = false;
+
+      setTimeout(() => {
+        this.updateBodyOverflowX = true;
+      }, 0);
     }
   }
 
@@ -475,13 +654,13 @@ export class ToastComponent
     this.visibility = 'visible';
   }
 
-  private defineCoords(toast: ElementRef, destinationDomRect: DOMRect) {
+  private defineCoords(destinationDomRect: DOMRect) {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
 
-    this.toastHeight = toast.nativeElement.offsetHeight;
-    this.toastWidth = toast.nativeElement.offsetWidth;
+    // this.toastHeight = toast.nativeElement.offsetHeight;
+    // this.toastWidth = toast.nativeElement.offsetWidth;
 
     switch (this.position) {
       case 'LEFT':
@@ -492,6 +671,7 @@ export class ToastComponent
           destinationDomRect.top +
           destinationDomRect.height / 2 -
           this.toastHeight / 2 +
+          window.scrollY +
           'px';
         break;
       case 'RIGHT':
@@ -504,6 +684,7 @@ export class ToastComponent
           destinationDomRect.top +
           destinationDomRect.height / 2 -
           this.toastHeight / 2 +
+          window.scrollY +
           'px';
 
         break;
@@ -514,7 +695,11 @@ export class ToastComponent
           destinationDomRect.width / 2 +
           'px';
         this.top =
-          destinationDomRect.top - this.toastHeight - this.gapInPx + 'px';
+          destinationDomRect.top -
+          this.toastHeight -
+          this.gapInPx +
+          window.scrollY +
+          'px';
         break;
       case 'BOTTOM':
         this.left =
@@ -525,6 +710,7 @@ export class ToastComponent
         this.top =
           destinationDomRect.top +
           destinationDomRect.height +
+          window.scrollY +
           this.gapInPx +
           'px';
         break;
@@ -532,6 +718,12 @@ export class ToastComponent
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
     }
+
+    console.log('in defineCoords - toastID ' + this.toastId);
+    console.log('newToastDestinationDomRect ');
+    console.log(destinationDomRect);
+    console.log('ToastDestinationDomRect ');
+    console.log(this.toastDestinationDomRect);
   }
 
   private initArrow() {
@@ -574,6 +766,11 @@ export class ToastComponent
     this.position =
       this.toastDestinations[this.currentNextElementIndex].position;
 
+    //get the toast dimensions in case they have changed.
+    //Perhaps dynamic content was added.
+    this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+    this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+
     //ensure previous arrowa are unset
     this.arrowTop = false;
     this.arrowBottom = false;
@@ -599,7 +796,7 @@ export class ToastComponent
 
     const eleDomRect = this.toastDestination.getBoundingClientRect();
     //this.toastDestinationDomRect = eleDomRect; //maybe can remove
-    this.defineCoords(this.toastVC, eleDomRect);
+    this.defineCoords(eleDomRect);
   }
 
   private defineHideOnInitDelay() {
@@ -640,57 +837,64 @@ export class ToastComponent
 
   private addDirectiveSubscriptions() {
     if (this.nextElements !== undefined) {
-      this.toastService.goToNextId$.subscribe((e) => {
+      this.goToNextId$ = this.toastService.goToNextId$.subscribe((e) => {
         this.goToNextElement();
       });
-      this.toastService.goToPreviousId$.subscribe((e) => {
-        this.goToPreviousElement();
-      });
-      this.toastService.goToFirstId$.subscribe((e) => {
+      this.goToPreviousId$ = this.toastService.goToPreviousId$.subscribe(
+        (e) => {
+          this.goToPreviousElement();
+        }
+      );
+      this.goToFirstId$ = this.toastService.goToFirstId$.subscribe((e) => {
         this.goToFirstElement();
       });
-      this.toastService.goToLastId$.subscribe((e) => {
+      this.goToLastId$ = this.toastService.goToLastId$.subscribe((e) => {
         this.goToLastElement();
       });
     }
 
-    this.toastService.closeAll$.subscribe((e) => {
+    this.closeAll$ = this.toastService.closeAll$.subscribe((e) => {
       this.onClose();
     });
 
-    this.toastService.close$.subscribe((toastInfo) => {
+    this.close$ = this.toastService.close$.subscribe((toastInfo) => {
       if (this.toastId === toastInfo?.toastId) {
         this.onClose();
       }
     });
 
-    this.toastService.closeAllOthers$.subscribe((toastInfo) => {
-      if (this.toastId !== toastInfo?.toastId) {
-        this.onClose();
+    this.closeAllOthers$ = this.toastService.closeAllOthers$.subscribe(
+      (toastInfo) => {
+        if (this.toastId !== toastInfo?.toastId) {
+          this.onClose();
+        }
       }
-    });
+    );
 
     if (this.toastGroupId !== undefined) {
-      this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
-        if (this.toastGroupId === toastInfo?.toastGroupId) {
-          this.onClose();
+      this.closeAllInGroup$ = this.toastService.closeAllInGroup$.subscribe(
+        (toastInfo) => {
+          if (this.toastGroupId === toastInfo?.toastGroupId) {
+            this.onClose();
+          }
         }
-      });
+      );
     }
 
     if (this.toastGroupId !== undefined) {
-      this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
-        if (
-          this.toastId !== toastInfo?.toastId &&
-          this.toastGroupId === toastInfo?.toastGroupId
-        ) {
-          this.onClose();
-        }
-      });
+      this.closeAllOthersInGroup$ =
+        this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
+          if (
+            this.toastId !== toastInfo?.toastId &&
+            this.toastGroupId === toastInfo?.toastGroupId
+          ) {
+            this.onClose();
+          }
+        });
     }
 
-    this.toastService.showAll$.subscribe((e) => {
-      //Must update 'show' so that if user hovers in and out, the toast does not close
+    this.showAll$ = this.toastService.showAll$.subscribe((e) => {
+      //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
       this.keepShowing = true;
       this.updateShowState(true);
       if (this.showOnInitDelayTimer) {
@@ -698,21 +902,23 @@ export class ToastComponent
       }
     });
 
-    this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
-      if (this.toastGroupId === toastInfo?.toastGroupId) {
-        //Must update 'show' so that if user hovers in and out, the toast does not close
-        this.keepShowing = true;
-        this.updateShowState(true);
-        if (this.showOnInitDelayTimer) {
-          this.showOnInitDelayTimer.cancelTimer = true;
+    this.showAllOthersInGroup$ =
+      this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
+        if (this.toastGroupId === toastInfo?.toastGroupId) {
+          //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
+          this.keepShowing = true;
+          this.updateShowState(true);
+          if (this.showOnInitDelayTimer) {
+            this.showOnInitDelayTimer.cancelTimer = true;
+          }
         }
-      }
-    });
+      });
   }
 
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
     this.ngZone.runOutsideAngular(() => {
+      this.isResizing = true;
       this.resizeSub$ = this.resizeObs$
         .pipe(
           tap(() => {
@@ -728,12 +934,12 @@ export class ToastComponent
                   true
                 );
 
-                this.visibility = 'hidden';
-                this.firstOfResizeBatch = false;
                 if (this.display === 'none') {
-                  this.display = 'inline-block';
-                  this.displayChanged = true;
+                  this.displayWasNoneAtStartOfWindowResize = true;
                 }
+                this.visibility = 'hidden';
+                this.display = 'none';
+                this.firstOfResizeBatch = false;
               });
             }
           }),
@@ -746,7 +952,11 @@ export class ToastComponent
               //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
               setTimeout(() => {
                 setTimeout(() => {
+                  this.isResizing = false;
                   this.redefineCoords();
+                  this.bodyOverflowX = this.calcBodyOverflowXWidth();
+                  this.previousBodyOverflowX = this.bodyOverflowX;
+                  this.toastService.updateBodyOverflowX(this.bodyOverflowX);
                 }, 0);
               }, 0);
             });
@@ -759,13 +969,21 @@ export class ToastComponent
     this.toastDestinationDomRect =
       this.toastDestination.getBoundingClientRect();
 
-    this.defineCoords(this.toastVC, this.toastDestinationDomRect);
+    console.log('toadtDest in redefinecoords');
+    console.log(this.toastDestination);
 
-    //check here which are active
-    if (this.displayChanged) {
+    console.log('bounding rect in redefine coords');
+    console.log(this.toastDestinationDomRect);
+
+    this.defineCoords(this.toastDestinationDomRect);
+
+    if (this.displayWasNoneAtStartOfWindowResize) {
       this.display = 'none';
-      this.displayChanged = false;
+      this.displayWasNoneAtStartOfWindowResize = false;
+    } else {
+      this.display = 'inline-block';
     }
+
     if (
       !this.showOnInitDelayTimer?.isActive &&
       !this.showDelayTimer?.isActive
@@ -787,7 +1005,7 @@ export class ToastComponent
   }
 
   private initToastDestinations() {
-    //get arrows of initial toast in case user set custom arrows
+    //get arrows of initial toast in case developer sets custom arrows
     const arrows: ArrowPosition[] = [];
     if (this.arrowTop) {
       arrows.push('TOP');
@@ -833,8 +1051,6 @@ export class ToastComponent
           });
         }
       });
-      console.log('toast destinations array');
-      console.log(this.toastDestinations);
     }
   }
 
@@ -845,9 +1061,7 @@ export class ToastComponent
         this.showCC.nativeElement,
         'click',
         (e: MouseEvent) => {
-          console.log(
-            'dynamically inserted show button was clicked. Now setting top and left'
-          );
+          console.log('dynamically inserted show button was clicked.');
         }
       );
     }
@@ -863,6 +1077,12 @@ export class ToastComponent
   }
 
   private checkInputs() {
+    if (!this.effectivePosition) {
+      throw Error(
+        'You must set the effectivePosition attribute. E.g. If the toast destination is a button and it has position:static, but the button is inside a div with position:fixed, the button will behave as if it were position:fixed. Thus the effectivePosition would be fixed.'
+      );
+    }
+
     if (this.toggleOnClick && (this.hideOnClick || this.showOnClick)) {
       throw Error(
         'You cannot define either hideOnClick or showOnClick at the same time as toggleOnClick'
