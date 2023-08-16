@@ -208,7 +208,7 @@ export class ToastComponent
     console.log('in ngViewChecked - toastId ' + this.toastId);
 
     //In case the toast content is resized or moved.
-    this.updateToastDestinationDomRectIfChanged();
+    //this.updateToastDestinationDomRectIfChanged();
 
     if (this.updateBodyOverflowX) {
       this.updateBodyOverflowXIfChanged();
@@ -239,6 +239,7 @@ export class ToastComponent
   }
 
   onClose() {
+    console.log('@@@ in onClose');
     this.updateShowState(false);
 
     this.cancelTimers([
@@ -274,9 +275,13 @@ export class ToastComponent
     if (this.hideDelay > 0) {
       this.hideDelayTimer = this.controllableTimer(this.hideDelay);
       this.hideDelayTimer.sub.subscribe({
-        complete: () => this.updateShowState(false),
+        complete: () => {
+          this.updateShowState(false);
+          console.log('@@@ in hideToast sub complete');
+        },
       });
     } else if (!this.keepShowing) {
+      console.log('@@@ in hideToast');
       this.updateShowState(false);
     }
   }
@@ -560,6 +565,7 @@ export class ToastComponent
         this.updateBodyOverflowX = true;
       }, 0);
     } else {
+      console.log('@@@@@ in updateShow false with toastId ' + this.toastId);
       this.bodyOverflowX = this.calcBodyOverflowXWidth();
       this.previousBodyOverflowX = this.bodyOverflowX;
 
@@ -798,6 +804,7 @@ export class ToastComponent
       this.hideOnInitDelayTimer = this.controllableTimer(this.hideOnInitDelay);
       this.hideOnInitDelayTimer.sub.subscribe({
         complete: () => {
+          console.log('@@@ in defineHideOnInitDelay sub complete');
           this.updateShowState(false);
         },
       });
@@ -902,8 +909,16 @@ export class ToastComponent
       }
     });
 
-    this.showAll$ = this.toastService.showAll$.subscribe((e) => {
-      this.showToastFromDirective();
+    this.showAll$ = this.toastService.showAll$.subscribe((toastInfo) => {
+      // if (this.toastId !== toastInfo?.toastId) {
+      //   this.showToastFromDirective();
+      // }
+      this.keepShowing = true;
+      this.updateShowState(true);
+      if (this.showOnInitDelayTimer) {
+        this.showOnInitDelayTimer.cancelTimer = true;
+      }
+      console.log('### isShow toastId ' + this.isShowing + ' ' + this.toastId);
     });
 
     this.showAllOthersInGroup$ =

@@ -122,7 +122,8 @@ export class ToastDirective implements OnInit, AfterViewInit, OnDestroy {
     if (this.onShowAll) {
       this.onShowAllObs$ = fromEvent(this.element.nativeElement, 'click');
       this.onShowAllSub$ = this.onShowAllObs$.subscribe((e) => {
-        this.toastService.onShowAll(e);
+        console.log('@@@@@@@@@@@ in showAll in directive');
+        this.toastService.onShowAll(e, 'fhfhf');
       });
     }
 
