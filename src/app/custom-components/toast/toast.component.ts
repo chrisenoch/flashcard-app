@@ -90,18 +90,20 @@ export class ToastComponent
   private toastHeight!: number;
   private toastWidth!: number;
   private currentNextElementIndex = 0;
-  private toastDestinationDomRect!: DOMRect;
+
   private bodyOverflowX!: number;
   private previousBodyOverflowX!: number;
   private isResizing = false;
 
+  //toastDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
+  private toastDestination!: HTMLElement;
+  private toastDestinationDomRect!: DOMRect;
   private toastDestinations!: {
     id: string;
     element: HTMLElement;
     position: Position;
     arrows?: Arrows;
   }[];
-  private toastDestination!: HTMLElement;
 
   private showOnInitDelayTimer: controlledTimer | undefined;
   private hideOnInitDelayTimer: controlledTimer | undefined;
@@ -258,8 +260,14 @@ export class ToastComponent
 
     if (this.showDelay > 0) {
       this.showDelayTimer = this.controllableTimer(this.showDelay);
-      this.showDelayTimer.sub.subscribe({
-        complete: () => this.updateShowState(true),
+      this.ngZone.runOutsideAngular(() => {
+        this.showDelayTimer!.sub.subscribe({
+          complete: () => {
+            this.ngZone.run(() => {
+              this.updateShowState(true);
+            });
+          },
+        });
       });
     } else {
       this.updateShowState(true);
@@ -273,10 +281,14 @@ export class ToastComponent
 
     if (this.hideDelay > 0) {
       this.hideDelayTimer = this.controllableTimer(this.hideDelay);
-      this.hideDelayTimer.sub.subscribe({
-        complete: () => {
-          this.updateShowState(false);
-        },
+      this.ngZone.runOutsideAngular(() => {
+        this.hideDelayTimer!.sub.subscribe({
+          complete: () => {
+            this.ngZone.run(() => {
+              this.updateShowState(false);
+            });
+          },
+        });
       });
     } else if (!this.keepShowing) {
       this.updateShowState(false);
@@ -798,10 +810,15 @@ export class ToastComponent
   private defineHideOnInitDelay() {
     if (this.hideOnInitDelay > 0) {
       this.hideOnInitDelayTimer = this.controllableTimer(this.hideOnInitDelay);
-      this.hideOnInitDelayTimer.sub.subscribe({
-        complete: () => {
-          this.updateShowState(false);
-        },
+
+      this.ngZone.runOutsideAngular(() => {
+        this.hideOnInitDelayTimer!.sub.subscribe({
+          complete: () => {
+            this.ngZone.run(() => {
+              this.updateShowState(false);
+            });
+          },
+        });
       });
     }
   }
@@ -814,19 +831,26 @@ export class ToastComponent
       this.showOnInitDelayTimer = this.controllableTimer(
         Math.abs(this.showOnInitDelay)
       );
-      this.showOnInitDelayTimer.sub.subscribe({
-        complete: () => {
-          this.initDisplayAndVisibility();
-          this.defineHideOnInitDelay();
-        },
-        error: (e: Error) => {
-          //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
-          if (e instanceof ControlledError) {
-            this.initDisplayAndVisibility();
-            //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled. Thus we don't call defineHideOninitDelay here
-            this.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
-          }
-        },
+      this.ngZone.runOutsideAngular(() => {
+        this.showOnInitDelayTimer!.sub.subscribe({
+          complete: () => {
+            this.ngZone.run(() => {
+              this.initDisplayAndVisibility();
+              this.defineHideOnInitDelay();
+            });
+          },
+          error: (e: Error) => {
+            this.ngZone.run(() => {
+              //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
+              if (e instanceof ControlledError) {
+                this.initDisplayAndVisibility();
+                //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled.
+                //Thus we don't call defineHideOninitDelay here
+                this.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
+              }
+            });
+          },
+        });
       });
     }
   }
@@ -840,6 +864,8 @@ export class ToastComponent
     }
   }
 
+  //used with the toast directive so the developer can easily control the toast from components within the toast or outside the toast. E.g. a close a button.
+  //These do not respect the hideDelay and showDelay timers. The hideDelay and showDelay timers are for actions (e.g. click, hover...) on the toast destination itself.
   private addDirectiveSubscriptions() {
     if (this.nextElements !== undefined) {
       this.goToNextId$ = this.toastService.goToNextId$.subscribe((e) => {
