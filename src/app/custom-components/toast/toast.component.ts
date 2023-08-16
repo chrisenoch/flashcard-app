@@ -68,6 +68,7 @@ export class ToastComponent
   right: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
+  positionType = 'absolute';
 
   private isShowing = false;
   private newBodyOverflowX$!: Subscription;
@@ -85,6 +86,7 @@ export class ToastComponent
   private goToFirstId$: Subscription | undefined;
   private goToLastId$: Subscription | undefined;
   private documentInjected!: Document;
+  private windowInjected!: (Window & typeof globalThis) | null;
   private toastHeight!: number;
   private toastWidth!: number;
   private currentNextElementIndex = 0;
@@ -114,6 +116,9 @@ export class ToastComponent
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
+  //E.g. if a button has position static but is inside a container with position fixed. The effectivePosition would be 'fixed.'
+  //This could be calculated. But I don't think traversing parent elements recursively, is good for performance if the developer can easily just add it.
+  @Input() effectivePosition: 'other' | 'fixed' | 'sticky' | undefined;
   //When set, toast does not hide on hover out.
   @Input('show') keepShowing = false;
   @Input() showOnHover: boolean | 'mouseenter' = true;
@@ -150,13 +155,11 @@ export class ToastComponent
   ngOnInit(): void {
     this.checkInputs();
 
-    this.newBodyOverflowX$ = this.toastService.newBodyOverflowX$.subscribe(
-      (newBodyOverflow) => {
-        if (newBodyOverflow !== this.bodyOverflowX) {
-          this.accountForOverflowXContentPushingContent();
-        }
-      }
-    );
+    //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
+    this.initPositionType();
+
+    //When a toast appears, overflow may happen, which can push content. The toast position may need to be updated to account for this.
+    this.initBodyOverFlowXUpdates();
 
     this.addDirectiveSubscriptions();
     this.initArrow();
@@ -376,6 +379,28 @@ export class ToastComponent
     );
 
     return controlObj;
+  }
+
+  private initPositionType() {
+    if (
+      this.effectivePosition &&
+      (this.effectivePosition.toLowerCase() === 'fixed' ||
+        this.effectivePosition.toLowerCase() === 'sticky')
+    ) {
+      this.positionType = this.effectivePosition;
+    } else {
+      this.positionType = 'absolute';
+    }
+  }
+
+  private initBodyOverFlowXUpdates() {
+    this.newBodyOverflowX$ = this.toastService.newBodyOverflowX$.subscribe(
+      (newBodyOverflow) => {
+        if (newBodyOverflow !== this.bodyOverflowX) {
+          this.accountForOverflowXContentPushingContent();
+        }
+      }
+    );
   }
 
   private compareDOMRectValues(domRectFirst: any, domRectSecond: any) {
@@ -980,7 +1005,7 @@ export class ToastComponent
   }
 
   private initToastDestinations() {
-    //get arrows of initial toast in case user set custom arrows
+    //get arrows of initial toast in case developer sets custom arrows
     const arrows: ArrowPosition[] = [];
     if (this.arrowTop) {
       arrows.push('TOP');
@@ -1052,6 +1077,12 @@ export class ToastComponent
   }
 
   private checkInputs() {
+    if (!this.effectivePosition) {
+      throw Error(
+        'You must set the effectivePosition attribute. E.g. If the toast destination is a button and it has position:static, but the button is inside a div with position:fixed, the button will behave as if it were position:fixed. Thus the effectivePosition would be fixed.'
+      );
+    }
+
     if (this.toggleOnClick && (this.hideOnClick || this.showOnClick)) {
       throw Error(
         'You cannot define either hideOnClick or showOnClick at the same time as toggleOnClick'

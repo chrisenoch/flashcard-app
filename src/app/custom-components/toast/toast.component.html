@@ -1,6 +1,6 @@
 <div
   #toast
-  class="absolute w-fit h-fit z-[9999]"
+  class="w-fit h-fit z-[9999]"
   [ngStyle]="{
     top: top,
     left: left,
@@ -8,6 +8,7 @@
     bottom: bottom,
     visibility: visibility,
     display: display,
+    position: positionType
   }"
   [ngClass]="{
     'animate-fade-in':animation,
