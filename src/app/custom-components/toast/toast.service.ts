@@ -21,7 +21,7 @@ export class ToastService {
 
   //show$ Can be called from outside the toast component.
   show$ = new Subject<{ event: Event; toastId: string } | null>();
-  showAll$ = new Subject<{ event: Event; toastId: string } | null>();
+  showAll$ = new Subject<Event | null>();
 
   showAllOthersInGroup$ = new Subject<{
     event: Event;
@@ -92,7 +92,7 @@ export class ToastService {
     this.show$.next({ event: e, toastId });
   }
 
-  onShowAll(e: Event, toastId: string) {
-    this.showAll$.next({ event: e, toastId });
+  onShowAll(e: Event) {
+    this.showAll$.next(e);
   }
 }
