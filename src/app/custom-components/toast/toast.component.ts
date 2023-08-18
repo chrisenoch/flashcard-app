@@ -115,10 +115,11 @@ export class ToastComponent
   private runAfterViewCheckedSub = false;
   private updateBodyOverflowX = false;
 
+  @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
   @Input() toastId!: string;
   @Input() toastGroupId: string | undefined;
-  //E.g. if a button has position static but is inside a container with position fixed. The effectivePosition would be 'fixed.'
+  //E.g. if a button has position static but is inside a container with position fixed, the effectivePosition would be 'fixed.'
   //This could be calculated. But I don't think traversing parent elements recursively, is good for performance if the developer can easily just add it.
   @Input() effectivePosition: 'other' | 'fixed' | 'sticky' | undefined;
   //When set, toast does not hide on hover out.
