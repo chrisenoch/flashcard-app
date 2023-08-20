@@ -90,6 +90,7 @@ export class ToastComponent
   private goToFirstId$: Subscription | undefined;
   private goToLastId$: Subscription | undefined;
   private documentInjected!: Document;
+  private windowInjected!: (Window & typeof globalThis) | null;
   private toastHeight!: number;
   private toastWidth!: number;
   private currentNextElementIndex = 0;
@@ -114,6 +115,7 @@ export class ToastComponent
   private firstOfResizeBatch = true;
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
+  private runUpdateToastPositionsOnScroll = false;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -160,9 +162,15 @@ export class ToastComponent
 
   ngOnInit(): void {
     this.checkInputs();
+    this.windowInjected = this.documentInjected.defaultView;
     //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
     this.initPositionType();
     this.addDirectiveSubscriptions();
+
+    //add scroll event listener
+    this.documentInjected.addEventListener('scrollend', () => {
+      this.runUpdateToastPositionsOnScroll = true;
+    });
     this.initArrow();
 
     if (this.showOnInitDelay > 0 || this.hideOnInitDelay > 0) {
@@ -225,8 +233,41 @@ export class ToastComponent
     }, 300);
   }
 
+  private updateToastPositionsOnScroll() {
+    //Need to add the scroll width or scroll height
+
+    console.log('in updateToastPositionsOnScroll, toastId ' + this.toastId);
+    this.toastAnchorDomRect =
+      this.toastAnchorVC.nativeElement.getBoundingClientRect();
+    setTimeout(() => {
+      this.toastTop =
+        this.toastAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
+      this.toastLeft =
+        this.toastAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
+      console.log(
+        'toastTop + toastLeft, toastId: ' + this.toastTop + ' ' + this.toastLeft
+      );
+
+      console.log(
+        'toastAnchorDomRect.top + toastAnchorDomRect.left, toastId: ' +
+          this.toastId
+      );
+      console.log(
+        this.toastAnchorDomRect.top + ' ' + this.toastAnchorDomRect.left
+      );
+    }, 300);
+  }
+
   ngAfterViewChecked(): void {
-    console.log('in ngViewChecked - toastId ' + this.toastId);
+    //console.log('in ngViewChecked - toastId ' + this.toastId);
+
+    if (this.runUpdateToastPositionsOnScroll) {
+      setTimeout(() => {
+        this.updateToastPositionsOnScroll();
+        // this.runUpdateToastPositionsOnScroll = false;
+      }, 0);
+      this.runUpdateToastPositionsOnScroll = false;
+    }
 
     //In case the toast destination is resized or moved.
     this.updateToastDestinationDomRectIfChanged();
