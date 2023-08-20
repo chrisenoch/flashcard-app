@@ -215,11 +215,10 @@ export class ToastComponent
       // this.toastWidth = this.toastVC.nativeElement.offsetWidth;
 
       //definCoords for toastAnchor
-      this.defineCoords(this.toastDestinationDomRect);
+      this.defineToastAnchorCoords(this.toastDestinationDomRect);
 
       //Because we need to read the updated position of toastAnchor
       setTimeout(() => {
-        //defineCoords for toast, which is a child of body
         this.toastAnchorDomRect =
           this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
@@ -531,7 +530,7 @@ export class ToastComponent
       if (!domRectsAreEqual) {
         this.toastDestinationDomRect = newToastDestinationDomRect;
         setTimeout(() => {
-          this.defineCoords(this.toastDestinationDomRect);
+          this.defineToastAnchorCoords(this.toastDestinationDomRect);
           setTimeout(() => {
             //this.defineCoords(this.toastDestinationDomRect);
             //to test - get newBoundingRect of Anchor
@@ -550,7 +549,7 @@ export class ToastComponent
         this.toastDestinationDomRect =
           this.toastDestination.getBoundingClientRect();
 
-        this.defineCoords(this.toastDestinationDomRect);
+        this.defineToastAnchorCoords(this.toastDestinationDomRect);
         this.initToastDestinations();
         this.previousBodyOverflowX = this.bodyOverflowX;
         this.toastService.updateBodyOverflowX(this.bodyOverflowX);
@@ -726,7 +725,7 @@ export class ToastComponent
     this.visibility = 'visible';
   }
 
-  private defineCoords(destinationDomRect: DOMRect) {
+  private defineToastAnchorCoords(destinationDomRect: DOMRect) {
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
@@ -897,7 +896,7 @@ export class ToastComponent
 
     const eleDomRect = this.toastDestination.getBoundingClientRect();
     //this.toastDestinationDomRect = eleDomRect; //maybe can remove
-    this.defineCoords(eleDomRect);
+    this.defineToastAnchorCoords(eleDomRect);
   }
 
   private defineHideOnInitDelay() {
@@ -1095,36 +1094,46 @@ export class ToastComponent
     this.toastAnchorVC.nativeElement.style.height = toastVCHeight + 'px';
     this.toastAnchorVC.nativeElement.style.width = toastVCWidth + 'px';
 
-    //toastDesintation size may have changed
+    //toastDestintation size may have changed
     this.toastDestinationDomRect =
       this.toastDestination.getBoundingClientRect();
-    this.defineCoords(this.toastDestinationDomRect);
+    this.defineToastAnchorCoords(this.toastDestinationDomRect);
 
-    if (this.displayWasNoneAtStartOfWindowResize) {
-      this.display = 'none';
-      this.displayWasNoneAtStartOfWindowResize = false;
-    } else {
-      this.display = 'inline-block';
-    }
+    //Because we need to read the updated position of toastAnchor
+    setTimeout(() => {
+      this.toastAnchorDomRect =
+        this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
-    if (
-      !this.showOnInitDelayTimer?.isActive &&
-      !this.showDelayTimer?.isActive
-    ) {
-      this.visibility = 'visible';
-    }
+      this.toastTop = this.toastAnchorDomRect.top + 'px';
+      this.toastLeft = this.toastAnchorDomRect.left + 'px';
 
-    this.pauseTimers(
-      [
-        this.showOnInitDelayTimer,
-        this.hideOnInitDelayTimer,
-        this.showDelayTimer,
-        this.hideDelayTimer,
-      ],
-      false
-    );
+      if (this.displayWasNoneAtStartOfWindowResize) {
+        this.display = 'none';
+        this.displayWasNoneAtStartOfWindowResize = false;
+      } else {
+        this.display = 'inline-block';
+      }
 
-    this.firstOfResizeBatch = true;
+      if (
+        !this.showOnInitDelayTimer?.isActive &&
+        !this.showDelayTimer?.isActive
+      ) {
+        this.visibility = 'visible';
+      }
+
+      this.pauseTimers(
+        [
+          this.showOnInitDelayTimer,
+          this.hideOnInitDelayTimer,
+          this.showDelayTimer,
+          this.hideDelayTimer,
+        ],
+        false
+      );
+
+      this.firstOfResizeBatch = true;
+      console.log('### handleWindowResizeEnd - toastId ' + this.toastId);
+    }, 0);
   }
 
   private initToastDestinations() {
