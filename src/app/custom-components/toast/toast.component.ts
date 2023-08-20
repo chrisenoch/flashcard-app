@@ -97,7 +97,6 @@ export class ToastComponent
 
   private bodyOverflowX!: number;
   private previousBodyOverflowX!: number;
-  private isResizing = false;
 
   //toastDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
   private toastDestination!: HTMLElement;
@@ -236,7 +235,8 @@ export class ToastComponent
     console.log('in ngViewChecked - toastId ' + this.toastId);
 
     //In case the toast content is resized or moved.
-    this.updateToastDestinationDomRectIfChanged();
+    this.updateToastIfToastAnchorDomRectChanged();
+    //this.updateToastDestinationDomRectIfChanged();
 
     // if (this.updateBodyOverflowX) {
     //   this.updateBodyOverflowXIfChanged();
@@ -470,23 +470,45 @@ export class ToastComponent
     return true;
   }
 
-  private updateToastDestinationDomRectIfChanged() {
-    if (this.toastDestinationDomRect && this.isResizing) {
-      const newToastDestinationDomRect =
-        this.toastDestination.getBoundingClientRect();
+  private updateToastIfToastAnchorDomRectChanged() {
+    console.log(
+      'in updateToastIfToastAnchorDomRectChanged ' + this.toastAnchorDomRect
+    );
+    if (this.toastAnchorDomRect) {
+      const newToastAnchorDomRect =
+        this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
       const domRectsAreEqual = this.compareDOMRectValues(
-        this.toastDestinationDomRect,
-        newToastDestinationDomRect
+        this.toastAnchorDomRect,
+        newToastAnchorDomRect
       );
       if (!domRectsAreEqual) {
-        this.toastDestinationDomRect = newToastDestinationDomRect;
+        this.toastAnchorDomRect = newToastAnchorDomRect;
         setTimeout(() => {
-          this.defineCoords(this.toastDestinationDomRect);
+          this.toastTop = this.toastAnchorDomRect.top + 'px';
+          this.toastLeft = this.toastAnchorDomRect.left + 'px';
         }, 0);
       }
     }
   }
+
+  // private updateToastDestinationDomRectIfChanged() {
+  //   if (this.toastDestinationDomRect && !this.isResizing) {
+  //     const newToastDestinationDomRect =
+  //       this.toastDestination.getBoundingClientRect();
+
+  //     const domRectsAreEqual = this.compareDOMRectValues(
+  //       this.toastDestinationDomRect,
+  //       newToastDestinationDomRect
+  //     );
+  //     if (!domRectsAreEqual) {
+  //       this.toastDestinationDomRect = newToastDestinationDomRect;
+  //       setTimeout(() => {
+  //         this.defineCoords(this.toastDestinationDomRect);
+  //       }, 0);
+  //     }
+  //   }
+  // }
 
   private accountForOverflowXContentPushingContent() {
     this.bodyOverflowX = this.calcBodyOverflowXWidth();
@@ -984,7 +1006,7 @@ export class ToastComponent
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
     this.ngZone.runOutsideAngular(() => {
-      this.isResizing = true;
+      console.log('### in WindowResizehandler');
       this.resizeSub$ = this.resizeObs$
         .pipe(
           tap(() => {
@@ -1018,7 +1040,6 @@ export class ToastComponent
               //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
               setTimeout(() => {
                 setTimeout(() => {
-                  this.isResizing = false;
                   this.redefineCoords();
                   this.bodyOverflowX = this.calcBodyOverflowXWidth();
                   this.previousBodyOverflowX = this.bodyOverflowX;
