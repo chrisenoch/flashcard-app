@@ -14,28 +14,28 @@
       class="bi bi-diamond-fill text-orange-500"
     ></i>
 
-    <p
-      class="text-8xl"
-      *ngIf="!showPrimaryWordFirst"
-      id="toast-destination-test"
-    >
-      {{ secondaryWord }}
-      <!-- <app-toast
-        toastId="toast-15"
-        toastGroupId="toast-group-15"
+    <div class="relative overflow-hidden">
+      <app-toast
+        toastId="toast-5"
+        toastGroupId="toast-group-2"
         position="RIGHT"
         effectivePosition="other"
-        [toggleOnClick]="true"
         [show]="true"
-        [hideDelay]="3000"
+        [toggleOnClick]="true"
         [showOnHover]="false"
-        [nextElements]="nextElements"
         [hideOnHoverOut]="false"
         [animation]="true"
       >
-        <app-toast-content toastId="toast-15"></app-toast-content>
-      </app-toast> -->
-    </p>
+        <app-toast-content toastId="toast-5"></app-toast-content>
+      </app-toast>
+      <p
+        class="text-8xl"
+        *ngIf="!showPrimaryWordFirst"
+        id="toast-destination-test"
+      >
+        {{ secondaryWord }}
+      </p>
+    </div>
   </ng-container>
   <ng-container *ngIf="showTranslation">
     <p *ngIf="showPrimaryWordFirst" class="text-6xl text-gray-700">
@@ -56,7 +56,7 @@
   >
     <div class="relative overflow-hidden h-full">
       <app-toast
-        toastId="toast-5"
+        toastId="toast-6"
         toastGroupId="toast-group-2"
         position="RIGHT"
         effectivePosition="other"
@@ -66,7 +66,7 @@
         [hideOnHoverOut]="false"
         [animation]="true"
       >
-        <app-toast-content toastId="toast-5"></app-toast-content>
+        <app-toast-content toastId="toast-6"></app-toast-content>
       </app-toast>
       <p
         class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"

@@ -236,8 +236,8 @@ export class ToastComponent
     console.log('in ngViewChecked - toastId ' + this.toastId);
 
     //In case the toast content is resized or moved.
-    this.updateToastIfToastAnchorDomRectChanged();
-    //this.updateToastDestinationDomRectIfChanged();
+    //this.updateToastIfToastAnchorDomRectChanged();
+    this.updateToastDestinationDomRectIfChanged();
 
     // if (this.updateBodyOverflowX) {
     //   this.updateBodyOverflowXIfChanged();
@@ -494,23 +494,53 @@ export class ToastComponent
     }
   }
 
-  // private updateToastDestinationDomRectIfChanged() {
-  //   if (this.toastDestinationDomRect && !this.isResizing) {
-  //     const newToastDestinationDomRect =
-  //       this.toastDestination.getBoundingClientRect();
+  private updateToastIfToastAnchorDomRectChangedTest() {
+    if (this.toastAnchorDomRect) {
+      console.log(
+        '### in updateToastIfToastAnchorDomRectChanged if toastId ' +
+          this.toastId +
+          ' ' +
+          this.toastAnchorDomRect
+      );
+      const newToastAnchorDomRect =
+        this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
-  //     const domRectsAreEqual = this.compareDOMRectValues(
-  //       this.toastDestinationDomRect,
-  //       newToastDestinationDomRect
-  //     );
-  //     if (!domRectsAreEqual) {
-  //       this.toastDestinationDomRect = newToastDestinationDomRect;
-  //       setTimeout(() => {
-  //         this.defineCoords(this.toastDestinationDomRect);
-  //       }, 0);
-  //     }
-  //   }
-  // }
+      const domRectsAreEqual = this.compareDOMRectValues(
+        this.toastAnchorDomRect,
+        newToastAnchorDomRect
+      );
+      if (!domRectsAreEqual) {
+        this.toastAnchorDomRect = newToastAnchorDomRect;
+        setTimeout(() => {
+          this.toastTop = this.toastAnchorDomRect.top + 'px';
+          this.toastLeft = this.toastAnchorDomRect.left + 'px';
+        }, 0);
+      }
+    }
+  }
+
+  private updateToastDestinationDomRectIfChanged() {
+    if (this.toastDestinationDomRect && !this.isResizing) {
+      const newToastDestinationDomRect =
+        this.toastDestination.getBoundingClientRect();
+
+      const domRectsAreEqual = this.compareDOMRectValues(
+        this.toastDestinationDomRect,
+        newToastDestinationDomRect
+      );
+      if (!domRectsAreEqual) {
+        this.toastDestinationDomRect = newToastDestinationDomRect;
+        setTimeout(() => {
+          this.defineCoords(this.toastDestinationDomRect);
+          setTimeout(() => {
+            //this.defineCoords(this.toastDestinationDomRect);
+            //to test - get newBoundingRect of Anchor
+            this.updateToastIfToastAnchorDomRectChangedTest();
+          }, 0);
+        }, 0);
+      }
+    }
+  }
 
   private accountForOverflowXContentPushingContent() {
     this.bodyOverflowX = this.calcBodyOverflowXWidth();
@@ -890,6 +920,9 @@ export class ToastComponent
     if (this.showOnInitDelay <= 0) {
       this.initDisplayAndVisibility();
       this.defineHideOnInitDelay();
+      console.log(
+        '### finished initdiaplay and visibility toastId ' + this.toastId
+      );
     } else {
       this.showOnInitDelayTimer = this.controllableTimer(
         Math.abs(this.showOnInitDelay)
