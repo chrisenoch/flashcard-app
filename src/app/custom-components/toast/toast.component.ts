@@ -94,6 +94,7 @@ export class ToastComponent
   private toastHeight!: number;
   private toastWidth!: number;
   private currentNextElementIndex = 0;
+  private isResizing = false;
 
   private bodyOverflowX!: number;
   private previousBodyOverflowX!: number;
@@ -471,10 +472,11 @@ export class ToastComponent
   }
 
   private updateToastIfToastAnchorDomRectChanged() {
-    console.log(
-      'in updateToastIfToastAnchorDomRectChanged ' + this.toastAnchorDomRect
-    );
-    if (this.toastAnchorDomRect) {
+    if (this.toastAnchorDomRect && !this.isResizing) {
+      console.log(
+        '### in updateToastIfToastAnchorDomRectChanged if' +
+          this.toastAnchorDomRect
+      );
       const newToastAnchorDomRect =
         this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
@@ -1012,6 +1014,8 @@ export class ToastComponent
           tap(() => {
             if (this.firstOfResizeBatch) {
               this.ngZone.run(() => {
+                this.isResizing = true;
+                console.log('#### isResizing');
                 this.pauseTimers(
                   [
                     this.showOnInitDelayTimer,
@@ -1040,6 +1044,7 @@ export class ToastComponent
               //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
               setTimeout(() => {
                 setTimeout(() => {
+                  this.isResizing = false;
                   this.redefineCoords();
                   this.bodyOverflowX = this.calcBodyOverflowXWidth();
                   this.previousBodyOverflowX = this.bodyOverflowX;
