@@ -1056,6 +1056,17 @@ export class ToastComponent
   }
 
   private handleWindowResizeEnd() {
+    //toast size may have changed
+    const toastVCHeight = this.toastVC.nativeElement.offsetHeight;
+    const toastVCWidth = this.toastVC.nativeElement.offsetWidth;
+    this.toastAnchorVC.nativeElement.style.height = toastVCHeight + 'px';
+    this.toastAnchorVC.nativeElement.style.width = toastVCWidth + 'px';
+
+    //toastDesintation size may have changed
+    this.toastDestinationDomRect =
+      this.toastDestination.getBoundingClientRect();
+    this.defineCoords(this.toastDestinationDomRect);
+
     if (this.displayWasNoneAtStartOfWindowResize) {
       this.display = 'none';
       this.displayWasNoneAtStartOfWindowResize = false;
