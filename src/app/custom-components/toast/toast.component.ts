@@ -75,7 +75,6 @@ export class ToastComponent
   // positionType = 'absolute';
 
   private isShowing = false;
-  private newBodyOverflowX$!: Subscription;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private closeAll$: Subscription | undefined;
@@ -96,9 +95,6 @@ export class ToastComponent
   private currentNextElementIndex = 0;
   private isResizing = false;
 
-  private bodyOverflowX!: number;
-  private previousBodyOverflowX!: number;
-
   //toastDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
   private toastDestination!: HTMLElement;
   private toastAnchorDomRect!: DOMRect;
@@ -118,7 +114,6 @@ export class ToastComponent
   private firstOfResizeBatch = true;
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
-  private updateBodyOverflowX = false;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -242,7 +237,6 @@ export class ToastComponent
 
   ngOnDestroy(): void {
     this.resizeSub$ && this.resizeSub$.unsubscribe();
-    this.newBodyOverflowX$ && this.newBodyOverflowX$.unsubscribe();
     this.closeAll$ && this.closeAll$.unsubscribe();
     this.close$ && this.close$.unsubscribe();
     this.closeAllInGroup$ && this.closeAllInGroup$.unsubscribe();
@@ -500,13 +494,6 @@ export class ToastComponent
     }
   }
 
-  private calcBodyOverflowXWidth() {
-    return (
-      this.documentInjected.body.scrollWidth -
-      this.documentInjected.body.clientWidth
-    );
-  }
-
   private addToggleToastListener(
     eventType: string,
     overrideKeepShowing: boolean = false
@@ -556,27 +543,13 @@ export class ToastComponent
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
   private updateShowState(isShow: boolean) {
     if (isShow) {
-      this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      this.previousBodyOverflowX = this.bodyOverflowX;
-
       //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
       this.display = 'inline-block';
       this.isShowing = true;
-
-      setTimeout(() => {
-        this.updateBodyOverflowX = true;
-      }, 0);
     } else {
-      this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      this.previousBodyOverflowX = this.bodyOverflowX;
-
       this.display = 'none';
       this.isShowing = false;
       this.keepShowing = false;
-
-      setTimeout(() => {
-        this.updateBodyOverflowX = true;
-      }, 0);
     }
   }
 
