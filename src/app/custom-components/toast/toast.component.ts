@@ -154,18 +154,12 @@ export class ToastComponent
     | undefined;
 
   @ViewChild('toast') toastVC!: ElementRef;
+  @ViewChild('toastAnchor') toastAnchorVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
     this.checkInputs();
-
-    //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
-    this.initPositionType();
-
-    //When a toast appears, overflow may happen, which can push content. The toast position may need to be updated to account for this.
-    this.initBodyOverFlowXUpdates();
-
     this.addDirectiveSubscriptions();
     this.initArrow();
 
@@ -183,27 +177,40 @@ export class ToastComponent
   ngAfterViewInit(): void {
     console.log('In ViewOnInit');
     this.toastDestination =
-      this.toastVC.nativeElement.parentElement.parentElement;
+      this.toastVC.nativeElement.parentElement.parentElement.parentElement;
 
     this.addActionEventListeners();
-
-    this.moveToastToBody();
 
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
-      this.bodyOverflowX = this.calcBodyOverflowXWidth();
-      this.toastService.updateBodyOverflowX(this.bodyOverflowX);
+      //get height and width of toast and set them as fixed heights and widths on the toast anchor
+
+      const originalToastHeight = this.toastVC.nativeElement.offsetHeight;
+      const originalToastWidth = this.toastVC.nativeElement.offsetWidth;
+      this.toastAnchorVC.nativeElement.style.height =
+        originalToastHeight + 'px';
+      this.toastAnchorVC.nativeElement.style.width = originalToastWidth + 'px';
+      console.log(
+        '####toast dimensions ' + originalToastHeight + ' ' + originalToastWidth
+      );
+
+      this.moveToastToBody();
+
+      console.log('toastDestination below ');
+      console.log(this.toastDestination);
 
       //get coords of the parent to <app-toast>. Toast should show upon hovering this.
       this.toastDestinationDomRect =
         this.toastDestination.getBoundingClientRect();
 
-      this.toastHeight = this.toastVC.nativeElement.offsetHeight;
-      this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+      this.toastHeight = originalToastHeight;
+      this.toastWidth = originalToastWidth;
+      // this.toastHeight = this.toastVC.nativeElement.offsetHeight;
+      // this.toastWidth = this.toastVC.nativeElement.offsetWidth;
       this.defineCoords(this.toastDestinationDomRect);
       this.initDelayTimers();
-      this.initToastDestinations();
+      this.initToastDestinations(); //To do: update this
     }, 300);
   }
 
@@ -398,28 +405,6 @@ export class ToastComponent
     return controlObj;
   }
 
-  private initPositionType() {
-    if (
-      this.effectivePosition &&
-      (this.effectivePosition.toLowerCase() === 'fixed' ||
-        this.effectivePosition.toLowerCase() === 'sticky')
-    ) {
-      this.positionType = this.effectivePosition;
-    } else {
-      this.positionType = 'absolute';
-    }
-  }
-
-  private initBodyOverFlowXUpdates() {
-    this.newBodyOverflowX$ = this.toastService.newBodyOverflowX$.subscribe(
-      (newBodyOverflow) => {
-        if (newBodyOverflow !== this.bodyOverflowX) {
-          this.accountForOverflowXContentPushingContent();
-        }
-      }
-    );
-  }
-
   private compareDOMRectValues(domRectFirst: any, domRectSecond: any) {
     const { x, y, width, height, top, right, bottom, left } = domRectFirst;
     const {
@@ -520,7 +505,7 @@ export class ToastComponent
     overrideKeepShowing: boolean = false
   ) {
     this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
+      this.toastVC.nativeElement.parentElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
         if (this.isShowing) {
@@ -537,7 +522,7 @@ export class ToastComponent
 
   private addShowToastListener(eventType: string) {
     this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
+      this.toastVC.nativeElement.parentElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
         this.showToast();
@@ -550,7 +535,7 @@ export class ToastComponent
     overrideKeepShowing: boolean = false
   ) {
     this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement,
+      this.toastVC.nativeElement.parentElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
         if (overrideKeepShowing) {
@@ -674,65 +659,98 @@ export class ToastComponent
       this.gapInPx = 8;
     }
 
-    // this.toastHeight = toast.nativeElement.offsetHeight;
-    // this.toastWidth = toast.nativeElement.offsetWidth;
+    console.log(
+      ' inside defineCoords - toastHeight toastWidth destinationRect' +
+        this.toastWidth +
+        ' ' +
+        this.toastHeight
+    );
+    console.log(destinationDomRect);
 
     switch (this.position) {
       case 'LEFT':
-        this.left =
-          destinationDomRect.left - this.toastWidth - this.gapInPx + 'px';
-
+        this.left = 0 - this.toastWidth - this.gapInPx + 'px';
         this.top =
-          destinationDomRect.top +
-          destinationDomRect.height / 2 -
-          this.toastHeight / 2 +
-          window.scrollY +
-          'px';
+          0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
+
         break;
       case 'RIGHT':
-        this.left =
-          destinationDomRect.left +
-          destinationDomRect.width +
-          this.gapInPx +
-          'px';
+        this.left = 0 + destinationDomRect.width + this.gapInPx + 'px';
         this.top =
-          destinationDomRect.top +
-          destinationDomRect.height / 2 -
-          this.toastHeight / 2 +
-          window.scrollY +
-          'px';
+          0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'TOP':
         this.left =
-          destinationDomRect.left -
-          this.toastWidth / 2 +
-          destinationDomRect.width / 2 +
-          'px';
-        this.top =
-          destinationDomRect.top -
-          this.toastHeight -
-          this.gapInPx +
-          window.scrollY +
-          'px';
+          0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
+        this.top = 0 - this.toastHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
         this.left =
-          destinationDomRect.left -
-          this.toastWidth / 2 +
-          destinationDomRect.width / 2 +
-          'px';
-        this.top =
-          destinationDomRect.top +
-          destinationDomRect.height +
-          window.scrollY +
-          this.gapInPx +
-          'px';
+          0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
+        this.top = 0 + destinationDomRect.height + this.gapInPx + 'px';
         break;
       default:
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
     }
+
+    // switch (this.position) {
+    //   case 'LEFT':
+    //     this.left =
+    //       destinationDomRect.left - this.toastWidth - this.gapInPx + 'px';
+
+    //     this.top =
+    //       destinationDomRect.top +
+    //       destinationDomRect.height / 2 -
+    //       this.toastHeight / 2 +
+    //       window.scrollY +
+    //       'px';
+    //     break;
+    //   case 'RIGHT':
+    //     this.left =
+    //       destinationDomRect.left +
+    //       destinationDomRect.width +
+    //       this.gapInPx +
+    //       'px';
+    //     this.top =
+    //       destinationDomRect.top +
+    //       destinationDomRect.height / 2 -
+    //       this.toastHeight / 2 +
+    //       window.scrollY +
+    //       'px';
+
+    //     break;
+    //   case 'TOP':
+    //     this.left =
+    //       destinationDomRect.left -
+    //       this.toastWidth / 2 +
+    //       destinationDomRect.width / 2 +
+    //       'px';
+    //     this.top =
+    //       destinationDomRect.top -
+    //       this.toastHeight -
+    //       this.gapInPx +
+    //       window.scrollY +
+    //       'px';
+    //     break;
+    //   case 'BOTTOM':
+    //     this.left =
+    //       destinationDomRect.left -
+    //       this.toastWidth / 2 +
+    //       destinationDomRect.width / 2 +
+    //       'px';
+    //     this.top =
+    //       destinationDomRect.top +
+    //       destinationDomRect.height +
+    //       window.scrollY +
+    //       this.gapInPx +
+    //       'px';
+    //     break;
+    //   default:
+    //     const exhaustiveCheck: never = this.position;
+    //     throw new Error(exhaustiveCheck);
+    // }
   }
 
   private initArrow() {
@@ -1099,12 +1117,6 @@ export class ToastComponent
   }
 
   private checkInputs() {
-    if (!this.effectivePosition) {
-      throw Error(
-        'You must set the effectivePosition attribute. E.g. If the toast destination is a button and it has position:static, but the button is inside a div with position:fixed, the button will behave as if it were position:fixed. Thus the effectivePosition would be fixed.'
-      );
-    }
-
     if (this.toggleOnClick && (this.hideOnClick || this.showOnClick)) {
       throw Error(
         'You cannot define either hideOnClick or showOnClick at the same time as toggleOnClick'

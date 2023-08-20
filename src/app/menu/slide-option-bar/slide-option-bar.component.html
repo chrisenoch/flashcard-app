@@ -1,11 +1,23 @@
 <div
   class="my-4 py-4 flex flex-col items-center w-full gap-2 p-x-8 rounded-3xl bg-purple-300"
 >
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onShowTranslation()"
-  >
-    <!-- <app-toast
+  <div class="relative overflow-hidden">
+    <app-toast
+      toastId="toast-1"
+      toastGroupId="toast-group-1"
+      position="RIGHT"
+      [show]="true"
+      [nextElements]="nextElements"
+      [animation]="true"
+    >
+      <app-toast-content toastId="toast-1"></app-toast-content>
+    </app-toast>
+
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onShowTranslation()"
+    >
+      <!-- <app-toast
       toastId="toast-1"
       toastGroupId="toast-group-1"
       position="LEFT"
@@ -15,8 +27,9 @@
     >
       <app-toast-content toastId="toast-1"></app-toast-content>
     </app-toast> -->
-    <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
-  </button>
+      <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
+    </button>
+  </div>
   <button
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onToggleTranslation()"
@@ -46,7 +59,7 @@
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowAllExerciseAnswers()"
   >
-    <app-toast
+    <!-- <app-toast
       toastId="toast-1"
       toastGroupId="toast-group-1"
       effectivePosition="other"
@@ -57,7 +70,7 @@
       [animation]="true"
     >
       <app-toast-content toastId="toast-1"></app-toast-content>
-    </app-toast>
+    </app-toast> -->
     <i class="bi bi-eye font-black text-gray-900 text-3xl"></i>
   </button>
   <button
