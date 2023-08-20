@@ -72,7 +72,7 @@ export class ToastComponent
   toastAnchorRight: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  positionType = 'absolute';
+  positionType: 'absolute' | 'fixed' | 'sticky' = 'absolute';
 
   private isShowing = false;
   private resizeObs$!: Observable<Event>;
@@ -213,10 +213,7 @@ export class ToastComponent
 
       this.toastHeight = originalToastHeight;
       this.toastWidth = originalToastWidth;
-      // this.toastHeight = this.toastVC.nativeElement.offsetHeight;
-      // this.toastWidth = this.toastVC.nativeElement.offsetWidth;
 
-      //definCoords for toastAnchor
       this.defineToastAnchorCoords(this.toastDestinationDomRect);
 
       //Because we need to read the updated position of toastAnchor
@@ -234,9 +231,6 @@ export class ToastComponent
   }
 
   private updateToastPositionsOnScroll() {
-    //Need to add the scroll width or scroll height
-
-    console.log('in updateToastPositionsOnScroll, toastId ' + this.toastId);
     this.toastAnchorDomRect =
       this.toastAnchorVC.nativeElement.getBoundingClientRect();
     setTimeout(() => {
@@ -244,27 +238,15 @@ export class ToastComponent
         this.toastAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
       this.toastLeft =
         this.toastAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
-      console.log(
-        'toastTop + toastLeft, toastId: ' + this.toastTop + ' ' + this.toastLeft
-      );
-
-      console.log(
-        'toastAnchorDomRect.top + toastAnchorDomRect.left, toastId: ' +
-          this.toastId
-      );
-      console.log(
-        this.toastAnchorDomRect.top + ' ' + this.toastAnchorDomRect.left
-      );
     }, 300);
   }
 
   ngAfterViewChecked(): void {
     //console.log('in ngViewChecked - toastId ' + this.toastId);
 
-    if (this.runUpdateToastPositionsOnScroll) {
+    if (this.runUpdateToastPositionsOnScroll && this.positionType !== 'fixed') {
       setTimeout(() => {
         this.updateToastPositionsOnScroll();
-        // this.runUpdateToastPositionsOnScroll = false;
       }, 0);
       this.runUpdateToastPositionsOnScroll = false;
     }
@@ -456,7 +438,10 @@ export class ToastComponent
       (this.effectivePosition.toLowerCase() === 'fixed' ||
         this.effectivePosition.toLowerCase() === 'sticky')
     ) {
-      this.positionType = this.effectivePosition;
+      this.positionType = this.effectivePosition as
+        | 'absolute'
+        | 'fixed'
+        | 'sticky';
     } else {
       this.positionType = 'absolute';
     }
