@@ -72,7 +72,7 @@ export class ToastComponent
   toastAnchorRight: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  // positionType = 'absolute';
+  positionType = 'absolute';
 
   private isShowing = false;
   private resizeObs$!: Observable<Event>;
@@ -160,6 +160,8 @@ export class ToastComponent
 
   ngOnInit(): void {
     this.checkInputs();
+    //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
+    this.initPositionType();
     this.addDirectiveSubscriptions();
     this.initArrow();
 
@@ -405,6 +407,18 @@ export class ToastComponent
     );
 
     return controlObj;
+  }
+
+  private initPositionType() {
+    if (
+      this.effectivePosition &&
+      (this.effectivePosition.toLowerCase() === 'fixed' ||
+        this.effectivePosition.toLowerCase() === 'sticky')
+    ) {
+      this.positionType = this.effectivePosition;
+    } else {
+      this.positionType = 'absolute';
+    }
   }
 
   private compareDOMRectValues(domRectFirst: any, domRectSecond: any) {
@@ -1048,6 +1062,14 @@ export class ToastComponent
   }
 
   private checkInputs() {
+    if (!this.effectivePosition) {
+      throw Error(
+        'You must set the effectivePosition attribute for toastId: ' +
+          this.toastId +
+          '. E.g. If the toast destination is a button and it has position:static, but the button is inside a div with position:fixed, the button will behave as if it were position:fixed. Thus the effectivePosition would be fixed.'
+      );
+    }
+
     if (this.toggleOnClick && (this.hideOnClick || this.showOnClick)) {
       throw Error(
         'You cannot define either hideOnClick or showOnClick at the same time as toggleOnClick'

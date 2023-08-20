@@ -8,13 +8,14 @@
     right: toastAnchorRight,
     bottom: toastAnchorBottom,
     visibility: 'hidden',
-    }"
+
+  }"
   id="{{ toastId + '-anchor' }}"
 >
   <!--this becomes a direct child of the body-->
   <div
     #toast
-    class="w-max h-fit absolute"
+    class="w-max h-fit"
     [ngStyle]="{
       top: toastTop,
       left: toastLeft,
@@ -22,6 +23,7 @@
       bottom: toastBottom,
       visibility: visibility,
       display: display,
+      position: positionType,
       zIndex: zIndex
     }"
     [ngClass]="{
