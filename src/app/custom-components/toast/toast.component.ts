@@ -202,9 +202,6 @@ export class ToastComponent
 
       this.moveToastToBody();
 
-      console.log('toastDestination below ');
-      console.log(this.toastDestination);
-
       //get coords of the parent to <app-toast>. Toast should show upon hovering this.
       this.toastDestinationDomRect =
         this.toastDestination.getBoundingClientRect();
@@ -234,14 +231,8 @@ export class ToastComponent
   ngAfterViewChecked(): void {
     console.log('in ngViewChecked - toastId ' + this.toastId);
 
-    //In case the toast content is resized or moved.
-    //this.updateToastIfToastAnchorDomRectChanged();
+    //In case the toast destination is resized or moved.
     this.updateToastDestinationDomRectIfChanged();
-
-    // if (this.updateBodyOverflowX) {
-    //   this.updateBodyOverflowXIfChanged();
-    //   this.updateBodyOverflowX = false;
-    // }
 
     if (this.runAfterViewCheckedSub) {
       this.afterViewChecked$.next(true);
@@ -362,7 +353,6 @@ export class ToastComponent
     }
   }
 
-  //E.g. for a timer of 5 seconds, you would use intervalPeriod with a value of 1000 and repetitions with a value of 5.
   controllableTimer(timeInMS: number): {
     sub: Observable<number>;
     isActive: boolean;
@@ -471,36 +461,7 @@ export class ToastComponent
   }
 
   private updateToastIfToastAnchorDomRectChanged() {
-    if (this.toastAnchorDomRect && !this.isResizing) {
-      console.log(
-        '### in updateToastIfToastAnchorDomRectChanged if' +
-          this.toastAnchorDomRect
-      );
-      const newToastAnchorDomRect =
-        this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
-
-      const domRectsAreEqual = this.compareDOMRectValues(
-        this.toastAnchorDomRect,
-        newToastAnchorDomRect
-      );
-      if (!domRectsAreEqual) {
-        this.toastAnchorDomRect = newToastAnchorDomRect;
-        setTimeout(() => {
-          this.toastTop = this.toastAnchorDomRect.top + 'px';
-          this.toastLeft = this.toastAnchorDomRect.left + 'px';
-        }, 0);
-      }
-    }
-  }
-
-  private updateToastIfToastAnchorDomRectChangedTest() {
     if (this.toastAnchorDomRect) {
-      console.log(
-        '### in updateToastIfToastAnchorDomRectChanged if toastId ' +
-          this.toastId +
-          ' ' +
-          this.toastAnchorDomRect
-      );
       const newToastAnchorDomRect =
         this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
@@ -532,35 +493,10 @@ export class ToastComponent
         setTimeout(() => {
           this.defineToastAnchorCoords(this.toastDestinationDomRect);
           setTimeout(() => {
-            //this.defineCoords(this.toastDestinationDomRect);
-            //to test - get newBoundingRect of Anchor
-            this.updateToastIfToastAnchorDomRectChangedTest();
+            this.updateToastIfToastAnchorDomRectChanged();
           }, 0);
         }, 0);
       }
-    }
-  }
-
-  private accountForOverflowXContentPushingContent() {
-    this.bodyOverflowX = this.calcBodyOverflowXWidth();
-    // this.toastService.updateBodyOverflowX(this.bodyOverflowX);
-    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-      setTimeout(() => {
-        this.toastDestinationDomRect =
-          this.toastDestination.getBoundingClientRect();
-
-        this.defineToastAnchorCoords(this.toastDestinationDomRect);
-        this.initToastDestinations();
-        this.previousBodyOverflowX = this.bodyOverflowX;
-        this.toastService.updateBodyOverflowX(this.bodyOverflowX);
-      }, 0);
-    }
-  }
-
-  private updateBodyOverflowXIfChanged() {
-    this.bodyOverflowX = this.calcBodyOverflowXWidth();
-    if (this.bodyOverflowX !== this.previousBodyOverflowX) {
-      this.toastService.updateBodyOverflowX(this.calcBodyOverflowXWidth());
     }
   }
 
@@ -730,14 +666,6 @@ export class ToastComponent
       this.gapInPx = 8;
     }
 
-    console.log(
-      ' inside defineCoords - toastHeight toastWidth destinationRect' +
-        this.toastWidth +
-        ' ' +
-        this.toastHeight
-    );
-    console.log(destinationDomRect);
-
     switch (this.position) {
       case 'LEFT':
         this.toastAnchorLeft = 0 - this.toastWidth - this.gapInPx + 'px';
@@ -767,63 +695,6 @@ export class ToastComponent
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
     }
-
-    // switch (this.position) {
-    //   case 'LEFT':
-    //     this.left =
-    //       destinationDomRect.left - this.toastWidth - this.gapInPx + 'px';
-
-    //     this.top =
-    //       destinationDomRect.top +
-    //       destinationDomRect.height / 2 -
-    //       this.toastHeight / 2 +
-    //       window.scrollY +
-    //       'px';
-    //     break;
-    //   case 'RIGHT':
-    //     this.left =
-    //       destinationDomRect.left +
-    //       destinationDomRect.width +
-    //       this.gapInPx +
-    //       'px';
-    //     this.top =
-    //       destinationDomRect.top +
-    //       destinationDomRect.height / 2 -
-    //       this.toastHeight / 2 +
-    //       window.scrollY +
-    //       'px';
-
-    //     break;
-    //   case 'TOP':
-    //     this.left =
-    //       destinationDomRect.left -
-    //       this.toastWidth / 2 +
-    //       destinationDomRect.width / 2 +
-    //       'px';
-    //     this.top =
-    //       destinationDomRect.top -
-    //       this.toastHeight -
-    //       this.gapInPx +
-    //       window.scrollY +
-    //       'px';
-    //     break;
-    //   case 'BOTTOM':
-    //     this.left =
-    //       destinationDomRect.left -
-    //       this.toastWidth / 2 +
-    //       destinationDomRect.width / 2 +
-    //       'px';
-    //     this.top =
-    //       destinationDomRect.top +
-    //       destinationDomRect.height +
-    //       window.scrollY +
-    //       this.gapInPx +
-    //       'px';
-    //     break;
-    //   default:
-    //     const exhaustiveCheck: never = this.position;
-    //     throw new Error(exhaustiveCheck);
-    // }
   }
 
   private initArrow() {
@@ -919,9 +790,6 @@ export class ToastComponent
     if (this.showOnInitDelay <= 0) {
       this.initDisplayAndVisibility();
       this.defineHideOnInitDelay();
-      console.log(
-        '### finished initdiaplay and visibility toastId ' + this.toastId
-      );
     } else {
       this.showOnInitDelayTimer = this.controllableTimer(
         Math.abs(this.showOnInitDelay)
@@ -1040,7 +908,6 @@ export class ToastComponent
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
     this.ngZone.runOutsideAngular(() => {
-      console.log('### in WindowResizehandler');
       this.resizeSub$ = this.resizeObs$
         .pipe(
           tap(() => {
@@ -1066,7 +933,7 @@ export class ToastComponent
     if (this.firstOfResizeBatch) {
       this.ngZone.run(() => {
         this.isResizing = true;
-        console.log('#### isResizing');
+
         this.pauseTimers(
           [
             this.showOnInitDelayTimer,
@@ -1132,7 +999,6 @@ export class ToastComponent
       );
 
       this.firstOfResizeBatch = true;
-      console.log('### handleWindowResizeEnd - toastId ' + this.toastId);
     }, 0);
   }
 
