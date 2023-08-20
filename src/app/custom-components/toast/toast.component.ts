@@ -1012,28 +1012,7 @@ export class ToastComponent
       this.resizeSub$ = this.resizeObs$
         .pipe(
           tap(() => {
-            if (this.firstOfResizeBatch) {
-              this.ngZone.run(() => {
-                this.isResizing = true;
-                console.log('#### isResizing');
-                this.pauseTimers(
-                  [
-                    this.showOnInitDelayTimer,
-                    this.hideOnInitDelayTimer,
-                    this.showDelayTimer,
-                    this.hideDelayTimer,
-                  ],
-                  true
-                );
-
-                if (this.display === 'none') {
-                  this.displayWasNoneAtStartOfWindowResize = true;
-                }
-                this.visibility = 'hidden';
-                this.display = 'none';
-                this.firstOfResizeBatch = false;
-              });
-            }
+            this.handleWindowResizeStart();
           }),
           debounceTime(1000)
         )
@@ -1041,15 +1020,9 @@ export class ToastComponent
           this.runAfterViewCheckedSub = true;
           this.ngZone.run(() => {
             this.afterViewChecked$.pipe(take(1)).subscribe(() => {
-              //nested seTimeout needed. If not, does not recover the correct BoundingClientRect.
               setTimeout(() => {
-                setTimeout(() => {
-                  this.isResizing = false;
-                  this.redefineCoords();
-                  this.bodyOverflowX = this.calcBodyOverflowXWidth();
-                  this.previousBodyOverflowX = this.bodyOverflowX;
-                  this.toastService.updateBodyOverflowX(this.bodyOverflowX);
-                }, 0);
+                this.isResizing = false;
+                this.handleWindowResizeEnd();
               }, 0);
             });
           });
@@ -1057,12 +1030,32 @@ export class ToastComponent
     });
   }
 
-  private redefineCoords() {
-    this.toastDestinationDomRect =
-      this.toastDestination.getBoundingClientRect();
+  private handleWindowResizeStart() {
+    if (this.firstOfResizeBatch) {
+      this.ngZone.run(() => {
+        this.isResizing = true;
+        console.log('#### isResizing');
+        this.pauseTimers(
+          [
+            this.showOnInitDelayTimer,
+            this.hideOnInitDelayTimer,
+            this.showDelayTimer,
+            this.hideDelayTimer,
+          ],
+          true
+        );
 
-    this.defineCoords(this.toastDestinationDomRect);
+        if (this.display === 'none') {
+          this.displayWasNoneAtStartOfWindowResize = true;
+        }
+        this.visibility = 'hidden';
+        this.display = 'none';
+        this.firstOfResizeBatch = false;
+      });
+    }
+  }
 
+  private handleWindowResizeEnd() {
     if (this.displayWasNoneAtStartOfWindowResize) {
       this.display = 'none';
       this.displayWasNoneAtStartOfWindowResize = false;
