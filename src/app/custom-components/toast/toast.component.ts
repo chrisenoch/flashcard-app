@@ -62,13 +62,17 @@ export class ToastComponent
     this.documentInjected = document;
   }
 
-  top: string | null = '0px';
-  bottom: string | null = null;
-  left: string | null = '0px';
-  right: string | null = null;
+  toastTop: string | null = '0px';
+  toastBottom: string | null = null;
+  toastLeft: string | null = '0px';
+  toastRight: string | null = null;
+  toastAnchorTop: string | null = '0px';
+  toastAnchorBottom: string | null = null;
+  toastAnchorLeft: string | null = '0px';
+  toastAnchorRight: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  positionType = 'absolute';
+  // positionType = 'absolute';
 
   private isShowing = false;
   private newBodyOverflowX$!: Subscription;
@@ -97,6 +101,7 @@ export class ToastComponent
 
   //toastDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
   private toastDestination!: HTMLElement;
+  private toastAnchorDomRect!: DOMRect;
   private toastDestinationDomRect!: DOMRect;
   private toastDestinations!: {
     id: string;
@@ -208,9 +213,22 @@ export class ToastComponent
       this.toastWidth = originalToastWidth;
       // this.toastHeight = this.toastVC.nativeElement.offsetHeight;
       // this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+
+      //definCoords for toastAnchor
       this.defineCoords(this.toastDestinationDomRect);
-      this.initDelayTimers();
-      this.initToastDestinations(); //To do: update this
+
+      //Because we need to read the updated position of toastAnchor
+      setTimeout(() => {
+        //defineCoords for toast, which is a child of body
+        this.toastAnchorDomRect =
+          this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
+
+        this.toastTop = this.toastAnchorDomRect.top + 'px';
+        this.toastLeft = this.toastAnchorDomRect.left + 'px';
+
+        this.initDelayTimers();
+        //this.initToastDestinations(); //To do: update this
+      }, 0);
     }, 300);
   }
 
@@ -220,10 +238,10 @@ export class ToastComponent
     //In case the toast content is resized or moved.
     this.updateToastDestinationDomRectIfChanged();
 
-    if (this.updateBodyOverflowX) {
-      this.updateBodyOverflowXIfChanged();
-      this.updateBodyOverflowX = false;
-    }
+    // if (this.updateBodyOverflowX) {
+    //   this.updateBodyOverflowXIfChanged();
+    //   this.updateBodyOverflowX = false;
+    // }
 
     if (this.runAfterViewCheckedSub) {
       this.afterViewChecked$.next(true);
@@ -669,26 +687,28 @@ export class ToastComponent
 
     switch (this.position) {
       case 'LEFT':
-        this.left = 0 - this.toastWidth - this.gapInPx + 'px';
-        this.top =
+        this.toastAnchorLeft = 0 - this.toastWidth - this.gapInPx + 'px';
+        this.toastAnchorTop =
           0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'RIGHT':
-        this.left = 0 + destinationDomRect.width + this.gapInPx + 'px';
-        this.top =
+        this.toastAnchorLeft =
+          0 + destinationDomRect.width + this.gapInPx + 'px';
+        this.toastAnchorTop =
           0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'TOP':
-        this.left =
+        this.toastAnchorLeft =
           0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
-        this.top = 0 - this.toastHeight - this.gapInPx + 'px';
+        this.toastAnchorTop = 0 - this.toastHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
-        this.left =
+        this.toastAnchorLeft =
           0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
-        this.top = 0 + destinationDomRect.height + this.gapInPx + 'px';
+        this.toastAnchorTop =
+          0 + destinationDomRect.height + this.gapInPx + 'px';
         break;
       default:
         const exhaustiveCheck: never = this.position;

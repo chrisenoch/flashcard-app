@@ -1,19 +1,25 @@
+<!-- toastAnchor stays with the toastDestination -->
 <div
   #toastAnchor
   class="absolute"
   [ngStyle]="{
-    top: top,
-    left: left,
-    right: right,
-    bottom: bottom,
+    top: toastAnchorTop,
+    left: toastAnchorLeft,
+    right: toastAnchorRight,
+    bottom: toastAnchorBottom,
     visibility: 'hidden',
     }"
   id="{{ toastId + '-anchor' }}"
 >
+  <!--this becomes a direct child of the body-->
   <div
     #toast
-    class="w-max h-fit"
+    class="w-max h-fit absolute"
     [ngStyle]="{
+      top: toastTop,
+      left: toastLeft,
+      right: toastRight,
+      bottom: toastBottom,
       visibility: visibility,
       display: display,
       zIndex: zIndex
