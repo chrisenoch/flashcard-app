@@ -52,12 +52,12 @@
     class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-pink-200 relative z-10"
   >
     <div class="relative overflow-hidden h-full">
-      <div id="toast-1-d-anchor" class="absolute invisible"></div>
-      <!-- <app-toast
+      <!-- <div id="toast-1-d-anchor" class="absolute invisible"></div> -->
+      <app-toast
         toastId="toast-6"
         toastGroupId="toast-group-2"
         position="RIGHT"
-        effectivePosition="other"
+        effectivePosition="absolute"
         [show]="true"
         [showOnInitDelay]="3000"
         [hideOnInitDelay]="3000"
@@ -67,7 +67,7 @@
         [animation]="true"
       >
         <app-toast-content toastId="toast-6"></app-toast-content>
-      </app-toast> -->
+      </app-toast>
       <p
         class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
         id="toast-1-d"
@@ -77,7 +77,7 @@
         toastId="toast-16"
         toastGroupId="toast-group-16"
         position="RIGHT"
-        effectivePosition="other"
+        effectivePosition="absolute"
         [show]="true"
         [toggleOnClick]="true"
         [showOnHover]="false"

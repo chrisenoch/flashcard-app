@@ -72,7 +72,7 @@ export class ToastComponent
   toastAnchorRight: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
-  positionType: 'absolute' | 'fixed' | 'sticky' = 'absolute';
+  positionType: 'absolute' | 'fixed' = 'absolute';
 
   private isShowing = false;
   private resizeObs$!: Observable<Event>;
@@ -105,6 +105,7 @@ export class ToastComponent
     toastAnchor: HTMLElement;
     element: HTMLElement;
     position: Position;
+    effectivePosition: 'absolute' | 'fixed';
     arrows?: Arrows;
   }[];
 
@@ -126,7 +127,7 @@ export class ToastComponent
   @Input() toastGroupId: string | undefined;
   //E.g. if a button has position static but is inside a container with position fixed, the effectivePosition would be 'fixed.'
   //This could be calculated. But I don't think traversing parent elements recursively, is good for performance if the developer can easily just add it.
-  @Input() effectivePosition: 'other' | 'fixed' | 'sticky' | undefined;
+  @Input() effectivePosition!: 'absolute' | 'fixed';
   //When set, toast does not hide on hover out.
   @Input('show') keepShowing = false;
 
@@ -154,6 +155,7 @@ export class ToastComponent
     | {
         id: string;
         position: Position;
+        effectivePosition: 'absolute' | 'fixed';
         arrows?: Arrows;
       }[]
     | undefined;
@@ -230,7 +232,7 @@ export class ToastComponent
         this.currentToastAnchor = this.toastAnchorVC.nativeElement;
 
         this.initDelayTimers();
-        this.initToastDestinations(); //To do: update this
+        this.initToastDestinations();
       }, 0);
     }, 300);
   }
@@ -437,13 +439,9 @@ export class ToastComponent
   private initPositionType() {
     if (
       this.effectivePosition &&
-      (this.effectivePosition.toLowerCase() === 'fixed' ||
-        this.effectivePosition.toLowerCase() === 'sticky')
+      this.effectivePosition.toLowerCase() === 'fixed'
     ) {
-      this.positionType = this.effectivePosition as
-        | 'absolute'
-        | 'fixed'
-        | 'sticky';
+      this.positionType = this.effectivePosition;
     } else {
       this.positionType = 'absolute';
     }
@@ -779,6 +777,8 @@ export class ToastComponent
       this.toastDestinations[this.currentNextElementIndex].position;
     this.currentToastAnchor =
       this.toastDestinations[this.currentNextElementIndex].toastAnchor;
+    this.positionType =
+      this.toastDestinations[this.currentNextElementIndex].effectivePosition;
 
     //get the toast dimensions in case they have changed.
     //Perhaps dynamic content was added.
@@ -1087,6 +1087,7 @@ export class ToastComponent
         element: this.toastDestination,
         position: this.position,
         toastAnchor: this.toastAnchorVC.nativeElement,
+        effectivePosition: this.effectivePosition,
         //arrows must be an array of at least one value or undefined
         arrows: arrows.length > 0 ? (arrows as Arrows) : undefined,
       },
@@ -1110,6 +1111,7 @@ export class ToastComponent
             position: ele.position,
             arrows: ele.arrows,
             toastAnchor: nextEleToastAnchor,
+            effectivePosition: ele.effectivePosition,
           });
         }
       });

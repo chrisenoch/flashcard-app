@@ -24,13 +24,13 @@ export class SlideOptionBarComponent {
   nextElements: {
     id: string;
     position: Position;
+    effectivePosition: 'absolute' | 'fixed';
     arrows?: Arrows;
   }[] = [
-    { id: 'toast-1-a', position: 'LEFT' },
-    { id: 'toast-1-b', position: 'RIGHT' },
-    { id: 'toast-1-c', position: 'RIGHT' },
+    { id: 'toast-1-a', position: 'LEFT', effectivePosition: 'absolute' },
+    { id: 'toast-1-b', position: 'RIGHT', effectivePosition: 'fixed' },
+    { id: 'toast-1-c', position: 'RIGHT', effectivePosition: 'absolute' },
 
-    { id: 'toast-1-d', position: 'RIGHT', arrows: ['TOP', 'BOTTOM'] },
     // { id: 'toast-destination-3', position: 'TOP', arrows: ['TOP', 'BOTTOM'] },
   ];
 
