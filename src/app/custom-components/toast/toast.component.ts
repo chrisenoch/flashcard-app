@@ -206,9 +206,6 @@ export class ToastComponent
       this.toastAnchorVC.nativeElement.style.height =
         originalToastHeight + 'px';
       this.toastAnchorVC.nativeElement.style.width = originalToastWidth + 'px';
-      console.log(
-        '####toast dimensions ' + originalToastHeight + ' ' + originalToastWidth
-      );
 
       this.moveToastToBody();
 
@@ -808,9 +805,6 @@ export class ToastComponent
       }
     }
 
-    console.log('new toast destination');
-    console.log(this.toastDestination);
-
     const eleDomRect = this.toastDestination.getBoundingClientRect();
     this.toastDestinationDomRect = eleDomRect;
 
@@ -825,9 +819,13 @@ export class ToastComponent
       //as toastAnchorDomRect# retrieved in this method represents the DomRect as it was defined before scroll was considered. If you do not add scrollY and scrollX here, then if the user scrolls, and then clicks on "next toast destination,"
       //the toast will move to the wrong destination because it won't take into account the scroll.
       this.toastTop =
-        this.toastAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
+        this.positionType === 'fixed'
+          ? this.toastAnchorDomRect.top + 'px'
+          : this.toastAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
       this.toastLeft =
-        this.toastAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
+        this.positionType === 'fixed'
+          ? this.toastAnchorDomRect.left + 'px'
+          : this.toastAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
     }, 0);
   }
 
@@ -1117,8 +1115,6 @@ export class ToastComponent
           });
         }
       });
-      console.log('toast destinations below');
-      console.log(this.toastDestinations);
     }
   }
 
