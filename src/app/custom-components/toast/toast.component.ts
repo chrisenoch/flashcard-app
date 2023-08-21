@@ -245,9 +245,7 @@ export class ToastComponent
     //console.log('in ngViewChecked - toastId ' + this.toastId);
 
     if (this.runUpdateToastPositionsOnScroll && this.positionType !== 'fixed') {
-      setTimeout(() => {
-        this.updateToastPositionsOnScroll();
-      }, 0);
+      this.updateToastPositionsOnScroll();
       this.runUpdateToastPositionsOnScroll = false;
     }
 
