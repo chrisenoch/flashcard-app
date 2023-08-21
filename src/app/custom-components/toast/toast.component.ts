@@ -812,21 +812,23 @@ export class ToastComponent
     console.log(this.toastDestination);
 
     const eleDomRect = this.toastDestination.getBoundingClientRect();
-    //this.toastDestinationDomRect = eleDomRect; //maybe can remove
     this.toastDestinationDomRect = eleDomRect;
 
-    //pass in the new element anchor.
     this.defineToastAnchorCoords(eleDomRect);
 
     //Because we need to read the updated position of toastAnchor
     setTimeout(() => {
-      //to do - change this for the new element anchor
       this.toastAnchorDomRect =
         this.currentToastAnchor.getBoundingClientRect() as DOMRect;
 
-      this.toastTop = this.toastAnchorDomRect.top + 'px';
-      this.toastLeft = this.toastAnchorDomRect.left + 'px';
-    });
+      //Normally we use the onscrollend EventListener along with updateToastPositionsOnScroll# to update the scroll. Here we cannot,
+      //as toastAnchorDomRect# retrieved in this method represents the DomRect as it was defined before scroll was considered. If you do not add scrollY and scrollX here, then if the user scrolls, and then clicks on "next toast destination,"
+      //the toast will move to the wrong destination because it won't take into account the scroll.
+      this.toastTop =
+        this.toastAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
+      this.toastLeft =
+        this.toastAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
+    }, 0);
   }
 
   private defineHideOnInitDelay() {
