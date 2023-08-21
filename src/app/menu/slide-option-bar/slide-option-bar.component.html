@@ -18,16 +18,6 @@
       class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
       (click)="onShowTranslation()"
     >
-      <!-- <app-toast
-      toastId="toast-1"
-      toastGroupId="toast-group-1"
-      position="LEFT"
-      [show]="true"
-      [nextElements]="nextElements"
-      [animation]="true"
-    >
-      <app-toast-content toastId="toast-1"></app-toast-content>
-    </app-toast> -->
       <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
     </button>
   </div>
@@ -43,9 +33,15 @@
   >
     <span class="text-gray-900 text-2xl">Ex</span>
   </button>
-  <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
-    <span class="text-gray-900 text-2xl">Eg</span>
-  </button>
+  <div class="relative overflow-hidden">
+    <div id="toast-1-a-anchor" class="absolute invisible"></div>
+    <button
+      id="toast-1-a"
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+    >
+      <span class="text-gray-900 text-2xl">Eg</span>
+    </button>
+  </div>
   <button
     class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
     (click)="onShowContentAfterWordVisited()"
@@ -64,7 +60,6 @@
       position="LEFT"
       [show]="true"
       [showDelay]="3000"
-      [nextElements]="nextElements"
       [animation]="true"
     >
       <app-toast-content toastId="toast-2"></app-toast-content>

@@ -107,6 +107,8 @@ export class ToastComponent
     arrows?: Arrows;
   }[];
 
+  private currentToastAnchor!: HTMLElement;
+
   private showOnInitDelayTimer: controlledTimer | undefined;
   private hideOnInitDelayTimer: controlledTimer | undefined;
   private hideDelayTimer: controlledTimer | undefined;
@@ -224,20 +226,11 @@ export class ToastComponent
         this.toastTop = this.toastAnchorDomRect.top + 'px';
         this.toastLeft = this.toastAnchorDomRect.left + 'px';
 
-        this.initDelayTimers();
-        //this.initToastDestinations(); //To do: update this
-      }, 0);
-    }, 300);
-  }
+        this.currentToastAnchor = this.toastAnchorVC.nativeElement;
 
-  private updateToastPositionsOnScroll() {
-    this.toastAnchorDomRect =
-      this.toastAnchorVC.nativeElement.getBoundingClientRect();
-    setTimeout(() => {
-      this.toastTop =
-        this.toastAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
-      this.toastLeft =
-        this.toastAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
+        this.initDelayTimers();
+        this.initToastDestinations(); //To do: update this
+      }, 0);
     }, 300);
   }
 
@@ -430,6 +423,16 @@ export class ToastComponent
     return controlObj;
   }
 
+  private updateToastPositionsOnScroll() {
+    this.toastAnchorDomRect = this.currentToastAnchor.getBoundingClientRect();
+    setTimeout(() => {
+      this.toastTop =
+        this.toastAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
+      this.toastLeft =
+        this.toastAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
+    }, 300);
+  }
+
   private initPositionType() {
     if (
       this.effectivePosition &&
@@ -495,7 +498,7 @@ export class ToastComponent
   private updateToastIfToastAnchorDomRectChanged() {
     if (this.toastAnchorDomRect) {
       const newToastAnchorDomRect =
-        this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
+        this.currentToastAnchor.getBoundingClientRect() as DOMRect;
 
       const domRectsAreEqual = this.compareDOMRectValues(
         this.toastAnchorDomRect,
@@ -778,9 +781,25 @@ export class ToastComponent
       }
     }
 
+    console.log('new toast destination');
+    console.log(this.toastDestination);
+
     const eleDomRect = this.toastDestination.getBoundingClientRect();
     //this.toastDestinationDomRect = eleDomRect; //maybe can remove
+    this.toastDestinationDomRect = eleDomRect;
+
+    //pass in the new element anchor.
     this.defineToastAnchorCoords(eleDomRect);
+
+    //Because we need to read the updated position of toastAnchor
+    setTimeout(() => {
+      //to do - change this for the new element anchor
+      this.toastAnchorDomRect =
+        this.currentToastAnchor.getBoundingClientRect() as DOMRect;
+
+      this.toastTop = this.toastAnchorDomRect.top + 'px';
+      this.toastLeft = this.toastAnchorDomRect.left + 'px';
+    });
   }
 
   private defineHideOnInitDelay() {
@@ -971,8 +990,8 @@ export class ToastComponent
     //toast size may have changed
     const toastVCHeight = this.toastVC.nativeElement.offsetHeight;
     const toastVCWidth = this.toastVC.nativeElement.offsetWidth;
-    this.toastAnchorVC.nativeElement.style.height = toastVCHeight + 'px';
-    this.toastAnchorVC.nativeElement.style.width = toastVCWidth + 'px';
+    this.currentToastAnchor.style.height = toastVCHeight + 'px';
+    this.currentToastAnchor.style.width = toastVCWidth + 'px';
 
     //toastDestintation size may have changed
     this.toastDestinationDomRect =
@@ -982,7 +1001,7 @@ export class ToastComponent
     //Because we need to read the updated position of toastAnchor
     setTimeout(() => {
       this.toastAnchorDomRect =
-        this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
+        this.currentToastAnchor.getBoundingClientRect() as DOMRect;
 
       this.toastTop = this.toastAnchorDomRect.top + 'px';
       this.toastLeft = this.toastAnchorDomRect.left + 'px';
@@ -1062,6 +1081,8 @@ export class ToastComponent
           });
         }
       });
+      console.log('toast destinations below');
+      console.log(this.toastDestinations);
     }
   }
 
