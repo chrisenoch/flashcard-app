@@ -102,6 +102,7 @@ export class ToastComponent
   private toastDestinationDomRect!: DOMRect;
   private toastDestinations!: {
     id: string;
+    toastAnchor: HTMLElement;
     element: HTMLElement;
     position: Position;
     arrows?: Arrows;
@@ -677,39 +678,63 @@ export class ToastComponent
     this.visibility = 'visible';
   }
 
+  // private defineCurrentToastAnchorCoords(destinationDomRect: DOMRect) {
+  //   const toastAnchors = this.defineToastAnchorCoords(destinationDomRect);
+  //   //if 0, the toast is the main toast
+  //   if (this.currentNextElementIndex === 0) {
+  //     this.toastAnchorTop = toastAnchors.toastAnchorTop;
+  //     this.toastAnchorLeft = toastAnchors.toastAnchorLeft;
+  //   } else {
+  //     //we are dealing with a toast destination
+  //     this.currentToastAnchor.style.top = toastAnchors.toastAnchorTop;
+  //     this.currentToastAnchor.style.left = toastAnchors.toastAnchorLeft;
+  //   }
+  // }
+
   private defineToastAnchorCoords(destinationDomRect: DOMRect) {
+    let toastAnchorTop;
+    let toastAnchorLeft;
+
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
     }
 
     switch (this.position) {
       case 'LEFT':
-        this.toastAnchorLeft = 0 - this.toastWidth - this.gapInPx + 'px';
-        this.toastAnchorTop =
+        toastAnchorLeft = 0 - this.toastWidth - this.gapInPx + 'px';
+        toastAnchorTop =
           0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'RIGHT':
-        this.toastAnchorLeft =
-          0 + destinationDomRect.width + this.gapInPx + 'px';
-        this.toastAnchorTop =
+        toastAnchorLeft = 0 + destinationDomRect.width + this.gapInPx + 'px';
+        toastAnchorTop =
           0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'TOP':
-        this.toastAnchorLeft =
+        toastAnchorLeft =
           0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
-        this.toastAnchorTop = 0 - this.toastHeight - this.gapInPx + 'px';
+        toastAnchorTop = 0 - this.toastHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
-        this.toastAnchorLeft =
+        toastAnchorLeft =
           0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
-        this.toastAnchorTop =
-          0 + destinationDomRect.height + this.gapInPx + 'px';
+        toastAnchorTop = 0 + destinationDomRect.height + this.gapInPx + 'px';
         break;
       default:
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
+    }
+
+    //if 0, the toast is the main toast
+    if (this.currentNextElementIndex === 0) {
+      this.toastAnchorTop = toastAnchorTop;
+      this.toastAnchorLeft = toastAnchorLeft;
+    } else {
+      //we are dealing with a toast destination
+      this.currentToastAnchor.style.top = toastAnchorTop;
+      this.currentToastAnchor.style.left = toastAnchorLeft;
     }
   }
 
@@ -752,6 +777,8 @@ export class ToastComponent
       this.toastDestinations[this.currentNextElementIndex].element;
     this.position =
       this.toastDestinations[this.currentNextElementIndex].position;
+    this.currentToastAnchor =
+      this.toastDestinations[this.currentNextElementIndex].toastAnchor;
 
     //get the toast dimensions in case they have changed.
     //Perhaps dynamic content was added.
@@ -1053,11 +1080,13 @@ export class ToastComponent
       arrows.push('NONE');
     }
 
+    //store the original toast
     this.toastDestinations = [
       {
         id: this.toastId,
         element: this.toastDestination,
         position: this.position,
+        toastAnchor: this.toastAnchorVC.nativeElement,
         //arrows must be an array of at least one value or undefined
         arrows: arrows.length > 0 ? (arrows as Arrows) : undefined,
       },
@@ -1072,12 +1101,15 @@ export class ToastComponent
           );
         }
         const nextEle = this.documentInjected.getElementById(id);
-        if (nextEle) {
+        const nextEleToastAnchor =
+          nextEle?.previousElementSibling as HTMLElement;
+        if (nextEle && nextEleToastAnchor) {
           this.toastDestinations.push({
             id,
             element: nextEle,
             position: ele.position,
             arrows: ele.arrows,
+            toastAnchor: nextEleToastAnchor,
           });
         }
       });
