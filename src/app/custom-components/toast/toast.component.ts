@@ -505,10 +505,12 @@ export class ToastComponent
       );
       if (!domRectsAreEqual) {
         this.toastAnchorDomRect = newToastAnchorDomRect;
-        setTimeout(() => {
-          this.toastTop = this.toastAnchorDomRect.top + 'px';
-          this.toastLeft = this.toastAnchorDomRect.left + 'px';
-        }, 0);
+        this.toastTop = this.toastAnchorDomRect.top + 'px';
+        this.toastLeft = this.toastAnchorDomRect.left + 'px';
+        // setTimeout(() => {
+        //   this.toastTop = this.toastAnchorDomRect.top + 'px';
+        //   this.toastLeft = this.toastAnchorDomRect.left + 'px';
+        // }, 0);
       }
     }
   }
