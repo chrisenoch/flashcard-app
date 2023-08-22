@@ -1,5 +1,6 @@
 import { Observable, interval, tap, map, takeWhile, finalize } from 'rxjs';
 import { ControlledError } from './errors/ControlledError';
+import { controlledTimer } from '../models/interfaces/controlledTimer';
 
 export function controllableTimer(timeInMS: number): {
   sub: Observable<number>;
@@ -59,4 +60,23 @@ export function controllableTimer(timeInMS: number): {
   );
 
   return controlObj;
+}
+
+export function cancelTimers(timers: (controlledTimer | undefined)[]) {
+  timers.forEach((timer) => {
+    if (timer !== undefined && timer !== null) {
+      timer.cancelTimer = true;
+    }
+  });
+}
+
+export function pauseTimers(
+  timers: (controlledTimer | undefined)[],
+  isPaused: boolean
+) {
+  timers.forEach((timer) => {
+    if (timer !== undefined && timer !== null) {
+      timer.pauseTimer = isPaused;
+    }
+  });
 }

@@ -40,7 +40,11 @@ import { Position } from './models/position';
 import { ArrowPosition, Arrows } from './models/arrows';
 import { ControlledError } from '../errors/ControlledError';
 import { compareDOMRectValues } from '../utilities';
-import { controllableTimer } from '../timers';
+import {
+  cancelTimers,
+  controllableTimer,
+  pauseTimers,
+} from '../controllableTimer';
 
 @Component({
   selector: 'app-toast',
@@ -285,7 +289,7 @@ export class ToastComponent
   onClose() {
     this.updateShowState(false);
 
-    this.cancelTimers([
+    cancelTimers([
       this.hideDelayTimer,
       this.showOnInitDelayTimer,
       this.hideOnInitDelayTimer,
@@ -294,7 +298,7 @@ export class ToastComponent
 
   showToast() {
     //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
-    this.cancelTimers([
+    cancelTimers([
       this.hideDelayTimer,
       this.showOnInitDelayTimer,
       this.hideOnInitDelayTimer,
@@ -547,25 +551,6 @@ export class ToastComponent
       this.isShowing = false;
       this.keepShowing = false;
     }
-  }
-
-  private cancelTimers(timers: (controlledTimer | undefined)[]) {
-    timers.forEach((timer) => {
-      if (timer !== undefined && timer !== null) {
-        timer.cancelTimer = true;
-      }
-    });
-  }
-
-  private pauseTimers(
-    timers: (controlledTimer | undefined)[],
-    isPaused: boolean
-  ) {
-    timers.forEach((timer) => {
-      if (timer !== undefined && timer !== null) {
-        timer.pauseTimer = isPaused;
-      }
-    });
   }
 
   private addActionEventListeners() {
@@ -954,7 +939,7 @@ export class ToastComponent
       this.ngZone.run(() => {
         this.isResizing = true;
 
-        this.pauseTimers(
+        pauseTimers(
           [
             this.showOnInitDelayTimer,
             this.hideOnInitDelayTimer,
@@ -1008,7 +993,7 @@ export class ToastComponent
         this.visibility = 'visible';
       }
 
-      this.pauseTimers(
+      pauseTimers(
         [
           this.showOnInitDelayTimer,
           this.hideOnInitDelayTimer,
