@@ -40,6 +40,7 @@ import { Position } from './models/position';
 import { ArrowPosition, Arrows } from './models/arrows';
 import { ControlledError } from '../errors/ControlledError';
 import { compareDOMRectValues } from '../utilities';
+import { controllableTimer } from '../timers';
 
 @Component({
   selector: 'app-toast',
@@ -300,7 +301,7 @@ export class ToastComponent
     ]);
 
     if (this.showDelay > 0) {
-      this.showDelayTimer = this.controllableTimer(this.showDelay);
+      this.showDelayTimer = controllableTimer(this.showDelay);
       this.ngZone.runOutsideAngular(() => {
         this.showDelayTimer!.sub.subscribe({
           complete: () => {
@@ -321,7 +322,7 @@ export class ToastComponent
     }
 
     if (this.hideDelay > 0) {
-      this.hideDelayTimer = this.controllableTimer(this.hideDelay);
+      this.hideDelayTimer = controllableTimer(this.hideDelay);
       this.ngZone.runOutsideAngular(() => {
         this.hideDelayTimer!.sub.subscribe({
           complete: () => {
@@ -375,66 +376,6 @@ export class ToastComponent
 
       this.defineNextElement();
     }
-  }
-
-  controllableTimer(timeInMS: number): {
-    sub: Observable<number>;
-    isActive: boolean;
-    count: number;
-    pauseTimer: boolean;
-    cancelTimer: boolean;
-  } {
-    let repetitions = Math.round(timeInMS / 100);
-    //object needed so can change these values with this return object from outside this function via a closure.
-    let controlObj: {
-      sub: Observable<number>;
-      isActive: boolean;
-      count: number;
-      pauseTimer: boolean;
-      cancelTimer: boolean;
-    } = {
-      sub: new Observable(),
-      isActive: false,
-      count: 0,
-      pauseTimer: false,
-      cancelTimer: false,
-    };
-
-    controlObj.sub = interval(100).pipe(
-      tap(() => {
-        if (controlObj.count === 0) {
-          controlObj.isActive = true;
-        }
-      }),
-      map(() => {
-        if (controlObj.pauseTimer) {
-          return controlObj.count;
-        } else {
-          return ++controlObj.count;
-        }
-      }),
-      map((val) => {
-        if (controlObj.cancelTimer) {
-          controlObj.count = 0;
-          controlObj.isActive = false;
-          throw new ControlledError(
-            'Observable cancelled because cancelTimer set to true'
-          );
-        } else {
-          return val;
-        }
-      }),
-
-      takeWhile((val) => val <= repetitions),
-      finalize(() => {
-        controlObj.isActive = false;
-        controlObj.count = 0;
-        controlObj.pauseTimer = false;
-        controlObj.cancelTimer = false;
-      })
-    );
-
-    return controlObj;
   }
 
   private initCSS() {
@@ -851,7 +792,7 @@ export class ToastComponent
 
   private defineHideOnInitDelay() {
     if (this.hideOnInitDelay > 0) {
-      this.hideOnInitDelayTimer = this.controllableTimer(this.hideOnInitDelay);
+      this.hideOnInitDelayTimer = controllableTimer(this.hideOnInitDelay);
 
       this.ngZone.runOutsideAngular(() => {
         this.hideOnInitDelayTimer!.sub.subscribe({
@@ -870,7 +811,7 @@ export class ToastComponent
       this.initDisplayAndVisibility();
       this.defineHideOnInitDelay();
     } else {
-      this.showOnInitDelayTimer = this.controllableTimer(
+      this.showOnInitDelayTimer = controllableTimer(
         Math.abs(this.showOnInitDelay)
       );
       this.ngZone.runOutsideAngular(() => {
