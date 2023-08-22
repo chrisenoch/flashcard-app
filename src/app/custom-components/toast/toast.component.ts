@@ -158,6 +158,9 @@ export class ToastComponent
   @Input() arrowRightCSSClasses: string | undefined;
   @Input() arrowTopCSSClasses: string | undefined;
   @Input() arrowBottomCSSClasses: string | undefined;
+  @Input() onToastTransitionEnd:
+    | { callback: () => void; propertiesToFireOn: string[] }
+    | undefined = undefined;
 
   @Input() nextElements:
     | {
@@ -572,6 +575,26 @@ export class ToastComponent
     }
   }
 
+  private addTransitionEndToastListener({
+    callback,
+    propertiesToFireOn,
+  }: {
+    callback: () => void;
+    propertiesToFireOn: string[];
+  }) {
+    this.renderer2.listen(
+      this.toastVC.nativeElement,
+      'transitionend',
+      (e: TransitionEvent) => {
+        propertiesToFireOn.forEach((property: string) => {
+          if (e.propertyName.toLowerCase() === property.toLowerCase()) {
+            callback();
+          }
+        });
+      }
+    );
+  }
+
   private addToggleToastListener(
     eventType: string,
     overrideKeepShowing: boolean = false
@@ -651,6 +674,10 @@ export class ToastComponent
   }
 
   private addActionEventListeners() {
+    if (this.onToastTransitionEnd !== undefined) {
+      this.addTransitionEndToastListener(this.onToastTransitionEnd);
+    }
+
     if (this.showOnHover) {
       if (this.showOnHover === 'mouseenter') {
         this.addShowToastListener('mouseenter');

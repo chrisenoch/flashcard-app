@@ -20,6 +20,12 @@ export class SlideOptionBarComponent {
   @Input() sidebarsOnRight = false;
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
+  //to test onToastTransitionEnd in custom toast component
+  onToastTransitionEnd = {
+    callback: () => console.log('transition ended'),
+    propertiesToFireOn: ['top'],
+  };
+
   //to test custom toast component
   nextElements: {
     id: string;
