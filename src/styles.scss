@@ -72,3 +72,7 @@ body {
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
 }
+
+.toast-transition {
+  transition: all 500ms linear;
+}

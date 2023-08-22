@@ -73,6 +73,7 @@ export class ToastComponent
   visibility = 'hidden';
   display = 'inline-block';
   positionType: 'absolute' | 'fixed' = 'absolute';
+  toastCSSClasses: string | undefined;
 
   private isShowing = false;
   private resizeObs$!: Observable<Event>;
@@ -150,7 +151,8 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: Position = 'RIGHT';
   @Input() gapInPx: number | undefined;
-  @Input() toastCSSClasses: string | undefined;
+  @Input() overrideToastCSSClasses: string | undefined;
+  @Input() addToastCSSClasses: string | undefined;
   @Input() toastAnchorCSSClasses: string | undefined;
   @Input() arrowLeftCSSClasses: string | undefined;
   @Input() arrowRightCSSClasses: string | undefined;
@@ -170,31 +172,6 @@ export class ToastComponent
   @ViewChild('toastAnchor') toastAnchorVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
-
-  private initCSS() {
-    if (this.toastCSSClasses === undefined) {
-      this.toastCSSClasses = 'w-max h-fit';
-    }
-    if (this.toastAnchorCSSClasses === undefined) {
-      this.toastAnchorCSSClasses = 'absolute';
-    }
-    if (this.arrowLeftCSSClasses === undefined) {
-      this.arrowLeftCSSClasses =
-        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-gray-400';
-    }
-    if (this.arrowRightCSSClasses === undefined) {
-      this.arrowRightCSSClasses =
-        'absolute top-[50%] right-0 w-0 h-0 border-l-8 -mt-2 -mr-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-l-gray-400';
-    }
-    if (this.arrowTopCSSClasses === undefined) {
-      this.arrowTopCSSClasses =
-        'absolute top-0 left-[50%] w-0 h-0 border-r-8 -ml-2 -mt-2 border-b-8 border-l-8 border-b-gray-400 border-r-transparent border-l-transparent';
-    }
-    if (this.arrowBottomCSSClasses === undefined) {
-      this.arrowBottomCSSClasses =
-        'absolute right-0 left-[50%] w-0 h-0 border-r-8 -ml-2 -mb-2 border-t-8 border-l-8 border-t-gray-400 border-r-transparent border-l-transparent';
-    }
-  }
 
   ngOnInit(): void {
     this.checkInputs();
@@ -223,6 +200,7 @@ export class ToastComponent
 
   ngAfterViewInit(): void {
     console.log('In ViewOnInit');
+
     this.toastDestination =
       this.toastVC.nativeElement.parentElement.parentElement.parentElement;
 
@@ -453,6 +431,35 @@ export class ToastComponent
     );
 
     return controlObj;
+  }
+
+  private initCSS() {
+    if (this.overrideToastCSSClasses === undefined) {
+      this.toastCSSClasses = 'w-max h-fit';
+    }
+    if (this.addToastCSSClasses) {
+      this.toastCSSClasses += ' ' + this.addToastCSSClasses;
+    }
+
+    if (this.toastAnchorCSSClasses === undefined) {
+      this.toastAnchorCSSClasses = 'absolute';
+    }
+    if (this.arrowLeftCSSClasses === undefined) {
+      this.arrowLeftCSSClasses =
+        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-gray-400';
+    }
+    if (this.arrowRightCSSClasses === undefined) {
+      this.arrowRightCSSClasses =
+        'absolute top-[50%] right-0 w-0 h-0 border-l-8 -mt-2 -mr-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-l-gray-400';
+    }
+    if (this.arrowTopCSSClasses === undefined) {
+      this.arrowTopCSSClasses =
+        'absolute top-0 left-[50%] w-0 h-0 border-r-8 -ml-2 -mt-2 border-b-8 border-l-8 border-b-gray-400 border-r-transparent border-l-transparent';
+    }
+    if (this.arrowBottomCSSClasses === undefined) {
+      this.arrowBottomCSSClasses =
+        'absolute right-0 left-[50%] w-0 h-0 border-r-8 -ml-2 -mb-2 border-t-8 border-l-8 border-t-gray-400 border-r-transparent border-l-transparent';
+    }
   }
 
   private updateToastPositionsOnScroll() {
