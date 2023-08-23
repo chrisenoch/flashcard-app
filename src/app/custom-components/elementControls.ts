@@ -1,5 +1,7 @@
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 import { cancelTimers } from './controllableTimer';
+import { Position } from './toast/models/position';
+import { Arrows } from './toast/models/arrows';
 
 export type ShowElementFromControl = {
   keepShowing: boolean;
@@ -16,6 +18,36 @@ export type CloseElementFromControl = {
   [key: string]: any;
 };
 
+export type ElementDestinationDetails = {
+  id: string;
+  elementAnchor: HTMLElement;
+  element: HTMLElement;
+  position: Position;
+  effectivePosition: 'absolute' | 'fixed';
+  arrows?: Arrows;
+};
+
+// goToFirstElement() {
+//   if (this.toastDestinations.length > 1) {
+//     this.currentNextElementIndex = 0;
+//     this.defineNextElement();
+//   }
+// }
+
+export type GoToFirstElement = {
+  elementDestinations: ElementDestinationDetails[];
+  currentNextElementIndex: number;
+  defineNextElement: () => void;
+  [key: string]: any;
+};
+
+export function goToFirstElement(thisOfResidingClass: GoToFirstElement) {
+  if (thisOfResidingClass.elementDestinations.length > 1) {
+    thisOfResidingClass.currentNextElementIndex = 0;
+    thisOfResidingClass.defineNextElement();
+  }
+}
+
 export function showElementFromControl(
   thisOfResidingClass: ShowElementFromControl
 ) {
@@ -31,8 +63,6 @@ export function closeElementFromControl(
   thisOfResidingClass: CloseElementFromControl
 ) {
   thisOfResidingClass.updateShowState(false);
-
-  console.log('in closeElementFromControl');
 
   if (
     thisOfResidingClass.hideDelayTimer ||
