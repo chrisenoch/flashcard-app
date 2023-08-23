@@ -53,6 +53,7 @@ import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
 import {
   hideElementWithTimers,
+  initDelayTimers,
   initDisplayAndVisibility,
   showElementWithTimers,
   updateShowState,
@@ -132,6 +133,7 @@ export class ToastComponent
 
   //AddElementControlsSubscription# expects updateShowState to be available on 'this.' We could just define the updateShowState method here. But instead, we import updateShowState and assign it to updateShowState as a property so it is available on 'this.'
   updateShowState = updateShowState;
+  initDisplayAndVisibility = initDisplayAndVisibility;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -256,7 +258,7 @@ export class ToastComponent
 
         this.currentToastAnchor = this.toastAnchorVC.nativeElement;
 
-        this.initDelayTimers();
+        initDelayTimers(this);
         this.initToastDestinations();
       }, 0);
     }, 300);
@@ -701,7 +703,7 @@ export class ToastComponent
     }, 0);
   }
 
-  private defineHideOnInitDelay() {
+  defineHideOnInitDelay() {
     if (this.hideOnInitDelay > 0) {
       this.hideOnInitDelayTimer = controllableTimer(this.hideOnInitDelay);
 
@@ -710,38 +712,6 @@ export class ToastComponent
           complete: () => {
             this.ngZone.run(() => {
               updateShowState(this, false);
-            });
-          },
-        });
-      });
-    }
-  }
-
-  private initDelayTimers() {
-    if (this.showOnInitDelay <= 0) {
-      initDisplayAndVisibility(this);
-      this.defineHideOnInitDelay();
-    } else {
-      this.showOnInitDelayTimer = controllableTimer(
-        Math.abs(this.showOnInitDelay)
-      );
-      this.ngZone.runOutsideAngular(() => {
-        this.showOnInitDelayTimer!.sub.subscribe({
-          complete: () => {
-            this.ngZone.run(() => {
-              initDisplayAndVisibility(this);
-              this.defineHideOnInitDelay();
-            });
-          },
-          error: (e: Error) => {
-            this.ngZone.run(() => {
-              //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
-              if (e instanceof ControlledError) {
-                initDisplayAndVisibility(this);
-                //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled.
-                //Thus we don't call defineHideOninitDelay here
-                this.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
-              }
             });
           },
         });

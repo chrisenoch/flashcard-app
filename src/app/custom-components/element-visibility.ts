@@ -1,6 +1,7 @@
 import { NgZone } from '@angular/core';
 import { controlledTimer } from '../models/interfaces/controlledTimer';
 import { cancelTimers, controllableTimer } from './controllable-timer';
+import { ControlledError } from './errors/ControlledError';
 
 export type UpdateShowState = {
   display: 'inline-block' | 'none';
@@ -37,6 +38,49 @@ export type HideElementWithTimers = {
   ngZone: NgZone;
   [key: string]: any;
 };
+
+export type InitDelayTimers = {
+  defineHideOnInitDelay: (thisofResidingClass: any) => void;
+  initDisplayAndVisibility: (thisofResidingClass: any) => void;
+  showOnInitDelayTimer?: controlledTimer;
+  showOnInitDelay?: number;
+  keepShowing: boolean;
+  ngZone: NgZone;
+  [key: string]: any;
+};
+
+export function initDelayTimers(thisOfResidingClass: InitDelayTimers) {
+  const self = thisOfResidingClass;
+  if (self.showOnInitDelay && self.showOnInitDelay <= 0) {
+    self.initDisplayAndVisibility(self);
+    self.defineHideOnInitDelay(self);
+  } else {
+    self.showOnInitDelayTimer = self.showOnInitDelay
+      ? controllableTimer(Math.abs(self.showOnInitDelay))
+      : controllableTimer(0);
+    self.ngZone.runOutsideAngular(() => {
+      self.showOnInitDelayTimer!.sub.subscribe({
+        complete: () => {
+          self.ngZone.run(() => {
+            self.initDisplayAndVisibility(self);
+            self.defineHideOnInitDelay(self);
+          });
+        },
+        error: (e: Error) => {
+          self.ngZone.run(() => {
+            //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
+            if (e instanceof ControlledError) {
+              self.initDisplayAndVisibility(self);
+              //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled.
+              //Thus we don't call defineHideOninitDelay here
+              self.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
+            }
+          });
+        },
+      });
+    });
+  }
+}
 
 export function hideElementWithTimers(
   thisOfResidingClass: HideElementWithTimers
