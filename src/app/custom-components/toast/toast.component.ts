@@ -49,6 +49,9 @@ import { addTransitionEndToastListener } from '../elementListeners';
 import {
   closeElementFromControl,
   goToFirstElement,
+  goToLastElement,
+  goToNextElement,
+  goToPreviousElement,
   showElementFromControl,
 } from '../elementControls';
 
@@ -335,47 +338,6 @@ export class ToastComponent
       });
     } else if (!this.keepShowing) {
       this.updateShowState(false);
-    }
-  }
-
-  // goToFirstElement() {
-  //   if (this.elementDestinations.length > 1) {
-  //     this.currentNextElementIndex = 0;
-  //     this.defineNextElement();
-  //   }
-  // }
-
-  goToLastElement() {
-    if (this.elementDestinations.length > 1) {
-      this.currentNextElementIndex = this.elementDestinations.length - 1;
-      this.defineNextElement();
-    }
-  }
-
-  goToPreviousElement() {
-    if (this.elementDestinations.length > 1) {
-      let nextElementIndex = this.currentNextElementIndex - 1;
-      if (nextElementIndex < 0) {
-        return;
-      } else {
-        this.currentNextElementIndex = nextElementIndex;
-      }
-
-      this.defineNextElement();
-    }
-  }
-
-  goToNextElement() {
-    if (this.elementDestinations.length > 1) {
-      //get next object from array and when reach the end, go back to the start
-      let nextElementIndex = this.currentNextElementIndex + 1;
-      if (nextElementIndex > this.elementDestinations.length - 1) {
-        this.currentNextElementIndex = 0;
-      } else {
-        this.currentNextElementIndex = nextElementIndex;
-      }
-
-      this.defineNextElement();
     }
   }
 
@@ -832,12 +794,12 @@ export class ToastComponent
     if (this.nextElements !== undefined) {
       this.subscriptions.push(
         this.toastService.goToNextId$.subscribe((e) => {
-          this.goToNextElement();
+          goToNextElement(this);
         })
       );
       this.subscriptions.push(
         this.toastService.goToPreviousId$.subscribe((e) => {
-          this.goToPreviousElement();
+          goToPreviousElement(this);
         })
       );
       this.subscriptions.push(
@@ -847,7 +809,7 @@ export class ToastComponent
       );
       this.subscriptions.push(
         this.toastService.goToLastId$.subscribe((e) => {
-          this.goToLastElement();
+          goToLastElement(this);
         })
       );
     }

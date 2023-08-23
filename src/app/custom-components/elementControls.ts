@@ -34,16 +34,51 @@ export type ElementDestinationDetails = {
 //   }
 // }
 
-export type GoToFirstElement = {
+export type GoToElement = {
   elementDestinations: ElementDestinationDetails[];
   currentNextElementIndex: number;
   defineNextElement: () => void;
   [key: string]: any;
 };
 
-export function goToFirstElement(thisOfResidingClass: GoToFirstElement) {
+export function goToNextElement(thisOfResidingClass: GoToElement) {
+  if (thisOfResidingClass.elementDestinations.length > 1) {
+    //get next object from array and when reach the end, go back to the start
+    let nextElementIndex = thisOfResidingClass.currentNextElementIndex + 1;
+    if (nextElementIndex > thisOfResidingClass.elementDestinations.length - 1) {
+      thisOfResidingClass.currentNextElementIndex = 0;
+    } else {
+      thisOfResidingClass.currentNextElementIndex = nextElementIndex;
+    }
+
+    thisOfResidingClass.defineNextElement();
+  }
+}
+
+export function goToPreviousElement(thisOfResidingClass: GoToElement) {
+  if (thisOfResidingClass.elementDestinations.length > 1) {
+    let nextElementIndex = thisOfResidingClass.currentNextElementIndex - 1;
+    if (nextElementIndex < 0) {
+      return;
+    } else {
+      thisOfResidingClass.currentNextElementIndex = nextElementIndex;
+    }
+
+    thisOfResidingClass.defineNextElement();
+  }
+}
+
+export function goToFirstElement(thisOfResidingClass: GoToElement) {
   if (thisOfResidingClass.elementDestinations.length > 1) {
     thisOfResidingClass.currentNextElementIndex = 0;
+    thisOfResidingClass.defineNextElement();
+  }
+}
+
+export function goToLastElement(thisOfResidingClass: GoToElement) {
+  if (thisOfResidingClass.elementDestinations.length > 1) {
+    thisOfResidingClass.currentNextElementIndex =
+      thisOfResidingClass.elementDestinations.length - 1;
     thisOfResidingClass.defineNextElement();
   }
 }
