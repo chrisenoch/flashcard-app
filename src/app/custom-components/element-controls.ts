@@ -7,25 +7,20 @@ import { Subscription } from 'rxjs';
 import { UpdateShowState, updateShowState } from './element-visibility';
 
 export type ShowElementFromControl = {
+  // The props below are what ShowElementFromControl expects to be available on 'this'
   keepShowing: boolean;
-  updateShowState: (
-    thisofResidingClass: UpdateShowState,
-    isShow: boolean
-  ) => void;
+  updateShowState: (thisofResidingClass: any, isShow: boolean) => void; //updateShowState: (thisofResidingClass: any. Because ShowElementFromControl is not concerned with which properties updateShowStates expects to be available on this. It just needs to know that it is there.
   showOnInitDelayTimer?: controlledTimer;
   [key: string]: any;
-} & UpdateShowState;
+};
 
 export type CloseElementFromControl = {
-  updateShowState: (
-    thisofResidingClass: UpdateShowState,
-    isShow: boolean
-  ) => void;
+  updateShowState: (thisofResidingClass: any, isShow: boolean) => void;
   showOnInitDelayTimer?: controlledTimer;
   hideOnInitDelayTimer?: controlledTimer;
   hideDelayTimer?: controlledTimer;
   [key: string]: any;
-} & UpdateShowState;
+};
 
 export type ElementDestinationDetails = {
   id: string;

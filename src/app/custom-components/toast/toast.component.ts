@@ -125,6 +125,7 @@ export class ToastComponent
   private runAfterViewCheckedSub = false;
   private runUpdateToastPositionsOnScroll = false;
 
+  //AddElementControlsSubscription# expects updateShowState to be available on 'this.' We could just define the updateShowState method here. But instead, we import updateShowState and assign it to updateShowState as a property so it is available on 'this.'
   updateShowState = updateShowState;
 
   @Input() zIndex = 100;
