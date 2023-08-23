@@ -147,7 +147,7 @@ export function initDisplayAndVisibility(
 }
 
 //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
-export function updateShowState(
+export function initUpdateShowState(
   thisOfResidingClass: UpdateShowState,
   isShow: boolean
 ) {

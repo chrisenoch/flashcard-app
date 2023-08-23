@@ -4,7 +4,7 @@ import { Position } from './toast/models/position';
 import { Arrows } from './toast/models/arrows';
 import { ElementControlsService } from './element-controls.service';
 import { Subscription } from 'rxjs';
-import { UpdateShowState, updateShowState } from './element-visibility';
+import { UpdateShowState, initUpdateShowState } from './element-visibility';
 
 export type ShowElementFromControl = {
   // The props below are what ShowElementFromControl expects to be available on 'this'

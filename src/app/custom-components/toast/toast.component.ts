@@ -55,8 +55,8 @@ import {
   hideElementWithTimers,
   initDelayTimers,
   initDisplayAndVisibility,
+  initUpdateShowState,
   showElementWithTimers,
-  updateShowState,
 } from '../element-visibility';
 
 @Component({
@@ -132,7 +132,7 @@ export class ToastComponent
   private runUpdateToastPositionsOnScroll = false;
 
   //AddElementControlsSubscription# expects updateShowState to be available on 'this.' We could just define the updateShowState method here. But instead, we import updateShowState and assign it to updateShowState as a property so it is available on 'this.'
-  updateShowState = updateShowState;
+  updateShowState = initUpdateShowState;
   initDisplayAndVisibility = initDisplayAndVisibility;
 
   @Input() zIndex = 100;
@@ -711,7 +711,7 @@ export class ToastComponent
         this.hideOnInitDelayTimer!.sub.subscribe({
           complete: () => {
             this.ngZone.run(() => {
-              updateShowState(this, false);
+              this.updateShowState(this, false);
             });
           },
         });
