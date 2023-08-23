@@ -45,9 +45,13 @@ import {
   controllableTimer,
   pauseTimers,
 } from '../controllable-timer';
-import { addTransitionEndToastListener } from '../element-listeners';
+import {
+  addConvenienceClickHandler,
+  addTransitionEndToastListener,
+} from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
+import { updateShowState } from '../element-visibility';
 
 @Component({
   selector: 'app-toast',
@@ -64,7 +68,7 @@ export class ToastComponent
 {
   constructor(
     @Inject(DOCUMENT) document: Document,
-    private renderer2: Renderer2,
+    public renderer2: Renderer2,
     private ngZone: NgZone,
     private toastService: ToastService,
     public elementControlsService: ElementControlsService
@@ -81,11 +85,11 @@ export class ToastComponent
   elementAnchorLeft: string | null = '0px';
   elementAnchorRight: string | null = null;
   visibility = 'hidden';
-  display = 'inline-block';
+  display: 'inline-block' | 'none' = 'inline-block';
   positionType: 'absolute' | 'fixed' = 'absolute';
   toastCSSClasses: string | undefined;
 
-  private isShowing = false;
+  isShowing = false;
   subscriptions: Subscription[] = [];
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
@@ -120,6 +124,8 @@ export class ToastComponent
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
   private runUpdateToastPositionsOnScroll = false;
+
+  updateShowState = updateShowState;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -170,7 +176,7 @@ export class ToastComponent
       }[]
     | undefined;
 
-  @ViewChild('toast') toastVC!: ElementRef;
+  @ViewChild('toast') elementVC!: ElementRef;
   @ViewChild('toastAnchor') toastAnchorVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
@@ -207,17 +213,18 @@ export class ToastComponent
     console.log('In ViewOnInit');
 
     this.elementDestination =
-      this.toastVC.nativeElement.parentElement.parentElement.parentElement;
+      this.elementVC.nativeElement.parentElement.parentElement.parentElement;
 
-    this.addActionEventListeners();
+    this.addElementDestinationListeners();
+    this.addElementListeners();
 
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
       //get height and width of toast and set them as fixed heights and widths on the toast anchor
 
-      const originalToastHeight = this.toastVC.nativeElement.offsetHeight;
-      const originalToastWidth = this.toastVC.nativeElement.offsetWidth;
+      const originalToastHeight = this.elementVC.nativeElement.offsetHeight;
+      const originalToastWidth = this.elementVC.nativeElement.offsetWidth;
       this.toastAnchorVC.nativeElement.style.height =
         originalToastHeight + 'px';
       this.toastAnchorVC.nativeElement.style.width = originalToastWidth + 'px';
@@ -271,26 +278,6 @@ export class ToastComponent
     this.resizeSub$ && this.resizeSub$.unsubscribe();
   }
 
-  // closeElementFromControl() {
-  //   this.updateShowState(false);
-
-  //   cancelTimers([
-  //     this.hideDelayTimer,
-  //     this.showOnInitDelayTimer,
-  //     this.hideOnInitDelayTimer,
-  //   ]);
-  // }
-
-  // onClose() {
-  //   this.updateShowState(false);
-
-  //   cancelTimers([
-  //     this.hideDelayTimer,
-  //     this.showOnInitDelayTimer,
-  //     this.hideOnInitDelayTimer,
-  //   ]);
-  // }
-
   showToast() {
     //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
     cancelTimers([
@@ -305,13 +292,13 @@ export class ToastComponent
         this.showDelayTimer!.sub.subscribe({
           complete: () => {
             this.ngZone.run(() => {
-              this.updateShowState(true);
+              updateShowState(this, true);
             });
           },
         });
       });
     } else {
-      this.updateShowState(true);
+      updateShowState(this, true);
     }
   }
 
@@ -326,13 +313,13 @@ export class ToastComponent
         this.hideDelayTimer!.sub.subscribe({
           complete: () => {
             this.ngZone.run(() => {
-              this.updateShowState(false);
+              updateShowState(this, false);
             });
           },
         });
       });
     } else if (!this.keepShowing) {
-      this.updateShowState(false);
+      updateShowState(this, false);
     }
   }
 
@@ -433,7 +420,7 @@ export class ToastComponent
     overrideKeepShowing: boolean = false
   ) {
     this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement.parentElement,
+      this.elementVC.nativeElement.parentElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
         if (this.isShowing) {
@@ -450,7 +437,7 @@ export class ToastComponent
 
   private addShowToastListener(eventType: string) {
     this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement.parentElement,
+      this.elementVC.nativeElement.parentElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
         this.showToast();
@@ -463,7 +450,7 @@ export class ToastComponent
     overrideKeepShowing: boolean = false
   ) {
     this.renderer2.listen(
-      this.toastVC.nativeElement.parentElement.parentElement.parentElement,
+      this.elementVC.nativeElement.parentElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
         if (overrideKeepShowing) {
@@ -475,27 +462,29 @@ export class ToastComponent
   }
 
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
-  updateShowState(isShow: boolean) {
-    if (isShow) {
-      //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
-      this.display = 'inline-block';
-      this.isShowing = true;
-    } else {
-      this.display = 'none';
-      this.isShowing = false;
-      this.keepShowing = false;
-    }
-  }
+  // updateShowState(isShow: boolean) {
+  //   if (isShow) {
+  //     //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
+  //     this.display = 'inline-block';
+  //     this.isShowing = true;
+  //   } else {
+  //     this.display = 'none';
+  //     this.isShowing = false;
+  //     this.keepShowing = false;
+  //   }
+  // }
 
-  private addActionEventListeners() {
+  private addElementListeners() {
     if (this.onElementTransitionEnd !== undefined) {
       addTransitionEndToastListener(
-        this.toastVC.nativeElement,
+        this.elementVC.nativeElement,
         this.renderer2,
         this.onElementTransitionEnd
       );
     }
+  }
 
+  private addElementDestinationListeners() {
     if (this.showOnHover) {
       if (this.showOnHover === 'mouseenter') {
         this.addShowToastListener('mouseenter');
@@ -536,13 +525,13 @@ export class ToastComponent
   private moveToastToBody() {
     //alternative: this.toastVC.nativeElement.parentElement.remove();
     this.renderer2.removeChild(
-      this.toastVC.nativeElement.parentElement,
-      this.toastVC.nativeElement
+      this.elementVC.nativeElement.parentElement,
+      this.elementVC.nativeElement
     );
 
     this.renderer2.appendChild(
       this.documentInjected.body,
-      this.toastVC.nativeElement
+      this.elementVC.nativeElement
     );
   }
 
@@ -663,8 +652,8 @@ export class ToastComponent
 
     //get the toast dimensions in case they have changed.
     //Perhaps dynamic content was added.
-    this.elementHeight = this.toastVC.nativeElement.offsetHeight;
-    this.elementWidth = this.toastVC.nativeElement.offsetWidth;
+    this.elementHeight = this.elementVC.nativeElement.offsetHeight;
+    this.elementWidth = this.elementVC.nativeElement.offsetWidth;
 
     //ensure previous arrowa are unset
     this.arrowTop = false;
@@ -725,7 +714,7 @@ export class ToastComponent
         this.hideOnInitDelayTimer!.sub.subscribe({
           complete: () => {
             this.ngZone.run(() => {
-              this.updateShowState(false);
+              updateShowState(this, false);
             });
           },
         });
@@ -764,118 +753,6 @@ export class ToastComponent
       });
     }
   }
-
-  // private showElementFromControl() {
-  //   //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
-  //   this.keepShowing = true;
-  //   this.updateShowState(true);
-  //   if (this.showOnInitDelayTimer) {
-  //     this.showOnInitDelayTimer.cancelTimer = true;
-  //   }
-  // }
-
-  // private showToastFromDirective() {
-  //   //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
-  //   this.keepShowing = true;
-  //   this.updateShowState(true);
-  //   if (this.showOnInitDelayTimer) {
-  //     this.showOnInitDelayTimer.cancelTimer = true;
-  //   }
-  // }
-
-  //used with the toast directive so the developer can easily control the toast from components within the toast or outside the toast. E.g. a close a button.
-  //These do not respect the hideDelay and showDelay timers. The hideDelay and showDelay timers are for actions (e.g. click, hover...) on the toast destination itself.
-  // private addElementControlsSubscriptions() {
-  //   if (this.nextElements !== undefined) {
-  //     this.subscriptions.push(
-  //       this.toastService.goToNextId$.subscribe((e) => {
-  //         goToNextElement(this);
-  //       })
-  //     );
-  //     this.subscriptions.push(
-  //       this.toastService.goToPreviousId$.subscribe((e) => {
-  //         goToPreviousElement(this);
-  //       })
-  //     );
-  //     this.subscriptions.push(
-  //       this.toastService.goToFirstId$.subscribe((e) => {
-  //         goToFirstElement(this);
-  //       })
-  //     );
-  //     this.subscriptions.push(
-  //       this.toastService.goToLastId$.subscribe((e) => {
-  //         goToLastElement(this);
-  //       })
-  //     );
-  //   }
-
-  //   this.subscriptions.push(
-  //     this.toastService.closeAll$.subscribe((e) => {
-  //       closeElementFromControl(this);
-  //     })
-  //   );
-
-  //   this.subscriptions.push(
-  //     this.toastService.close$.subscribe((toastInfo) => {
-  //       if (this.elementId === toastInfo?.toastId) {
-  //         closeElementFromControl(this);
-  //       }
-  //     })
-  //   );
-
-  //   this.subscriptions.push(
-  //     this.toastService.closeAllOthers$.subscribe((toastInfo) => {
-  //       if (this.elementId !== toastInfo?.toastId) {
-  //         closeElementFromControl(this);
-  //       }
-  //     })
-  //   );
-
-  //   if (this.elementGroupId !== undefined) {
-  //     this.subscriptions.push(
-  //       this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
-  //         if (this.elementGroupId === toastInfo?.toastGroupId) {
-  //           closeElementFromControl(this);
-  //         }
-  //       })
-  //     );
-  //   }
-
-  //   if (this.elementGroupId !== undefined) {
-  //     this.subscriptions.push(
-  //       this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
-  //         if (
-  //           this.elementId !== toastInfo?.toastId &&
-  //           this.elementGroupId === toastInfo?.toastGroupId
-  //         ) {
-  //           closeElementFromControl(this);
-  //         }
-  //       })
-  //     );
-  //   }
-
-  //   this.subscriptions.push(
-  //     this.toastService.show$.subscribe((toastInfo) => {
-  //       if (this.elementId === toastInfo?.toastId) {
-  //         showElementFromControl(this);
-  //       }
-  //     })
-  //   );
-
-  //   this.subscriptions.push(
-  //     this.toastService.showAll$.subscribe((toastInfo) => {
-  //       showElementFromControl(this);
-  //     })
-  //   );
-
-  //   this.subscriptions.push(
-  //     this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
-  //       if (this.elementGroupId === toastInfo?.toastGroupId) {
-  //         showElementFromControl(this);
-  //       }
-  //     })
-  //   );
-  // }
 
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
@@ -928,8 +805,8 @@ export class ToastComponent
 
   private handleWindowResizeEnd() {
     //toast size may have changed
-    const toastVCHeight = this.toastVC.nativeElement.offsetHeight;
-    const toastVCWidth = this.toastVC.nativeElement.offsetWidth;
+    const toastVCHeight = this.elementVC.nativeElement.offsetHeight;
+    const toastVCWidth = this.elementVC.nativeElement.offsetWidth;
     this.currentToastAnchor.style.height = toastVCHeight + 'px';
     this.currentToastAnchor.style.width = toastVCWidth + 'px';
 
@@ -1034,13 +911,13 @@ export class ToastComponent
   //Can add an event to an element by adding the template reference to the element. E.g. #close. Does not work in child components.
   private addConvenienceClickhandlers() {
     if (this.showCC) {
-      addConvenienceClickhandler(this.showCC, this.renderer2, () =>
+      addConvenienceClickHandler(this.showCC, this.renderer2, () =>
         console.log('clicked show')
       );
     }
 
     if (this.closeCC) {
-      addConvenienceClickhandler(this.closeCC, this.renderer2, () =>
+      addConvenienceClickHandler(this.closeCC, this.renderer2, () =>
         console.log('clicked close')
       );
     }
@@ -1091,11 +968,4 @@ export class ToastComponent
   deny() {
     console.log('inside deny in toast');
   }
-}
-function addConvenienceClickhandler(
-  showCC: ElementRef<any> | undefined,
-  renderer2: Renderer2,
-  arg2: () => void
-) {
-  throw new Error('Function not implemented.');
 }

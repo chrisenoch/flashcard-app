@@ -4,21 +4,28 @@ import { Position } from './toast/models/position';
 import { Arrows } from './toast/models/arrows';
 import { ElementControlsService } from './element-controls.service';
 import { Subscription } from 'rxjs';
+import { UpdateShowState, updateShowState } from './element-visibility';
 
 export type ShowElementFromControl = {
   keepShowing: boolean;
-  updateShowState: (isShow: boolean) => void;
+  updateShowState: (
+    thisofResidingClass: UpdateShowState,
+    isShow: boolean
+  ) => void;
   showOnInitDelayTimer?: controlledTimer;
   [key: string]: any;
-};
+} & UpdateShowState;
 
 export type CloseElementFromControl = {
-  updateShowState: (isShow: boolean) => void;
+  updateShowState: (
+    thisofResidingClass: UpdateShowState,
+    isShow: boolean
+  ) => void;
   showOnInitDelayTimer?: controlledTimer;
   hideOnInitDelayTimer?: controlledTimer;
   hideDelayTimer?: controlledTimer;
   [key: string]: any;
-};
+} & UpdateShowState;
 
 export type ElementDestinationDetails = {
   id: string;
@@ -61,6 +68,8 @@ export type AddElementControlsSubscription = {
   CloseElementFromControl &
   ShowElementFromControl;
 
+//used with the element-controls directive so the developer can easily control the element from components within the element or outside the element. E.g. a close a button.
+//These do not respect any hideDelay and showDelay timers. The hideDelay and showDelay timers are for actions (e.g. click, hover...) on the element destination itself.
 export function addElementControlsSubscriptions(
   thisOfResidingClass: AddElementControlsSubscription
 ) {
@@ -213,7 +222,7 @@ export function showElementFromControl(
   const self = thisOfResidingClass;
   //Must update 'KeepShowing' so that if user hovers in and out, the element does not close
   self.keepShowing = true;
-  self.updateShowState(true);
+  self.updateShowState(self, true);
   if (self.showOnInitDelayTimer) {
     self.showOnInitDelayTimer.cancelTimer = true;
   }
@@ -223,7 +232,7 @@ export function closeElementFromControl(
   thisOfResidingClass: CloseElementFromControl
 ) {
   const self = thisOfResidingClass;
-  self.updateShowState(false);
+  self.updateShowState(self, false);
 
   if (
     self.hideDelayTimer ||
