@@ -3,17 +3,17 @@
 >
   <div class="relative overflow-hidden">
     <app-toast
-      toastId="toast-1"
-      toastGroupId="toast-group-1"
+      elementId="toast-1"
+      elementGroupId="toast-group-1"
       effectivePosition="absolute"
       position="RIGHT"
       [show]="true"
-      addToastCSSClasses="toast-transition"
-      [onToastTransitionEnd]="onToastTransitionEnd"
+      addElementCSSClasses="toast-transition"
+      [onElementTransitionEnd]="onToastTransitionEnd"
       [nextElements]="nextElements"
       [animation]="true"
     >
-      <app-toast-content toastId="toast-1"></app-toast-content>
+      <app-toast-content elementId="toast-1"></app-toast-content>
     </app-toast>
 
     <button
@@ -56,15 +56,15 @@
 >
   <div class="relative overflow-hidden">
     <app-toast
-      toastId="toast-2"
-      toastGroupId="toast-group-1"
+      elementId="toast-2"
+      elementGroupId="toast-group-1"
       effectivePosition="absolute"
       position="LEFT"
       [show]="true"
       [showDelay]="3000"
       [animation]="true"
     >
-      <app-toast-content toastId="toast-2"></app-toast-content>
+      <app-toast-content elementId="toast-2"></app-toast-content>
     </app-toast>
     <button
       class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"

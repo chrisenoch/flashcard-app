@@ -44,16 +44,10 @@ import {
   cancelTimers,
   controllableTimer,
   pauseTimers,
-} from '../controllableTimer';
-import { addTransitionEndToastListener } from '../elementListeners';
-import {
-  closeElementFromControl,
-  goToFirstElement,
-  goToLastElement,
-  goToNextElement,
-  goToPreviousElement,
-  showElementFromControl,
-} from '../elementControls';
+} from '../controllable-timer';
+import { addTransitionEndToastListener } from '../element-listeners';
+import { addElementControlsSubscriptions } from '../element-controls';
+import { ElementControlsService } from '../element-controls.service';
 
 @Component({
   selector: 'app-toast',
@@ -72,19 +66,20 @@ export class ToastComponent
     @Inject(DOCUMENT) document: Document,
     private renderer2: Renderer2,
     private ngZone: NgZone,
-    private toastService: ToastService
+    private toastService: ToastService,
+    public elementControlsService: ElementControlsService
   ) {
     this.documentInjected = document;
   }
 
-  toastTop: string | null = '0px';
-  toastBottom: string | null = null;
-  toastLeft: string | null = '0px';
-  toastRight: string | null = null;
-  toastAnchorTop: string | null = '0px';
-  toastAnchorBottom: string | null = null;
-  toastAnchorLeft: string | null = '0px';
-  toastAnchorRight: string | null = null;
+  elementTop: string | null = '0px';
+  elementBottom: string | null = null;
+  elementLeft: string | null = '0px';
+  elementRight: string | null = null;
+  elementAnchorTop: string | null = '0px';
+  elementAnchorBottom: string | null = null;
+  elementAnchorLeft: string | null = '0px';
+  elementAnchorRight: string | null = null;
   visibility = 'hidden';
   display = 'inline-block';
   positionType: 'absolute' | 'fixed' = 'absolute';
@@ -96,8 +91,8 @@ export class ToastComponent
   private resizeSub$!: Subscription | undefined;
   private documentInjected!: Document;
   private windowInjected!: (Window & typeof globalThis) | null;
-  private toastHeight!: number;
-  private toastWidth!: number;
+  private elementHeight!: number;
+  private elementWidth!: number;
   currentNextElementIndex = 0;
   private isResizing = false;
 
@@ -128,8 +123,8 @@ export class ToastComponent
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
-  @Input() toastId!: string;
-  @Input() toastGroupId: string | undefined;
+  @Input() elementId!: string;
+  @Input() elementGroupId: string | undefined;
   //E.g. if a button has position static but is inside a container with position fixed, the effectivePosition would be 'fixed.'
   //This could be calculated. But I don't think traversing parent elements recursively, is good for performance if the developer can easily just add it.
   @Input() effectivePosition!: 'absolute' | 'fixed';
@@ -156,13 +151,13 @@ export class ToastComponent
   @Input() position: Position = 'RIGHT';
   @Input() gapInPx: number | undefined;
   @Input() overrideToastCSSClasses: string | undefined;
-  @Input() addToastCSSClasses: string | undefined;
-  @Input() toastAnchorCSSClasses: string | undefined;
+  @Input() addElementCSSClasses: string | undefined;
+  @Input() elementAnchorCSSClasses: string | undefined;
   @Input() arrowLeftCSSClasses: string | undefined;
   @Input() arrowRightCSSClasses: string | undefined;
   @Input() arrowTopCSSClasses: string | undefined;
   @Input() arrowBottomCSSClasses: string | undefined;
-  @Input() onToastTransitionEnd:
+  @Input() onElementTransitionEnd:
     | { callback: () => void; propertiesToFireOn: string[] }
     | undefined = undefined;
 
@@ -189,7 +184,7 @@ export class ToastComponent
     //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
     this.initCSS();
     this.initPositionType();
-    this.addDirectiveSubscriptions();
+    addElementControlsSubscriptions(this);
 
     //add scroll event listener
     this.documentInjected.addEventListener('scrollend', () => {
@@ -233,8 +228,8 @@ export class ToastComponent
       this.toastDestinationDomRect =
         this.elementDestination.getBoundingClientRect();
 
-      this.toastHeight = originalToastHeight;
-      this.toastWidth = originalToastWidth;
+      this.elementHeight = originalToastHeight;
+      this.elementWidth = originalToastWidth;
 
       this.defineToastAnchorCoords(this.toastDestinationDomRect);
 
@@ -243,8 +238,8 @@ export class ToastComponent
         this.elementAnchorDomRect =
           this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
-        this.toastTop = this.elementAnchorDomRect.top + 'px';
-        this.toastLeft = this.elementAnchorDomRect.left + 'px';
+        this.elementTop = this.elementAnchorDomRect.top + 'px';
+        this.elementLeft = this.elementAnchorDomRect.left + 'px';
 
         this.currentToastAnchor = this.toastAnchorVC.nativeElement;
 
@@ -345,12 +340,12 @@ export class ToastComponent
     if (this.overrideToastCSSClasses === undefined) {
       this.toastCSSClasses = 'w-max h-fit';
     }
-    if (this.addToastCSSClasses) {
-      this.toastCSSClasses += ' ' + this.addToastCSSClasses;
+    if (this.addElementCSSClasses) {
+      this.toastCSSClasses += ' ' + this.addElementCSSClasses;
     }
 
-    if (this.toastAnchorCSSClasses === undefined) {
-      this.toastAnchorCSSClasses = 'absolute';
+    if (this.elementAnchorCSSClasses === undefined) {
+      this.elementAnchorCSSClasses = 'absolute';
     }
     if (this.arrowLeftCSSClasses === undefined) {
       this.arrowLeftCSSClasses =
@@ -373,9 +368,9 @@ export class ToastComponent
   private updateToastPositionsOnScroll() {
     this.elementAnchorDomRect = this.currentToastAnchor.getBoundingClientRect();
     setTimeout(() => {
-      this.toastTop =
+      this.elementTop =
         this.elementAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
-      this.toastLeft =
+      this.elementLeft =
         this.elementAnchorDomRect.left + this.windowInjected?.scrollX! + 'px';
     }, 300);
   }
@@ -402,8 +397,8 @@ export class ToastComponent
       );
       if (!domRectsAreEqual) {
         this.elementAnchorDomRect = newToastAnchorDomRect;
-        this.toastTop = this.elementAnchorDomRect.top + 'px';
-        this.toastLeft = this.elementAnchorDomRect.left + 'px';
+        this.elementTop = this.elementAnchorDomRect.top + 'px';
+        this.elementLeft = this.elementAnchorDomRect.left + 'px';
         // setTimeout(() => {
         //   this.toastTop = this.toastAnchorDomRect.top + 'px';
         //   this.toastLeft = this.toastAnchorDomRect.left + 'px';
@@ -493,11 +488,11 @@ export class ToastComponent
   }
 
   private addActionEventListeners() {
-    if (this.onToastTransitionEnd !== undefined) {
+    if (this.onElementTransitionEnd !== undefined) {
       addTransitionEndToastListener(
         this.toastVC.nativeElement,
         this.renderer2,
-        this.onToastTransitionEnd
+        this.onElementTransitionEnd
       );
     }
 
@@ -585,25 +580,25 @@ export class ToastComponent
 
     switch (this.position) {
       case 'LEFT':
-        toastAnchorLeft = 0 - this.toastWidth - this.gapInPx + 'px';
+        toastAnchorLeft = 0 - this.elementWidth - this.gapInPx + 'px';
         toastAnchorTop =
-          0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
+          0 - this.elementHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'RIGHT':
         toastAnchorLeft = 0 + destinationDomRect.width + this.gapInPx + 'px';
         toastAnchorTop =
-          0 - this.toastHeight / 2 + destinationDomRect.height / 2 + 'px';
+          0 - this.elementHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'TOP':
         toastAnchorLeft =
-          0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
-        toastAnchorTop = 0 - this.toastHeight - this.gapInPx + 'px';
+          0 - this.elementWidth / 2 + destinationDomRect.width / 2 + 'px';
+        toastAnchorTop = 0 - this.elementHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
         toastAnchorLeft =
-          0 - this.toastWidth / 2 + destinationDomRect.width / 2 + 'px';
+          0 - this.elementWidth / 2 + destinationDomRect.width / 2 + 'px';
         toastAnchorTop = 0 + destinationDomRect.height + this.gapInPx + 'px';
         break;
       default:
@@ -613,8 +608,8 @@ export class ToastComponent
 
     //if 0, the toast is the main toast
     if (this.currentNextElementIndex === 0) {
-      this.toastAnchorTop = toastAnchorTop;
-      this.toastAnchorLeft = toastAnchorLeft;
+      this.elementAnchorTop = toastAnchorTop;
+      this.elementAnchorLeft = toastAnchorLeft;
     } else {
       //we are dealing with a toast destination
       this.currentToastAnchor.style.top = toastAnchorTop;
@@ -668,8 +663,8 @@ export class ToastComponent
 
     //get the toast dimensions in case they have changed.
     //Perhaps dynamic content was added.
-    this.toastHeight = this.toastVC.nativeElement.offsetHeight;
-    this.toastWidth = this.toastVC.nativeElement.offsetWidth;
+    this.elementHeight = this.toastVC.nativeElement.offsetHeight;
+    this.elementWidth = this.toastVC.nativeElement.offsetWidth;
 
     //ensure previous arrowa are unset
     this.arrowTop = false;
@@ -707,13 +702,13 @@ export class ToastComponent
       //Normally we use the onscrollend EventListener along with updateToastPositionsOnScroll# to update the scroll. Here we cannot,
       //as toastAnchorDomRect# retrieved in this method represents the DomRect as it was defined before scroll was considered. If you do not add scrollY and scrollX here, then if the user scrolls, and then clicks on "next toast destination,"
       //the toast will move to the wrong destination because it won't take into account the scroll.
-      this.toastTop =
+      this.elementTop =
         this.positionType === 'fixed'
           ? this.elementAnchorDomRect.top + 'px'
           : this.elementAnchorDomRect.top +
             this.windowInjected?.scrollY! +
             'px';
-      this.toastLeft =
+      this.elementLeft =
         this.positionType === 'fixed'
           ? this.elementAnchorDomRect.left + 'px'
           : this.elementAnchorDomRect.left +
@@ -790,97 +785,97 @@ export class ToastComponent
 
   //used with the toast directive so the developer can easily control the toast from components within the toast or outside the toast. E.g. a close a button.
   //These do not respect the hideDelay and showDelay timers. The hideDelay and showDelay timers are for actions (e.g. click, hover...) on the toast destination itself.
-  private addDirectiveSubscriptions() {
-    if (this.nextElements !== undefined) {
-      this.subscriptions.push(
-        this.toastService.goToNextId$.subscribe((e) => {
-          goToNextElement(this);
-        })
-      );
-      this.subscriptions.push(
-        this.toastService.goToPreviousId$.subscribe((e) => {
-          goToPreviousElement(this);
-        })
-      );
-      this.subscriptions.push(
-        this.toastService.goToFirstId$.subscribe((e) => {
-          goToFirstElement(this);
-        })
-      );
-      this.subscriptions.push(
-        this.toastService.goToLastId$.subscribe((e) => {
-          goToLastElement(this);
-        })
-      );
-    }
+  // private addElementControlsSubscriptions() {
+  //   if (this.nextElements !== undefined) {
+  //     this.subscriptions.push(
+  //       this.toastService.goToNextId$.subscribe((e) => {
+  //         goToNextElement(this);
+  //       })
+  //     );
+  //     this.subscriptions.push(
+  //       this.toastService.goToPreviousId$.subscribe((e) => {
+  //         goToPreviousElement(this);
+  //       })
+  //     );
+  //     this.subscriptions.push(
+  //       this.toastService.goToFirstId$.subscribe((e) => {
+  //         goToFirstElement(this);
+  //       })
+  //     );
+  //     this.subscriptions.push(
+  //       this.toastService.goToLastId$.subscribe((e) => {
+  //         goToLastElement(this);
+  //       })
+  //     );
+  //   }
 
-    this.subscriptions.push(
-      this.toastService.closeAll$.subscribe((e) => {
-        closeElementFromControl(this);
-      })
-    );
+  //   this.subscriptions.push(
+  //     this.toastService.closeAll$.subscribe((e) => {
+  //       closeElementFromControl(this);
+  //     })
+  //   );
 
-    this.subscriptions.push(
-      this.toastService.close$.subscribe((toastInfo) => {
-        if (this.toastId === toastInfo?.toastId) {
-          closeElementFromControl(this);
-        }
-      })
-    );
+  //   this.subscriptions.push(
+  //     this.toastService.close$.subscribe((toastInfo) => {
+  //       if (this.elementId === toastInfo?.toastId) {
+  //         closeElementFromControl(this);
+  //       }
+  //     })
+  //   );
 
-    this.subscriptions.push(
-      this.toastService.closeAllOthers$.subscribe((toastInfo) => {
-        if (this.toastId !== toastInfo?.toastId) {
-          closeElementFromControl(this);
-        }
-      })
-    );
+  //   this.subscriptions.push(
+  //     this.toastService.closeAllOthers$.subscribe((toastInfo) => {
+  //       if (this.elementId !== toastInfo?.toastId) {
+  //         closeElementFromControl(this);
+  //       }
+  //     })
+  //   );
 
-    if (this.toastGroupId !== undefined) {
-      this.subscriptions.push(
-        this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
-          if (this.toastGroupId === toastInfo?.toastGroupId) {
-            closeElementFromControl(this);
-          }
-        })
-      );
-    }
+  //   if (this.elementGroupId !== undefined) {
+  //     this.subscriptions.push(
+  //       this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
+  //         if (this.elementGroupId === toastInfo?.toastGroupId) {
+  //           closeElementFromControl(this);
+  //         }
+  //       })
+  //     );
+  //   }
 
-    if (this.toastGroupId !== undefined) {
-      this.subscriptions.push(
-        this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
-          if (
-            this.toastId !== toastInfo?.toastId &&
-            this.toastGroupId === toastInfo?.toastGroupId
-          ) {
-            closeElementFromControl(this);
-          }
-        })
-      );
-    }
+  //   if (this.elementGroupId !== undefined) {
+  //     this.subscriptions.push(
+  //       this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
+  //         if (
+  //           this.elementId !== toastInfo?.toastId &&
+  //           this.elementGroupId === toastInfo?.toastGroupId
+  //         ) {
+  //           closeElementFromControl(this);
+  //         }
+  //       })
+  //     );
+  //   }
 
-    this.subscriptions.push(
-      this.toastService.show$.subscribe((toastInfo) => {
-        if (this.toastId === toastInfo?.toastId) {
-          showElementFromControl(this);
-        }
-      })
-    );
+  //   this.subscriptions.push(
+  //     this.toastService.show$.subscribe((toastInfo) => {
+  //       if (this.elementId === toastInfo?.toastId) {
+  //         showElementFromControl(this);
+  //       }
+  //     })
+  //   );
 
-    this.subscriptions.push(
-      this.toastService.showAll$.subscribe((toastInfo) => {
-        showElementFromControl(this);
-      })
-    );
+  //   this.subscriptions.push(
+  //     this.toastService.showAll$.subscribe((toastInfo) => {
+  //       showElementFromControl(this);
+  //     })
+  //   );
 
-    this.subscriptions.push(
-      this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
-        if (this.toastGroupId === toastInfo?.toastGroupId) {
-          showElementFromControl(this);
-        }
-      })
-    );
-  }
+  //   this.subscriptions.push(
+  //     this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
+  //       if (this.elementGroupId === toastInfo?.toastGroupId) {
+  //         showElementFromControl(this);
+  //       }
+  //     })
+  //   );
+  // }
 
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
@@ -948,8 +943,8 @@ export class ToastComponent
       this.elementAnchorDomRect =
         this.currentToastAnchor.getBoundingClientRect() as DOMRect;
 
-      this.toastTop = this.elementAnchorDomRect.top + 'px';
-      this.toastLeft = this.elementAnchorDomRect.left + 'px';
+      this.elementTop = this.elementAnchorDomRect.top + 'px';
+      this.elementLeft = this.elementAnchorDomRect.left + 'px';
 
       if (this.displayWasNoneAtStartOfWindowResize) {
         this.display = 'none';
@@ -1001,7 +996,7 @@ export class ToastComponent
     //store the original toast
     this.elementDestinations = [
       {
-        id: this.toastId,
+        id: this.elementId,
         element: this.elementDestination,
         position: this.position,
         elementAnchor: this.toastAnchorVC.nativeElement,
@@ -1014,9 +1009,9 @@ export class ToastComponent
     if (this.nextElements && this.nextElements.length > 0) {
       this.nextElements.forEach((ele) => {
         const id = ele.id;
-        if (id.toUpperCase() === this.toastId.toUpperCase()) {
+        if (id.toUpperCase() === this.elementId.toUpperCase()) {
           throw Error(
-            `Cannot have an id in nextElements that is named the same as the toastID (${this.toastId}) , as the toastId is reserved for the initial toastDestination.`
+            `Cannot have an id in nextElements that is named the same as the toastID (${this.elementId}) , as the toastId is reserved for the initial toastDestination.`
           );
         }
         const nextEle = this.documentInjected.getElementById(id);
@@ -1055,7 +1050,7 @@ export class ToastComponent
     if (!this.effectivePosition) {
       throw Error(
         'You must set the effectivePosition attribute for toastId: ' +
-          this.toastId +
+          this.elementId +
           '. E.g. If the toast destination is a button and it has position:static, but the button is inside a div with position:fixed, the button will behave as if it were position:fixed. Thus the effectivePosition would be fixed.'
       );
     }
@@ -1072,7 +1067,7 @@ export class ToastComponent
       );
     }
 
-    if (!this.toastId) {
+    if (!this.elementId) {
       throw Error('You must set the toastId attribute');
     }
     if (this.hideDelay < 0) {

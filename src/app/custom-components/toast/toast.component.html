@@ -1,25 +1,25 @@
 <!-- toastAnchor stays with the toastDestination -->
 <div
   #toastAnchor
-  [ngClass]="toastAnchorCSSClasses"
+  [ngClass]="elementAnchorCSSClasses"
   [ngStyle]="{
-    top: toastAnchorTop,
-    left: toastAnchorLeft,
-    right: toastAnchorRight,
-    bottom: toastAnchorBottom,
+    top: elementAnchorTop,
+    left: elementAnchorLeft,
+    right: elementAnchorRight,
+    bottom: elementAnchorBottom,
     visibility: 'hidden',
 
   }"
-  id="{{ toastId + '-anchor' }}"
+  id="{{ elementId + '-anchor' }}"
 >
   <!--this becomes a direct child of the body-->
   <div
     #toast
     [ngStyle]="{
-      top: toastTop,
-      left: toastLeft,
-      right: toastRight,
-      bottom: toastBottom,
+      top: elementTop,
+      left: elementLeft,
+      right: elementRight,
+      bottom: elementBottom,
       visibility: visibility,
       display: display,
       position: positionType,
