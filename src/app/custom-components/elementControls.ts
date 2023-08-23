@@ -32,6 +32,8 @@ export function closeElementFromControl(
 ) {
   thisOfResidingClass.updateShowState(false);
 
+  console.log('in closeElementFromControl');
+
   if (
     thisOfResidingClass.hideDelayTimer ||
     thisOfResidingClass.showOnInitDelayTimer ||

@@ -87,20 +87,9 @@ export class ToastComponent
   toastCSSClasses: string | undefined;
 
   private isShowing = false;
+  subscriptions: Subscription[] = [];
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
-  private closeAll$: Subscription | undefined;
-  private close$: Subscription | undefined;
-  private closeAllInGroup$: Subscription | undefined;
-  private closeAllOthers$: Subscription | undefined;
-  private closeAllOthersInGroup$: Subscription | undefined;
-  private show$: Subscription | undefined;
-  private showAll$: Subscription | undefined;
-  private showAllOthersInGroup$: Subscription | undefined;
-  private goToNextId$: Subscription | undefined;
-  private goToPreviousId$: Subscription | undefined;
-  private goToFirstId$: Subscription | undefined;
-  private goToLastId$: Subscription | undefined;
   private documentInjected!: Document;
   private windowInjected!: (Window & typeof globalThis) | null;
   private toastHeight!: number;
@@ -279,19 +268,8 @@ export class ToastComponent
   }
 
   ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
     this.resizeSub$ && this.resizeSub$.unsubscribe();
-    this.closeAll$ && this.closeAll$.unsubscribe();
-    this.close$ && this.close$.unsubscribe();
-    this.closeAllInGroup$ && this.closeAllInGroup$.unsubscribe();
-    this.closeAllOthers$ && this.closeAllOthers$.unsubscribe();
-    this.closeAllOthersInGroup$ && this.closeAllOthersInGroup$.unsubscribe();
-    this.show$ && this.show$.unsubscribe();
-    this.showAll$ && this.showAll$.unsubscribe();
-    this.showAllOthersInGroup$ && this.showAllOthersInGroup$.unsubscribe();
-    this.goToNextId$ && this.goToNextId$.unsubscribe();
-    this.goToPreviousId$ && this.goToPreviousId$.unsubscribe();
-    this.goToFirstId$ && this.goToFirstId$.unsubscribe();
-    this.goToLastId$ && this.goToLastId$.unsubscribe();
   }
 
   // closeElementFromControl() {
@@ -847,52 +825,62 @@ export class ToastComponent
   //These do not respect the hideDelay and showDelay timers. The hideDelay and showDelay timers are for actions (e.g. click, hover...) on the toast destination itself.
   private addDirectiveSubscriptions() {
     if (this.nextElements !== undefined) {
-      this.goToNextId$ = this.toastService.goToNextId$.subscribe((e) => {
-        this.goToNextElement();
-      });
-      this.goToPreviousId$ = this.toastService.goToPreviousId$.subscribe(
-        (e) => {
-          this.goToPreviousElement();
-        }
+      this.subscriptions.push(
+        this.toastService.goToNextId$.subscribe((e) => {
+          this.goToNextElement();
+        })
       );
-      this.goToFirstId$ = this.toastService.goToFirstId$.subscribe((e) => {
-        this.goToFirstElement();
-      });
-      this.goToLastId$ = this.toastService.goToLastId$.subscribe((e) => {
-        this.goToLastElement();
-      });
+      this.subscriptions.push(
+        this.toastService.goToPreviousId$.subscribe((e) => {
+          this.goToPreviousElement();
+        })
+      );
+      this.subscriptions.push(
+        this.toastService.goToFirstId$.subscribe((e) => {
+          this.goToFirstElement();
+        })
+      );
+      this.subscriptions.push(
+        this.toastService.goToLastId$.subscribe((e) => {
+          this.goToLastElement();
+        })
+      );
     }
 
-    this.closeAll$ = this.toastService.closeAll$.subscribe((e) => {
-      closeElementFromControl(this);
-    });
-
-    this.close$ = this.toastService.close$.subscribe((toastInfo) => {
-      if (this.toastId === toastInfo?.toastId) {
+    this.subscriptions.push(
+      this.toastService.closeAll$.subscribe((e) => {
         closeElementFromControl(this);
-      }
-    });
+      })
+    );
 
-    this.closeAllOthers$ = this.toastService.closeAllOthers$.subscribe(
-      (toastInfo) => {
+    this.subscriptions.push(
+      this.toastService.close$.subscribe((toastInfo) => {
+        if (this.toastId === toastInfo?.toastId) {
+          closeElementFromControl(this);
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.toastService.closeAllOthers$.subscribe((toastInfo) => {
         if (this.toastId !== toastInfo?.toastId) {
           closeElementFromControl(this);
         }
-      }
+      })
     );
 
     if (this.toastGroupId !== undefined) {
-      this.closeAllInGroup$ = this.toastService.closeAllInGroup$.subscribe(
-        (toastInfo) => {
+      this.subscriptions.push(
+        this.toastService.closeAllInGroup$.subscribe((toastInfo) => {
           if (this.toastGroupId === toastInfo?.toastGroupId) {
             closeElementFromControl(this);
           }
-        }
+        })
       );
     }
 
     if (this.toastGroupId !== undefined) {
-      this.closeAllOthersInGroup$ =
+      this.subscriptions.push(
         this.toastService.closeAllOthersInGroup$.subscribe((toastInfo) => {
           if (
             this.toastId !== toastInfo?.toastId &&
@@ -900,25 +888,31 @@ export class ToastComponent
           ) {
             closeElementFromControl(this);
           }
-        });
+        })
+      );
     }
 
-    this.show$ = this.toastService.show$.subscribe((toastInfo) => {
-      if (this.toastId === toastInfo?.toastId) {
+    this.subscriptions.push(
+      this.toastService.show$.subscribe((toastInfo) => {
+        if (this.toastId === toastInfo?.toastId) {
+          showElementFromControl(this);
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.toastService.showAll$.subscribe((toastInfo) => {
         showElementFromControl(this);
-      }
-    });
+      })
+    );
 
-    this.showAll$ = this.toastService.showAll$.subscribe((toastInfo) => {
-      showElementFromControl(this);
-    });
-
-    this.showAllOthersInGroup$ =
+    this.subscriptions.push(
       this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
         if (this.toastGroupId === toastInfo?.toastGroupId) {
           showElementFromControl(this);
         }
-      });
+      })
+    );
   }
 
   private addWindowResizeHandler() {
