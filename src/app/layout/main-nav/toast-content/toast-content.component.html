@@ -1,9 +1,9 @@
 <div class="w-full h-full bg-gray-400 p-2 rounded-lg">
   <h1>My tooltip/toastId {{ elementId }}</h1>
   <div class="flex gap-4">
-    <!-- <button appElementControls [elementId]="elementId" [onShowAll]="true">
+    <button appElementControls [elementId]="elementId" [onShowAll]="true">
       Show All
-    </button> -->
+    </button>
     <!-- <button appElementControls [elementId]="elementId" [onCloseAllOthers]="true">
       Close All Others
     </button>
@@ -14,33 +14,21 @@
     >
       CAOIG
     </button> -->
-    <button
-      appElementControls
-      [elementId]="elementId"
-      onShowAllOthersInGroup="toast-group-1"
-    >
-      ShowAllO*InGroup
-    </button>
-    <!-- <button
-      appElementControls
-      [elementId]="elementId"
-      [onCloseAllOthers]="true"
-    >
-      CloseAllOthers
-    </button> -->
-    <button
-      appElementControls
-      [elementId]="elementId"
-      onCloseAllInGroup="toast-group-1"
-    >
-      CloseAllInGrp
+    <button appElementControls [elementId]="elementId" [onGoToNextId]="true">
+      Next d
     </button>
     <button
       appElementControls
       [elementId]="elementId"
-      onCloseAllOthersInGroup="toast-group-1"
+      [onGoToPreviousId]="true"
     >
-      CloseAllOt*InGroup
+      Pre d
+    </button>
+    <button appElementControls [elementId]="elementId" [onGoToFirstId]="true">
+      Fir d
+    </button>
+    <button appElementControls [elementId]="elementId" [onGoToLastId]="true">
+      Las d
     </button>
     <button appElementControls [elementId]="elementId" [onClose]="true">
       Close

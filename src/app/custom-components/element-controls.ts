@@ -64,66 +64,59 @@ export type AddElementControlsSubscription = {
 export function addElementControlsSubscriptions(
   thisOfResidingClass: AddElementControlsSubscription
 ) {
-  if (thisOfResidingClass.nextElements !== undefined) {
-    thisOfResidingClass.subscriptions.push(
-      thisOfResidingClass.elementControlsService.goToNextId$.subscribe((e) => {
-        goToNextElement(thisOfResidingClass);
+  const self = thisOfResidingClass;
+  if (self.nextElements !== undefined) {
+    self.subscriptions.push(
+      self.elementControlsService.goToNextId$.subscribe((e) => {
+        goToNextElement(self);
       })
     );
-    thisOfResidingClass.subscriptions.push(
-      thisOfResidingClass.elementControlsService.goToPreviousId$.subscribe(
-        (e) => {
-          goToPreviousElement(thisOfResidingClass);
-        }
-      )
-    );
-    thisOfResidingClass.subscriptions.push(
-      thisOfResidingClass.elementControlsService.goToFirstId$.subscribe((e) => {
-        goToFirstElement(thisOfResidingClass);
+    self.subscriptions.push(
+      self.elementControlsService.goToPreviousId$.subscribe((e) => {
+        goToPreviousElement(self);
       })
     );
-    thisOfResidingClass.subscriptions.push(
-      thisOfResidingClass.elementControlsService.goToLastId$.subscribe((e) => {
-        goToLastElement(thisOfResidingClass);
+    self.subscriptions.push(
+      self.elementControlsService.goToFirstId$.subscribe((e) => {
+        goToFirstElement(self);
+      })
+    );
+    self.subscriptions.push(
+      self.elementControlsService.goToLastId$.subscribe((e) => {
+        goToLastElement(self);
       })
     );
   }
 
-  thisOfResidingClass.subscriptions.push(
-    thisOfResidingClass.elementControlsService.closeAll$.subscribe((e) => {
-      closeElementFromControl(thisOfResidingClass);
+  self.subscriptions.push(
+    self.elementControlsService.closeAll$.subscribe((e) => {
+      closeElementFromControl(self);
     })
   );
 
-  thisOfResidingClass.subscriptions.push(
-    thisOfResidingClass.elementControlsService.close$.subscribe((toastInfo) => {
-      if (thisOfResidingClass.elementId === toastInfo?.elementId) {
-        closeElementFromControl(thisOfResidingClass);
+  self.subscriptions.push(
+    self.elementControlsService.close$.subscribe((toastInfo) => {
+      if (self.elementId === toastInfo?.elementId) {
+        closeElementFromControl(self);
       }
     })
   );
 
-  thisOfResidingClass.subscriptions.push(
-    thisOfResidingClass.elementControlsService.closeAllOthers$.subscribe(
-      (toastInfo) => {
-        if (thisOfResidingClass.elementId !== toastInfo?.elementId) {
-          closeElementFromControl(thisOfResidingClass);
-        }
+  self.subscriptions.push(
+    self.elementControlsService.closeAllOthers$.subscribe((toastInfo) => {
+      if (self.elementId !== toastInfo?.elementId) {
+        closeElementFromControl(self);
       }
-    )
+    })
   );
 
-  if (thisOfResidingClass.elementGroupId !== undefined) {
-    thisOfResidingClass.subscriptions.push(
-      thisOfResidingClass.elementControlsService.closeAllInGroup$.subscribe(
-        (toastInfo) => {
-          if (
-            thisOfResidingClass.elementGroupId === toastInfo?.elementGroupId
-          ) {
-            closeElementFromControl(thisOfResidingClass);
-          }
+  if (self.elementGroupId !== undefined) {
+    self.subscriptions.push(
+      self.elementControlsService.closeAllInGroup$.subscribe((toastInfo) => {
+        if (self.elementGroupId === toastInfo?.elementGroupId) {
+          closeElementFromControl(self);
         }
-      )
+      })
     );
   }
 
@@ -170,72 +163,77 @@ export function addElementControlsSubscriptions(
 }
 
 export function goToNextElement(thisOfResidingClass: GoToElement) {
-  if (thisOfResidingClass.elementDestinations.length > 1) {
+  const self = thisOfResidingClass;
+  if (self.elementDestinations.length > 1) {
     //get next object from array and when reach the end, go back to the start
-    let nextElementIndex = thisOfResidingClass.currentNextElementIndex + 1;
-    if (nextElementIndex > thisOfResidingClass.elementDestinations.length - 1) {
-      thisOfResidingClass.currentNextElementIndex = 0;
+    let nextElementIndex = self.currentNextElementIndex + 1;
+    if (nextElementIndex > self.elementDestinations.length - 1) {
+      self.currentNextElementIndex = 0;
     } else {
-      thisOfResidingClass.currentNextElementIndex = nextElementIndex;
+      self.currentNextElementIndex = nextElementIndex;
     }
 
-    thisOfResidingClass.defineNextElement();
+    self.defineNextElement();
   }
 }
 
 export function goToPreviousElement(thisOfResidingClass: GoToElement) {
-  if (thisOfResidingClass.elementDestinations.length > 1) {
-    let nextElementIndex = thisOfResidingClass.currentNextElementIndex - 1;
+  const self = thisOfResidingClass;
+  if (self.elementDestinations.length > 1) {
+    let nextElementIndex = self.currentNextElementIndex - 1;
     if (nextElementIndex < 0) {
       return;
     } else {
-      thisOfResidingClass.currentNextElementIndex = nextElementIndex;
+      self.currentNextElementIndex = nextElementIndex;
     }
 
-    thisOfResidingClass.defineNextElement();
+    self.defineNextElement();
   }
 }
 
 export function goToFirstElement(thisOfResidingClass: GoToElement) {
-  if (thisOfResidingClass.elementDestinations.length > 1) {
-    thisOfResidingClass.currentNextElementIndex = 0;
-    thisOfResidingClass.defineNextElement();
+  const self = thisOfResidingClass;
+  if (self.elementDestinations.length > 1) {
+    self.currentNextElementIndex = 0;
+    self.defineNextElement();
   }
 }
 
 export function goToLastElement(thisOfResidingClass: GoToElement) {
-  if (thisOfResidingClass.elementDestinations.length > 1) {
-    thisOfResidingClass.currentNextElementIndex =
-      thisOfResidingClass.elementDestinations.length - 1;
-    thisOfResidingClass.defineNextElement();
+  const self = thisOfResidingClass;
+  if (self.elementDestinations.length > 1) {
+    self.currentNextElementIndex = self.elementDestinations.length - 1;
+    self.defineNextElement();
   }
 }
 
 export function showElementFromControl(
   thisOfResidingClass: ShowElementFromControl
 ) {
+  const self = thisOfResidingClass;
   //Must update 'KeepShowing' so that if user hovers in and out, the element does not close
-  thisOfResidingClass.keepShowing = true;
-  thisOfResidingClass.updateShowState(true);
-  if (thisOfResidingClass.showOnInitDelayTimer) {
-    thisOfResidingClass.showOnInitDelayTimer.cancelTimer = true;
+  self.keepShowing = true;
+  self.updateShowState(true);
+  if (self.showOnInitDelayTimer) {
+    self.showOnInitDelayTimer.cancelTimer = true;
   }
 }
 
 export function closeElementFromControl(
   thisOfResidingClass: CloseElementFromControl
 ) {
-  thisOfResidingClass.updateShowState(false);
+  const self = thisOfResidingClass;
+  self.updateShowState(false);
 
   if (
-    thisOfResidingClass.hideDelayTimer ||
-    thisOfResidingClass.showOnInitDelayTimer ||
-    thisOfResidingClass.hideOnInitDelayTimer
+    self.hideDelayTimer ||
+    self.showOnInitDelayTimer ||
+    self.hideOnInitDelayTimer
   ) {
     cancelTimers([
-      thisOfResidingClass?.hideDelayTimer,
-      thisOfResidingClass?.showOnInitDelayTimer,
-      thisOfResidingClass?.hideOnInitDelayTimer,
+      self?.hideDelayTimer,
+      self?.showOnInitDelayTimer,
+      self?.hideOnInitDelayTimer,
     ]);
   }
 }
