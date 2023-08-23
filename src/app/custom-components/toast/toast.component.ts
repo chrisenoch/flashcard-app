@@ -45,6 +45,11 @@ import {
   controllableTimer,
   pauseTimers,
 } from '../controllableTimer';
+import { addTransitionEndToastListener } from '../elementListeners';
+import {
+  closeElementFromControl,
+  showElementFromControl,
+} from '../elementControls';
 
 @Component({
   selector: 'app-toast',
@@ -118,9 +123,9 @@ export class ToastComponent
 
   private currentToastAnchor!: HTMLElement;
 
-  private showOnInitDelayTimer: controlledTimer | undefined;
-  private hideOnInitDelayTimer: controlledTimer | undefined;
-  private hideDelayTimer: controlledTimer | undefined;
+  showOnInitDelayTimer: controlledTimer | undefined;
+  hideOnInitDelayTimer: controlledTimer | undefined;
+  hideDelayTimer: controlledTimer | undefined;
   private showDelayTimer: controlledTimer | undefined;
   private displayWasNoneAtStartOfWindowResize = false;
   private firstOfResizeBatch = true;
@@ -183,6 +188,9 @@ export class ToastComponent
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
+    console.log('this');
+    console.log(this);
+
     this.checkInputs();
     this.windowInjected = this.documentInjected.defaultView;
     //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
@@ -286,15 +294,25 @@ export class ToastComponent
     this.goToLastId$ && this.goToLastId$.unsubscribe();
   }
 
-  onClose() {
-    this.updateShowState(false);
+  // closeElementFromControl() {
+  //   this.updateShowState(false);
 
-    cancelTimers([
-      this.hideDelayTimer,
-      this.showOnInitDelayTimer,
-      this.hideOnInitDelayTimer,
-    ]);
-  }
+  //   cancelTimers([
+  //     this.hideDelayTimer,
+  //     this.showOnInitDelayTimer,
+  //     this.hideOnInitDelayTimer,
+  //   ]);
+  // }
+
+  // onClose() {
+  //   this.updateShowState(false);
+
+  //   cancelTimers([
+  //     this.hideDelayTimer,
+  //     this.showOnInitDelayTimer,
+  //     this.hideOnInitDelayTimer,
+  //   ]);
+  // }
 
   showToast() {
     //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
@@ -474,26 +492,6 @@ export class ToastComponent
     }
   }
 
-  private addTransitionEndToastListener({
-    callback,
-    propertiesToFireOn,
-  }: {
-    callback: () => void;
-    propertiesToFireOn: string[];
-  }) {
-    this.renderer2.listen(
-      this.toastVC.nativeElement,
-      'transitionend',
-      (e: TransitionEvent) => {
-        propertiesToFireOn.forEach((property: string) => {
-          if (e.propertyName.toLowerCase() === property.toLowerCase()) {
-            callback();
-          }
-        });
-      }
-    );
-  }
-
   private addToggleToastListener(
     eventType: string,
     overrideKeepShowing: boolean = false
@@ -541,7 +539,7 @@ export class ToastComponent
   }
 
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
-  private updateShowState(isShow: boolean) {
+  updateShowState(isShow: boolean) {
     if (isShow) {
       //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
       this.display = 'inline-block';
@@ -555,7 +553,11 @@ export class ToastComponent
 
   private addActionEventListeners() {
     if (this.onToastTransitionEnd !== undefined) {
-      this.addTransitionEndToastListener(this.onToastTransitionEnd);
+      addTransitionEndToastListener(
+        this.toastVC.nativeElement,
+        this.renderer2,
+        this.onToastTransitionEnd
+      );
     }
 
     if (this.showOnHover) {
@@ -823,14 +825,23 @@ export class ToastComponent
     }
   }
 
-  private showToastFromDirective() {
-    //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
-    this.keepShowing = true;
-    this.updateShowState(true);
-    if (this.showOnInitDelayTimer) {
-      this.showOnInitDelayTimer.cancelTimer = true;
-    }
-  }
+  // private showElementFromControl() {
+  //   //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
+  //   this.keepShowing = true;
+  //   this.updateShowState(true);
+  //   if (this.showOnInitDelayTimer) {
+  //     this.showOnInitDelayTimer.cancelTimer = true;
+  //   }
+  // }
+
+  // private showToastFromDirective() {
+  //   //Must update 'KeepShowing' so that if user hovers in and out, the toast does not close
+  //   this.keepShowing = true;
+  //   this.updateShowState(true);
+  //   if (this.showOnInitDelayTimer) {
+  //     this.showOnInitDelayTimer.cancelTimer = true;
+  //   }
+  // }
 
   //used with the toast directive so the developer can easily control the toast from components within the toast or outside the toast. E.g. a close a button.
   //These do not respect the hideDelay and showDelay timers. The hideDelay and showDelay timers are for actions (e.g. click, hover...) on the toast destination itself.
@@ -853,19 +864,19 @@ export class ToastComponent
     }
 
     this.closeAll$ = this.toastService.closeAll$.subscribe((e) => {
-      this.onClose();
+      closeElementFromControl(this);
     });
 
     this.close$ = this.toastService.close$.subscribe((toastInfo) => {
       if (this.toastId === toastInfo?.toastId) {
-        this.onClose();
+        closeElementFromControl(this);
       }
     });
 
     this.closeAllOthers$ = this.toastService.closeAllOthers$.subscribe(
       (toastInfo) => {
         if (this.toastId !== toastInfo?.toastId) {
-          this.onClose();
+          closeElementFromControl(this);
         }
       }
     );
@@ -874,7 +885,7 @@ export class ToastComponent
       this.closeAllInGroup$ = this.toastService.closeAllInGroup$.subscribe(
         (toastInfo) => {
           if (this.toastGroupId === toastInfo?.toastGroupId) {
-            this.onClose();
+            closeElementFromControl(this);
           }
         }
       );
@@ -887,25 +898,25 @@ export class ToastComponent
             this.toastId !== toastInfo?.toastId &&
             this.toastGroupId === toastInfo?.toastGroupId
           ) {
-            this.onClose();
+            closeElementFromControl(this);
           }
         });
     }
 
     this.show$ = this.toastService.show$.subscribe((toastInfo) => {
       if (this.toastId === toastInfo?.toastId) {
-        this.showToastFromDirective();
+        showElementFromControl(this);
       }
     });
 
     this.showAll$ = this.toastService.showAll$.subscribe((toastInfo) => {
-      this.showToastFromDirective();
+      showElementFromControl(this);
     });
 
     this.showAllOthersInGroup$ =
       this.toastService.showAllOthersInGroup$.subscribe((toastInfo) => {
         if (this.toastGroupId === toastInfo?.toastGroupId) {
-          this.showToastFromDirective();
+          showElementFromControl(this);
         }
       });
   }
@@ -1067,21 +1078,14 @@ export class ToastComponent
   //Can add an event to an element by adding the template reference to the element. E.g. #close. Does not work in child components.
   private addConvenienceClickhandlers() {
     if (this.showCC) {
-      this.renderer2.listen(
-        this.showCC.nativeElement,
-        'click',
-        (e: MouseEvent) => {
-          console.log('dynamically inserted show button was clicked.');
-        }
+      addConvenienceClickhandler(this.showCC, this.renderer2, () =>
+        console.log('clicked show')
       );
     }
+
     if (this.closeCC) {
-      this.renderer2.listen(
-        this.closeCC.nativeElement,
-        'click',
-        (e: MouseEvent) => {
-          this.onClose();
-        }
+      addConvenienceClickhandler(this.closeCC, this.renderer2, () =>
+        console.log('clicked close')
       );
     }
   }
@@ -1131,4 +1135,11 @@ export class ToastComponent
   deny() {
     console.log('inside deny in toast');
   }
+}
+function addConvenienceClickhandler(
+  showCC: ElementRef<any> | undefined,
+  renderer2: Renderer2,
+  arg2: () => void
+) {
+  throw new Error('Function not implemented.');
 }
