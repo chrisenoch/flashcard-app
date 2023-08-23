@@ -124,45 +124,41 @@ export function addElementControlsSubscriptions(
     );
   }
 
-  if (thisOfResidingClass.elementGroupId !== undefined) {
-    thisOfResidingClass.subscriptions.push(
-      thisOfResidingClass.elementControlsService.closeAllOthersInGroup$.subscribe(
+  if (self.elementGroupId !== undefined) {
+    self.subscriptions.push(
+      self.elementControlsService.closeAllOthersInGroup$.subscribe(
         (toastInfo) => {
           if (
-            thisOfResidingClass.elementId !== toastInfo?.elementId &&
-            thisOfResidingClass.elementGroupId === toastInfo?.elementGroupId
+            self.elementId !== toastInfo?.elementId &&
+            self.elementGroupId === toastInfo?.elementGroupId
           ) {
-            closeElementFromControl(thisOfResidingClass);
+            closeElementFromControl(self);
           }
         }
       )
     );
   }
 
-  thisOfResidingClass.subscriptions.push(
-    thisOfResidingClass.elementControlsService.show$.subscribe((toastInfo) => {
-      if (thisOfResidingClass.elementId === toastInfo?.elementId) {
-        showElementFromControl(thisOfResidingClass);
+  self.subscriptions.push(
+    self.elementControlsService.show$.subscribe((toastInfo) => {
+      if (self.elementId === toastInfo?.elementId) {
+        showElementFromControl(self);
       }
     })
   );
 
-  thisOfResidingClass.subscriptions.push(
-    thisOfResidingClass.elementControlsService.showAll$.subscribe(
-      (toastInfo) => {
-        showElementFromControl(thisOfResidingClass);
-      }
-    )
+  self.subscriptions.push(
+    self.elementControlsService.showAll$.subscribe((toastInfo) => {
+      showElementFromControl(self);
+    })
   );
 
-  thisOfResidingClass.subscriptions.push(
-    thisOfResidingClass.elementControlsService.showAllOthersInGroup$.subscribe(
-      (toastInfo) => {
-        if (thisOfResidingClass.elementGroupId === toastInfo?.elementGroupId) {
-          showElementFromControl(thisOfResidingClass);
-        }
+  self.subscriptions.push(
+    self.elementControlsService.showAllOthersInGroup$.subscribe((toastInfo) => {
+      if (self.elementGroupId === toastInfo?.elementGroupId) {
+        showElementFromControl(self);
       }
-    )
+    })
   );
 }
 
@@ -217,6 +213,8 @@ export function showElementFromControl(
   const self = thisOfResidingClass;
   //Must update 'KeepShowing' so that if user hovers in and out, the element does not close
   self.keepShowing = true;
+  //showElementFromControl expects updateShowState to be available on 'this' of the class it is imported into.
+  //Also, updateShowState needs to know the value of 'this', so the imported implementation of updateShowState can check that 'this' provides all the properties it needs.
   self.updateShowState(self, true);
   if (self.showOnInitDelayTimer) {
     self.showOnInitDelayTimer.cancelTimer = true;
@@ -227,6 +225,8 @@ export function closeElementFromControl(
   thisOfResidingClass: CloseElementFromControl
 ) {
   const self = thisOfResidingClass;
+  //closeElementFromControl expects updateShowState to be available on 'this' of the class it is imported into.
+  //Also, updateShowState needs to know the value of 'this', so the imported implementation of updateShowState can check that 'this' provides all the properties it needs.
   self.updateShowState(self, false);
 
   if (

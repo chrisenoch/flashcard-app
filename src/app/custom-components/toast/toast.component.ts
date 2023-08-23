@@ -51,7 +51,12 @@ import {
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
-import { updateShowState } from '../element-visibility';
+import {
+  hideElementWithTimers,
+  initDisplayAndVisibility,
+  showElementWithTimers,
+  updateShowState,
+} from '../element-visibility';
 
 @Component({
   selector: 'app-toast',
@@ -69,7 +74,7 @@ export class ToastComponent
   constructor(
     @Inject(DOCUMENT) document: Document,
     public renderer2: Renderer2,
-    private ngZone: NgZone,
+    public ngZone: NgZone,
     private toastService: ToastService,
     public elementControlsService: ElementControlsService
   ) {
@@ -84,7 +89,7 @@ export class ToastComponent
   elementAnchorBottom: string | null = null;
   elementAnchorLeft: string | null = '0px';
   elementAnchorRight: string | null = null;
-  visibility = 'hidden';
+  visibility: 'hidden' | 'visible' = 'hidden';
   display: 'inline-block' | 'none' = 'inline-block';
   positionType: 'absolute' | 'fixed' = 'absolute';
   toastCSSClasses: string | undefined;
@@ -118,7 +123,7 @@ export class ToastComponent
   showOnInitDelayTimer: controlledTimer | undefined;
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
-  private showDelayTimer: controlledTimer | undefined;
+  showDelayTimer: controlledTimer | undefined;
   private displayWasNoneAtStartOfWindowResize = false;
   private firstOfResizeBatch = true;
   private afterViewChecked$ = new Subject<boolean>();
@@ -279,50 +284,50 @@ export class ToastComponent
     this.resizeSub$ && this.resizeSub$.unsubscribe();
   }
 
-  showToast() {
-    //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
-    cancelTimers([
-      this.hideDelayTimer,
-      this.showOnInitDelayTimer,
-      this.hideOnInitDelayTimer,
-    ]);
+  // showElementWithTimers() {
+  //   //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
+  //   cancelTimers([
+  //     this.hideDelayTimer,
+  //     this.showOnInitDelayTimer,
+  //     this.hideOnInitDelayTimer,
+  //   ]);
 
-    if (this.showDelay > 0) {
-      this.showDelayTimer = controllableTimer(this.showDelay);
-      this.ngZone.runOutsideAngular(() => {
-        this.showDelayTimer!.sub.subscribe({
-          complete: () => {
-            this.ngZone.run(() => {
-              updateShowState(this, true);
-            });
-          },
-        });
-      });
-    } else {
-      updateShowState(this, true);
-    }
-  }
+  //   if (this.showDelay > 0) {
+  //     this.showDelayTimer = controllableTimer(this.showDelay);
+  //     this.ngZone.runOutsideAngular(() => {
+  //       this.showDelayTimer!.sub.subscribe({
+  //         complete: () => {
+  //           this.ngZone.run(() => {
+  //             updateShowState(this, true);
+  //           });
+  //         },
+  //       });
+  //     });
+  //   } else {
+  //     updateShowState(this, true);
+  //   }
+  // }
 
-  hideToast() {
-    if (this.showDelayTimer) {
-      this.showDelayTimer.cancelTimer = true;
-    }
+  // hideElementWithTimers() {
+  //   if (this.showDelayTimer) {
+  //     this.showDelayTimer.cancelTimer = true;
+  //   }
 
-    if (this.hideDelay > 0) {
-      this.hideDelayTimer = controllableTimer(this.hideDelay);
-      this.ngZone.runOutsideAngular(() => {
-        this.hideDelayTimer!.sub.subscribe({
-          complete: () => {
-            this.ngZone.run(() => {
-              updateShowState(this, false);
-            });
-          },
-        });
-      });
-    } else if (!this.keepShowing) {
-      updateShowState(this, false);
-    }
-  }
+  //   if (this.hideDelay > 0) {
+  //     this.hideDelayTimer = controllableTimer(this.hideDelay);
+  //     this.ngZone.runOutsideAngular(() => {
+  //       this.hideDelayTimer!.sub.subscribe({
+  //         complete: () => {
+  //           this.ngZone.run(() => {
+  //             updateShowState(this, false);
+  //           });
+  //         },
+  //       });
+  //     });
+  //   } else if (!this.keepShowing) {
+  //     updateShowState(this, false);
+  //   }
+  // }
 
   private initCSS() {
     if (this.overrideToastCSSClasses === undefined) {
@@ -428,9 +433,9 @@ export class ToastComponent
           if (overrideKeepShowing) {
             this.keepShowing = false;
           }
-          this.hideToast();
+          hideElementWithTimers(this);
         } else {
-          this.showToast();
+          showElementWithTimers(this);
         }
       }
     );
@@ -441,7 +446,7 @@ export class ToastComponent
       this.elementVC.nativeElement.parentElement.parentElement.parentElement,
       eventType,
       (e: Event) => {
-        this.showToast();
+        showElementWithTimers(this);
       }
     );
   }
@@ -457,7 +462,7 @@ export class ToastComponent
         if (overrideKeepShowing) {
           this.keepShowing = false;
         }
-        this.hideToast();
+        hideElementWithTimers(this);
       }
     );
   }
@@ -534,17 +539,6 @@ export class ToastComponent
       this.documentInjected.body,
       this.elementVC.nativeElement
     );
-  }
-
-  private initDisplayAndVisibility() {
-    //set display to none ASAP to avoid possible jumps in the UI. None found, this is a precaution.
-    if (this.keepShowing) {
-      this.display = 'inline-block';
-      this.isShowing = true;
-    } else {
-      this.display = 'none';
-    }
-    this.visibility = 'visible';
   }
 
   // private defineCurrentToastAnchorCoords(destinationDomRect: DOMRect) {
@@ -725,7 +719,7 @@ export class ToastComponent
 
   private initDelayTimers() {
     if (this.showOnInitDelay <= 0) {
-      this.initDisplayAndVisibility();
+      initDisplayAndVisibility(this);
       this.defineHideOnInitDelay();
     } else {
       this.showOnInitDelayTimer = controllableTimer(
@@ -735,7 +729,7 @@ export class ToastComponent
         this.showOnInitDelayTimer!.sub.subscribe({
           complete: () => {
             this.ngZone.run(() => {
-              this.initDisplayAndVisibility();
+              initDisplayAndVisibility(this);
               this.defineHideOnInitDelay();
             });
           },
@@ -743,7 +737,7 @@ export class ToastComponent
             this.ngZone.run(() => {
               //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
               if (e instanceof ControlledError) {
-                this.initDisplayAndVisibility();
+                initDisplayAndVisibility(this);
                 //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled.
                 //Thus we don't call defineHideOninitDelay here
                 this.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
