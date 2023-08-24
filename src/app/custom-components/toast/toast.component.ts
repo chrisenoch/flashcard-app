@@ -48,9 +48,10 @@ import {
 import {
   addConvenienceClickHandler,
   addHideElementWithTimersListener,
-  addShowElementWithTimersListener,
+  addShowElementWithTimersListener as prepareAddShowElementWithTimersListener,
   addToggleElementWithTimersListener,
   addTransitionEndToastListener,
+  initShowOnHoverListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
@@ -110,7 +111,7 @@ export class ToastComponent
   private isResizing = false;
 
   //toastDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
-  private elementDestination!: HTMLElement;
+  elementDestination!: HTMLElement;
   private elementAnchorDomRect!: DOMRect;
   private toastDestinationDomRect!: DOMRect;
   elementDestinations!: {
@@ -139,6 +140,7 @@ export class ToastComponent
   initDisplayAndVisibility = prepareInitDisplayAndVisibility;
   showElementWithTimers = prepareShowElementWithTimers;
   hideElementWithTimers = prepareHideElementWithTimers;
+  addShowElementWithTimersListener = prepareAddShowElementWithTimersListener;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -452,21 +454,8 @@ export class ToastComponent
   }
 
   private addElementDestinationListeners() {
-    if (this.showOnHover) {
-      if (this.showOnHover === 'mouseenter') {
-        addShowElementWithTimersListener(
-          this,
-          'mouseenter',
-          this.elementDestination
-        );
-      } else {
-        addShowElementWithTimersListener(
-          this,
-          'mouseover',
-          this.elementDestination
-        );
-      }
-    }
+    initShowOnHoverListener(this);
+
     if (this.hideOnHoverOut) {
       if (this.hideOnHoverOut === 'mouseleave') {
         addHideElementWithTimersListener(
@@ -491,7 +480,11 @@ export class ToastComponent
       );
     }
     if (this.showOnClick) {
-      addShowElementWithTimersListener(this, 'click', this.elementDestination);
+      this.addShowElementWithTimersListener(
+        this,
+        'click',
+        this.elementDestination
+      );
     }
 
     if (this.hideOnClick) {
@@ -503,7 +496,7 @@ export class ToastComponent
       );
     }
     if (this.showOnCustom) {
-      addShowElementWithTimersListener(
+      this.addShowElementWithTimersListener(
         this,
         this.showOnCustom,
         this.elementDestination

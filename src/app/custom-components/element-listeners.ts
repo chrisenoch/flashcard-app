@@ -22,6 +22,40 @@ export type AddToggleElementWithTimersListener = {
   [key: string]: any;
 };
 
+export type InitShowOnHoverListener = {
+  addShowElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement
+  ) => void;
+
+  elementDestination: HTMLElement;
+  showOnHover: boolean | 'mouseenter';
+
+  [key: string]: any;
+};
+
+export function initShowOnHoverListener(
+  thisofResidingClass: InitShowOnHoverListener
+) {
+  const self = thisofResidingClass;
+  if (self.showOnHover) {
+    if (self.showOnHover === 'mouseenter') {
+      self.addShowElementWithTimersListener(
+        self,
+        'mouseenter',
+        self.elementDestination
+      );
+    } else {
+      self.addShowElementWithTimersListener(
+        self,
+        'mouseover',
+        self.elementDestination
+      );
+    }
+  }
+}
+
 export function addToggleElementWithTimersListener(
   thisofResidingClass: AddToggleElementWithTimersListener,
   eventType: string,
