@@ -233,7 +233,7 @@ export class ToastComponent
     this.elementDestination =
       this.elementVC.nativeElement.parentElement.parentElement.parentElement;
 
-    this.addElementDestinationListeners();
+    this.addElementDestinationListeners(this.elementDestination);
     this.addElementListeners();
 
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
@@ -456,25 +456,10 @@ export class ToastComponent
     }
   }
 
-  private addElementDestinationListeners() {
-    initShowOnHoverListener(this);
-    initHideOnHoverOutListener(this);
+  private addElementDestinationListeners(elementDestination: HTMLElement) {
+    initShowOnHoverListener(this, elementDestination);
+    initHideOnHoverOutListener(this, elementDestination);
 
-    // if (this.hideOnHoverOut) {
-    //   if (this.hideOnHoverOut === 'mouseleave') {
-    //     addHideElementWithTimersListener(
-    //       this,
-    //       'mouseleave',
-    //       this.elementDestination
-    //     );
-    //   } else {
-    //     addHideElementWithTimersListener(
-    //       this,
-    //       'mouseout',
-    //       this.elementDestination
-    //     );
-    //   }
-    // }
     if (this.toggleOnClick) {
       addToggleElementWithTimersListener(
         this,

@@ -29,7 +29,6 @@ export type InitShowOnHoverListener = {
     target: HTMLElement
   ) => void;
 
-  elementDestination: HTMLElement;
   showOnHover: boolean | 'mouseenter';
 
   [key: string]: any;
@@ -43,50 +42,35 @@ export type InitHideOnHoverOutListener = {
     overrideKeepShowing?: boolean
   ) => void;
 
-  elementDestination: HTMLElement;
   hideOnHoverOut: boolean | 'mouseleave';
 
   [key: string]: any;
 };
 
 export function initHideOnHoverOutListener(
-  thisOfResidingClass: InitHideOnHoverOutListener
+  thisOfResidingClass: InitHideOnHoverOutListener,
+  target: HTMLElement
 ) {
   const self = thisOfResidingClass;
   if (self.hideOnHoverOut) {
     if (self.hideOnHoverOut === 'mouseleave') {
-      self.addHideElementWithTimersListener(
-        self,
-        'mouseleave',
-        self.elementDestination
-      );
+      self.addHideElementWithTimersListener(self, 'mouseleave', target);
     } else {
-      self.addHideElementWithTimersListener(
-        self,
-        'mouseout',
-        self.elementDestination
-      );
+      self.addHideElementWithTimersListener(self, 'mouseout', target);
     }
   }
 }
 
 export function initShowOnHoverListener(
-  thisofResidingClass: InitShowOnHoverListener
+  thisofResidingClass: InitShowOnHoverListener,
+  target: HTMLElement
 ) {
   const self = thisofResidingClass;
   if (self.showOnHover) {
     if (self.showOnHover === 'mouseenter') {
-      self.addShowElementWithTimersListener(
-        self,
-        'mouseenter',
-        self.elementDestination
-      );
+      self.addShowElementWithTimersListener(self, 'mouseenter', target);
     } else {
-      self.addShowElementWithTimersListener(
-        self,
-        'mouseover',
-        self.elementDestination
-      );
+      self.addShowElementWithTimersListener(self, 'mouseover', target);
     }
   }
 }
