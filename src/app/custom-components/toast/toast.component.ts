@@ -49,6 +49,7 @@ import {
   addConvenienceClickHandler,
   addHideElementWithTimersListener,
   addShowElementWithTimersListener,
+  addToggleElementWithTimersListener,
   addTransitionEndToastListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
@@ -427,23 +428,6 @@ export class ToastComponent
     }
   }
 
-  private addToggleElementWithTimersListener(
-    eventType: string,
-    target: HTMLElement,
-    overrideKeepShowing: boolean = false
-  ) {
-    this.renderer2.listen(target, eventType, (e: Event) => {
-      if (this.isShowing) {
-        if (overrideKeepShowing) {
-          this.keepShowing = false;
-        }
-        this.hideElementWithTimers(this);
-      } else {
-        this.showElementWithTimers(this);
-      }
-    });
-  }
-
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
   // updateShowState(isShow: boolean) {
   //   if (isShow) {
@@ -499,7 +483,8 @@ export class ToastComponent
       }
     }
     if (this.toggleOnClick) {
-      this.addToggleElementWithTimersListener(
+      addToggleElementWithTimersListener(
+        this,
         'click',
         this.elementDestination,
         true
@@ -535,7 +520,8 @@ export class ToastComponent
     }
 
     if (this.toggleOnCustom) {
-      this.addToggleElementWithTimersListener(
+      addToggleElementWithTimersListener(
+        this,
         this.toggleOnCustom,
         this.elementDestination,
         true

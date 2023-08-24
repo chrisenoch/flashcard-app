@@ -13,6 +13,34 @@ export type AddHideElementWithTimersListener = {
   [key: string]: any;
 };
 
+export type AddToggleElementWithTimersListener = {
+  hideElementWithTimers: (thisofResidingClass: any) => void;
+  showElementWithTimers: (thisofResidingClass: any) => void;
+  renderer2: Renderer2;
+  isShowing: boolean;
+  keepShowing: boolean;
+  [key: string]: any;
+};
+
+export function addToggleElementWithTimersListener(
+  thisofResidingClass: AddToggleElementWithTimersListener,
+  eventType: string,
+  target: HTMLElement,
+  overrideKeepShowing: boolean = false
+) {
+  const self = thisofResidingClass;
+  self.renderer2.listen(target, eventType, (e: Event) => {
+    if (self.isShowing) {
+      if (overrideKeepShowing) {
+        self.keepShowing = false;
+      }
+      self.hideElementWithTimers(self);
+    } else {
+      self.showElementWithTimers(self);
+    }
+  });
+}
+
 export function addHideElementWithTimersListener(
   thisofResidingClass: AddHideElementWithTimersListener,
   eventType: string,
