@@ -425,48 +425,38 @@ export class ToastComponent
 
   private addToggleToastListener(
     eventType: string,
+    target: HTMLElement,
     overrideKeepShowing: boolean = false
   ) {
-    this.renderer2.listen(
-      this.elementVC.nativeElement.parentElement.parentElement.parentElement,
-      eventType,
-      (e: Event) => {
-        if (this.isShowing) {
-          if (overrideKeepShowing) {
-            this.keepShowing = false;
-          }
-          hideElementWithTimers(this);
-        } else {
-          showElementWithTimers(this);
-        }
-      }
-    );
-  }
-
-  private addShowToastListener(eventType: string) {
-    this.renderer2.listen(
-      this.elementVC.nativeElement.parentElement.parentElement.parentElement,
-      eventType,
-      (e: Event) => {
-        showElementWithTimers(this);
-      }
-    );
-  }
-
-  private addHideToastListener(
-    eventType: string,
-    overrideKeepShowing: boolean = false
-  ) {
-    this.renderer2.listen(
-      this.elementVC.nativeElement.parentElement.parentElement.parentElement,
-      eventType,
-      (e: Event) => {
+    this.renderer2.listen(target, eventType, (e: Event) => {
+      if (this.isShowing) {
         if (overrideKeepShowing) {
           this.keepShowing = false;
         }
         hideElementWithTimers(this);
+      } else {
+        showElementWithTimers(this);
       }
-    );
+    });
+  }
+
+  private addShowToastListener(eventType: string, target: HTMLElement) {
+    this.renderer2.listen(target, eventType, (e: Event) => {
+      showElementWithTimers(this);
+    });
+  }
+
+  private addHideToastListener(
+    eventType: string,
+    target: HTMLElement,
+    overrideKeepShowing: boolean = false
+  ) {
+    this.renderer2.listen(target, eventType, (e: Event) => {
+      if (overrideKeepShowing) {
+        this.keepShowing = false;
+      }
+      hideElementWithTimers(this);
+    });
   }
 
   //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
@@ -495,38 +485,46 @@ export class ToastComponent
   private addElementDestinationListeners() {
     if (this.showOnHover) {
       if (this.showOnHover === 'mouseenter') {
-        this.addShowToastListener('mouseenter');
+        this.addShowToastListener('mouseenter', this.elementDestination);
       } else {
-        this.addShowToastListener('mouseover');
+        this.addShowToastListener('mouseover', this.elementDestination);
       }
     }
     if (this.hideOnHoverOut) {
       if (this.hideOnHoverOut === 'mouseleave') {
-        this.addHideToastListener('mouseleave');
+        this.addHideToastListener('mouseleave', this.elementDestination);
       } else {
-        this.addHideToastListener('mouseout');
+        this.addHideToastListener('mouseout', this.elementDestination);
       }
     }
     if (this.toggleOnClick) {
-      this.addToggleToastListener('click', true);
+      this.addToggleToastListener('click', this.elementDestination, true);
     }
     if (this.showOnClick) {
-      this.addShowToastListener('click');
+      this.addShowToastListener('click', this.elementDestination);
     }
 
     if (this.hideOnClick) {
-      this.addHideToastListener('click', true);
+      this.addHideToastListener('click', this.elementDestination, true);
     }
     if (this.showOnCustom) {
-      this.addShowToastListener(this.showOnCustom);
+      this.addShowToastListener(this.showOnCustom, this.elementDestination);
     }
 
     if (this.hideOnCustom) {
-      this.addHideToastListener(this.hideOnCustom, true);
+      this.addHideToastListener(
+        this.hideOnCustom,
+        this.elementDestination,
+        true
+      );
     }
 
     if (this.toggleOnCustom) {
-      this.addToggleToastListener(this.toggleOnCustom, true);
+      this.addToggleToastListener(
+        this.toggleOnCustom,
+        this.elementDestination,
+        true
+      );
     }
   }
 
