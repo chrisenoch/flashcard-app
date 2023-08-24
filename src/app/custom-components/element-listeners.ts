@@ -47,6 +47,29 @@ export type InitHideOnHoverOutListener = {
   [key: string]: any;
 };
 
+export type InitToggleOnClickListener = {
+  addToggleElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement,
+    overrideKeepShowing: boolean
+  ) => void;
+
+  toggleOnClick: boolean;
+
+  [key: string]: any;
+};
+
+export function initToggleOnClickListener(
+  thisOfResidingClass: InitToggleOnClickListener,
+  target: HTMLElement
+) {
+  const self = thisOfResidingClass;
+  if (self.toggleOnClick) {
+    self.addToggleElementWithTimersListener(self, 'click', target, true);
+  }
+}
+
 export function initHideOnHoverOutListener(
   thisOfResidingClass: InitHideOnHoverOutListener,
   target: HTMLElement

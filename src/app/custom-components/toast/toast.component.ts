@@ -50,10 +50,12 @@ import {
   addHideElementWithTimersListener,
   addHideElementWithTimersListener as prepareAddHideElementWithTimersListener,
   addShowElementWithTimersListener as prepareAddShowElementWithTimersListener,
+  addToggleElementWithTimersListener as prepareAddToggleElementWithTimersListener,
   addToggleElementWithTimersListener,
   addTransitionEndToastListener,
   initShowOnHoverListener,
   initHideOnHoverOutListener,
+  initToggleOnClickListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
@@ -144,6 +146,8 @@ export class ToastComponent
   hideElementWithTimers = prepareHideElementWithTimers;
   addShowElementWithTimersListener = prepareAddShowElementWithTimersListener;
   addHideElementWithTimersListener = prepareAddHideElementWithTimersListener;
+  addToggleElementWithTimersListener =
+    prepareAddToggleElementWithTimersListener;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -459,15 +463,16 @@ export class ToastComponent
   private addElementDestinationListeners(elementDestination: HTMLElement) {
     initShowOnHoverListener(this, elementDestination);
     initHideOnHoverOutListener(this, elementDestination);
+    initToggleOnClickListener(this, elementDestination);
 
-    if (this.toggleOnClick) {
-      addToggleElementWithTimersListener(
-        this,
-        'click',
-        this.elementDestination,
-        true
-      );
-    }
+    // if (this.toggleOnClick) {
+    //   addToggleElementWithTimersListener(
+    //     this,
+    //     'click',
+    //     this.elementDestination,
+    //     true
+    //   );
+    // }
     if (this.showOnClick) {
       this.addShowElementWithTimersListener(
         this,
