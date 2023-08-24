@@ -47,6 +47,7 @@ import {
 } from '../controllable-timer';
 import {
   addConvenienceClickHandler,
+  addShowElementWithTimersListener,
   addTransitionEndToastListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
@@ -54,9 +55,9 @@ import { ElementControlsService } from '../element-controls.service';
 import {
   hideElementWithTimers,
   initDelayTimers,
-  initDisplayAndVisibility,
-  initUpdateShowState,
-  showElementWithTimers,
+  initDisplayAndVisibility as prepareInitDisplayAndVisibility,
+  updateShowState as prepareUpdateShowState,
+  showElementWithTimers as prepareShowElementWithTimers,
 } from '../element-visibility';
 
 @Component({
@@ -132,8 +133,9 @@ export class ToastComponent
   private runUpdateToastPositionsOnScroll = false;
 
   //AddElementControlsSubscription# expects updateShowState to be available on 'this.' We could just define the updateShowState method here. But instead, we import updateShowState and assign it to updateShowState as a property so it is available on 'this.'
-  updateShowState = initUpdateShowState;
-  initDisplayAndVisibility = initDisplayAndVisibility;
+  updateShowState = prepareUpdateShowState;
+  initDisplayAndVisibility = prepareInitDisplayAndVisibility;
+  showElementWithTimers = prepareShowElementWithTimers;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -423,7 +425,7 @@ export class ToastComponent
     }
   }
 
-  private addToggleToastListener(
+  private addToggleElementWithTimersListener(
     eventType: string,
     target: HTMLElement,
     overrideKeepShowing: boolean = false
@@ -435,18 +437,12 @@ export class ToastComponent
         }
         hideElementWithTimers(this);
       } else {
-        showElementWithTimers(this);
+        this.showElementWithTimers(this);
       }
     });
   }
 
-  private addShowToastListener(eventType: string, target: HTMLElement) {
-    this.renderer2.listen(target, eventType, (e: Event) => {
-      showElementWithTimers(this);
-    });
-  }
-
-  private addHideToastListener(
+  private addHideElementWithTimersListener(
     eventType: string,
     target: HTMLElement,
     overrideKeepShowing: boolean = false
@@ -485,34 +481,60 @@ export class ToastComponent
   private addElementDestinationListeners() {
     if (this.showOnHover) {
       if (this.showOnHover === 'mouseenter') {
-        this.addShowToastListener('mouseenter', this.elementDestination);
+        addShowElementWithTimersListener(
+          this,
+          'mouseenter',
+          this.elementDestination
+        );
       } else {
-        this.addShowToastListener('mouseover', this.elementDestination);
+        addShowElementWithTimersListener(
+          this,
+          'mouseover',
+          this.elementDestination
+        );
       }
     }
     if (this.hideOnHoverOut) {
       if (this.hideOnHoverOut === 'mouseleave') {
-        this.addHideToastListener('mouseleave', this.elementDestination);
+        this.addHideElementWithTimersListener(
+          'mouseleave',
+          this.elementDestination
+        );
       } else {
-        this.addHideToastListener('mouseout', this.elementDestination);
+        this.addHideElementWithTimersListener(
+          'mouseout',
+          this.elementDestination
+        );
       }
     }
     if (this.toggleOnClick) {
-      this.addToggleToastListener('click', this.elementDestination, true);
+      this.addToggleElementWithTimersListener(
+        'click',
+        this.elementDestination,
+        true
+      );
     }
     if (this.showOnClick) {
-      this.addShowToastListener('click', this.elementDestination);
+      addShowElementWithTimersListener(this, 'click', this.elementDestination);
     }
 
     if (this.hideOnClick) {
-      this.addHideToastListener('click', this.elementDestination, true);
+      this.addHideElementWithTimersListener(
+        'click',
+        this.elementDestination,
+        true
+      );
     }
     if (this.showOnCustom) {
-      this.addShowToastListener(this.showOnCustom, this.elementDestination);
+      addShowElementWithTimersListener(
+        this,
+        this.showOnCustom,
+        this.elementDestination
+      );
     }
 
     if (this.hideOnCustom) {
-      this.addHideToastListener(
+      this.addHideElementWithTimersListener(
         this.hideOnCustom,
         this.elementDestination,
         true
@@ -520,7 +542,7 @@ export class ToastComponent
     }
 
     if (this.toggleOnCustom) {
-      this.addToggleToastListener(
+      this.addToggleElementWithTimersListener(
         this.toggleOnCustom,
         this.elementDestination,
         true

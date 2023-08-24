@@ -1,13 +1,19 @@
 import { ElementRef, Renderer2 } from '@angular/core';
 
-//Can add an event to an element by adding the template reference to the element. E.g. #close. Does not work in child components.
-export function addConvenienceClickHandler(
-  host: ElementRef,
-  renderer2: Renderer2,
-  callback: () => void
+export type AddShowElementListener = {
+  showElementWithTimers: (thisofResidingClass: any) => void;
+  renderer2: Renderer2;
+  [key: string]: any;
+};
+
+export function addShowElementWithTimersListener(
+  thisofResidingClass: AddShowElementListener,
+  eventType: string,
+  target: HTMLElement
 ) {
-  renderer2.listen(host.nativeElement, 'click', (e: MouseEvent) => {
-    callback();
+  const self = thisofResidingClass;
+  self.renderer2.listen(target, eventType, (e: Event) => {
+    self.showElementWithTimers(self);
   });
 }
 
@@ -28,5 +34,16 @@ export function addTransitionEndToastListener(
         callback();
       }
     });
+  });
+}
+
+//Can add an event to an element by adding the template reference to the element. E.g. #close. Does not work in child components.
+export function addConvenienceClickHandler(
+  host: ElementRef,
+  renderer2: Renderer2,
+  callback: () => void
+) {
+  renderer2.listen(host.nativeElement, 'click', (e: MouseEvent) => {
+    callback();
   });
 }
