@@ -1,13 +1,35 @@
 import { ElementRef, Renderer2 } from '@angular/core';
 
-export type AddShowElementListener = {
+export type AddShowElementWithTimersListener = {
   showElementWithTimers: (thisofResidingClass: any) => void;
   renderer2: Renderer2;
   [key: string]: any;
 };
 
+export type AddHideElementWithTimersListener = {
+  hideElementWithTimers: (thisofResidingClass: any) => void;
+  renderer2: Renderer2;
+  keepShowing: boolean;
+  [key: string]: any;
+};
+
+export function addHideElementWithTimersListener(
+  thisofResidingClass: AddHideElementWithTimersListener,
+  eventType: string,
+  target: HTMLElement,
+  overrideKeepShowing: boolean = false
+) {
+  const self = thisofResidingClass;
+  self.renderer2.listen(target, eventType, (e: Event) => {
+    if (overrideKeepShowing) {
+      self.keepShowing = false;
+    }
+    self.hideElementWithTimers(self);
+  });
+}
+
 export function addShowElementWithTimersListener(
-  thisofResidingClass: AddShowElementListener,
+  thisofResidingClass: AddShowElementWithTimersListener,
   eventType: string,
   target: HTMLElement
 ) {

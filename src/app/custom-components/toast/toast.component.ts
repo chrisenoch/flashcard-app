@@ -47,13 +47,14 @@ import {
 } from '../controllable-timer';
 import {
   addConvenienceClickHandler,
+  addHideElementWithTimersListener,
   addShowElementWithTimersListener,
   addTransitionEndToastListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
 import {
-  hideElementWithTimers,
+  hideElementWithTimers as prepareHideElementWithTimers,
   initDelayTimers,
   initDisplayAndVisibility as prepareInitDisplayAndVisibility,
   updateShowState as prepareUpdateShowState,
@@ -136,6 +137,7 @@ export class ToastComponent
   updateShowState = prepareUpdateShowState;
   initDisplayAndVisibility = prepareInitDisplayAndVisibility;
   showElementWithTimers = prepareShowElementWithTimers;
+  hideElementWithTimers = prepareHideElementWithTimers;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -435,23 +437,10 @@ export class ToastComponent
         if (overrideKeepShowing) {
           this.keepShowing = false;
         }
-        hideElementWithTimers(this);
+        this.hideElementWithTimers(this);
       } else {
         this.showElementWithTimers(this);
       }
-    });
-  }
-
-  private addHideElementWithTimersListener(
-    eventType: string,
-    target: HTMLElement,
-    overrideKeepShowing: boolean = false
-  ) {
-    this.renderer2.listen(target, eventType, (e: Event) => {
-      if (overrideKeepShowing) {
-        this.keepShowing = false;
-      }
-      hideElementWithTimers(this);
     });
   }
 
@@ -496,12 +485,14 @@ export class ToastComponent
     }
     if (this.hideOnHoverOut) {
       if (this.hideOnHoverOut === 'mouseleave') {
-        this.addHideElementWithTimersListener(
+        addHideElementWithTimersListener(
+          this,
           'mouseleave',
           this.elementDestination
         );
       } else {
-        this.addHideElementWithTimersListener(
+        addHideElementWithTimersListener(
+          this,
           'mouseout',
           this.elementDestination
         );
@@ -519,7 +510,8 @@ export class ToastComponent
     }
 
     if (this.hideOnClick) {
-      this.addHideElementWithTimersListener(
+      addHideElementWithTimersListener(
+        this,
         'click',
         this.elementDestination,
         true
@@ -534,7 +526,8 @@ export class ToastComponent
     }
 
     if (this.hideOnCustom) {
-      this.addHideElementWithTimersListener(
+      addHideElementWithTimersListener(
+        this,
         this.hideOnCustom,
         this.elementDestination,
         true
