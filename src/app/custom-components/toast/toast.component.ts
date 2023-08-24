@@ -636,21 +636,21 @@ export class ToastComponent
     }, 0);
   }
 
-  defineHideOnInitDelay() {
-    if (this.hideOnInitDelay > 0) {
-      this.hideOnInitDelayTimer = controllableTimer(this.hideOnInitDelay);
+  // defineHideOnInitDelay() {
+  //   if (this.hideOnInitDelay > 0) {
+  //     this.hideOnInitDelayTimer = controllableTimer(this.hideOnInitDelay);
 
-      this.ngZone.runOutsideAngular(() => {
-        this.hideOnInitDelayTimer!.sub.subscribe({
-          complete: () => {
-            this.ngZone.run(() => {
-              this.updateShowState(this, false);
-            });
-          },
-        });
-      });
-    }
-  }
+  //     this.ngZone.runOutsideAngular(() => {
+  //       this.hideOnInitDelayTimer!.sub.subscribe({
+  //         complete: () => {
+  //           this.ngZone.run(() => {
+  //             this.updateShowState(this, false);
+  //           });
+  //         },
+  //       });
+  //     });
+  //   }
+  // }
 
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
