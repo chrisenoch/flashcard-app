@@ -60,18 +60,6 @@ export type InitToggleOnClickListener = {
   [key: string]: any;
 };
 
-export type InitShowOnClickListener = {
-  addShowElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement
-  ) => void;
-
-  showOnClick: boolean;
-
-  [key: string]: any;
-};
-
 export type InitHideOnClickListener = {
   addHideElementWithTimersListener: (
     thisofResidingClass: any,
@@ -85,13 +73,65 @@ export type InitHideOnClickListener = {
   [key: string]: any;
 };
 
-export function initHideOnClickListener(
-  thisOfResidingClass: InitHideOnClickListener,
+export type InitShowOnClickListener = {
+  addShowElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement
+  ) => void;
+
+  showOnClick: boolean;
+
+  [key: string]: any;
+};
+
+export type InitShowOnCustomListener = {
+  addShowElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement
+  ) => void;
+
+  showOnCustom: string | undefined;
+
+  [key: string]: any;
+};
+
+export type InitHideOnCustomListener = {
+  addHideElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement,
+    overrideKeepShowing?: boolean
+  ) => void;
+
+  hideOnCustom: string | undefined;
+
+  [key: string]: any;
+};
+
+export function initHideOnCustomListener(
+  thisOfResidingClass: InitHideOnCustomListener,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
-  if (self.hideOnClick) {
-    self.addHideElementWithTimersListener(self, 'click', target, true);
+  if (self.hideOnCustom) {
+    self.addHideElementWithTimersListener(
+      self,
+      self.hideOnCustom,
+      target,
+      true
+    );
+  }
+}
+
+export function initShowOnCustomListener(
+  thisOfResidingClass: InitShowOnCustomListener,
+  target: HTMLElement
+) {
+  const self = thisOfResidingClass;
+  if (self.showOnCustom) {
+    self.addShowElementWithTimersListener(self, self.showOnCustom, target);
   }
 }
 
@@ -102,6 +142,16 @@ export function initShowOnClickListener(
   const self = thisOfResidingClass;
   if (self.showOnClick) {
     self.addShowElementWithTimersListener(self, 'click', target);
+  }
+}
+
+export function initHideOnClickListener(
+  thisOfResidingClass: InitHideOnClickListener,
+  target: HTMLElement
+) {
+  const self = thisOfResidingClass;
+  if (self.hideOnClick) {
+    self.addHideElementWithTimersListener(self, 'click', target, true);
   }
 }
 
