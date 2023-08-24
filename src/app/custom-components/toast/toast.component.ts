@@ -56,6 +56,8 @@ import {
   initShowOnHoverListener,
   initHideOnHoverOutListener,
   initToggleOnClickListener,
+  initShowOnClickListener,
+  initHideOnClickListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
@@ -464,31 +466,17 @@ export class ToastComponent
     initShowOnHoverListener(this, elementDestination);
     initHideOnHoverOutListener(this, elementDestination);
     initToggleOnClickListener(this, elementDestination);
+    initShowOnClickListener(this, elementDestination);
+    initHideOnClickListener(this, elementDestination);
 
-    // if (this.toggleOnClick) {
-    //   addToggleElementWithTimersListener(
+    // if (this.hideOnClick) {
+    //   addHideElementWithTimersListener(
     //     this,
     //     'click',
     //     this.elementDestination,
     //     true
     //   );
     // }
-    if (this.showOnClick) {
-      this.addShowElementWithTimersListener(
-        this,
-        'click',
-        this.elementDestination
-      );
-    }
-
-    if (this.hideOnClick) {
-      addHideElementWithTimersListener(
-        this,
-        'click',
-        this.elementDestination,
-        true
-      );
-    }
     if (this.showOnCustom) {
       this.addShowElementWithTimersListener(
         this,

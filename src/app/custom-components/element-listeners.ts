@@ -60,6 +60,51 @@ export type InitToggleOnClickListener = {
   [key: string]: any;
 };
 
+export type InitShowOnClickListener = {
+  addShowElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement
+  ) => void;
+
+  showOnClick: boolean;
+
+  [key: string]: any;
+};
+
+export type InitHideOnClickListener = {
+  addHideElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement,
+    overrideKeepShowing?: boolean
+  ) => void;
+
+  hideOnClick: boolean;
+
+  [key: string]: any;
+};
+
+export function initHideOnClickListener(
+  thisOfResidingClass: InitHideOnClickListener,
+  target: HTMLElement
+) {
+  const self = thisOfResidingClass;
+  if (self.hideOnClick) {
+    self.addHideElementWithTimersListener(self, 'click', target, true);
+  }
+}
+
+export function initShowOnClickListener(
+  thisOfResidingClass: InitShowOnClickListener,
+  target: HTMLElement
+) {
+  const self = thisOfResidingClass;
+  if (self.showOnClick) {
+    self.addShowElementWithTimersListener(self, 'click', target);
+  }
+}
+
 export function initToggleOnClickListener(
   thisOfResidingClass: InitToggleOnClickListener,
   target: HTMLElement
