@@ -1,127 +1,77 @@
 import { ElementRef, Renderer2 } from '@angular/core';
+import {
+  HideElementWithTimers,
+  ShowElementWithTimers,
+  hideElementWithTimers,
+  showElementWithTimers,
+} from './element-visibility';
 
 export type AddShowElementWithTimersListener = {
-  showElementWithTimers: (thisofResidingClass: any) => void;
   renderer2: Renderer2;
   [key: string]: any;
-};
+} & ShowElementWithTimers;
 
 export type AddHideElementWithTimersListener = {
-  hideElementWithTimers: (thisofResidingClass: any) => void;
   renderer2: Renderer2;
   keepShowing: boolean;
   [key: string]: any;
-};
+} & HideElementWithTimers;
 
 export type AddToggleElementWithTimersListener = {
-  hideElementWithTimers: (thisofResidingClass: any) => void;
-  showElementWithTimers: (thisofResidingClass: any) => void;
   renderer2: Renderer2;
   isShowing: boolean;
   keepShowing: boolean;
   [key: string]: any;
-};
+} & HideElementWithTimers &
+  ShowElementWithTimers;
 
 export type InitShowOnHoverListener = {
-  addShowElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement
-  ) => void;
-
   showOnHover: boolean | 'mouseenter';
 
   [key: string]: any;
-};
+} & AddShowElementWithTimersListener;
 
 export type InitHideOnHoverOutListener = {
-  addHideElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement,
-    overrideKeepShowing?: boolean
-  ) => void;
-
   hideOnHoverOut: boolean | 'mouseleave';
 
   [key: string]: any;
-};
+} & AddHideElementWithTimersListener;
 
 export type InitToggleOnClickListener = {
-  addToggleElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement,
-    overrideKeepShowing: boolean
-  ) => void;
-
   toggleOnClick: boolean;
 
   [key: string]: any;
-};
+} & AddToggleElementWithTimersListener;
 
 export type InitHideOnClickListener = {
-  addHideElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement,
-    overrideKeepShowing?: boolean
-  ) => void;
-
   hideOnClick: boolean;
 
   [key: string]: any;
-};
+} & AddHideElementWithTimersListener;
 
 export type InitShowOnClickListener = {
-  addShowElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement
-  ) => void;
-
   showOnClick: boolean;
 
   [key: string]: any;
-};
+} & AddShowElementWithTimersListener;
 
 export type InitShowOnCustomListener = {
-  addShowElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement
-  ) => void;
-
   showOnCustom: string | undefined;
 
   [key: string]: any;
-};
+} & AddShowElementWithTimersListener;
 
 export type InitHideOnCustomListener = {
-  addHideElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement,
-    overrideKeepShowing?: boolean
-  ) => void;
-
   hideOnCustom: string | undefined;
 
   [key: string]: any;
-};
+} & AddHideElementWithTimersListener;
 
 export type InitToggleOnCustomListener = {
-  addToggleElementWithTimersListener: (
-    thisofResidingClass: any,
-    eventType: string,
-    target: HTMLElement,
-    overrideKeepShowing: boolean
-  ) => void;
-
   toggleOnCustom: string | undefined;
 
   [key: string]: any;
-};
+} & AddToggleElementWithTimersListener;
 
 export function initToggleOnCustomListener(
   thisOfResidingClass: InitToggleOnCustomListener,
@@ -129,12 +79,7 @@ export function initToggleOnCustomListener(
 ) {
   const self = thisOfResidingClass;
   if (self.toggleOnCustom) {
-    self.addToggleElementWithTimersListener(
-      self,
-      self.toggleOnCustom,
-      target,
-      true
-    );
+    addToggleElementWithTimersListener(self, self.toggleOnCustom, target, true);
   }
 }
 
@@ -144,12 +89,7 @@ export function initHideOnCustomListener(
 ) {
   const self = thisOfResidingClass;
   if (self.hideOnCustom) {
-    self.addHideElementWithTimersListener(
-      self,
-      self.hideOnCustom,
-      target,
-      true
-    );
+    addHideElementWithTimersListener(self, self.hideOnCustom, target, true);
   }
 }
 
@@ -159,7 +99,7 @@ export function initShowOnCustomListener(
 ) {
   const self = thisOfResidingClass;
   if (self.showOnCustom) {
-    self.addShowElementWithTimersListener(self, self.showOnCustom, target);
+    addShowElementWithTimersListener(self, self.showOnCustom, target);
   }
 }
 
@@ -169,7 +109,7 @@ export function initShowOnClickListener(
 ) {
   const self = thisOfResidingClass;
   if (self.showOnClick) {
-    self.addShowElementWithTimersListener(self, 'click', target);
+    addShowElementWithTimersListener(self, 'click', target);
   }
 }
 
@@ -179,7 +119,7 @@ export function initHideOnClickListener(
 ) {
   const self = thisOfResidingClass;
   if (self.hideOnClick) {
-    self.addHideElementWithTimersListener(self, 'click', target, true);
+    addHideElementWithTimersListener(self, 'click', target, true);
   }
 }
 
@@ -189,7 +129,7 @@ export function initToggleOnClickListener(
 ) {
   const self = thisOfResidingClass;
   if (self.toggleOnClick) {
-    self.addToggleElementWithTimersListener(self, 'click', target, true);
+    addToggleElementWithTimersListener(self, 'click', target, true);
   }
 }
 
@@ -200,9 +140,9 @@ export function initHideOnHoverOutListener(
   const self = thisOfResidingClass;
   if (self.hideOnHoverOut) {
     if (self.hideOnHoverOut === 'mouseleave') {
-      self.addHideElementWithTimersListener(self, 'mouseleave', target);
+      addHideElementWithTimersListener(self, 'mouseleave', target);
     } else {
-      self.addHideElementWithTimersListener(self, 'mouseout', target);
+      addHideElementWithTimersListener(self, 'mouseout', target);
     }
   }
 }
@@ -214,9 +154,9 @@ export function initShowOnHoverListener(
   const self = thisofResidingClass;
   if (self.showOnHover) {
     if (self.showOnHover === 'mouseenter') {
-      self.addShowElementWithTimersListener(self, 'mouseenter', target);
+      addShowElementWithTimersListener(self, 'mouseenter', target);
     } else {
-      self.addShowElementWithTimersListener(self, 'mouseover', target);
+      addShowElementWithTimersListener(self, 'mouseover', target);
     }
   }
 }
@@ -233,9 +173,9 @@ export function addToggleElementWithTimersListener(
       if (overrideKeepShowing) {
         self.keepShowing = false;
       }
-      self.hideElementWithTimers(self);
+      hideElementWithTimers(self);
     } else {
-      self.showElementWithTimers(self);
+      showElementWithTimers(self);
     }
   });
 }
@@ -251,7 +191,7 @@ export function addHideElementWithTimersListener(
     if (overrideKeepShowing) {
       self.keepShowing = false;
     }
-    self.hideElementWithTimers(self);
+    hideElementWithTimers(self);
   });
 }
 
@@ -262,7 +202,7 @@ export function addShowElementWithTimersListener(
 ) {
   const self = thisofResidingClass;
   self.renderer2.listen(target, eventType, (e: Event) => {
-    self.showElementWithTimers(self);
+    showElementWithTimers(self);
   });
 }
 

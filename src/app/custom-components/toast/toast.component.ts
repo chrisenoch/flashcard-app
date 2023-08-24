@@ -38,20 +38,11 @@ import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 import { ToastService } from './toast.service';
 import { Position } from './models/position';
 import { ArrowPosition, Arrows } from './models/arrows';
-import { ControlledError } from '../errors/ControlledError';
+
 import { compareDOMRectValues } from '../utilities';
-import {
-  cancelTimers,
-  controllableTimer,
-  pauseTimers,
-} from '../controllable-timer';
+import { pauseTimers } from '../controllable-timer';
 import {
   addConvenienceClickHandler,
-  addHideElementWithTimersListener,
-  addHideElementWithTimersListener as prepareAddHideElementWithTimersListener,
-  addShowElementWithTimersListener as prepareAddShowElementWithTimersListener,
-  addToggleElementWithTimersListener as prepareAddToggleElementWithTimersListener,
-  addToggleElementWithTimersListener,
   addTransitionEndToastListener,
   initShowOnHoverListener,
   initHideOnHoverOutListener,
@@ -64,13 +55,7 @@ import {
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
-import {
-  hideElementWithTimers as prepareHideElementWithTimers,
-  initDelayTimers,
-  initDisplayAndVisibility as prepareInitDisplayAndVisibility,
-  updateShowState as prepareUpdateShowState,
-  showElementWithTimers as prepareShowElementWithTimers,
-} from '../element-visibility';
+import { initDelayTimers } from '../element-visibility';
 
 @Component({
   selector: 'app-toast',
@@ -145,14 +130,14 @@ export class ToastComponent
   private runUpdateToastPositionsOnScroll = false;
 
   //AddElementControlsSubscription# expects updateShowState to be available on 'this.' We could just define the updateShowState method here. But instead, we import updateShowState and assign it to updateShowState as a property so it is available on 'this.'
-  updateShowState = prepareUpdateShowState;
-  initDisplayAndVisibility = prepareInitDisplayAndVisibility;
-  showElementWithTimers = prepareShowElementWithTimers;
-  hideElementWithTimers = prepareHideElementWithTimers;
-  addShowElementWithTimersListener = prepareAddShowElementWithTimersListener;
-  addHideElementWithTimersListener = prepareAddHideElementWithTimersListener;
-  addToggleElementWithTimersListener =
-    prepareAddToggleElementWithTimersListener;
+  // updateShowState = prepareUpdateShowState;
+  // initDisplayAndVisibility = prepareInitDisplayAndVisibility;
+  // showElementWithTimers = prepareShowElementWithTimers;
+  // hideElementWithTimers = prepareHideElementWithTimers;
+  // addShowElementWithTimersListener = prepareAddShowElementWithTimersListener;
+  // addHideElementWithTimersListener = prepareAddHideElementWithTimersListener;
+  // addToggleElementWithTimersListener =
+  //   prepareAddToggleElementWithTimersListener;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;

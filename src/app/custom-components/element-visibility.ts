@@ -19,7 +19,6 @@ export type InitDisplayAndVisibility = {
 };
 
 export type ShowElementWithTimers = {
-  updateShowState: (thisofResidingClass: any, isShow: boolean) => void;
   showOnInitDelayTimer?: controlledTimer;
   hideOnInitDelayTimer?: controlledTimer;
   hideDelayTimer?: controlledTimer;
@@ -27,17 +26,16 @@ export type ShowElementWithTimers = {
   showDelay?: number;
   ngZone: NgZone;
   [key: string]: any;
-};
+} & UpdateShowState;
 
 export type HideElementWithTimers = {
-  updateShowState: (thisofResidingClass: any, isShow: boolean) => void;
   hideDelayTimer?: controlledTimer;
   showDelayTimer?: controlledTimer;
   hideDelay?: number;
   keepShowing: boolean;
   ngZone: NgZone;
   [key: string]: any;
-};
+} & UpdateShowState;
 
 export type InitDelayTimers = {
   showOnInitDelayTimer?: controlledTimer;
@@ -121,13 +119,13 @@ export function hideElementWithTimers(
       self.hideDelayTimer!.sub.subscribe({
         complete: () => {
           self.ngZone.run(() => {
-            self.updateShowState(self, false);
+            updateShowState(self, false);
           });
         },
       });
     });
   } else if (!self.keepShowing) {
-    self.updateShowState(self, false);
+    updateShowState(self, false);
   }
 }
 
@@ -148,13 +146,13 @@ export function showElementWithTimers(
       self.showDelayTimer!.sub.subscribe({
         complete: () => {
           self.ngZone.run(() => {
-            self.updateShowState(self, true);
+            updateShowState(self, true);
           });
         },
       });
     });
   } else {
-    self.updateShowState(self, true);
+    updateShowState(self, true);
   }
 }
 

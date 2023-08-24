@@ -9,18 +9,16 @@ import { UpdateShowState, updateShowState } from './element-visibility';
 export type ShowElementFromControl = {
   // The props below are what ShowElementFromControl expects to be available on 'this'
   keepShowing: boolean;
-  updateShowState: (thisofResidingClass: any, isShow: boolean) => void; //updateShowState: (thisofResidingClass: any. Because ShowElementFromControl is not concerned with which properties updateShowStates expects to be available on this. It just needs to know that it is there.
   showOnInitDelayTimer?: controlledTimer;
   [key: string]: any;
-};
+} & UpdateShowState;
 
 export type CloseElementFromControl = {
-  updateShowState: (thisofResidingClass: any, isShow: boolean) => void;
   showOnInitDelayTimer?: controlledTimer;
   hideOnInitDelayTimer?: controlledTimer;
   hideDelayTimer?: controlledTimer;
   [key: string]: any;
-};
+} & UpdateShowState;
 
 export type ElementDestinationDetails = {
   id: string;
@@ -51,13 +49,6 @@ export type AddElementControlsSubscription = {
         arrows?: Arrows;
       }[]
     | undefined;
-  // goToNextElement: GoToElement;
-  // goToPreviousElement: GoToElement;
-  // goToFirstElement: GoToElement;
-  // goToLastElement: GoToElement;
-  // closeElementFromControl: CloseElementFromControl;
-  // showElementFromControl: ShowElementFromControl;
-
   [key: string]: any;
 } & GoToElement &
   CloseElementFromControl &
@@ -215,7 +206,7 @@ export function showElementFromControl(
   self.keepShowing = true;
   //showElementFromControl expects updateShowState to be available on 'this' of the class it is imported into.
   //Also, updateShowState needs to know the value of 'this', so the imported implementation of updateShowState can check that 'this' provides all the properties it needs.
-  self.updateShowState(self, true);
+  updateShowState(self, true);
   if (self.showOnInitDelayTimer) {
     self.showOnInitDelayTimer.cancelTimer = true;
   }
@@ -227,7 +218,7 @@ export function closeElementFromControl(
   const self = thisOfResidingClass;
   //closeElementFromControl expects updateShowState to be available on 'this' of the class it is imported into.
   //Also, updateShowState needs to know the value of 'this', so the imported implementation of updateShowState can check that 'this' provides all the properties it needs.
-  self.updateShowState(self, false);
+  updateShowState(self, false);
 
   if (
     self.hideDelayTimer ||
