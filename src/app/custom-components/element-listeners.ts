@@ -35,6 +35,41 @@ export type InitShowOnHoverListener = {
   [key: string]: any;
 };
 
+export type InitHideOnHoverOutListener = {
+  addHideElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement,
+    overrideKeepShowing?: boolean
+  ) => void;
+
+  elementDestination: HTMLElement;
+  hideOnHoverOut: boolean | 'mouseleave';
+
+  [key: string]: any;
+};
+
+export function initHideOnHoverOutListener(
+  thisOfResidingClass: InitHideOnHoverOutListener
+) {
+  const self = thisOfResidingClass;
+  if (self.hideOnHoverOut) {
+    if (self.hideOnHoverOut === 'mouseleave') {
+      self.addHideElementWithTimersListener(
+        self,
+        'mouseleave',
+        self.elementDestination
+      );
+    } else {
+      self.addHideElementWithTimersListener(
+        self,
+        'mouseout',
+        self.elementDestination
+      );
+    }
+  }
+}
+
 export function initShowOnHoverListener(
   thisofResidingClass: InitShowOnHoverListener
 ) {

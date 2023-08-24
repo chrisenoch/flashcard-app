@@ -48,10 +48,12 @@ import {
 import {
   addConvenienceClickHandler,
   addHideElementWithTimersListener,
+  addHideElementWithTimersListener as prepareAddHideElementWithTimersListener,
   addShowElementWithTimersListener as prepareAddShowElementWithTimersListener,
   addToggleElementWithTimersListener,
   addTransitionEndToastListener,
   initShowOnHoverListener,
+  initHideOnHoverOutListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
@@ -141,6 +143,7 @@ export class ToastComponent
   showElementWithTimers = prepareShowElementWithTimers;
   hideElementWithTimers = prepareHideElementWithTimers;
   addShowElementWithTimersListener = prepareAddShowElementWithTimersListener;
+  addHideElementWithTimersListener = prepareAddHideElementWithTimersListener;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -455,22 +458,23 @@ export class ToastComponent
 
   private addElementDestinationListeners() {
     initShowOnHoverListener(this);
+    initHideOnHoverOutListener(this);
 
-    if (this.hideOnHoverOut) {
-      if (this.hideOnHoverOut === 'mouseleave') {
-        addHideElementWithTimersListener(
-          this,
-          'mouseleave',
-          this.elementDestination
-        );
-      } else {
-        addHideElementWithTimersListener(
-          this,
-          'mouseout',
-          this.elementDestination
-        );
-      }
-    }
+    // if (this.hideOnHoverOut) {
+    //   if (this.hideOnHoverOut === 'mouseleave') {
+    //     addHideElementWithTimersListener(
+    //       this,
+    //       'mouseleave',
+    //       this.elementDestination
+    //     );
+    //   } else {
+    //     addHideElementWithTimersListener(
+    //       this,
+    //       'mouseout',
+    //       this.elementDestination
+    //     );
+    //   }
+    // }
     if (this.toggleOnClick) {
       addToggleElementWithTimersListener(
         this,
