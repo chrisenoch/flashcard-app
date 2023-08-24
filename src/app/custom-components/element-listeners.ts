@@ -8,69 +8,50 @@ import {
 
 export type AddShowElementWithTimersListener = {
   renderer2: Renderer2;
-  [key: string]: any;
 } & ShowElementWithTimers;
 
 export type AddHideElementWithTimersListener = {
   renderer2: Renderer2;
   keepShowing: boolean;
-  [key: string]: any;
 } & HideElementWithTimers;
 
 export type AddToggleElementWithTimersListener = {
   renderer2: Renderer2;
   isShowing: boolean;
   keepShowing: boolean;
-  [key: string]: any;
 } & HideElementWithTimers &
   ShowElementWithTimers;
 
 export type InitShowOnHoverListener = {
   showOnHover: boolean | 'mouseenter';
-
-  [key: string]: any;
 } & AddShowElementWithTimersListener;
 
 export type InitHideOnHoverOutListener = {
   hideOnHoverOut: boolean | 'mouseleave';
-
-  [key: string]: any;
 } & AddHideElementWithTimersListener;
 
 export type InitToggleOnClickListener = {
   toggleOnClick: boolean;
-
-  [key: string]: any;
 } & AddToggleElementWithTimersListener;
 
 export type InitHideOnClickListener = {
   hideOnClick: boolean;
-
-  [key: string]: any;
 } & AddHideElementWithTimersListener;
 
 export type InitShowOnClickListener = {
   showOnClick: boolean;
-
-  [key: string]: any;
 } & AddShowElementWithTimersListener;
 
 export type InitShowOnCustomListener = {
   showOnCustom: string | undefined;
-
-  [key: string]: any;
 } & AddShowElementWithTimersListener;
 
 export type InitHideOnCustomListener = {
   hideOnCustom: string | undefined;
-
-  [key: string]: any;
 } & AddHideElementWithTimersListener;
 
 export type InitToggleOnCustomListener = {
   toggleOnCustom: string | undefined;
-
-  [key: string]: any;
 } & AddToggleElementWithTimersListener;
 
 export function initToggleOnCustomListener(

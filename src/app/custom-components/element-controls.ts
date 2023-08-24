@@ -10,14 +10,12 @@ export type ShowElementFromControl = {
   // The props below are what ShowElementFromControl expects to be available on 'this'
   keepShowing: boolean;
   showOnInitDelayTimer?: controlledTimer;
-  [key: string]: any;
 } & UpdateShowState;
 
 export type CloseElementFromControl = {
   showOnInitDelayTimer?: controlledTimer;
   hideOnInitDelayTimer?: controlledTimer;
   hideDelayTimer?: controlledTimer;
-  [key: string]: any;
 } & UpdateShowState;
 
 export type ElementDestinationDetails = {
@@ -33,7 +31,6 @@ export type GoToElement = {
   elementDestinations: ElementDestinationDetails[];
   currentNextElementIndex: number;
   defineNextElement: () => void;
-  [key: string]: any;
 };
 
 export type AddElementControlsSubscription = {
@@ -49,7 +46,6 @@ export type AddElementControlsSubscription = {
         arrows?: Arrows;
       }[]
     | undefined;
-  [key: string]: any;
 } & GoToElement &
   CloseElementFromControl &
   ShowElementFromControl;

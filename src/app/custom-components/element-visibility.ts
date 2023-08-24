@@ -7,7 +7,6 @@ export type UpdateShowState = {
   display: 'inline-block' | 'none';
   isShowing: boolean;
   keepShowing: boolean;
-  [key: string]: any;
 };
 
 export type InitDisplayAndVisibility = {
@@ -15,7 +14,6 @@ export type InitDisplayAndVisibility = {
   isShowing: boolean;
   keepShowing: boolean;
   visibility: 'hidden' | 'visible';
-  [key: string]: any;
 };
 
 export type ShowElementWithTimers = {
@@ -25,7 +23,6 @@ export type ShowElementWithTimers = {
   showDelayTimer?: controlledTimer;
   showDelay?: number;
   ngZone: NgZone;
-  [key: string]: any;
 } & UpdateShowState;
 
 export type HideElementWithTimers = {
@@ -34,7 +31,6 @@ export type HideElementWithTimers = {
   hideDelay?: number;
   keepShowing: boolean;
   ngZone: NgZone;
-  [key: string]: any;
 } & UpdateShowState;
 
 export type InitDelayTimers = {
@@ -42,9 +38,14 @@ export type InitDelayTimers = {
   showOnInitDelay?: number;
   keepShowing: boolean;
   ngZone: NgZone;
-  [key: string]: any;
 } & InitDisplayAndVisibility &
   DefineHideOnInitDelay;
+
+export type DefineHideOnInitDelay = {
+  hideOnInitDelayTimer?: controlledTimer;
+  hideOnInitDelay?: number;
+  ngZone: NgZone;
+} & UpdateShowState;
 
 export function initDelayTimers(thisOfResidingClass: InitDelayTimers) {
   const self = thisOfResidingClass;
@@ -78,13 +79,6 @@ export function initDelayTimers(thisOfResidingClass: InitDelayTimers) {
     });
   }
 }
-
-export type DefineHideOnInitDelay = {
-  hideOnInitDelayTimer?: controlledTimer;
-  hideOnInitDelay?: number;
-  ngZone: NgZone;
-  [key: string]: any;
-} & UpdateShowState;
 
 export function defineHideOnInitDelay(
   thisOfResidingClass: DefineHideOnInitDelay
