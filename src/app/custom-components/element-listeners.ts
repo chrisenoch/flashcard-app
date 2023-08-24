@@ -110,6 +110,34 @@ export type InitHideOnCustomListener = {
   [key: string]: any;
 };
 
+export type InitToggleOnCustomListener = {
+  addToggleElementWithTimersListener: (
+    thisofResidingClass: any,
+    eventType: string,
+    target: HTMLElement,
+    overrideKeepShowing: boolean
+  ) => void;
+
+  toggleOnCustom: string | undefined;
+
+  [key: string]: any;
+};
+
+export function initToggleOnCustomListener(
+  thisOfResidingClass: InitToggleOnCustomListener,
+  target: HTMLElement
+) {
+  const self = thisOfResidingClass;
+  if (self.toggleOnCustom) {
+    self.addToggleElementWithTimersListener(
+      self,
+      self.toggleOnCustom,
+      target,
+      true
+    );
+  }
+}
+
 export function initHideOnCustomListener(
   thisOfResidingClass: InitHideOnCustomListener,
   target: HTMLElement

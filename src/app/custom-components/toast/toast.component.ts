@@ -60,6 +60,7 @@ import {
   initHideOnClickListener,
   initShowOnCustomListener,
   initHideOnCustomListener,
+  initToggleOnCustomListener,
 } from '../element-listeners';
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
@@ -441,19 +442,6 @@ export class ToastComponent
     }
   }
 
-  //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
-  // updateShowState(isShow: boolean) {
-  //   if (isShow) {
-  //     //Don't set keepShowing to false here. Upon hover out, the tooltip should not continue showing unless KeepShowing is set to true.
-  //     this.display = 'inline-block';
-  //     this.isShowing = true;
-  //   } else {
-  //     this.display = 'none';
-  //     this.isShowing = false;
-  //     this.keepShowing = false;
-  //   }
-  // }
-
   private addElementListeners() {
     if (this.onElementTransitionEnd !== undefined) {
       addTransitionEndToastListener(
@@ -472,15 +460,7 @@ export class ToastComponent
     initHideOnClickListener(this, elementDestination);
     initShowOnCustomListener(this, elementDestination);
     initHideOnCustomListener(this, elementDestination);
-
-    if (this.toggleOnCustom) {
-      addToggleElementWithTimersListener(
-        this,
-        this.toggleOnCustom,
-        this.elementDestination,
-        true
-      );
-    }
+    initToggleOnCustomListener(this, elementDestination);
   }
 
   private moveToastToBody() {
