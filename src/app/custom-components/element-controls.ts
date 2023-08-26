@@ -12,11 +12,15 @@ export type ShowElementFromControl = {
   showOnInitDelayTimer?: controlledTimer;
 } & UpdateShowState;
 
+export interface ShowElementFromControlArgs extends ShowElementFromControl {}
+
 export type CloseElementFromControl = {
   showOnInitDelayTimer?: controlledTimer;
   hideOnInitDelayTimer?: controlledTimer;
   hideDelayTimer?: controlledTimer;
 } & UpdateShowState;
+
+export interface CloseElementFromControlArgs extends CloseElementFromControl {}
 
 export type ElementDestinationDetails = {
   id: string;
@@ -27,11 +31,16 @@ export type ElementDestinationDetails = {
   arrows?: Arrows;
 };
 
+export interface ElementDestinationDetailsArgs
+  extends ElementDestinationDetails {}
+
 export type GoToElement = {
   elementDestinations: ElementDestinationDetails[];
   currentNextElementIndex: number;
   defineNextElement: () => void;
 };
+
+export interface GoToElementArgs extends GoToElement {}
 
 export type AddElementControlsSubscription = {
   elementId: string;
@@ -50,10 +59,13 @@ export type AddElementControlsSubscription = {
   CloseElementFromControl &
   ShowElementFromControl;
 
+export interface AddElementControlsSubscriptionArgs
+  extends AddElementControlsSubscription {}
+
 //used with the element-controls directive so the developer can easily control the element from components within the element or outside the element. E.g. a close a button.
 //These do not respect any hideDelay and showDelay timers. The hideDelay and showDelay timers are for actions (e.g. click, hover...) on the element destination itself.
 export function addElementControlsSubscriptions(
-  thisOfResidingClass: AddElementControlsSubscription
+  thisOfResidingClass: AddElementControlsSubscriptionArgs
 ) {
   const self = thisOfResidingClass;
   if (self.nextElements !== undefined) {
@@ -149,7 +161,7 @@ export function addElementControlsSubscriptions(
   );
 }
 
-export function goToNextElement(thisOfResidingClass: GoToElement) {
+export function goToNextElement(thisOfResidingClass: GoToElementArgs) {
   const self = thisOfResidingClass;
   if (self.elementDestinations.length > 1) {
     //get next object from array and when reach the end, go back to the start
@@ -164,7 +176,7 @@ export function goToNextElement(thisOfResidingClass: GoToElement) {
   }
 }
 
-export function goToPreviousElement(thisOfResidingClass: GoToElement) {
+export function goToPreviousElement(thisOfResidingClass: GoToElementArgs) {
   const self = thisOfResidingClass;
   if (self.elementDestinations.length > 1) {
     let nextElementIndex = self.currentNextElementIndex - 1;
@@ -178,7 +190,7 @@ export function goToPreviousElement(thisOfResidingClass: GoToElement) {
   }
 }
 
-export function goToFirstElement(thisOfResidingClass: GoToElement) {
+export function goToFirstElement(thisOfResidingClass: GoToElementArgs) {
   const self = thisOfResidingClass;
   if (self.elementDestinations.length > 1) {
     self.currentNextElementIndex = 0;
@@ -186,7 +198,7 @@ export function goToFirstElement(thisOfResidingClass: GoToElement) {
   }
 }
 
-export function goToLastElement(thisOfResidingClass: GoToElement) {
+export function goToLastElement(thisOfResidingClass: GoToElementArgs) {
   const self = thisOfResidingClass;
   if (self.elementDestinations.length > 1) {
     self.currentNextElementIndex = self.elementDestinations.length - 1;
@@ -195,7 +207,7 @@ export function goToLastElement(thisOfResidingClass: GoToElement) {
 }
 
 export function showElementFromControl(
-  thisOfResidingClass: ShowElementFromControl
+  thisOfResidingClass: ShowElementFromControlArgs
 ) {
   const self = thisOfResidingClass;
   //Must update 'KeepShowing' so that if user hovers in and out, the element does not close
@@ -209,7 +221,7 @@ export function showElementFromControl(
 }
 
 export function closeElementFromControl(
-  thisOfResidingClass: CloseElementFromControl
+  thisOfResidingClass: CloseElementFromControlArgs
 ) {
   const self = thisOfResidingClass;
   //closeElementFromControl expects updateShowState to be available on 'this' of the class it is imported into.

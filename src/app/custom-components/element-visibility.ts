@@ -9,12 +9,17 @@ export type UpdateShowState = {
   keepShowing: boolean;
 };
 
+export interface UpdateShowStateArgs extends UpdateShowState {}
+
 export type InitDisplayAndVisibility = {
   display: 'inline-block' | 'none';
   isShowing: boolean;
   keepShowing: boolean;
   visibility: 'hidden' | 'visible';
 };
+
+export interface InitDisplayAndVisibilityArgs
+  extends InitDisplayAndVisibility {}
 
 export type ShowElementWithTimers = {
   showOnInitDelayTimer?: controlledTimer;
@@ -25,6 +30,8 @@ export type ShowElementWithTimers = {
   ngZone: NgZone;
 } & UpdateShowState;
 
+export interface ShowElementWithTimersArgs extends ShowElementWithTimers {}
+
 export type HideElementWithTimers = {
   hideDelayTimer?: controlledTimer;
   showDelayTimer?: controlledTimer;
@@ -32,6 +39,8 @@ export type HideElementWithTimers = {
   keepShowing: boolean;
   ngZone: NgZone;
 } & UpdateShowState;
+
+export interface HideElementWithTimersArgs extends HideElementWithTimers {}
 
 export type InitDelayTimers = {
   showOnInitDelayTimer?: controlledTimer;
@@ -41,13 +50,17 @@ export type InitDelayTimers = {
 } & InitDisplayAndVisibility &
   DefineHideOnInitDelay;
 
+export interface InitDelayTimersArgs extends InitDelayTimers {}
+
 export type DefineHideOnInitDelay = {
   hideOnInitDelayTimer?: controlledTimer;
   hideOnInitDelay?: number;
   ngZone: NgZone;
 } & UpdateShowState;
 
-export function initDelayTimers(thisOfResidingClass: InitDelayTimers) {
+export interface DefineHideOnInitDelayArgs extends DefineHideOnInitDelay {}
+
+export function initDelayTimers(thisOfResidingClass: InitDelayTimersArgs) {
   const self = thisOfResidingClass;
   if (self.showOnInitDelay && self.showOnInitDelay <= 0) {
     initDisplayAndVisibility(self);
@@ -81,7 +94,7 @@ export function initDelayTimers(thisOfResidingClass: InitDelayTimers) {
 }
 
 export function defineHideOnInitDelay(
-  thisOfResidingClass: DefineHideOnInitDelay
+  thisOfResidingClass: DefineHideOnInitDelayArgs
 ) {
   const self = thisOfResidingClass;
   if (self.hideOnInitDelay && self.hideOnInitDelay > 0) {
@@ -100,7 +113,7 @@ export function defineHideOnInitDelay(
 }
 
 export function hideElementWithTimers(
-  thisOfResidingClass: HideElementWithTimers
+  thisOfResidingClass: HideElementWithTimersArgs
 ) {
   const self = thisOfResidingClass;
   if (self.showDelayTimer) {
@@ -124,7 +137,7 @@ export function hideElementWithTimers(
 }
 
 export function showElementWithTimers(
-  thisOfResidingClass: ShowElementWithTimers
+  thisOfResidingClass: ShowElementWithTimersArgs
 ) {
   const self = thisOfResidingClass;
   //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
@@ -151,7 +164,7 @@ export function showElementWithTimers(
 }
 
 export function initDisplayAndVisibility(
-  thisOfResidingClass: InitDisplayAndVisibility
+  thisOfResidingClass: InitDisplayAndVisibilityArgs
 ) {
   const self = thisOfResidingClass;
   if (self.keepShowing) {
@@ -165,7 +178,7 @@ export function initDisplayAndVisibility(
 
 //KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
 export function updateShowState(
-  thisOfResidingClass: UpdateShowState,
+  thisOfResidingClass: UpdateShowStateArgs,
   isShow: boolean
 ) {
   const self = thisOfResidingClass;

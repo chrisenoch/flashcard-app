@@ -72,10 +72,10 @@ export class ToastComponent
 {
   constructor(
     @Inject(DOCUMENT) document: Document,
-    public renderer2: Renderer2,
-    public ngZone: NgZone,
+    readonly renderer2: Renderer2,
+    readonly ngZone: NgZone,
     private toastService: ToastService,
-    public elementControlsService: ElementControlsService
+    readonly elementControlsService: ElementControlsService
   ) {
     this.documentInjected = document;
   }

@@ -10,10 +10,16 @@ export type AddShowElementWithTimersListener = {
   renderer2: Renderer2;
 } & ShowElementWithTimers;
 
+export interface AddShowElementWithTimersListenerArgs
+  extends AddShowElementWithTimersListener {}
+
 export type AddHideElementWithTimersListener = {
   renderer2: Renderer2;
   keepShowing: boolean;
 } & HideElementWithTimers;
+
+export interface AddHideElementWithTimersListenerArgs
+  extends AddHideElementWithTimersListener {}
 
 export type AddToggleElementWithTimersListener = {
   renderer2: Renderer2;
@@ -22,40 +28,64 @@ export type AddToggleElementWithTimersListener = {
 } & HideElementWithTimers &
   ShowElementWithTimers;
 
+export interface AddToggleElementWithTimersListenerArgs
+  extends AddToggleElementWithTimersListener {}
+
 export type InitShowOnHoverListener = {
   showOnHover: boolean | 'mouseenter';
 } & AddShowElementWithTimersListener;
+
+export interface InitShowOnHoverListenerArgs extends InitShowOnHoverListener {}
 
 export type InitHideOnHoverOutListener = {
   hideOnHoverOut: boolean | 'mouseleave';
 } & AddHideElementWithTimersListener;
 
+export interface InitHideOnHoverOutListenerArgs
+  extends InitHideOnHoverOutListener {}
+
 export type InitToggleOnClickListener = {
   toggleOnClick: boolean;
 } & AddToggleElementWithTimersListener;
+
+export interface InitToggleOnClickListenerArgs
+  extends InitToggleOnClickListener {}
 
 export type InitHideOnClickListener = {
   hideOnClick: boolean;
 } & AddHideElementWithTimersListener;
 
+export interface InitHideOnClickListenerArgs extends InitHideOnClickListener {}
+
 export type InitShowOnClickListener = {
   showOnClick: boolean;
 } & AddShowElementWithTimersListener;
+
+export interface InitShowOnClickListenerArgs extends InitShowOnClickListener {}
 
 export type InitShowOnCustomListener = {
   showOnCustom: string | undefined;
 } & AddShowElementWithTimersListener;
 
+export interface InitShowOnCustomListenerArgs
+  extends InitShowOnCustomListener {}
+
 export type InitHideOnCustomListener = {
   hideOnCustom: string | undefined;
 } & AddHideElementWithTimersListener;
+
+export interface InitHideOnCustomListenerArgs
+  extends InitHideOnCustomListener {}
 
 export type InitToggleOnCustomListener = {
   toggleOnCustom: string | undefined;
 } & AddToggleElementWithTimersListener;
 
+export interface InitToggleOnCustomListenerArgs
+  extends InitToggleOnCustomListener {}
+
 export function initToggleOnCustomListener(
-  thisOfResidingClass: InitToggleOnCustomListener,
+  thisOfResidingClass: InitToggleOnCustomListenerArgs,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
@@ -65,7 +95,7 @@ export function initToggleOnCustomListener(
 }
 
 export function initHideOnCustomListener(
-  thisOfResidingClass: InitHideOnCustomListener,
+  thisOfResidingClass: InitHideOnCustomListenerArgs,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
@@ -75,7 +105,7 @@ export function initHideOnCustomListener(
 }
 
 export function initShowOnCustomListener(
-  thisOfResidingClass: InitShowOnCustomListener,
+  thisOfResidingClass: InitShowOnCustomListenerArgs,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
@@ -85,7 +115,7 @@ export function initShowOnCustomListener(
 }
 
 export function initShowOnClickListener(
-  thisOfResidingClass: InitShowOnClickListener,
+  thisOfResidingClass: InitShowOnClickListenerArgs,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
@@ -95,7 +125,7 @@ export function initShowOnClickListener(
 }
 
 export function initHideOnClickListener(
-  thisOfResidingClass: InitHideOnClickListener,
+  thisOfResidingClass: InitHideOnClickListenerArgs,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
@@ -105,7 +135,7 @@ export function initHideOnClickListener(
 }
 
 export function initToggleOnClickListener(
-  thisOfResidingClass: InitToggleOnClickListener,
+  thisOfResidingClass: InitToggleOnClickListenerArgs,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
@@ -115,7 +145,7 @@ export function initToggleOnClickListener(
 }
 
 export function initHideOnHoverOutListener(
-  thisOfResidingClass: InitHideOnHoverOutListener,
+  thisOfResidingClass: InitHideOnHoverOutListenerArgs,
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
@@ -129,7 +159,7 @@ export function initHideOnHoverOutListener(
 }
 
 export function initShowOnHoverListener(
-  thisofResidingClass: InitShowOnHoverListener,
+  thisofResidingClass: InitShowOnHoverListenerArgs,
   target: HTMLElement
 ) {
   const self = thisofResidingClass;
@@ -143,7 +173,7 @@ export function initShowOnHoverListener(
 }
 
 export function addToggleElementWithTimersListener(
-  thisofResidingClass: AddToggleElementWithTimersListener,
+  thisofResidingClass: AddToggleElementWithTimersListenerArgs,
   eventType: string,
   target: HTMLElement,
   overrideKeepShowing: boolean = false
@@ -162,7 +192,7 @@ export function addToggleElementWithTimersListener(
 }
 
 export function addHideElementWithTimersListener(
-  thisofResidingClass: AddHideElementWithTimersListener,
+  thisofResidingClass: AddHideElementWithTimersListenerArgs,
   eventType: string,
   target: HTMLElement,
   overrideKeepShowing: boolean = false
@@ -177,7 +207,7 @@ export function addHideElementWithTimersListener(
 }
 
 export function addShowElementWithTimersListener(
-  thisofResidingClass: AddShowElementWithTimersListener,
+  thisofResidingClass: AddShowElementWithTimersListenerArgs,
   eventType: string,
   target: HTMLElement
 ) {
