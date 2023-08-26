@@ -4,7 +4,6 @@ import {
   AfterViewInit,
   Component,
   ContentChild,
-  DoCheck,
   ElementRef,
   Inject,
   Input,
@@ -13,29 +12,18 @@ import {
   Renderer2,
   ViewChild,
   NgZone,
-  HostListener,
   AfterViewChecked,
-  AfterContentChecked,
 } from '@angular/core';
 import {
   Observable,
   Subscription,
   fromEvent,
-  pipe,
-  interval,
-  debounce,
   debounceTime,
   tap,
-  map,
-  filter,
-  takeUntil,
-  takeWhile,
-  finalize,
   Subject,
   take,
 } from 'rxjs';
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
-import { ToastService } from './toast.service';
 import { Position } from './models/position';
 import { ArrowPosition, Arrows } from './models/arrows';
 
@@ -74,7 +62,6 @@ export class ToastComponent
     @Inject(DOCUMENT) document: Document,
     readonly renderer2: Renderer2,
     readonly ngZone: NgZone,
-    private toastService: ToastService,
     readonly elementControlsService: ElementControlsService
   ) {
     this.documentInjected = document;
@@ -91,23 +78,11 @@ export class ToastComponent
   visibility: 'hidden' | 'visible' = 'hidden';
   display: 'inline-block' | 'none' = 'inline-block';
   positionType: 'absolute' | 'fixed' = 'absolute';
-  toastCSSClasses: string | undefined;
-
+  elementCSSClasses: string | undefined;
   isShowing = false;
   subscriptions: Subscription[] = [];
-  private resizeObs$!: Observable<Event>;
-  private resizeSub$!: Subscription | undefined;
-  private documentInjected!: Document;
-  private windowInjected!: (Window & typeof globalThis) | null;
-  private elementHeight!: number;
-  private elementWidth!: number;
-  currentNextElementIndex = 0;
-  private isResizing = false;
-
-  //toastDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
+  //elementDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
   elementDestination!: HTMLElement;
-  private elementAnchorDomRect!: DOMRect;
-  private toastDestinationDomRect!: DOMRect;
   elementDestinations!: {
     id: string;
     elementAnchor: HTMLElement;
@@ -116,28 +91,26 @@ export class ToastComponent
     effectivePosition: 'absolute' | 'fixed';
     arrows?: Arrows;
   }[];
-
-  private currentToastAnchor!: HTMLElement;
-
+  currentNextElementIndex = 0;
   showOnInitDelayTimer: controlledTimer | undefined;
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
+  private resizeObs$!: Observable<Event>;
+  private resizeSub$!: Subscription | undefined;
+  private documentInjected!: Document;
+  private windowInjected!: (Window & typeof globalThis) | null;
+  private elementHeight!: number;
+  private elementWidth!: number;
+  private isResizing = false;
+  private elementAnchorDomRect!: DOMRect;
+  private elementDestinationDomRect!: DOMRect;
+  private currentToastAnchor!: HTMLElement;
   private displayWasNoneAtStartOfWindowResize = false;
   private firstOfResizeBatch = true;
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
   private runUpdateToastPositionsOnScroll = false;
-
-  //AddElementControlsSubscription# expects updateShowState to be available on 'this.' We could just define the updateShowState method here. But instead, we import updateShowState and assign it to updateShowState as a property so it is available on 'this.'
-  // updateShowState = prepareUpdateShowState;
-  // initDisplayAndVisibility = prepareInitDisplayAndVisibility;
-  // showElementWithTimers = prepareShowElementWithTimers;
-  // hideElementWithTimers = prepareHideElementWithTimers;
-  // addShowElementWithTimersListener = prepareAddShowElementWithTimersListener;
-  // addHideElementWithTimersListener = prepareAddHideElementWithTimersListener;
-  // addToggleElementWithTimersListener =
-  //   prepareAddToggleElementWithTimersListener;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -244,13 +217,13 @@ export class ToastComponent
       this.moveToastToBody();
 
       //get coords of the parent to <app-toast>. Toast should show upon hovering this.
-      this.toastDestinationDomRect =
+      this.elementDestinationDomRect =
         this.elementDestination.getBoundingClientRect();
 
       this.elementHeight = originalToastHeight;
       this.elementWidth = originalToastWidth;
 
-      this.defineToastAnchorCoords(this.toastDestinationDomRect);
+      this.defineToastAnchorCoords(this.elementDestinationDomRect);
 
       //Because we need to read the updated position of toastAnchor
       setTimeout(() => {
@@ -290,57 +263,12 @@ export class ToastComponent
     this.resizeSub$ && this.resizeSub$.unsubscribe();
   }
 
-  // showElementWithTimers() {
-  //   //Needed because if the user hovers in and out quickly, one timer will be initiated after another. And then maybe a series of show hide behaviour will happen once the user has hovered out.
-  //   cancelTimers([
-  //     this.hideDelayTimer,
-  //     this.showOnInitDelayTimer,
-  //     this.hideOnInitDelayTimer,
-  //   ]);
-
-  //   if (this.showDelay > 0) {
-  //     this.showDelayTimer = controllableTimer(this.showDelay);
-  //     this.ngZone.runOutsideAngular(() => {
-  //       this.showDelayTimer!.sub.subscribe({
-  //         complete: () => {
-  //           this.ngZone.run(() => {
-  //             updateShowState(this, true);
-  //           });
-  //         },
-  //       });
-  //     });
-  //   } else {
-  //     updateShowState(this, true);
-  //   }
-  // }
-
-  // hideElementWithTimers() {
-  //   if (this.showDelayTimer) {
-  //     this.showDelayTimer.cancelTimer = true;
-  //   }
-
-  //   if (this.hideDelay > 0) {
-  //     this.hideDelayTimer = controllableTimer(this.hideDelay);
-  //     this.ngZone.runOutsideAngular(() => {
-  //       this.hideDelayTimer!.sub.subscribe({
-  //         complete: () => {
-  //           this.ngZone.run(() => {
-  //             updateShowState(this, false);
-  //           });
-  //         },
-  //       });
-  //     });
-  //   } else if (!this.keepShowing) {
-  //     updateShowState(this, false);
-  //   }
-  // }
-
   private initCSS() {
     if (this.overrideToastCSSClasses === undefined) {
-      this.toastCSSClasses = 'w-max h-fit';
+      this.elementCSSClasses = 'w-max h-fit';
     }
     if (this.addElementCSSClasses) {
-      this.toastCSSClasses += ' ' + this.addElementCSSClasses;
+      this.elementCSSClasses += ' ' + this.addElementCSSClasses;
     }
 
     if (this.elementAnchorCSSClasses === undefined) {
@@ -407,18 +335,18 @@ export class ToastComponent
   }
 
   private updateToastDestinationDomRectIfChanged() {
-    if (this.toastDestinationDomRect && !this.isResizing) {
+    if (this.elementDestinationDomRect && !this.isResizing) {
       const newToastDestinationDomRect =
         this.elementDestination.getBoundingClientRect();
 
       const domRectsAreEqual = compareDOMRectValues(
-        this.toastDestinationDomRect,
+        this.elementDestinationDomRect,
         newToastDestinationDomRect
       );
       if (!domRectsAreEqual) {
-        this.toastDestinationDomRect = newToastDestinationDomRect;
+        this.elementDestinationDomRect = newToastDestinationDomRect;
         setTimeout(() => {
-          this.defineToastAnchorCoords(this.toastDestinationDomRect);
+          this.defineToastAnchorCoords(this.elementDestinationDomRect);
           setTimeout(() => {
             this.updateToastIfToastAnchorDomRectChanged();
           }, 0);
@@ -594,7 +522,7 @@ export class ToastComponent
     }
 
     const eleDomRect = this.elementDestination.getBoundingClientRect();
-    this.toastDestinationDomRect = eleDomRect;
+    this.elementDestinationDomRect = eleDomRect;
 
     this.defineToastAnchorCoords(eleDomRect);
 
@@ -620,22 +548,6 @@ export class ToastComponent
             'px';
     }, 0);
   }
-
-  // defineHideOnInitDelay() {
-  //   if (this.hideOnInitDelay > 0) {
-  //     this.hideOnInitDelayTimer = controllableTimer(this.hideOnInitDelay);
-
-  //     this.ngZone.runOutsideAngular(() => {
-  //       this.hideOnInitDelayTimer!.sub.subscribe({
-  //         complete: () => {
-  //           this.ngZone.run(() => {
-  //             this.updateShowState(this, false);
-  //           });
-  //         },
-  //       });
-  //     });
-  //   }
-  // }
 
   private addWindowResizeHandler() {
     this.resizeObs$ = fromEvent(window, 'resize');
@@ -694,9 +606,9 @@ export class ToastComponent
     this.currentToastAnchor.style.width = toastVCWidth + 'px';
 
     //toastDestintation size may have changed
-    this.toastDestinationDomRect =
+    this.elementDestinationDomRect =
       this.elementDestination.getBoundingClientRect();
-    this.defineToastAnchorCoords(this.toastDestinationDomRect);
+    this.defineToastAnchorCoords(this.elementDestinationDomRect);
 
     //Because we need to read the updated position of toastAnchor
     setTimeout(() => {
