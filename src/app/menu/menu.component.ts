@@ -25,6 +25,9 @@ import { Inject } from '@angular/core';
 export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   displayedContent: TeachingItem | undefined;
   contents: MenuItem[] = [];
+  wordContents: MenuItem[] = [];
+  summaryContents: MenuItem[] = [];
+  exerciseContents: MenuItem[] = [];
   isTeachingItemsError = false;
   sidebarsOnRight = false;
   //change this - set to true for now for testing
@@ -98,6 +101,24 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       return;
     }
 
+    this.wordContents = this.generateContentsItems(this.wordItems, (e) => {
+      this.updateDisplayedContent(e);
+    });
+
+    this.summaryContents = this.generateContentsItems(
+      this.summaryItems,
+      (e) => {
+        this.updateDisplayedContent(e);
+      }
+    );
+
+    this.exerciseContents = this.generateContentsItems(
+      this.exerciseItems,
+      (e) => {
+        this.updateDisplayedContent(e);
+      }
+    );
+
     this.contents = this.generateContents();
 
     //init first word
@@ -112,18 +133,42 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.wordsSubscription.unsubscribe();
   }
 
+  private getTeachingItemById(id: string) {
+    return this.teachingItems.find((item) => {
+      item.id === id;
+    });
+  }
+
   updateContentAfterWordVisited() {
     console.log('in updateContentsAfterWordVisited');
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
     //this.contents = this.generateContents();
-    //New approach
-    //Get all words that havem't been visited from items property of relevant section of contents and set display to none, or set them all to display:inline-block/block
-    this.contents[0].items = this.generateContentsItems(this.wordItems, (e) => {
-      this.updateDisplayedContent(e);
-    });
-    this.contents = [...this.contents];
 
-    console.log(this.contents[0].items);
+    //find wordItems to show
+    const worditemIdsToShow = this.wordItems
+      .filter((item, i) => {
+        const shouldShow = this.getWordItemsToBeShown(item, i);
+        return shouldShow;
+      })
+      .map((item) => item.id);
+    const worditemIdsToShowSet = new Set(worditemIdsToShow);
+
+    this.contents[0].items = this.wordContents?.filter((item: MenuItem) => {
+      let teachingItem;
+      if (item && item.id) {
+        teachingItem = this.getTeachingItemById(item.id);
+        //if not a word item then always return
+        if (teachingItem && !this.isWordItem(teachingItem)) {
+          return true;
+        } else {
+          return worditemIdsToShowSet.has(item.id);
+        }
+      } else {
+        return true;
+      }
+    });
+
+    this.contents = [...this.contents];
   }
 
   updateShowTranslation() {
@@ -400,9 +445,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.generateContentsItems(this.wordItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
+        items: this.wordContents,
       },
       {
         label: 'Summary',
@@ -412,9 +455,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.generateContentsItems(this.summaryItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
+        items: this.summaryContents,
       },
       {
         label: 'Exercises',
@@ -424,9 +465,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.generateContentsItems(this.exerciseItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
+        items: this.exerciseContents,
       },
     ];
 
