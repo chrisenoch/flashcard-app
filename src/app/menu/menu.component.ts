@@ -266,7 +266,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private updateWordItemsToBeShown() {
-    //find wordItems to show
     const worditemIdsToShow = this.wordItems
       .filter((item, i) => {
         const shouldShow = this.isWordItemToBeShown(item, i);
@@ -290,7 +289,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     });
     this.contents[0].items = this.currentWordContents;
-
     this.contents = [...this.contents];
   }
 
@@ -306,9 +304,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.autoExpandVocabulary = true;
       const isVocabularyExpanded = this.decideIfVocabularyExpanded();
       this.contents[0].expanded = isVocabularyExpanded;
-      // this.contents.forEach((ele)=>{
-      //   ele.
-      // })
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Summary &&
@@ -617,30 +612,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private setItemAsVisited(item: TeachingItem) {
-    if (item.isVisited) {
-      return;
-    }
-
-    if (this.isWordItem(item)) {
-      item.isVisited = true;
-      this.contents = this.generateContents();
-    } else {
-      item.isVisited = true;
-    }
-  }
-
-  private addWordToContents() {
-    if (this.displayedContent && this.isWordItem(this.displayedContent)) {
-      const wordItem = this.displayedContent;
-
-      if (wordItem.isVisited) {
-        //don't generate contents again if word is already shown on the contents bar
-        return;
-      } else {
-        this.setItemAsVisited(wordItem);
-        this.contents = this.generateContents();
-      }
-    }
+    item.isVisited = true;
   }
 
   //Navigates to start of next section if goToPrevious argument is not provided or set to false. Set goToPrevious to true to navigate to start of previous section.
