@@ -134,9 +134,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private getTeachingItemById(id: string) {
-    return this.teachingItems.find((item) => {
-      item.id === id;
-    });
+    const teachingItem = this.teachingItems.find((item) => item.id === id);
+    return teachingItem;
   }
 
   updateContentAfterWordVisited() {
@@ -176,10 +175,22 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateToggleTranslation() {
+    console.log('inside updateToggleTranslation');
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
-    this.contents = this.generateContents();
-    //New approach
-    //Just run second half of generateContents
+    //this.contents = this.generateContents();
+    this.wordContents.forEach((item) => {
+      let teachingItem;
+      if (item.id) {
+        teachingItem = this.getTeachingItemById(item.id);
+      }
+
+      if (teachingItem && this.isWordItem(teachingItem)) {
+        item.label = this.showPrimaryWordFirst
+          ? capitalize(teachingItem.english)
+          : capitalize(teachingItem.spanish);
+      }
+    });
+    this.contents = [...this.contents];
   }
 
   updateShowAllExerciseAnswers() {
