@@ -435,6 +435,19 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return generatedContents;
   }
 
+  private getWordItemsToBeShown(item: TeachingItem, index: number): boolean {
+    if (
+      index !== 0 &&
+      this.showContentAfterWordVisited &&
+      this.isWordItem(item) &&
+      !item.isVisited
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   private generateContentsItems(
     items: TeachingItem[],
     callback: (...args: any[]) => void,
@@ -447,16 +460,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       .filter((item, i) => {
         //don't show vocab word until it has been visited if showContentAfterWordVisited is true
-        if (
-          i !== 0 &&
-          this.showContentAfterWordVisited &&
-          this.isWordItem(item) &&
-          !item.isVisited
-        ) {
-          return false;
-        } else {
-          return true;
-        }
+        return this.getWordItemsToBeShown(item, i);
       })
 
       .map((item) => {
