@@ -274,12 +274,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.onBottomNavigationCommon();
   }
 
-  onShowWordsAftervisited() {
-    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.contents = this.generateContents();
-    //New approach
-    //Only update contents items for relevant section
-  }
+  // onShowWordsAftervisited() {
+  //   this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
+  //   this.contents = this.generateContents();
+  //   //New approach
+  //   //Only update contents items for relevant section
+  // }
 
   //methods to be called on every bottom navigation method
   private onBottomNavigationCommon() {
@@ -297,7 +297,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.wantsVocabularyExpanded === null
     ) {
       this.autoExpandVocabulary = true;
-      this.contents = this.generateContents();
+      const isVocabularyExpanded = this.decideIfVocabularyExpanded();
+      this.contents[0].expanded = isVocabularyExpanded;
+      // this.contents.forEach((ele)=>{
+      //   ele.
+      // })
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Summary &&
@@ -305,7 +309,9 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.wantsSummaryExpanded === null
     ) {
       this.autoExpandSummary = true;
-      this.contents = this.generateContents();
+      // this.contents = this.generateContents();
+      const isSummaryExpanded = this.decideIfSummaryExpanded();
+      this.contents[1].expanded = isSummaryExpanded;
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Exercise &&
@@ -313,8 +319,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.wantsExercisesExpanded === null
     ) {
       this.autoExpandExercises = true;
-      this.contents = this.generateContents();
+      // this.contents = this.generateContents();
+      const isExercisesExpanded = this.decideIfExercisesExpanded();
+      this.contents[2].expanded = isExercisesExpanded;
     }
+
+    this.contents = [...this.contents];
   }
 
   private updateWantsExpanded(e: MenuItemCommandEvent) {
