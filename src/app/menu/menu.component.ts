@@ -25,9 +25,12 @@ import { Inject } from '@angular/core';
 export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   displayedContent: TeachingItem | undefined;
   contents: MenuItem[] = [];
-  wordContents: MenuItem[] = [];
-  summaryContents: MenuItem[] = [];
-  exerciseContents: MenuItem[] = [];
+  private wordContents: MenuItem[] = [];
+  private summaryContents: MenuItem[] = [];
+  private exerciseContents: MenuItem[] = [];
+  private currentWordContents: MenuItem[] = [];
+  private currentSummaryContents: MenuItem[] = [];
+  private currentExerciseContents: MenuItem[] = [];
   isTeachingItemsError = false;
   sidebarsOnRight = false;
   //change this - set to true for now for testing
@@ -104,6 +107,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.wordContents = this.generateContentsItems(this.wordItems, (e) => {
       this.updateDisplayedContent(e);
     });
+    this.currentWordContents = [...this.wordContents];
 
     this.summaryContents = this.generateContentsItems(
       this.summaryItems,
@@ -111,6 +115,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.updateDisplayedContent(e);
       }
     );
+    this.currentSummaryContents = [...this.summaryContents];
 
     this.exerciseContents = this.generateContentsItems(
       this.exerciseItems,
@@ -118,6 +123,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.updateDisplayedContent(e);
       }
     );
+    this.currentExerciseContents = [...this.exerciseContents];
 
     this.contents = this.generateContents();
 
@@ -131,11 +137,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnDestroy(): void {
     this.wordsSubscription.unsubscribe();
-  }
-
-  private getTeachingItemById(id: string) {
-    const teachingItem = this.teachingItems.find((item) => item.id === id);
-    return teachingItem;
   }
 
   updateContentAfterWordVisited() {
@@ -152,7 +153,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       .map((item) => item.id);
     const worditemIdsToShowSet = new Set(worditemIdsToShow);
 
-    this.contents[0].items = this.wordContents?.filter((item: MenuItem) => {
+    this.currentWordContents = this.wordContents?.filter((item: MenuItem) => {
       let teachingItem;
       if (item && item.id) {
         teachingItem = this.getTeachingItemById(item.id);
@@ -166,6 +167,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         return true;
       }
     });
+
+    this.contents[0].items = this.currentWordContents;
 
     this.contents = [...this.contents];
   }
@@ -374,6 +377,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.contents = this.generateContents();
   }
 
+  private getTeachingItemById(id: string) {
+    const teachingItem = this.teachingItems.find((item) => item.id === id);
+    return teachingItem;
+  }
+
   private decideIfVocabularyExpanded() {
     if (this.wantsVocabularyExpanded === null) {
       return this.autoExpandVocabulary;
@@ -466,7 +474,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.wordContents,
+        items: this.currentWordContents,
       },
       {
         label: 'Summary',
@@ -476,7 +484,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.summaryContents,
+        items: this.currentSummaryContents,
       },
       {
         label: 'Exercises',
@@ -486,7 +494,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.exerciseContents,
+        items: this.currentExerciseContents,
       },
     ];
 
