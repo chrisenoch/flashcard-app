@@ -1,24 +1,38 @@
 <div class="w-full h-full bg-gray-400 p-2 rounded-lg">
-  <h1>My tooltip/toastId {{ toastId }}</h1>
+  <h1>My tooltip/toastId {{ elementId }}</h1>
   <div class="flex gap-4">
-    <button appToast [toastId]="toastId" [onClose]="true">Close</button>
-    <button appToast [toastId]="toastId" [onShowAll]="true">Show All</button>
-    <!-- <button appToast [toastId]="toastId" [onCloseAllOthers]="true">
+    <button appElementControls [elementId]="elementId" [onShowAll]="true">
+      Show All
+    </button>
+    <!-- <button appElementControls [elementId]="elementId" [onCloseAllOthers]="true">
       Close All Others
     </button>
     <button
-      appToast
-      [toastId]="toastId"
+      appElementControls
+      [elementId]="elementId"
       onCloseAllOthersInGroup="toast-group-3"
     >
       CAOIG
     </button> -->
-    <button appToast [toastId]="toastId" [onGoToNextId]="true">Next d</button>
-    <button appToast [toastId]="toastId" [onGoToPreviousId]="true">
+    <button appElementControls [elementId]="elementId" [onGoToNextId]="true">
+      Next d
+    </button>
+    <button
+      appElementControls
+      [elementId]="elementId"
+      [onGoToPreviousId]="true"
+    >
       Pre d
     </button>
-    <button appToast [toastId]="toastId" [onGoToFirstId]="true">Fir d</button>
-    <button appToast [toastId]="toastId" [onGoToLastId]="true">Las d</button>
+    <button appElementControls [elementId]="elementId" [onGoToFirstId]="true">
+      Fir d
+    </button>
+    <button appElementControls [elementId]="elementId" [onGoToLastId]="true">
+      Las d
+    </button>
+    <button appElementControls [elementId]="elementId" [onClose]="true">
+      Close
+    </button>
     <!-- <button appToast [toastId]="toastId" onShowAllOthersInGroup="toast-group-3">
       SAOG 3
     </button> -->

@@ -6,12 +6,12 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./toast-content.component.scss'],
 })
 export class ToastContentComponent implements OnInit {
-  @Input() toastId!: string;
-  @Input() toastGroupId: string | undefined;
+  @Input() elementId!: string;
+  @Input() elementGroupId: string | undefined;
 
   ngOnInit(): void {
-    if (!this.toastId) {
-      throw Error('You must set the toastId attribute');
+    if (!this.elementId) {
+      throw Error('You must set the elementId attribute');
     }
   }
 }

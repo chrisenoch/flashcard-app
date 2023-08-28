@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject, of } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -33,21 +33,6 @@ export class ToastService {
   goToPreviousId$ = new Subject<Event | null>();
   goToFirstId$ = new Subject<Event | null>();
   goToLastId$ = new Subject<Event | null>();
-
-  accountForOverflowXContentPushingContent$ = new Subject<boolean>();
-  newBodyOverflowX$ = new Subject<number>();
-  bodyOverflowX: number | undefined;
-
-  updateBodyOverflowX(newBodyOverflowX: number) {
-    if (this.bodyOverflowX !== newBodyOverflowX) {
-      this.newBodyOverflowX$.next(newBodyOverflowX);
-      this.bodyOverflowX = newBodyOverflowX;
-    }
-  }
-
-  runAccountForOverflowXContentPushingContent$() {
-    this.accountForOverflowXContentPushingContent$.next(true);
-  }
 
   onGoToNextId(e: Event) {
     this.goToNextId$.next(e);

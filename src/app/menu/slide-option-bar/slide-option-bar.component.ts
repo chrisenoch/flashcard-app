@@ -20,18 +20,24 @@ export class SlideOptionBarComponent {
   @Input() sidebarsOnRight = false;
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
+  //to test onToastTransitionEnd in custom toast component
+  onToastTransitionEnd = {
+    callback: () => console.log('transition ended'),
+    propertiesToFireOn: ['top'],
+  };
+
   //to test custom toast component
   nextElements: {
     id: string;
     position: Position;
+    effectivePosition: 'absolute' | 'fixed';
     arrows?: Arrows;
   }[] = [
-    { id: 'mytest', position: 'LEFT' },
-    { id: 'toast-destination-test', position: 'RIGHT' },
-    { id: 'toast-destination-test-2', position: 'RIGHT' },
+    { id: 'toast-1-a', position: 'LEFT', effectivePosition: 'absolute' },
+    { id: 'toast-1-b', position: 'RIGHT', effectivePosition: 'fixed' },
+    { id: 'toast-1-c', position: 'RIGHT', effectivePosition: 'absolute' },
 
-    { id: 'toast-destination-2', position: 'RIGHT' },
-    { id: 'toast-destination-3', position: 'TOP', arrows: ['TOP', 'BOTTOM'] },
+    // { id: 'toast-destination-3', position: 'TOP', arrows: ['TOP', 'BOTTOM'] },
   ];
 
   toastDestinations!: [

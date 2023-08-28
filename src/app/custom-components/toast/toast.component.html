@@ -1,36 +1,61 @@
+<!-- toastAnchor stays with the toastDestination -->
 <div
-  #toast
-  class="w-fit h-fit"
+  #toastAnchor
+  [ngClass]="elementAnchorCSSClasses"
   [ngStyle]="{
-    top: top,
-    left: left,
-    right: right,
-    bottom: bottom,
-    visibility: visibility,
-    display: display,
-    position: positionType,
-    zIndex: zIndex
+    top: elementAnchorTop,
+    left: elementAnchorLeft,
+    right: elementAnchorRight,
+    bottom: elementAnchorBottom,
+    visibility: 'hidden',
+
   }"
-  [ngClass]="{
-    'animate-fade-in':animation,
-  }"
+  id="{{ elementId + '-anchor' }}"
 >
-  <!-- <h1>My tooltip/toast header</h1> -->
-  <ng-content></ng-content>
+  <!--this becomes a direct child of the body-->
   <div
-    *ngIf="showArrow && arrowLeft"
-    class="absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-gray-400 z-[9999]"
-  ></div>
-  <div
-    *ngIf="showArrow && arrowRight"
-    class="absolute top-[50%] right-0 w-0 h-0 border-l-8 -mt-2 -mr-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-l-gray-400 z-[9999]"
-  ></div>
-  <div
-    *ngIf="showArrow && arrowTop"
-    class="absolute top-0 left-[50%] w-0 h-0 border-r-8 -ml-2 -mt-2 border-b-8 border-l-8 border-b-gray-400 border-r-transparent border-l-transparent z-[9999]"
-  ></div>
-  <div
-    *ngIf="showArrow && arrowBottom"
-    class="absolute right-0 left-[50%] w-0 h-0 border-r-8 -ml-2 -mb-2 border-t-8 border-l-8 border-t-gray-400 border-r-transparent border-l-transparent z-[9999]"
-  ></div>
+    #toast
+    [ngStyle]="{
+      top: elementTop,
+      left: elementLeft,
+      right: elementRight,
+      bottom: elementBottom,
+      visibility: visibility,
+      display: display,
+      position: positionType,
+      zIndex: zIndex
+    }"
+    [ngClass]="elementCSSClasses"
+  >
+    <!-- <h1>My tooltip/toast header</h1> -->
+    <ng-content></ng-content>
+    <div
+      *ngIf="showArrow && arrowLeft"
+      [ngClass]="arrowLeftCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+    <div
+      *ngIf="showArrow && arrowRight"
+      [ngClass]="arrowRightCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+    <div
+      *ngIf="showArrow && arrowTop"
+      [ngClass]="arrowTopCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+    <div
+      *ngIf="showArrow && arrowBottom"
+      [ngClass]="arrowBottomCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+  </div>
 </div>

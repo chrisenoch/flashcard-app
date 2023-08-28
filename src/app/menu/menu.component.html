@@ -80,23 +80,24 @@
       'justify-end': slideNavbarPos === 'RIGHT',
     }"
   >
-    <div class="flex gap-4 justify-center w-[30rem]">
-      <button id="mytest" class="p-4 bg-green-600 rounded-lg">
-        Test
-
-        <app-toast
-          toastId="toast-12"
-          toastGroupId="toast-group-12"
+    <div class="flex gap-4 justify-center w-[40rem]">
+      <div class="relative overflow-hidden">
+        <div id="toast-1-b-anchor" class="absolute invisible"></div>
+        <!-- <app-toast
+          toastId="toast-3"
+          toastGroupId="toast-group-2"
           position="LEFT"
           effectivePosition="fixed"
           [show]="true"
           [showOnHover]="false"
           [hideOnHoverOut]="false"
+          [toggleOnClick]="true"
           [animation]="true"
         >
-          <app-toast-content toastId="toast-12"></app-toast-content>
-        </app-toast>
-      </button>
+          <app-toast-content toastId="toast-3"></app-toast-content>
+        </app-toast> -->
+        <button id="toast-1-b" class="p-4 bg-green-600 rounded-lg">Test</button>
+      </div>
 
       <!-- <button
         appToast
@@ -132,12 +133,27 @@
         styleClass=" p-button-secondary p-button-lg"
         (onClick)="onNextSection()"
       ></p-button>
-      <p-button
-        id="toast-destination-3"
-        label="End"
-        styleClass="p-button-rounded p-button-lg"
-        (onClick)="onEnd()"
-      ></p-button>
+      <div class="relative overflow-hidden">
+        <app-toast
+          elementId="toast-4"
+          elementGroupId="toast-group-2"
+          position="RIGHT"
+          effectivePosition="fixed"
+          [show]="true"
+          [showOnHover]="false"
+          [hideOnHoverOut]="false"
+          hideOnCustom="dblclick"
+          [animation]="true"
+        >
+          <app-toast-content elementId="toast-4"></app-toast-content>
+        </app-toast>
+        <p-button
+          id="toast-destination-3"
+          label="End"
+          styleClass="p-button-rounded p-button-lg"
+          (onClick)="onEnd()"
+        ></p-button>
+      </div>
     </div>
   </div>
 </div>

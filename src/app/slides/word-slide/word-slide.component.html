@@ -1,14 +1,4 @@
 <div class="pt-16 h-full flex flex-col gap-8 items-center">
-  <!-- <div class="relative w-full">
-    <span class="absolute top-0 -left-36 w-96 h-96 bg-red-500">Hello</span>
-  </div> -->
-
-  <!-- <div class="relative bg-gray-300 h-36 w-36">
-    <div
-      class="absolute top-[50%] -mt-2 left-0 w-0 h-0 border-r-8 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-pink-700 z-[99999]"
-    ></div>
-  </div> -->
-
   <p class="text-8xl" *ngIf="!showTranslation && showPrimaryWordFirst">
     {{ primaryWord }}
   </p>
@@ -24,28 +14,25 @@
       class="bi bi-diamond-fill text-orange-500"
     ></i>
 
-    <p
-      class="text-8xl"
-      *ngIf="!showPrimaryWordFirst"
-      id="toast-destination-test"
-    >
-      {{ secondaryWord }}
-      <app-toast
-        toastId="toast-15"
-        toastGroupId="toast-group-15"
+    <div class="relative overflow-hidden">
+      <div id="toast-1-c-anchor" class="absolute invisible"></div>
+      <!-- <app-toast
+        toastId="toast-5"
+        toastGroupId="toast-group-2"
         position="RIGHT"
         effectivePosition="other"
-        [toggleOnClick]="true"
         [show]="true"
-        [hideDelay]="3000"
+        [toggleOnClick]="true"
         [showOnHover]="false"
-        [nextElements]="nextElements"
         [hideOnHoverOut]="false"
         [animation]="true"
       >
-        <app-toast-content toastId="toast-15"></app-toast-content>
-      </app-toast>
-    </p>
+        <app-toast-content toastId="toast-5"></app-toast-content>
+      </app-toast> -->
+      <p class="text-8xl" *ngIf="!showPrimaryWordFirst" id="toast-1-c">
+        {{ secondaryWord }}
+      </p>
+    </div>
   </ng-container>
   <ng-container *ngIf="showTranslation">
     <p *ngIf="showPrimaryWordFirst" class="text-6xl text-gray-700">
@@ -64,16 +51,33 @@
     *ngIf="showExplanation"
     class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-pink-200 relative z-10"
   >
-    <p
-      class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
-      id="toast-destination-test-2"
-    >
-      {{ explanation }}
+    <div class="relative overflow-hidden h-full">
+      <!-- <div id="toast-1-d-anchor" class="absolute invisible"></div> -->
       <app-toast
+        elementId="toast-6"
+        elementGroupId="toast-group-2"
+        position="RIGHT"
+        effectivePosition="absolute"
+        [show]="true"
+        [showOnInitDelay]="3000"
+        [hideOnInitDelay]="3000"
+        [toggleOnClick]="true"
+        [showOnHover]="false"
+        [hideOnHoverOut]="false"
+        [animation]="true"
+      >
+        <app-toast-content elementId="toast-6"></app-toast-content>
+      </app-toast>
+      <p
+        class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
+        id="toast-1-d"
+      >
+        {{ explanation }}
+        <!-- <app-toast
         toastId="toast-16"
         toastGroupId="toast-group-16"
         position="RIGHT"
-        effectivePosition="other"
+        effectivePosition="absolute"
         [show]="true"
         [toggleOnClick]="true"
         [showOnHover]="false"
@@ -81,7 +85,8 @@
         [animation]="true"
       >
         <app-toast-content toastId="toast-16"></app-toast-content>
-      </app-toast>
-    </p>
+      </app-toast> -->
+      </p>
+    </div>
   </div>
 </div>
