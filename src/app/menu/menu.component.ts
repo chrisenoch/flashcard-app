@@ -113,8 +113,17 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateContentAfterWordVisited() {
+    console.log('in updateContentsAfterWordVisited');
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.contents = this.generateContents();
+    //this.contents = this.generateContents();
+    //New approach
+    //Get all words that havem't been visited from items property of relevant section of contents and set display to none, or set them all to display:inline-block/block
+    this.contents[0].items = this.generateContentsItems(this.wordItems, (e) => {
+      this.updateDisplayedContent(e);
+    });
+    this.contents = [...this.contents];
+
+    console.log(this.contents[0].items);
   }
 
   updateShowTranslation() {
@@ -124,6 +133,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   updateToggleTranslation() {
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
     this.contents = this.generateContents();
+    //New approach
+    //Just run second half of generateContents
   }
 
   updateShowAllExerciseAnswers() {
@@ -210,6 +221,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   onShowWordsAftervisited() {
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
     this.contents = this.generateContents();
+    //New approach
+    //Only update contents items for relevant section
   }
 
   //methods to be called on every bottom navigation method
@@ -657,6 +670,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private updateDisplayedContent(e: MenuItemCommandEvent) {
+    console.log('updateDisplayedContent');
     if (e?.item?.id) {
       const id = e.item.id;
       const newDisplayedContent = this.teachingItems.find(
