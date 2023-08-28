@@ -144,33 +144,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
     //this.contents = this.generateContents();
 
-    //find wordItems to show
-    const worditemIdsToShow = this.wordItems
-      .filter((item, i) => {
-        const shouldShow = this.isWordItemToBeShown(item, i);
-        return shouldShow;
-      })
-      .map((item) => item.id);
-    const worditemIdsToShowSet = new Set(worditemIdsToShow);
-
-    this.currentWordContents = this.wordContents?.filter((item: MenuItem) => {
-      let teachingItem;
-      if (item && item.id) {
-        teachingItem = this.getTeachingItemById(item.id);
-        //if not a word item then always return
-        if (teachingItem && !this.isWordItem(teachingItem)) {
-          return true;
-        } else {
-          return worditemIdsToShowSet.has(item.id);
-        }
-      } else {
-        return true;
-      }
-    });
-
-    this.contents[0].items = this.currentWordContents;
-
-    this.contents = [...this.contents];
+    this.updateWordItemsToBeShown();
   }
 
   updateShowTranslation() {
@@ -292,8 +266,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private updateWordItemsToBeShown() {
-    // this.currentWordContents = this.wordContents.forEach((ele)=>{
-    // })
     //find wordItems to show
     const worditemIdsToShow = this.wordItems
       .filter((item, i) => {
