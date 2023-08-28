@@ -147,7 +147,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     //find wordItems to show
     const worditemIdsToShow = this.wordItems
       .filter((item, i) => {
-        const shouldShow = this.getWordItemsToBeShown(item, i);
+        const shouldShow = this.isWordItemToBeShown(item, i);
         return shouldShow;
       })
       .map((item) => item.id);
@@ -287,7 +287,39 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //methods to be called on every bottom navigation method
   private onBottomNavigationCommon() {
     this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.updateWordItemsToBeShown();
     this.autoExpandSection();
+  }
+
+  private updateWordItemsToBeShown() {
+    // this.currentWordContents = this.wordContents.forEach((ele)=>{
+    // })
+    //find wordItems to show
+    const worditemIdsToShow = this.wordItems
+      .filter((item, i) => {
+        const shouldShow = this.isWordItemToBeShown(item, i);
+        return shouldShow;
+      })
+      .map((item) => item.id);
+    const worditemIdsToShowSet = new Set(worditemIdsToShow);
+
+    this.currentWordContents = this.wordContents?.filter((item: MenuItem) => {
+      let teachingItem;
+      if (item && item.id) {
+        teachingItem = this.getTeachingItemById(item.id);
+        //if not a word item then always return
+        if (teachingItem && !this.isWordItem(teachingItem)) {
+          return true;
+        } else {
+          return worditemIdsToShowSet.has(item.id);
+        }
+      } else {
+        return true;
+      }
+    });
+    this.contents[0].items = this.currentWordContents;
+
+    this.contents = [...this.contents];
   }
 
   //the default behaviour is for the sections on the sidebar
@@ -503,7 +535,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return generatedContents;
   }
 
-  private getWordItemsToBeShown(item: TeachingItem, index: number): boolean {
+  private isWordItemToBeShown(item: TeachingItem, index: number): boolean {
     if (
       index !== 0 &&
       this.showContentAfterWordVisited &&
@@ -528,7 +560,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       .filter((item, i) => {
         //don't show vocab word until it has been visited if showContentAfterWordVisited is true
-        return this.getWordItemsToBeShown(item, i);
+        return this.isWordItemToBeShown(item, i);
       })
 
       .map((item) => {
