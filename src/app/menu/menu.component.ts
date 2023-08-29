@@ -25,10 +25,10 @@ import { Inject } from '@angular/core';
 export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   displayedContent: TeachingItem | undefined;
   contents: MenuItem[] = [];
-  private wordContents: MenuItem[] = [];
+  private vocabContents: MenuItem[] = [];
   private summaryContents: MenuItem[] = [];
   private exerciseContents: MenuItem[] = [];
-  private currentWordContents: MenuItem[] = [];
+  private currentVocabContents: MenuItem[] = [];
   private currentSummaryContents: MenuItem[] = [];
   private currentExerciseContents: MenuItem[] = [];
   isTeachingItemsError = false;
@@ -41,7 +41,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
   accordionState = { showAllTabs: false };
 
-  private wordsSubscription!: Subscription;
+  private wordsSubscription$!: Subscription;
   private currentPos = 0;
   private autoExpandVocabulary = true;
   private autoExpandSummary = false;
@@ -103,7 +103,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy(): void {
-    this.wordsSubscription.unsubscribe();
+    this.wordsSubscription$.unsubscribe();
   }
 
   updateContentAfterWordVisited() {
@@ -117,7 +117,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateToggleTranslation() {
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
-    this.wordContents.forEach((item) => {
+    this.vocabContents.forEach((item) => {
       let teachingItem;
       if (item.id) {
         teachingItem = this.getTeachingItemById(item.id);
@@ -222,15 +222,15 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private updateWordItemsToBeShown() {
-    const worditemIdsToShow = this.wordItems
+    const wordItemIdsToShow = this.wordItems
       .filter((item, i) => {
         const shouldShow = this.isWordItemToBeShown(item, i);
         return shouldShow;
       })
       .map((item) => item.id);
-    const worditemIdsToShowSet = new Set(worditemIdsToShow);
+    const wordItemIdsToShowSet = new Set(wordItemIdsToShow);
 
-    this.currentWordContents = this.wordContents?.filter((item: MenuItem) => {
+    this.currentVocabContents = this.vocabContents?.filter((item: MenuItem) => {
       let teachingItem;
       if (item && item.id) {
         teachingItem = this.getTeachingItemById(item.id);
@@ -238,7 +238,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (teachingItem && !this.isWordItem(teachingItem)) {
           return true;
         } else {
-          return worditemIdsToShowSet.has(item.id);
+          return wordItemIdsToShowSet.has(item.id);
         }
       } else {
         return true;
@@ -249,7 +249,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       TEACHING_ITEM.Word,
       this.contents
     );
-    vocabSection && (vocabSection.items = this.currentWordContents);
+    vocabSection && (vocabSection.items = this.currentVocabContents);
     this.contents = [...this.contents];
   }
 
@@ -433,7 +433,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private generateTeachingItems() {
-    this.wordsSubscription = this.wordService
+    this.wordsSubscription$ = this.wordService
       .getWordItems()
       .subscribe((wordItems: WordItem[]) => {
         this.wordItems = wordItems;
@@ -452,10 +452,10 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private prepareContents() {
-    this.wordContents = this.generateContentsItems(this.wordItems, (e) => {
+    this.vocabContents = this.generateContentsItems(this.wordItems, (e) => {
       this.updateDisplayedContent(e);
     });
-    this.currentWordContents = [...this.wordContents];
+    this.currentVocabContents = [...this.vocabContents];
 
     this.summaryContents = this.generateContentsItems(
       this.summaryItems,
@@ -489,7 +489,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.currentWordContents,
+        items: this.currentVocabContents,
       },
       {
         label: 'Summary',
