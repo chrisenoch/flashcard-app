@@ -81,48 +81,14 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) {}
 
   ngOnInit() {
-    this.wordsSubscription = this.wordService
-      .getWordItems()
-      .subscribe((wordItems: WordItem[]) => {
-        this.wordItems = wordItems;
-      });
-
-    this.summaryItems = this.generateSummaryItems(
-      this.maxWordsOnSummarySlide,
-      this.wordItems
-    );
-
-    this.teachingItems = [
-      ...this.wordItems,
-      ...this.summaryItems,
-      ...this.exerciseItems,
-    ];
+    this.generateTeachingItems();
 
     if (this.teachingItems.length < 1) {
       this.isTeachingItemsError = true;
       return;
     }
 
-    this.wordContents = this.generateContentsItems(this.wordItems, (e) => {
-      this.updateDisplayedContent(e);
-    });
-    this.currentWordContents = [...this.wordContents];
-
-    this.summaryContents = this.generateContentsItems(
-      this.summaryItems,
-      (e) => {
-        this.updateDisplayedContent(e);
-      }
-    );
-    this.currentSummaryContents = [...this.summaryContents];
-
-    this.exerciseContents = this.generateContentsItems(
-      this.exerciseItems,
-      (e) => {
-        this.updateDisplayedContent(e);
-      }
-    );
-    this.currentExerciseContents = [...this.exerciseContents];
+    this.prepareContents();
 
     this.contents = this.generateContents();
 
@@ -464,6 +430,48 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     this.runUpdateActiveWordsOnSidebar = false;
+  }
+
+  private generateTeachingItems() {
+    this.wordsSubscription = this.wordService
+      .getWordItems()
+      .subscribe((wordItems: WordItem[]) => {
+        this.wordItems = wordItems;
+      });
+
+    this.summaryItems = this.generateSummaryItems(
+      this.maxWordsOnSummarySlide,
+      this.wordItems
+    );
+
+    this.teachingItems = [
+      ...this.wordItems,
+      ...this.summaryItems,
+      ...this.exerciseItems,
+    ];
+  }
+
+  private prepareContents() {
+    this.wordContents = this.generateContentsItems(this.wordItems, (e) => {
+      this.updateDisplayedContent(e);
+    });
+    this.currentWordContents = [...this.wordContents];
+
+    this.summaryContents = this.generateContentsItems(
+      this.summaryItems,
+      (e) => {
+        this.updateDisplayedContent(e);
+      }
+    );
+    this.currentSummaryContents = [...this.summaryContents];
+
+    this.exerciseContents = this.generateContentsItems(
+      this.exerciseItems,
+      (e) => {
+        this.updateDisplayedContent(e);
+      }
+    );
+    this.currentExerciseContents = [...this.exerciseContents];
   }
 
   private generateContents() {
