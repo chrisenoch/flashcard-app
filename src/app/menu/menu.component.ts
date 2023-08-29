@@ -282,10 +282,28 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.contents = [...this.contents];
   }
 
+  private getTeachingSection(sectionId: TEACHING_ITEM, contents: MenuItem[]) {
+    const section = contents.find((sec) => sec.id === sectionId);
+    return section;
+  }
+
   //the default behaviour is for the sections on the sidebar
   //to expand when a slide of that section is visited. However,
   //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
   private autoExpandSection() {
+    const vocabSection = this.getTeachingSection(
+      TEACHING_ITEM.Word,
+      this.contents
+    );
+    const summarySection = this.getTeachingSection(
+      TEACHING_ITEM.Summary,
+      this.contents
+    );
+    const exerciseSection = this.getTeachingSection(
+      TEACHING_ITEM.Exercise,
+      this.contents
+    );
+
     if (
       this.displayedContent?.type === TEACHING_ITEM.Word &&
       !this.autoExpandVocabulary &&
@@ -293,7 +311,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     ) {
       this.autoExpandVocabulary = true;
       const isVocabularyExpanded = this.decideIfVocabularyExpanded();
-      this.contents[0].expanded = isVocabularyExpanded;
+      vocabSection && (vocabSection.expanded = isVocabularyExpanded);
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Summary &&
@@ -302,7 +320,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     ) {
       this.autoExpandSummary = true;
       const isSummaryExpanded = this.decideIfSummaryExpanded();
-      this.contents[1].expanded = isSummaryExpanded;
+      summarySection && (summarySection.expanded = isSummaryExpanded);
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Exercise &&
@@ -311,10 +329,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     ) {
       this.autoExpandExercises = true;
       const isExercisesExpanded = this.decideIfExercisesExpanded();
-      this.contents[2].expanded = isExercisesExpanded;
+      exerciseSection && (exerciseSection.expanded = isExercisesExpanded);
     }
 
     this.contents = [...this.contents];
+    console.log('contents');
+    console.log(this.contents);
   }
 
   private updateWantsExpanded(e: MenuItemCommandEvent) {
@@ -703,7 +723,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private updateDisplayedContent(e: MenuItemCommandEvent) {
-    console.log('updateDisplayedContent');
     if (e?.item?.id) {
       const id = e.item.id;
       const newDisplayedContent = this.teachingItems.find(
