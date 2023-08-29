@@ -98,11 +98,10 @@
         }
       }
 
+      //Using !important below for word, summary, and exercise because I think the alternative of deeply nesting everything is less clear.
       .word {
         .p-menuitem-icon {
-          color: var(
-            --tw-purple-400
-          ) !important; //Important to override .p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-link .p-menuitem-icon in _mixins.scss
+          color: var(--tw-purple-400) !important;
         }
       }
 
@@ -145,9 +144,8 @@
     }
 
     .p-panelmenu-content {
-      background-color: yellow;
       background-color: transparent;
-      border: none !important;
+      border: none;
 
       .p-menuitem {
         .p-menuitem-link {
@@ -155,23 +153,18 @@
           padding: 0.6rem 0.6rem 0.6rem 1.25rem;
           &:hover {
             .p-menuitem-text {
-              color: black !important;
+              color: black;
             }
           }
 
           .p-menuitem-text {
-            //box-sizing: content-box;
             color: var(--tw-gray-600);
             font-weight: 600;
-            padding: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            line-height: 1.5rem;
           }
         }
       }
     }
   }
 }
-
-//.sidebar-and-slide-wrapper {
-//   display: flex;
-//   background-color: #fff5f0;
-// }
