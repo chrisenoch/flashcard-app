@@ -25,6 +25,12 @@ import { Inject } from '@angular/core';
 export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   displayedContent: TeachingItem | undefined;
   contents: MenuItem[] = [];
+  private vocabContents: MenuItem[] = [];
+  private summaryContents: MenuItem[] = [];
+  private exerciseContents: MenuItem[] = [];
+  private currentVocabContents: MenuItem[] = [];
+  private currentSummaryContents: MenuItem[] = [];
+  private currentExerciseContents: MenuItem[] = [];
   isTeachingItemsError = false;
   sidebarsOnRight = false;
   //change this - set to true for now for testing
@@ -35,7 +41,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
   accordionState = { showAllTabs: false };
 
-  private wordsSubscription!: Subscription;
+  private wordsSubscription$!: Subscription;
   private currentPos = 0;
   private autoExpandVocabulary = true;
   private autoExpandSummary = false;
@@ -48,7 +54,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   private maxWordsOnSummarySlide: number = 16;
   //showContentAfterWordVisited = true;
   private showContentAfterWordVisited = false;
-  private isGeneratedContentFinished = false;
+  private runUpdateActiveWordsOnSidebar = false;
 
   private wordItems: WordItem[] = [];
   private summaryItems: SummaryItem[] = [];
@@ -71,32 +77,18 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private wordService: WordService,
-    private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) document: Document
   ) {}
 
   ngOnInit() {
-    this.wordsSubscription = this.wordService
-      .getWordItems()
-      .subscribe((wordItems: WordItem[]) => {
-        this.wordItems = wordItems;
-      });
-
-    this.summaryItems = this.generateSummaryItems(
-      this.maxWordsOnSummarySlide,
-      this.wordItems
-    );
-
-    this.teachingItems = [
-      ...this.wordItems,
-      ...this.summaryItems,
-      ...this.exerciseItems,
-    ];
+    this.generateTeachingItems();
 
     if (this.teachingItems.length < 1) {
       this.isTeachingItemsError = true;
       return;
     }
+
+    this.prepareContents();
 
     this.contents = this.generateContents();
 
@@ -105,16 +97,18 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    this.updateActiveWordOnSidebar();
+    if (this.runUpdateActiveWordsOnSidebar) {
+      this.updateActiveWordOnSidebar();
+    }
   }
 
   ngOnDestroy(): void {
-    this.wordsSubscription.unsubscribe();
+    this.wordsSubscription$.unsubscribe();
   }
 
   updateContentAfterWordVisited() {
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.contents = this.generateContents();
+    this.updateWordItemsToBeShown();
   }
 
   updateShowTranslation() {
@@ -123,7 +117,19 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateToggleTranslation() {
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
-    this.contents = this.generateContents();
+    this.vocabContents.forEach((item) => {
+      let teachingItem;
+      if (item.id) {
+        teachingItem = this.getTeachingItemById(item.id);
+      }
+
+      if (teachingItem && this.isWordItem(teachingItem)) {
+        item.label = this.showPrimaryWordFirst
+          ? capitalize(teachingItem.english)
+          : capitalize(teachingItem.spanish);
+      }
+    });
+    this.contents = [...this.contents];
   }
 
   updateShowAllExerciseAnswers() {
@@ -207,28 +213,76 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.onBottomNavigationCommon();
   }
 
-  onShowWordsAftervisited() {
-    this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.contents = this.generateContents();
-  }
-
   //methods to be called on every bottom navigation method
   private onBottomNavigationCommon() {
     this.displayedContent && this.setItemAsVisited(this.displayedContent);
+    this.updateWordItemsToBeShown();
+    this.runUpdateActiveWordsOnSidebar = true;
     this.autoExpandSection();
+  }
+
+  private updateWordItemsToBeShown() {
+    const wordItemIdsToShow = this.wordItems
+      .filter((item, i) => {
+        const shouldShow = this.isWordItemToBeShown(item, i);
+        return shouldShow;
+      })
+      .map((item) => item.id);
+    const wordItemIdsToShowSet = new Set(wordItemIdsToShow);
+
+    this.currentVocabContents = this.vocabContents?.filter((item: MenuItem) => {
+      let teachingItem;
+      if (item && item.id) {
+        teachingItem = this.getTeachingItemById(item.id);
+        //if not a word item then always return
+        if (teachingItem && !this.isWordItem(teachingItem)) {
+          return true;
+        } else {
+          return wordItemIdsToShowSet.has(item.id);
+        }
+      } else {
+        return true;
+      }
+    });
+
+    const vocabSection = this.getTeachingSection(
+      TEACHING_ITEM.Word,
+      this.contents
+    );
+    vocabSection && (vocabSection.items = this.currentVocabContents);
+    this.contents = [...this.contents];
+  }
+
+  private getTeachingSection(sectionId: TEACHING_ITEM, contents: MenuItem[]) {
+    const section = contents.find((sec) => sec.id === sectionId);
+    return section;
   }
 
   //the default behaviour is for the sections on the sidebar
   //to expand when a slide of that section is visited. However,
   //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
   private autoExpandSection() {
+    const vocabSection = this.getTeachingSection(
+      TEACHING_ITEM.Word,
+      this.contents
+    );
+    const summarySection = this.getTeachingSection(
+      TEACHING_ITEM.Summary,
+      this.contents
+    );
+    const exerciseSection = this.getTeachingSection(
+      TEACHING_ITEM.Exercise,
+      this.contents
+    );
+
     if (
       this.displayedContent?.type === TEACHING_ITEM.Word &&
       !this.autoExpandVocabulary &&
       this.wantsVocabularyExpanded === null
     ) {
       this.autoExpandVocabulary = true;
-      this.contents = this.generateContents();
+      const isVocabularyExpanded = this.decideIfVocabularyExpanded();
+      vocabSection && (vocabSection.expanded = isVocabularyExpanded);
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Summary &&
@@ -236,7 +290,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.wantsSummaryExpanded === null
     ) {
       this.autoExpandSummary = true;
-      this.contents = this.generateContents();
+      const isSummaryExpanded = this.decideIfSummaryExpanded();
+      summarySection && (summarySection.expanded = isSummaryExpanded);
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Exercise &&
@@ -244,8 +299,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.wantsExercisesExpanded === null
     ) {
       this.autoExpandExercises = true;
-      this.contents = this.generateContents();
+      const isExercisesExpanded = this.decideIfExercisesExpanded();
+      exerciseSection && (exerciseSection.expanded = isExercisesExpanded);
     }
+
+    this.contents = [...this.contents];
   }
 
   private updateWantsExpanded(e: MenuItemCommandEvent) {
@@ -292,7 +350,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.wantsExercisesExpanded = true;
       }
     }
-    this.contents = this.generateContents();
+  }
+
+  private getTeachingItemById(id: string) {
+    const teachingItem = this.teachingItems.find((item) => item.id === id);
+    return teachingItem;
   }
 
   private decideIfVocabularyExpanded() {
@@ -329,47 +391,87 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private updateActiveWordOnSidebar() {
-    if (this.isGeneratedContentFinished || this.displayedContent?.isVisited) {
-      if (this.displayedContent) {
-        const newActiveWordContainer = document.querySelector(
-          '.' + this.displayedContent.id
-        );
+    if (this.displayedContent) {
+      const newActiveWordContainer = document.querySelector(
+        '.' + this.displayedContent.id
+      );
 
-        //remove class from all possible places
-        const wordClasses = Array.from(
-          document.querySelectorAll("[class*='word']")
-        );
-        const summaryClasses = Array.from(
-          document.querySelectorAll("[class*='summary']")
-        );
-        const exerciseClasses = Array.from(
-          document.querySelectorAll("[class*='exercise']")
-        );
-        const sideBarClasses = [
-          ...wordClasses,
-          ...summaryClasses,
-          ...exerciseClasses,
-        ];
+      //remove class from all possible places
+      const wordClasses = Array.from(
+        document.querySelectorAll("[class*='word']")
+      );
+      const summaryClasses = Array.from(
+        document.querySelectorAll("[class*='summary']")
+      );
+      const exerciseClasses = Array.from(
+        document.querySelectorAll("[class*='exercise']")
+      );
+      const sideBarClasses = [
+        ...wordClasses,
+        ...summaryClasses,
+        ...exerciseClasses,
+      ];
 
-        sideBarClasses.forEach((ele) => {
-          ele.classList.remove('active-word');
-          ele.classList.remove('active-summary');
-          ele.classList.remove('active-exercise');
-        });
+      sideBarClasses.forEach((ele) => {
+        ele.classList.remove('active-word');
+        ele.classList.remove('active-summary');
+        ele.classList.remove('active-exercise');
+      });
 
-        if (this.isWordItem(this.displayedContent)) {
-          newActiveWordContainer?.classList.add('active-word');
-        }
-        if (this.isSummaryItem(this.displayedContent)) {
-          newActiveWordContainer?.classList.add('active-summary');
-        }
-        if (this.isExerciseItem(this.displayedContent)) {
-          newActiveWordContainer?.classList.add('active-exercise');
-        }
+      if (this.isWordItem(this.displayedContent)) {
+        newActiveWordContainer?.classList.add('active-word');
       }
-
-      this.isGeneratedContentFinished = false;
+      if (this.isSummaryItem(this.displayedContent)) {
+        newActiveWordContainer?.classList.add('active-summary');
+      }
+      if (this.isExerciseItem(this.displayedContent)) {
+        newActiveWordContainer?.classList.add('active-exercise');
+      }
     }
+
+    this.runUpdateActiveWordsOnSidebar = false;
+  }
+
+  private generateTeachingItems() {
+    this.wordsSubscription$ = this.wordService
+      .getWordItems()
+      .subscribe((wordItems: WordItem[]) => {
+        this.wordItems = wordItems;
+      });
+
+    this.summaryItems = this.generateSummaryItems(
+      this.maxWordsOnSummarySlide,
+      this.wordItems
+    );
+
+    this.teachingItems = [
+      ...this.wordItems,
+      ...this.summaryItems,
+      ...this.exerciseItems,
+    ];
+  }
+
+  private prepareContents() {
+    this.vocabContents = this.generateContentsItems(this.wordItems, (e) => {
+      this.updateDisplayedContent(e);
+    });
+    this.currentVocabContents = [...this.vocabContents];
+
+    this.summaryContents = this.generateContentsItems(
+      this.summaryItems,
+      (e) => {
+        this.updateDisplayedContent(e);
+      }
+    );
+    this.currentSummaryContents = [...this.summaryContents];
+
+    this.exerciseContents = this.generateContentsItems(
+      this.exerciseItems,
+      (e) => {
+        this.updateDisplayedContent(e);
+      }
+    );
+    this.currentExerciseContents = [...this.exerciseContents];
   }
 
   private generateContents() {
@@ -387,9 +489,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.generateContentsItems(this.wordItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
+        items: this.currentVocabContents,
       },
       {
         label: 'Summary',
@@ -399,9 +499,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.generateContentsItems(this.summaryItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
+        items: this.currentSummaryContents,
       },
       {
         label: 'Exercises',
@@ -411,15 +509,26 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         command: (e: MenuItemCommandEvent) => {
           this.updateWantsExpanded(e);
         },
-        items: this.generateContentsItems(this.exerciseItems, (e) => {
-          this.updateDisplayedContent(e);
-        }),
+        items: this.currentExerciseContents,
       },
     ];
 
-    this.isGeneratedContentFinished = true;
+    this.runUpdateActiveWordsOnSidebar = true;
 
     return generatedContents;
+  }
+
+  private isWordItemToBeShown(item: TeachingItem, index: number): boolean {
+    if (
+      index !== 0 &&
+      this.showContentAfterWordVisited &&
+      this.isWordItem(item) &&
+      !item.isVisited
+    ) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   private generateContentsItems(
@@ -434,16 +543,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       .filter((item, i) => {
         //don't show vocab word until it has been visited if showContentAfterWordVisited is true
-        if (
-          i !== 0 &&
-          this.showContentAfterWordVisited &&
-          this.isWordItem(item) &&
-          !item.isVisited
-        ) {
-          return false;
-        } else {
-          return true;
-        }
+        return this.isWordItemToBeShown(item, i);
       })
 
       .map((item) => {
@@ -528,30 +628,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private setItemAsVisited(item: TeachingItem) {
-    if (item.isVisited) {
-      return;
-    }
-
-    if (this.isWordItem(item)) {
-      item.isVisited = true;
-      this.contents = this.generateContents();
-    } else {
-      item.isVisited = true;
-    }
-  }
-
-  private addWordToContents() {
-    if (this.displayedContent && this.isWordItem(this.displayedContent)) {
-      const wordItem = this.displayedContent;
-
-      if (wordItem.isVisited) {
-        //don't generate contents again if word is already shown on the contents bar
-        return;
-      } else {
-        this.setItemAsVisited(wordItem);
-        this.contents = this.generateContents();
-      }
-    }
+    item.isVisited = true;
   }
 
   //Navigates to start of next section if goToPrevious argument is not provided or set to false. Set goToPrevious to true to navigate to start of previous section.
@@ -671,6 +748,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         );
 
         this.setItemAsVisited(this.displayedContent);
+        this.runUpdateActiveWordsOnSidebar = true;
       }
     }
   }
