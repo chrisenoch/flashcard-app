@@ -1,66 +1,66 @@
 :host {
   ::ng-deep {
-    & .p-menubar {
+    .p-menubar {
       position: fixed;
       bottom: 0;
       left: calc(50% + 150px);
       transform: translateX(-50%);
     }
 
-    & .p-panelmenu {
+    .p-panelmenu {
       width: 13rem;
-      & .p-panelmenu-panel {
+      .p-panelmenu-panel {
         margin-bottom: 0.25rem;
 
         &:first-child {
-          & .p-panelmenu-header {
-            & .p-menuitem-icon {
-              color: var(--tw-purple-400) !important;
+          .p-panelmenu-header {
+            .p-menuitem-icon {
+              color: var(--tw-purple-400);
             }
 
-            & a {
+            a {
               &:focus {
                 box-shadow: none;
-                border: 2px solid var(--tw-purple-500) !important;
+                border: 2px solid var(--tw-purple-500);
               }
             }
           }
         }
 
         &:nth-child(2) {
-          & .p-panelmenu-header {
-            & .p-menuitem-icon {
-              color: var(--tw-orange-400) !important;
+          .p-panelmenu-header {
+            .p-menuitem-icon {
+              color: var(--tw-orange-400);
             }
-            & a {
+            a {
               &:focus {
                 box-shadow: none;
-                border: 2px solid var(--tw-orange-500) !important;
+                border: 2px solid var(--tw-orange-500);
               }
             }
           }
         }
 
         &:nth-child(3) {
-          & .p-panelmenu-header {
-            & .p-menuitem-icon {
-              color: var(--tw-pink-400) !important;
+          .p-panelmenu-header {
+            .p-menuitem-icon {
+              color: var(--tw-pink-400);
             }
-            & a {
+            a {
               &:focus {
                 box-shadow: none;
-                border: 2px solid var(--tw-pink-500) !important;
+                border: 2px solid var(--tw-pink-500);
               }
             }
           }
         }
 
-        & .p-panelmenu-header {
+        .p-panelmenu-header {
           a {
             background-color: var(--tw-gray-800);
             color: white;
-            border-radius: 0.75rem !important;
-            border: none !important;
+            border-radius: 0.75rem !important; //must be important to override .p-panelmenu .p-panelmenu-panel:last-child .p-panelmenu-header:not(.p-highlight) > a defined in _panelmenu.scss
+            border: none;
           }
 
           &:not(.p-disabled) {
@@ -72,20 +72,20 @@
             }
           }
 
-          & .p-icon-wrapper {
+          .p-icon-wrapper {
             order: 1;
             color: var(--tw-gray-50);
           }
 
-          & .p-menuitem-text {
+          .p-menuitem-text {
             flex-grow: 1;
           }
         }
       }
 
-      & .p-panelmenu-content {
-        & .p-menuitem {
-          & .p-menuitem-link {
+      .p-panelmenu-content {
+        .p-menuitem {
+          .p-menuitem-link {
             &:focus {
               box-shadow: none;
             }
@@ -98,42 +98,43 @@
         }
       }
 
-      & .word {
-        & .p-menuitem-icon {
+      //Using !important below for word, summary, and exercise because I think the alternative of deeply nesting everything is less clear.
+      .word {
+        .p-menuitem-icon {
           color: var(--tw-purple-400) !important;
         }
       }
 
-      & .summary {
-        & .p-menuitem-icon {
+      .summary {
+        .p-menuitem-icon {
           color: var(--tw-orange-400) !important;
         }
       }
 
-      & .exercise {
-        & .p-menuitem-icon {
+      .exercise {
+        .p-menuitem-icon {
           color: var(--tw-pink-400) !important;
         }
       }
 
-      & .active-word {
-        & .p-menuitem-text {
+      .active-word {
+        .p-menuitem-text {
           background-color: var(--tw-purple-200);
           padding: 0.5rem;
           border-radius: 0.75rem;
           color: black !important;
         }
       }
-      & .active-summary {
-        & .p-menuitem-text {
+      .active-summary {
+        .p-menuitem-text {
           background-color: var(--tw-orange-200);
           padding: 0.5rem;
           border-radius: 0.75rem;
           color: black !important;
         }
       }
-      & .active-exercise {
-        & .p-menuitem-text {
+      .active-exercise {
+        .p-menuitem-text {
           background-color: var(--tw-pink-200);
           padding: 0.5rem;
           border-radius: 0.75rem;
@@ -142,34 +143,28 @@
       }
     }
 
-    & .p-panelmenu-content {
-      background-color: yellow;
+    .p-panelmenu-content {
       background-color: transparent;
-      border: none !important;
+      border: none;
 
-      & .p-menuitem {
-        & .p-menuitem-link {
+      .p-menuitem {
+        .p-menuitem-link {
           //padding-left: 1.25rem;
           padding: 0.6rem 0.6rem 0.6rem 1.25rem;
           &:hover {
-            & .p-menuitem-text {
-              color: black !important;
+            .p-menuitem-text {
+              color: black;
             }
           }
 
-          & .p-menuitem-text {
-            //box-sizing: content-box;
+          .p-menuitem-text {
             color: var(--tw-gray-600);
             font-weight: 600;
-            padding: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            line-height: 1.5rem;
           }
         }
       }
     }
   }
 }
-
-//.sidebar-and-slide-wrapper {
-//   display: flex;
-//   background-color: #fff5f0;
-// }
