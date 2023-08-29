@@ -278,7 +278,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         return true;
       }
     });
-    this.contents[0].items = this.currentWordContents;
+
+    const vocabSection = this.getTeachingSection(
+      TEACHING_ITEM.Word,
+      this.contents
+    );
+    vocabSection && (vocabSection.items = this.currentWordContents);
     this.contents = [...this.contents];
   }
 
@@ -333,8 +338,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     this.contents = [...this.contents];
-    console.log('contents');
-    console.log(this.contents);
   }
 
   private updateWantsExpanded(e: MenuItemCommandEvent) {
