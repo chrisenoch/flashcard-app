@@ -1,4 +1,6 @@
-<div class="pt-16 h-full flex flex-col gap-8 items-center">
+<div
+  class="wrapper pt-16 h-full flex flex-col gap-8 items-center bg-gradient-to-b from-pink-100 to-white from-30%"
+>
   <p class="text-8xl" *ngIf="!showTranslation && showPrimaryWordFirst">
     {{ primaryWord }}
   </p>
@@ -34,7 +36,7 @@
   <!-- explanation -->
   <div
     *ngIf="showExplanation"
-    class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-pink-200 relative z-10"
+    class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-purple-500/40 relative z-10"
   >
     <p
       class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
