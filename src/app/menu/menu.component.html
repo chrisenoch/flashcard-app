@@ -80,37 +80,80 @@
       'justify-end': slideNavbarPos === 'RIGHT',
     }"
   >
-    <div class="flex gap-4 justify-center w-[30rem]">
-      <p-button
-        label="Start"
-        styleClass="p-button-rounded p-button-lg"
-        (onClick)="onStart()"
-      ></p-button>
-      <p-button
-        icon="bi bi-chevron-double-left"
-        styleClass="p-button-secondary p-button-lg"
-        (onClick)="onPreviousSection()"
-      ></p-button>
-      <p-button
-        icon="bi bi-chevron-left"
-        styleClass=" p-button-info p-button-lg"
-        (onClick)="onPrevious()"
-      ></p-button>
-      <p-button
-        icon="bi bi-chevron-right"
-        styleClass=" p-button-info p-button-lg"
-        (onClick)="onNext()"
-      ></p-button>
-      <p-button
-        icon="bi bi-chevron-double-right"
-        styleClass=" p-button-secondary p-button-lg"
-        (onClick)="onNextSection()"
-      ></p-button>
-      <p-button
-        label="End"
-        styleClass="p-button-rounded p-button-lg"
-        (onClick)="onEnd()"
-      ></p-button>
-    </div>
+    <ul class="flex gap-4 justify-center min-w-[30rem]">
+      <li class="h-full flex items-center">
+        <button
+          (click)="onStart()"
+          href="#"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-purple-300 hover:bg-purple-400"
+        >
+          <span
+            class="py-3 px-4 inline-block text-xl text-gray-950 font-medium rounded-full"
+            ><span>Start</span></span
+          >
+        </button>
+      </li>
+      <li class="h-full flex items-center">
+        <button
+          (click)="onPreviousSection()"
+          href="#"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-orange-300 hover:bg-orange-400"
+        >
+          <span
+            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
+            ><i class="bi bi-chevron-double-left text-2xl"></i
+          ></span>
+        </button>
+      </li>
+      <li class="h-full flex items-center">
+        <button
+          (click)="onPrevious()"
+          href="#"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
+        >
+          <span
+            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
+            ><i class="bi bi-chevron-left text-2xl"></i
+          ></span>
+        </button>
+      </li>
+      <li class="h-full flex items-center">
+        <button
+          (click)="onNext()"
+          href="#"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
+        >
+          <span
+            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
+            ><i class="bi bi-chevron-right text-2xl"></i
+          ></span>
+        </button>
+      </li>
+      <li class="h-full flex items-center">
+        <button
+          (click)="onNextSection()"
+          href="#"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-orange-300 hover:bg-orange-400"
+        >
+          <span
+            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
+            ><i class="bi bi-chevron-double-right text-2xl"></i
+          ></span>
+        </button>
+      </li>
+
+      <li class="h-full flex items-center">
+        <button
+          (click)="onEnd()"
+          href="#"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-purple-300 hover:bg-purple-400"
+        >
+          <span
+            class="py-3 px-4 inline-block text-xl text-gray-950 font-medium rounded-full"
+            ><span>End</span></span
+          >
+        </button>
+      </li>
+    </ul>
   </div>
 </div>
