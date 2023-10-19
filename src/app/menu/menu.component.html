@@ -5,7 +5,7 @@
 <div *ngIf="!isTeachingItemsError" class="flex">
   <!--sidebar-->
   <div
-    class="min-w-[18rem] pl-10 pt-8 overflow-y-auto h-[calc(100vh-80px)]"
+    class="w-fit pl-10 pt-8 flex-shrink-0 overflow-y-auto h-[calc(100vh-80px)]"
     [ngClass]="sidebarsOnRight ? 'order-2' : 'order-0'"
   >
     <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
@@ -20,7 +20,7 @@
     (updateShowAllExerciseAnswers)="updateShowAllExerciseAnswers()"
     (updateHideAllExerciseAnswers)="updateHideAllExerciseAnswers()"
     (updateSidebarsOnRight)="updateSidebarsOnRight()"
-    class="min-w-[4rem] flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)]"
+    class="w-fit px-8 flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)]"
     [ngClass]="sidebarsOnRight ? 'order-1' : 'order-0'"
     [sidebarsOnRight]="sidebarsOnRight"
     [slideNavbarPos]="slideNavbarPos"
@@ -35,7 +35,7 @@
   <ng-template #elseBlock>
     <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
       <app-word-slide
-        class="bg-white grow"
+        class="bg-white grow pr-8"
         ngClass="app-word-slide"
         [primaryWord]="displayedContent.english"
         [secondaryWord]="displayedContent.spanish"
