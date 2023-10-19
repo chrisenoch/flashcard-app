@@ -1,14 +1,25 @@
 <div
-  class="wrapper pt-16 h-full flex flex-col gap-8 items-center bg-gradient-to-b from-pink-100 to-white from-30%"
+  class="text-white xwrapper relative pt-16 h-full flex flex-col gap-8 items-center bg-pink-500"
 >
-  <p class="text-8xl" *ngIf="!showTranslation && showPrimaryWordFirst">
+  <img
+    class="absolute left-0 bottom-0"
+    src="../../../assets/svgs/waves-lots.svg"
+    alt=""
+  />
+  <p
+    class="font-Nunito text-8xl"
+    *ngIf="!showTranslation && showPrimaryWordFirst"
+  >
     {{ primaryWord }}
   </p>
-  <p class="text-8xl" *ngIf="!showTranslation && !showPrimaryWordFirst">
+  <p
+    class="font-Nunito text-8xl"
+    *ngIf="!showTranslation && !showPrimaryWordFirst"
+  >
     {{ secondaryWord }}
   </p>
   <ng-container *ngIf="showTranslation">
-    <p class="text-8xl text-gray-800" *ngIf="showPrimaryWordFirst">
+    <p class="font-Nunito text-8xl text-gray-800" *ngIf="showPrimaryWordFirst">
       {{ primaryWord }}
     </p>
     <i
@@ -16,12 +27,12 @@
       class="bi bi-diamond-fill text-orange-500"
     ></i>
 
-    <p class="text-8xl" *ngIf="!showPrimaryWordFirst">
+    <p class="font-Nunito text-8xl" *ngIf="!showPrimaryWordFirst">
       {{ secondaryWord }}
     </p>
   </ng-container>
   <ng-container *ngIf="showTranslation">
-    <p *ngIf="showPrimaryWordFirst" class="text-6xl text-gray-700">
+    <p *ngIf="showPrimaryWordFirst" class="font-Nunito text-6xl text-gray-700">
       {{ "(" + secondaryWord + ")" }}
     </p>
     <i
@@ -29,18 +40,16 @@
       class="bi bi-diamond-fill text-orange-500"
     ></i>
 
-    <p *ngIf="!showPrimaryWordFirst" class="text-6xl text-gray-700">
+    <p *ngIf="!showPrimaryWordFirst" class="font-Nunito text-6xl text-gray-700">
       {{ "(" + primaryWord + ")" }}
     </p>
   </ng-container>
   <!-- explanation -->
   <div
     *ngIf="showExplanation"
-    class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-purple-500/40 relative z-10"
+    class="explanation-container mt-4 w-[70%] h-[45%] relative z-10"
   >
-    <p
-      class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
-    >
+    <p class="pt-6 text-2xl text-center absolute inset-0">
       {{ explanation }}
     </p>
   </div>

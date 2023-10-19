@@ -4,7 +4,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'BubblegumSans': ['Bubblegum Sans', 'cursive']
+        'BubblegumSans': ['Bubblegum Sans', 'cursive'],
+        'Nunito': ['Nunito', 'sans-serif'],
+        'OpenSans': ['Open Sans', 'sans-serif'],
       }
     },
   },
