@@ -1,20 +1,23 @@
 <div
-  class="text-white relative pt-16 h-[calc(100%-96px)] flex flex-col gap-8 items-center rounded-xl bg-pink-500"
+  class="relative pt-16 h-[calc(100%-96px)] flex flex-col gap-8 items-center rounded-xl border-purple-500/10 border bg-[#FCFFF5]"
 >
   <p
-    class="font-Nunito text-8xl"
+    class="text-purple-500 font-Nunito text-8xl"
     *ngIf="!showTranslation && showPrimaryWordFirst"
   >
     {{ primaryWord }}
   </p>
   <p
-    class="font-Nunito text-8xl"
+    class="text-purple-500 font-Nunito text-8xl"
     *ngIf="!showTranslation && !showPrimaryWordFirst"
   >
     {{ secondaryWord }}
   </p>
   <ng-container *ngIf="showTranslation">
-    <p class="font-Nunito text-8xl text-gray-800" *ngIf="showPrimaryWordFirst">
+    <p
+      class="text-purple-500 font-Nunito text-8xl"
+      *ngIf="showPrimaryWordFirst"
+    >
       {{ primaryWord }}
     </p>
     <i
@@ -22,12 +25,15 @@
       class="bi bi-diamond-fill text-orange-500"
     ></i>
 
-    <p class="font-Nunito text-8xl" *ngIf="!showPrimaryWordFirst">
+    <p
+      class="text-purple-500 font-Nunito text-8xl"
+      *ngIf="!showPrimaryWordFirst"
+    >
       {{ secondaryWord }}
     </p>
   </ng-container>
   <ng-container *ngIf="showTranslation">
-    <p *ngIf="showPrimaryWordFirst" class="font-Nunito text-6xl text-gray-700">
+    <p *ngIf="showPrimaryWordFirst" class="text-pink-500 font-Nunito text-6xl">
       {{ "(" + secondaryWord + ")" }}
     </p>
     <i
@@ -35,7 +41,7 @@
       class="bi bi-diamond-fill text-orange-500"
     ></i>
 
-    <p *ngIf="!showPrimaryWordFirst" class="font-Nunito text-6xl text-gray-700">
+    <p *ngIf="!showPrimaryWordFirst" class="text-pink-500 font-Nunito text-6xl">
       {{ "(" + primaryWord + ")" }}
     </p>
   </ng-container>
@@ -48,4 +54,62 @@
       {{ explanation }}
     </p>
   </div>
+
+  <svg
+    class="absolute bottom-0 left-0"
+    width="108"
+    height="336"
+    viewBox="0 0 108 336"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-900"
+      d="M64 97.0765L0 0V336H108L30.5 167.113L64 97.0765Z"
+      fill="#94A3B8"
+    />
+  </svg>
+
+  <svg
+    class="absolute bottom-0 right-0"
+    width="108"
+    height="336"
+    viewBox="0 0 108 336"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-900"
+      d="M44 97.0765L108 0V336H0L77.5 167.113L44 97.0765Z"
+      fill="#9CA3AF"
+    />
+  </svg>
+  <svg
+    class="absolute top-0 left-0"
+    width="108"
+    height="336"
+    viewBox="0 0 108 336"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-900"
+      d="M64 238.923L0 336V0H108L30.5 168.887L64 238.923Z"
+      fill="#9CA3AF"
+    />
+  </svg>
+  <svg
+    class="absolute top-0 right-0"
+    width="108"
+    height="336"
+    viewBox="0 0 108 336"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-900"
+      d="M44 238.923L108 336V0H0L77.5 168.887L44 238.923Z"
+      fill="#9CA3AF"
+    />
+  </svg>
 </div>
