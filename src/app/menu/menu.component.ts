@@ -1,9 +1,13 @@
 import {
   AfterViewChecked,
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
+  ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { TeachingItem } from '../models/types/teachingItem';
@@ -16,13 +20,17 @@ import { WordService } from '../word.service';
 import { Subject, Subscription } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { Inject } from '@angular/core';
+import { SlideOptionBarComponent } from './slide-option-bar/slide-option-bar.component';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
-export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class MenuComponent
+  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked
+{
   displayedContent: TeachingItem | undefined;
   contents: MenuItem[] = [];
   private vocabContents: MenuItem[] = [];
@@ -75,9 +83,17 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     },
   ];
 
+  // @ViewChild(SlideOptionBarComponent)
+  // private slideOptionBarVC!: SlideOptionBarComponent;
+
+  private element: null | HTMLElement = null;
+
+  @ViewChild('testNgDeep3')
+  private slideOptionBarVC!: ElementRef;
+
   constructor(
     private wordService: WordService,
-    @Inject(DOCUMENT) document: Document
+    @Inject(DOCUMENT) private documentInjected: Document
   ) {}
 
   ngOnInit() {
@@ -94,6 +110,50 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     //init first word
     this.displayedContent = this.teachingItems[this.currentPos];
+
+    //test oocument object.
+    if (this.documentInjected) {
+      this.documentInjected.getElementById('testNgDeep') &&
+        console.log(
+          this.documentInjected.getElementById('testNgDeep')?.children[1]
+            .children[1].classList
+        );
+    }
+  }
+
+  ngAfterViewInit(): void {
+    console.log('in afterviewinit');
+    console.log('slide option bar VC below');
+    console.log(this.slideOptionBarVC);
+
+    if (this.documentInjected) {
+      console.log(
+        this.documentInjected.getElementById('testNgDeep')?.children[2]
+      );
+      console.log(this.documentInjected.getElementById('testNgDeep2'));
+      const testEle = this.documentInjected.getElementById('testNgDeep')
+        ?.children[1].children[1] as HTMLElement;
+      testEle.style.marginTop = '300px';
+    }
+
+    // console.log('in AfterViewInit menu component, slideoption bar below');
+    // console.log(this.slideOptionBarVC);
+    // this.element = this.slideOptionBarVC.nativeElement;
+
+    // console.log(this.slideOptionBarVC);
+    // this.element?.children[1].children[1].classList.remove('my-4');
+    // this.element?.children[1].children[1].classList.add('my-50');
+    // console.log(
+    //   this.element?.children[1].children[1].classList.contains('my-4')
+    // );
+    // console.log(
+    //   this.element?.children[1].children[1].classList.contains('my-4')
+    // );
+    // const ele =
+    //   this.element && (this.element.children[1].children[1] as HTMLElement);
+    // if (ele) {
+    //   ele.style.marginTop = '500px';
+    // }
   }
 
   ngAfterViewChecked() {

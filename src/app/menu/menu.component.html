@@ -2,7 +2,7 @@
   *ngIf="isTeachingItemsError"
   class="h-[calc(100vh-80px)] block"
 ></app-no-teaching-items-error>
-<div *ngIf="!isTeachingItemsError" class="flex">
+<div #testNgDeep id="testNgDeep" *ngIf="!isTeachingItemsError" class="flex">
   <!--sidebar-->
   <div
     class="w-fit pl-10 pt-8 flex-shrink-0 overflow-y-auto h-[calc(100vh-80px)]"
@@ -12,6 +12,8 @@
   </div>
   <!--second sidebar-->
   <app-slide-option-bar
+    #testNgDeep3
+    id="testNgDeep2"
     (updateShowContentAfterWordVisited)="updateContentAfterWordVisited()"
     (updateSlideNavbarPos)="updateSlideNavbarPos()"
     (updateShowTranslation)="updateShowTranslation()"
@@ -24,6 +26,7 @@
     [ngClass]="sidebarsOnRight ? 'order-1' : 'order-0'"
     [sidebarsOnRight]="sidebarsOnRight"
     [slideNavbarPos]="slideNavbarPos"
+    [ngClass]="sidebarsOnRight ? 'order-2' : 'order-0'"
   ></app-slide-option-bar>
 
   <ng-container *ngIf="!displayedContent; else elseBlock">
