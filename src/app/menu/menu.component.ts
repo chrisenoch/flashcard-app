@@ -108,7 +108,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateContentAfterWordVisited() {
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.updateWordItemsToBeShown();
+    this.updateWordItemsToBeShownOnSidebar();
   }
 
   updateShowTranslation() {
@@ -129,10 +129,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
           : capitalize(teachingItem.spanish);
       }
     });
-    this.contents = [...this.contents];
+    //this.contents = [...this.contents];
   }
 
   updateShowAllExerciseAnswers() {
+    // Changes to the accordionState are only recognised by the Accordion
+    // if the object reference changes. This is an implemntation detail of the Accordion.
     const accordionStateCopy = { ...this.accordionState };
     accordionStateCopy.showAllTabs = true;
     this.accordionState = accordionStateCopy;
@@ -216,12 +218,16 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //methods to be called on every bottom navigation method
   private onBottomNavigationCommon() {
     this.displayedContent && this.setItemAsVisited(this.displayedContent);
-    this.updateWordItemsToBeShown();
+    this.updateWordItemsToBeShownOnSidebar();
     this.runUpdateActiveWordsOnSidebar = true;
     this.autoExpandSection();
   }
 
-  private updateWordItemsToBeShown() {
+  //If the sidebar Vocabulary panel is expanded, all the word items show if showContentAfterWordVisited
+  //is true. If the user sets this to false, the words only appear on the sidebar, when they have been
+  //visited even if the Vocabulary panel is expanded. This function ensures the correct words are shown
+  //on the sidebar.
+  private updateWordItemsToBeShownOnSidebar() {
     const wordItemIdsToShow = this.wordItems
       .filter((item, i) => {
         const shouldShow = this.isWordItemToBeShown(item, i);
@@ -234,7 +240,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       let teachingItem;
       if (item && item.id) {
         teachingItem = this.getTeachingItemById(item.id);
-        //if not a word item then always return
+        //If not a word item then always return true because we always want to show it
+        //if the sidebar header panel is open
         if (teachingItem && !this.isWordItem(teachingItem)) {
           return true;
         } else {
@@ -249,6 +256,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       TEACHING_ITEM.Word,
       this.contents
     );
+    console.log('vocabSection in updateWordItemsToBeShownOnSidebar');
+    console.log(vocabSection);
     vocabSection && (vocabSection.items = this.currentVocabContents);
     this.contents = [...this.contents];
   }
