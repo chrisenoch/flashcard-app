@@ -1,45 +1,110 @@
-<div class="pt-16 h-full flex flex-col gap-8 items-center">
-  <p class="text-8xl" *ngIf="!showTranslation && showPrimaryWordFirst">
+<div
+  class="relative pt-16 h-[calc(100%-96px)] flex flex-col gap-8 items-center rounded-xl border-purple-500/10 border bg-[#FCFFF5]"
+>
+  <p
+    class="text-purple-500 text-8xl"
+    *ngIf="!showTranslation && showPrimaryWordFirst"
+  >
     {{ primaryWord }}
   </p>
-  <p class="text-8xl" *ngIf="!showTranslation && !showPrimaryWordFirst">
+  <p
+    class="text-purple-500 text-8xl"
+    *ngIf="!showTranslation && !showPrimaryWordFirst"
+  >
     {{ secondaryWord }}
   </p>
   <ng-container *ngIf="showTranslation">
-    <p class="text-8xl text-gray-800" *ngIf="showPrimaryWordFirst">
+    <p class="text-purple-500 text-8xl" *ngIf="showPrimaryWordFirst">
       {{ primaryWord }}
     </p>
     <i
       *ngIf="showPrimaryWordFirst"
-      class="bi bi-diamond-fill text-orange-500"
+      class="bi bi-diamond-fill text-gray-700"
     ></i>
 
-    <p class="text-8xl" *ngIf="!showPrimaryWordFirst">
+    <p class="text-purple-500 text-8xl" *ngIf="!showPrimaryWordFirst">
       {{ secondaryWord }}
     </p>
   </ng-container>
   <ng-container *ngIf="showTranslation">
-    <p *ngIf="showPrimaryWordFirst" class="text-6xl text-gray-700">
+    <p *ngIf="showPrimaryWordFirst" class="text-pink-500 text-6xl">
       {{ "(" + secondaryWord + ")" }}
     </p>
     <i
       *ngIf="!showPrimaryWordFirst"
-      class="bi bi-diamond-fill text-orange-500"
+      class="bi bi-diamond-fill text-black font-medium"
     ></i>
 
-    <p *ngIf="!showPrimaryWordFirst" class="text-6xl text-gray-700">
+    <p *ngIf="!showPrimaryWordFirst" class="text-pink-500 text-6xl">
       {{ "(" + primaryWord + ")" }}
     </p>
   </ng-container>
   <!-- explanation -->
   <div
     *ngIf="showExplanation"
-    class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-pink-200 relative z-10"
+    class="explanation-container mt-4 w-[70%] h-[45%] relative z-10"
   >
-    <p
-      class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
-    >
-      {{ explanation }}
-    </p>
+    <p class="pt-6 text-2xl text-center absolute inset-0">{{ explanation }}</p>
   </div>
+
+  <svg
+    class="absolute top-0 left-0"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-800"
+      d="M1 1L1 201C20.1148 53.1008 128.281 6.04202 201 1L1 1Z"
+      fill="#FCE7F3"
+      stroke="white"
+    />
+  </svg>
+  <svg
+    class="absolute top-0 right-0"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-800"
+      d="M201 1L201 201C181.885 53.1008 73.7193 6.04202 0.999985 1L201 1Z"
+      fill="#FCE7F3"
+      stroke="white"
+    />
+  </svg>
+  <svg
+    class="absolute bottom-0 left-0"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-800"
+      d="M1 201L1 1C20.1148 148.899 128.281 195.958 201 201L1 201Z"
+      fill="#FCE7F3"
+      stroke="white"
+    />
+  </svg>
+  <svg
+    class="absolute bottom-0 right-0"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-800"
+      d="M201 201L201 1C181.885 148.899 73.7193 195.958 0.999985 201L201 201Z"
+      fill="#FCE7F3"
+      stroke="white"
+    />
+  </svg>
 </div>

@@ -5,7 +5,7 @@
 <div *ngIf="!isTeachingItemsError" class="flex">
   <!--sidebar-->
   <div
-    class="min-w-[18rem] pl-10 pt-8 overflow-y-auto h-[calc(100vh-80px)] bg-gray-50"
+    class="w-fit pl-10 pt-8 flex-shrink-0 overflow-y-auto h-[calc(100vh-80px)]"
     [ngClass]="sidebarsOnRight ? 'order-2' : 'order-0'"
   >
     <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
@@ -20,7 +20,7 @@
     (updateShowAllExerciseAnswers)="updateShowAllExerciseAnswers()"
     (updateHideAllExerciseAnswers)="updateHideAllExerciseAnswers()"
     (updateSidebarsOnRight)="updateSidebarsOnRight()"
-    class="min-w-[4rem] flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)] bg-gray-100"
+    class="w-fit px-8 flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)]"
     [ngClass]="sidebarsOnRight ? 'order-1' : 'order-0'"
     [sidebarsOnRight]="sidebarsOnRight"
     [slideNavbarPos]="slideNavbarPos"
@@ -35,7 +35,7 @@
   <ng-template #elseBlock>
     <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
       <app-word-slide
-        class="bg-white grow"
+        class="bg-white grow pr-8"
         ngClass="app-word-slide"
         [primaryWord]="displayedContent.english"
         [secondaryWord]="displayedContent.spanish"
@@ -85,7 +85,7 @@
         <button
           (click)="onStart()"
           href="#"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-purple-300 hover:bg-purple-400"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
             class="py-3 px-4 inline-block text-xl text-gray-950 font-medium rounded-full"
@@ -97,7 +97,7 @@
         <button
           (click)="onPreviousSection()"
           href="#"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-orange-300 hover:bg-orange-400"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
             class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
@@ -133,7 +133,7 @@
         <button
           (click)="onNextSection()"
           href="#"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-orange-300 hover:bg-orange-400"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
             class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
@@ -146,7 +146,7 @@
         <button
           (click)="onEnd()"
           href="#"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-purple-300 hover:bg-purple-400"
+          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
             class="py-3 px-4 inline-block text-xl text-gray-950 font-medium rounded-full"
