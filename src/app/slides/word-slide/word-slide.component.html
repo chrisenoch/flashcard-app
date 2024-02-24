@@ -2,22 +2,19 @@
   class="relative pt-16 h-[calc(100%-96px)] flex flex-col gap-8 items-center rounded-xl border-purple-500/10 border bg-[#FCFFF5]"
 >
   <p
-    class="text-purple-500 font-Nunito text-8xl"
+    class="text-purple-500 text-8xl"
     *ngIf="!showTranslation && showPrimaryWordFirst"
   >
     {{ primaryWord }}
   </p>
   <p
-    class="text-purple-500 font-Nunito text-8xl"
+    class="text-purple-500 text-8xl"
     *ngIf="!showTranslation && !showPrimaryWordFirst"
   >
     {{ secondaryWord }}
   </p>
   <ng-container *ngIf="showTranslation">
-    <p
-      class="text-purple-500 font-Nunito text-8xl"
-      *ngIf="showPrimaryWordFirst"
-    >
+    <p class="text-purple-500 text-8xl" *ngIf="showPrimaryWordFirst">
       {{ primaryWord }}
     </p>
     <i
@@ -25,23 +22,20 @@
       class="bi bi-diamond-fill text-gray-700"
     ></i>
 
-    <p
-      class="text-purple-500 font-Nunito text-8xl"
-      *ngIf="!showPrimaryWordFirst"
-    >
+    <p class="text-purple-500 text-8xl" *ngIf="!showPrimaryWordFirst">
       {{ secondaryWord }}
     </p>
   </ng-container>
   <ng-container *ngIf="showTranslation">
-    <p *ngIf="showPrimaryWordFirst" class="text-pink-500 font-Nunito text-6xl">
+    <p *ngIf="showPrimaryWordFirst" class="text-pink-500 text-6xl">
       {{ "(" + secondaryWord + ")" }}
     </p>
     <i
       *ngIf="!showPrimaryWordFirst"
-      class="bi bi-diamond-fill text-green-500 font-medium"
+      class="bi bi-diamond-fill text-black font-medium"
     ></i>
 
-    <p *ngIf="!showPrimaryWordFirst" class="text-pink-500 font-Nunito text-6xl">
+    <p *ngIf="!showPrimaryWordFirst" class="text-pink-500 text-6xl">
       {{ "(" + primaryWord + ")" }}
     </p>
   </ng-container>
@@ -50,66 +44,67 @@
     *ngIf="showExplanation"
     class="explanation-container mt-4 w-[70%] h-[45%] relative z-10"
   >
-    <p class="pt-6 text-2xl text-center absolute inset-0">
-      {{ explanation }}
-    </p>
+    <p class="pt-6 text-2xl text-center absolute inset-0">{{ explanation }}</p>
   </div>
 
   <svg
-    class="absolute bottom-0 left-0"
-    width="108"
-    height="336"
-    viewBox="0 0 108 336"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      class="fill-gray-900"
-      d="M64 97.0765L0 0V336H108L30.5 167.113L64 97.0765Z"
-      fill="#94A3B8"
-    />
-  </svg>
-
-  <svg
-    class="absolute bottom-0 right-0"
-    width="108"
-    height="336"
-    viewBox="0 0 108 336"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      class="fill-gray-900"
-      d="M44 97.0765L108 0V336H0L77.5 167.113L44 97.0765Z"
-      fill="#9CA3AF"
-    />
-  </svg>
-  <svg
     class="absolute top-0 left-0"
-    width="108"
-    height="336"
-    viewBox="0 0 108 336"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      class="fill-gray-900"
-      d="M64 238.923L0 336V0H108L30.5 168.887L64 238.923Z"
-      fill="#9CA3AF"
+      class="fill-gray-800"
+      d="M1 1L1 201C20.1148 53.1008 128.281 6.04202 201 1L1 1Z"
+      fill="#FCE7F3"
+      stroke="white"
     />
   </svg>
   <svg
     class="absolute top-0 right-0"
-    width="108"
-    height="336"
-    viewBox="0 0 108 336"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      class="fill-gray-900"
-      d="M44 238.923L108 336V0H0L77.5 168.887L44 238.923Z"
-      fill="#9CA3AF"
+      class="fill-gray-800"
+      d="M201 1L201 201C181.885 53.1008 73.7193 6.04202 0.999985 1L201 1Z"
+      fill="#FCE7F3"
+      stroke="white"
+    />
+  </svg>
+  <svg
+    class="absolute bottom-0 left-0"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-800"
+      d="M1 201L1 1C20.1148 148.899 128.281 195.958 201 201L1 201Z"
+      fill="#FCE7F3"
+      stroke="white"
+    />
+  </svg>
+  <svg
+    class="absolute bottom-0 right-0"
+    width="101"
+    height="101"
+    viewBox="0 0 202 202"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="fill-gray-800"
+      d="M201 201L201 1C181.885 148.899 73.7193 195.958 0.999985 201L201 201Z"
+      fill="#FCE7F3"
+      stroke="white"
     />
   </svg>
 </div>
