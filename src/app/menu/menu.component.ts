@@ -92,7 +92,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private wordService: WordService,
-    @Inject(DOCUMENT) document: Document
+    @Inject(DOCUMENT) private injectedDocument: Document
   ) {}
 
   ngOnInit() {
@@ -387,19 +387,19 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private updateActiveWordOnSidebar() {
     if (this.displayedContent) {
-      const newActiveWordContainer = document.querySelector(
+      const newActiveWordContainer = this.injectedDocument.querySelector(
         '.' + this.displayedContent.id
       );
 
       //remove class from all possible places
       const wordElements = Array.from(
-        document.querySelectorAll("[class*='word']")
+        this.injectedDocument.querySelectorAll("[class*='word']")
       );
       const summaryElements = Array.from(
-        document.querySelectorAll("[class*='summary']")
+        this.injectedDocument.querySelectorAll("[class*='summary']")
       );
       const exerciseElements = Array.from(
-        document.querySelectorAll("[class*='exercise']")
+        this.injectedDocument.querySelectorAll("[class*='exercise']")
       );
       const sideBarElements = [
         ...wordElements,
