@@ -28,7 +28,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   private vocabContents: MenuItem[] = [];
   private summaryContents: MenuItem[] = [];
   private exerciseContents: MenuItem[] = [];
-  private currentVocabContents: MenuItem[] = [];
+  private vocabContentsToShow: MenuItem[] = [];
   private currentSummaryContents: MenuItem[] = [];
   private currentExerciseContents: MenuItem[] = [];
   isTeachingItemsError = false;
@@ -56,6 +56,10 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   private showContentAfterWordVisited = false;
   private runUpdateActiveWordsOnSidebar = false;
 
+  private vocabSection: MenuItem | null = null;
+  private summarySection: MenuItem | null = null;
+  private exerciseSection: MenuItem | null = null;
+
   private wordItems: WordItem[] = [];
   private summaryItems: SummaryItem[] = [];
   private teachingItems: TeachingItem[] = [];
@@ -65,6 +69,17 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       type: TEACHING_ITEM.Exercise,
       id: 'exercise-1',
+      //questions:[{"Question 1", "Answer 1"}
+      questions: [
+        { question: 'Question 1', answer: 'Answer 1' },
+        { question: 'Question 2', answer: 'Answer 2' },
+        { question: 'Question 3', answer: 'Answer 3' },
+      ],
+      isVisited: false,
+    },
+    {
+      type: TEACHING_ITEM.Exercise,
+      id: 'exercise-2',
       //questions:[{"Question 1", "Answer 1"}
       questions: [
         { question: 'Question 1', answer: 'Answer 1' },
@@ -236,10 +251,10 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       .map((item) => item.id);
     const wordItemIdsToShowSet = new Set(wordItemIdsToShow);
 
-    this.currentVocabContents = this.vocabContents?.filter((item: MenuItem) => {
-      let teachingItem;
+    this.vocabContentsToShow = this.vocabContents?.filter((item: MenuItem) => {
+      //let teachingItem;
       if (item && item.id) {
-        teachingItem = this.getTeachingItemById(item.id);
+        const teachingItem = this.getTeachingItemById(item.id);
         //If not a word item then always return true because we always want to show it
         //if the sidebar header panel is open
         if (teachingItem && !this.isWordItem(teachingItem)) {
@@ -252,38 +267,17 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     });
 
-    const vocabSection = this.getTeachingSection(
-      TEACHING_ITEM.Word,
-      this.contents
-    );
-    console.log('vocabSection in updateWordItemsToBeShownOnSidebar');
-    console.log(vocabSection);
-    vocabSection && (vocabSection.items = this.currentVocabContents);
+    this.vocabSection && (this.vocabSection.items = this.vocabContentsToShow);
+
+    //Need to change the object reference or Angular does not re-render.
+    //Are there any better ways to trigger the re-render?
     this.contents = [...this.contents];
   }
 
-  private getTeachingSection(sectionId: TEACHING_ITEM, contents: MenuItem[]) {
-    const section = contents.find((sec) => sec.id === sectionId);
-    return section;
-  }
-
-  //the default behaviour is for the sections on the sidebar
+  //The default behaviour is for the sections on the sidebar
   //to expand when a slide of that section is visited. However,
   //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
   private autoExpandSection() {
-    const vocabSection = this.getTeachingSection(
-      TEACHING_ITEM.Word,
-      this.contents
-    );
-    const summarySection = this.getTeachingSection(
-      TEACHING_ITEM.Summary,
-      this.contents
-    );
-    const exerciseSection = this.getTeachingSection(
-      TEACHING_ITEM.Exercise,
-      this.contents
-    );
-
     if (
       this.displayedContent?.type === TEACHING_ITEM.Word &&
       !this.autoExpandVocabulary &&
@@ -291,7 +285,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     ) {
       this.autoExpandVocabulary = true;
       const isVocabularyExpanded = this.decideIfVocabularyExpanded();
-      vocabSection && (vocabSection.expanded = isVocabularyExpanded);
+      this.vocabSection && (this.vocabSection.expanded = isVocabularyExpanded);
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Summary &&
@@ -300,7 +294,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     ) {
       this.autoExpandSummary = true;
       const isSummaryExpanded = this.decideIfSummaryExpanded();
-      summarySection && (summarySection.expanded = isSummaryExpanded);
+      this.summarySection && (this.summarySection.expanded = isSummaryExpanded);
     }
     if (
       this.displayedContent?.type === TEACHING_ITEM.Exercise &&
@@ -309,9 +303,12 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     ) {
       this.autoExpandExercises = true;
       const isExercisesExpanded = this.decideIfExercisesExpanded();
-      exerciseSection && (exerciseSection.expanded = isExercisesExpanded);
+      this.exerciseSection &&
+        (this.exerciseSection.expanded = isExercisesExpanded);
     }
 
+    //Not needed here but is needed in updateWordItemsToBeShownOnSidebar.
+    //To do: Find out the reason. Keep it for now.
     this.contents = [...this.contents];
   }
 
@@ -464,7 +461,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.vocabContents = this.generateContentsItems(this.wordItems, (e) => {
       this.updateDisplayedContent(e);
     });
-    this.currentVocabContents = [...this.vocabContents];
+    this.vocabContentsToShow = [...this.vocabContents];
 
     this.summaryContents = this.generateContentsItems(
       this.summaryItems,
@@ -488,38 +485,44 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     const isSummaryExpanded = this.decideIfSummaryExpanded();
     const isExercisesExpanded = this.decideIfExercisesExpanded();
 
+    this.vocabSection = {
+      label: 'Vocabulary',
+      id: TEACHING_ITEM.Word,
+      //icon: 'pi pi-bolt',
+      icon: 'bi bi-record-fill',
+      expanded: isVocabularyExpanded,
+      command: (e: MenuItemCommandEvent) => {
+        this.updateWantsExpanded(e);
+      },
+      items: this.vocabContentsToShow,
+    };
+
+    this.summarySection = {
+      label: 'Summary',
+      id: TEACHING_ITEM.Summary,
+      icon: 'bi bi-record-fill',
+      expanded: isSummaryExpanded,
+      command: (e: MenuItemCommandEvent) => {
+        this.updateWantsExpanded(e);
+      },
+      items: this.currentSummaryContents,
+    };
+
+    this.exerciseSection = {
+      label: 'Exercises',
+      id: TEACHING_ITEM.Exercise,
+      icon: 'bi bi-record-fill',
+      expanded: isExercisesExpanded,
+      command: (e: MenuItemCommandEvent) => {
+        this.updateWantsExpanded(e);
+      },
+      items: this.currentExerciseContents,
+    };
+
     const generatedContents = [
-      {
-        label: 'Vocabulary',
-        id: TEACHING_ITEM.Word,
-        //icon: 'pi pi-bolt',
-        icon: 'bi bi-record-fill',
-        expanded: isVocabularyExpanded,
-        command: (e: MenuItemCommandEvent) => {
-          this.updateWantsExpanded(e);
-        },
-        items: this.currentVocabContents,
-      },
-      {
-        label: 'Summary',
-        id: TEACHING_ITEM.Summary,
-        icon: 'bi bi-record-fill',
-        expanded: isSummaryExpanded,
-        command: (e: MenuItemCommandEvent) => {
-          this.updateWantsExpanded(e);
-        },
-        items: this.currentSummaryContents,
-      },
-      {
-        label: 'Exercises',
-        id: TEACHING_ITEM.Exercise,
-        icon: 'bi bi-record-fill',
-        expanded: isExercisesExpanded,
-        command: (e: MenuItemCommandEvent) => {
-          this.updateWantsExpanded(e);
-        },
-        items: this.currentExerciseContents,
-      },
+      this.vocabSection,
+      this.summarySection,
+      this.exerciseSection,
     ];
 
     this.runUpdateActiveWordsOnSidebar = true;
@@ -588,10 +591,10 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private generateSummaryItems(
-    wordsPerPage: number,
+    maxWordsPerPage: number,
     wordItems: WordItem[]
   ): SummaryItem[] {
-    if (wordsPerPage < 1) {
+    if (maxWordsPerPage < 1) {
       return [];
     }
 
@@ -617,7 +620,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         return;
       }
 
-      if ((i + 1) % wordsPerPage === 0) {
+      if ((i + 1) % maxWordsPerPage === 0) {
         //when the wordsPerPage limit is reached, we add the SummaryItem to summaryItems
         //add to main summaryItems array
         summaryItems.push(summaryItem);
