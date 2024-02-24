@@ -352,11 +352,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return teachingItem;
   }
 
-  private getWordItemById(id: string) {
-    const wordItem = this.wordItems.find((wordItem) => wordItem.id === id);
-    return wordItem;
-  }
-
   private decideIfVocabularyExpanded() {
     if (this.wantsVocabularyExpanded === null) {
       return this.autoExpandVocabulary;
@@ -397,22 +392,22 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       );
 
       //remove class from all possible places
-      const wordClasses = Array.from(
+      const wordElements = Array.from(
         document.querySelectorAll("[class*='word']")
       );
-      const summaryClasses = Array.from(
+      const summaryElements = Array.from(
         document.querySelectorAll("[class*='summary']")
       );
-      const exerciseClasses = Array.from(
+      const exerciseElements = Array.from(
         document.querySelectorAll("[class*='exercise']")
       );
-      const sideBarClasses = [
-        ...wordClasses,
-        ...summaryClasses,
-        ...exerciseClasses,
+      const sideBarElements = [
+        ...wordElements,
+        ...summaryElements,
+        ...exerciseElements,
       ];
 
-      sideBarClasses.forEach((ele) => {
+      sideBarElements.forEach((ele) => {
         ele.classList.remove('active-word');
         ele.classList.remove('active-summary');
         ele.classList.remove('active-exercise');
