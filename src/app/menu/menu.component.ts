@@ -29,8 +29,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   private summaryContents: MenuItem[] = [];
   private exerciseContents: MenuItem[] = [];
   private vocabContentsToShow: MenuItem[] = [];
-  private currentSummaryContents: MenuItem[] = [];
-  private currentExerciseContents: MenuItem[] = [];
   isTeachingItemsError = false;
   sidebarsOnRight = false;
   //change this - set to true for now for testing
@@ -458,7 +456,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.updateDisplayedContent(e);
       }
     );
-    this.currentSummaryContents = [...this.summaryContents];
 
     this.exerciseContents = this.generateContentsItems(
       this.exerciseItems,
@@ -466,7 +463,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.updateDisplayedContent(e);
       }
     );
-    this.currentExerciseContents = [...this.exerciseContents];
   }
 
   private generateContents() {
@@ -494,7 +490,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       command: (e: MenuItemCommandEvent) => {
         this.updateWantsExpanded(e);
       },
-      items: this.currentSummaryContents,
+      items: this.summaryContents,
     };
 
     this.exerciseSection = {
@@ -505,7 +501,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       command: (e: MenuItemCommandEvent) => {
         this.updateWantsExpanded(e);
       },
-      items: this.currentExerciseContents,
+      items: this.exerciseContents,
     };
 
     const generatedContents = [
