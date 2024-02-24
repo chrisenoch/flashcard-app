@@ -36,7 +36,7 @@ export class AccordionComponent
   }
 
   ngAfterContentInit(): void {
-    this.updateShowAllTabsOnPageLoad();
+    this.updateShowAllTabs();
     this.initAccordionTabArr();
   }
 
@@ -55,15 +55,6 @@ export class AccordionComponent
     }
   }
 
-  private updateShowAllTabsOnPageLoad() {
-    for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
-      if (ele && ele.isActive === null) {
-        ele.isActive = this.accordionState.showAllTabs;
-      }
-    }
-  }
-
   private updateShowAllTabs() {
     for (let i = 0; i < this.contentChildren.length; i++) {
       let ele = this.contentChildren.get(i);
@@ -75,17 +66,12 @@ export class AccordionComponent
 
   private ensureOnlyOneTabIsActive() {
     for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
-
+      const ele = this.contentChildren.get(i);
       if (ele) {
         //no previous activeTab so just update it
         if (ele.isActive && this.activeTabId === null) {
           this.activeTabId = ele.tabId;
-        } else if (
-          ele.isActive &&
-          this.activeTabId !== null &&
-          ele.tabId !== this.activeTabId
-        ) {
+        } else if (ele.isActive && ele.tabId !== this.activeTabId) {
           ele.isActive = false;
           this.activeTabId = ele.tabId;
           break;
@@ -96,7 +82,7 @@ export class AccordionComponent
 
   private initAccordionTabArr() {
     for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
+      const ele = this.contentChildren.get(i);
       if (ele) {
         this.accordionTabs.push(ele);
       }
