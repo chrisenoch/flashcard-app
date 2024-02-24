@@ -1,0 +1,18 @@
+<div class="pt-16 h-full flex flex-col gap-8 items-center">
+  <h1 class="text-6xl mb-8 border-b-gray-300 border-b-2">Vocab Summary</h1>
+
+  <ol class="text-3xl content-around flex flex-col flex-wrap w-[80%] h-[36rem]">
+    <div
+      *ngFor="let item of wordItems; index as i"
+      class="flex items-center gap-4 pb-12"
+    >
+      <div
+        class="h-8 w-8 text-base flex justify-center items-center rounded-[50%] font-bold bg-gray-300"
+      >
+        {{ i + 1 }}
+      </div>
+      <li *ngIf="showPrimaryWordFirst">{{ item.english }}</li>
+      <li *ngIf="!showPrimaryWordFirst">{{ item.spanish }}</li>
+    </div>
+  </ol>
+</div>
