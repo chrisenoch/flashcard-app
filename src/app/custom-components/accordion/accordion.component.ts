@@ -24,12 +24,12 @@ export class AccordionComponent
 
   accordionTabs: AccordionTabComponent[] = [];
 
-  //use this to get the isActive status of the accordion tabs
+  //Use this to get the isActive status of the accordion tabs
   @ContentChildren(AccordionTabComponent)
   private contentChildren!: QueryList<AccordionTabComponent>;
 
   private previousAccordionState = {};
-  private activeTabId: string | null = null; //keeps track of the activeTabId
+  private activeTabId: string | 'NO_ACTIVE_TAB' = 'NO_ACTIVE_TAB';
 
   ngOnInit() {
     this.previousAccordionState = this.accordionState;
@@ -68,8 +68,8 @@ export class AccordionComponent
     for (let i = 0; i < this.contentChildren.length; i++) {
       const ele = this.contentChildren.get(i);
       if (ele) {
-        //no previous activeTab so just update it
-        if (ele.isActive && this.activeTabId === null) {
+        if (ele.isActive && this.activeTabId === 'NO_ACTIVE_TAB') {
+          //no previous activeTab so just update it
           this.activeTabId = ele.tabId;
         } else if (ele.isActive && ele.tabId !== this.activeTabId) {
           ele.isActive = false;
