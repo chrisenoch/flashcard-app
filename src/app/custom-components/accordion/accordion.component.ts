@@ -44,38 +44,31 @@ export class AccordionComponent
     if (!this.multiple) {
       this.ensureOnlyOneTabIsActive();
     }
-
+    //Ensures, updateShowAllTabs only runs if it was the last user action on the accordion.
+    //The problem with using a boolean such as shouldShowAllTabs is that the parent is telling us to run this method via changing an input prop.
+    //Imagine the user clicks "show all tabs", and then subsequently hides a tab. When the user hides a tab, ngAfterContentChecked will run.
+    //and updateShowAllTabs should not be run because the user just requested a tab to be hidden.
+    //If we used a boolean, updateShowAllTabs would run.
     if (this.accordionState !== this.previousAccordionState) {
       this.updateShowAllTabs();
       this.previousAccordionState = this.accordionState;
     }
   }
 
-  private initAccordionTabArr() {
-    for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
-      if (ele) {
-        this.accordionTabs.push(ele);
-      }
-    }
-  }
-
   private updateShowAllTabsOnPageLoad() {
-    let showAllTabs = this.accordionState.showAllTabs;
     for (let i = 0; i < this.contentChildren.length; i++) {
       let ele = this.contentChildren.get(i);
       if (ele && ele.isActive === null) {
-        ele.isActive = showAllTabs;
+        ele.isActive = this.accordionState.showAllTabs;
       }
     }
   }
 
   private updateShowAllTabs() {
-    let showAllTabs = this.accordionState.showAllTabs;
     for (let i = 0; i < this.contentChildren.length; i++) {
       let ele = this.contentChildren.get(i);
       if (ele) {
-        ele.isActive = showAllTabs;
+        ele.isActive = this.accordionState.showAllTabs;
       }
     }
   }
@@ -88,7 +81,6 @@ export class AccordionComponent
         //no previous activeTab so just update it
         if (ele.isActive && this.activeTabId === null) {
           this.activeTabId = ele.tabId;
-          //need
         } else if (
           ele.isActive &&
           this.activeTabId !== null &&
@@ -98,6 +90,15 @@ export class AccordionComponent
           this.activeTabId = ele.tabId;
           break;
         }
+      }
+    }
+  }
+
+  private initAccordionTabArr() {
+    for (let i = 0; i < this.contentChildren.length; i++) {
+      let ele = this.contentChildren.get(i);
+      if (ele) {
+        this.accordionTabs.push(ele);
       }
     }
   }
