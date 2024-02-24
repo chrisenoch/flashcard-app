@@ -250,27 +250,16 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       })
       .map((item) => item.id);
     const wordItemIdsToShowSet = new Set(wordItemIdsToShow);
-
     this.vocabContentsToShow = this.vocabContents?.filter((item: MenuItem) => {
-      //let teachingItem;
-      if (item && item.id) {
-        const teachingItem = this.getTeachingItemById(item.id);
-        //If not a word item then always return true because we always want to show it
-        //if the sidebar header panel is open
-        if (teachingItem && !this.isWordItem(teachingItem)) {
-          return true;
-        } else {
-          return wordItemIdsToShowSet.has(item.id);
-        }
-      } else {
-        return true;
+      if (item.id) {
+        return wordItemIdsToShowSet.has(item.id);
       }
+      return false;
     });
 
     this.vocabSection && (this.vocabSection.items = this.vocabContentsToShow);
-
     //Need to change the object reference or Angular does not re-render.
-    //Are there any better ways to trigger the re-render?
+    //To do: Are there any better ways to trigger the re-render?
     this.contents = [...this.contents];
   }
 
@@ -361,6 +350,11 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   private getTeachingItemById(id: string) {
     const teachingItem = this.teachingItems.find((item) => item.id === id);
     return teachingItem;
+  }
+
+  private getWordItemById(id: string) {
+    const wordItem = this.wordItems.find((wordItem) => wordItem.id === id);
+    return wordItem;
   }
 
   private decideIfVocabularyExpanded() {
