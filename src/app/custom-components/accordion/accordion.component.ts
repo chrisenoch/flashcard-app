@@ -30,7 +30,6 @@ export class AccordionComponent
 
   private previousAccordionState = {};
   private activeTabId: string | null = null; //keeps track of the activeTabId
-  private tabIdToRemove: string | null = null;
 
   ngOnInit() {
     this.previousAccordionState = this.accordionState;
@@ -42,7 +41,9 @@ export class AccordionComponent
   }
 
   ngAfterContentChecked() {
-    this.ensureOnlyOneTabIsActive();
+    if (!this.multiple) {
+      this.ensureOnlyOneTabIsActive();
+    }
 
     if (this.accordionState !== this.previousAccordionState) {
       this.updateShowAllTabs();
@@ -80,37 +81,23 @@ export class AccordionComponent
   }
 
   private ensureOnlyOneTabIsActive() {
-    if (!this.multiple) {
-      for (let i = 0; i < this.contentChildren.length; i++) {
-        let ele = this.contentChildren.get(i);
+    for (let i = 0; i < this.contentChildren.length; i++) {
+      let ele = this.contentChildren.get(i);
 
-        if (ele) {
-          //no previous activeTab so just update it
-          if (ele.isActive && this.activeTabId === null) {
-            this.activeTabId = ele.tabId;
-            //need
-          } else if (
-            ele.isActive &&
-            this.activeTabId !== null &&
-            ele.tabId !== this.activeTabId
-          ) {
-            //need to set it on the actual value as well
-            this.tabIdToRemove = this.activeTabId;
-
-            //update activeTabId
-            this.activeTabId = ele.tabId;
-            break;
-          }
+      if (ele) {
+        //no previous activeTab so just update it
+        if (ele.isActive && this.activeTabId === null) {
+          this.activeTabId = ele.tabId;
+          //need
+        } else if (
+          ele.isActive &&
+          this.activeTabId !== null &&
+          ele.tabId !== this.activeTabId
+        ) {
+          ele.isActive = false;
+          this.activeTabId = ele.tabId;
+          break;
         }
-      }
-
-      if (this.tabIdToRemove) {
-        this.contentChildren.forEach((ele) => {
-          if (ele.tabId === this.tabIdToRemove) {
-            ele.isActive = false;
-          }
-        });
-        this.tabIdToRemove = null;
       }
     }
   }
