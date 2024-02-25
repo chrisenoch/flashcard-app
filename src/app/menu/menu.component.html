@@ -1,7 +1,7 @@
-<app-no-teaching-items-error
+<app-no-teaching-entities-error
   *ngIf="isTeachingEntityError"
   class="h-[calc(100vh-80px)] block"
-></app-no-teaching-items-error>
+></app-no-teaching-entities-error>
 <div *ngIf="!isTeachingEntityError" class="flex">
   <!--sidebar-->
   <div
@@ -56,7 +56,7 @@
       <app-summary-slide
         class="bg-white grow"
         ngClass="app-summary-slide"
-        [wordItems]="displayedContentInSlide.wordItems"
+        [wordEntities]="displayedContentInSlide.wordEntities"
         [showPrimaryWordFirst]="showPrimaryWordFirst"
       ></app-summary-slide>
     </ng-container>

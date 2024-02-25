@@ -1,10 +1,4 @@
-import {
-  AfterViewChecked,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { WordEntity } from '../models/interfaces/wordEntity';
 import { SummaryEntity } from '../models/interfaces/summaryEntity';
@@ -436,8 +430,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   private generateTeachingEntities() {
     this.wordsSubscription$ = this.wordService
       .getWordEntities()
-      .subscribe((wordItems: WordEntity[]) => {
-        this.wordEntities = wordItems;
+      .subscribe((wordEntities: WordEntity[]) => {
+        this.wordEntities = wordEntities;
       });
 
     this.summaryEntities = this.generateSummaryEntities(
@@ -604,32 +598,30 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     let summaryEntity: SummaryEntity = {
       id: 'summary-',
       kind: type,
-      wordItems: [],
+      wordEntities: [],
       isVisited: false,
     };
 
     wordEntities.forEach((wordEntity, i, arr) => {
       summaryEntity.id = 'summary-' + count;
-      //continue adding wordItems to wordItems array on object until wordsPerPage = 8;
-      summaryEntity.wordItems.push(wordEntity);
+      //continue adding wordEntities to wordEntitiesrray on object until wordsPerPage = maxWordsPerPage ;
+      summaryEntity.wordEntities.push(wordEntity);
 
-      //if last iteration, add the remaining summaryItem and end loop early
+      //if last iteration, add the remaining summaryEntity and end loop early
       if (i === arr.length - 1) {
         summaryEntities.push(summaryEntity);
         return;
       }
 
       if ((i + 1) % maxWordsPerPage === 0) {
-        //when the wordsPerPage limit is reached, we add the SummaryItem to summaryItems
-        //add to main summaryItems array
+        //when the wordsPerPage limit is reached, we add the summaryEntity to main summaryEntities array
         summaryEntities.push(summaryEntity);
-        //increment count
         count++;
 
         summaryEntity = {
           id: 'summary-',
           kind: type,
-          wordItems: [],
+          wordEntities: [],
           isVisited: false,
         };
       }

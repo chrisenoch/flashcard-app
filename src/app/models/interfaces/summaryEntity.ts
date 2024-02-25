@@ -1,10 +1,10 @@
 import { Details } from '../types/details';
 import { WordEntity } from './wordEntity';
 
-//change this later
+//To do: change this
 export interface SummaryEntity {
   id: string;
   kind: 'SUMMARY';
-  wordItems: WordEntity[];
+  wordEntities: WordEntity[];
   isVisited: boolean;
 }

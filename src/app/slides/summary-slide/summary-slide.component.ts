@@ -7,6 +7,6 @@ import { WordEntity } from 'src/app/models/interfaces/wordEntity';
   styleUrls: ['./summary-slide.component.scss'],
 })
 export class SummarySlideComponent {
-  @Input() wordItems: WordEntity[] = [];
+  @Input() wordEntities: WordEntity[] = [];
   @Input() showPrimaryWordFirst = false;
 }
