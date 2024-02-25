@@ -6,7 +6,12 @@
   <!--sidebar-->
   <div
     class="w-fit pl-10 pt-8 flex-shrink-0 overflow-y-auto h-[calc(100vh-80px)]"
-    [ngClass]="sidebarsOnRight ? 'order-2' : 'order-0'"
+    [ngClass]="{
+      'order-0': !sidebarsOnRight,
+      'pl-8': !sidebarsOnRight,
+      'order-2': sidebarsOnRight,
+      'pr-8': sidebarsOnRight
+    }"
   >
     <p-panelMenu [model]="sidebarMenuItems" [multiple]="true"></p-panelMenu>
   </div>
@@ -20,7 +25,7 @@
     (updateShowAllExerciseAnswers)="updateShowAllExerciseAnswers()"
     (updateHideAllExerciseAnswers)="updateHideAllExerciseAnswers()"
     (updateSidebarsOnRight)="updateSidebarsOnRight()"
-    class="w-fit px-8 flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)]"
+    class="w-fit pl-8 flex-shrink-0 flex flex-col items-center justify-end overflow-y-auto h-[calc(100vh-80px)]"
     [ngClass]="sidebarsOnRight ? 'order-1' : 'order-0'"
     [sidebarsOnRight]="sidebarsOnRight"
     [slideNavbarPos]="slideNavbarPos"
@@ -37,7 +42,7 @@
       *ngIf="displayedContentInSlide && isWordEntity(displayedContentInSlide)"
     >
       <app-word-slide
-        class="bg-white grow pr-8"
+        class="bg-white grow px-8"
         ngClass="app-word-slide"
         [primaryWord]="displayedContentInSlide.english"
         [secondaryWord]="displayedContentInSlide.spanish"
@@ -78,7 +83,7 @@
 
 <div
   *ngIf="!isTeachingEntityError"
-  class="fixed bottom-4 z-10 flex gap-4 justify-center"
+  class="fixed bottom-4 z-10 px-8 flex gap-4 justify-center"
   [ngClass]="sidebarsOnRight ? 'left-0 right-[22rem] ' : 'left-[22rem] right-0'"
 >
   <!--change the justify-* class below to change where the navbar buttons are located-->
@@ -94,7 +99,6 @@
       <li class="h-full flex items-center">
         <button
           (click)="onStart()"
-          href="#"
           class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
@@ -106,7 +110,6 @@
       <li class="h-full flex items-center">
         <button
           (click)="onPreviousSection()"
-          href="#"
           class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
@@ -118,7 +121,6 @@
       <li class="h-full flex items-center">
         <button
           (click)="onPrevious()"
-          href="#"
           class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
@@ -130,7 +132,6 @@
       <li class="h-full flex items-center">
         <button
           (click)="onNext()"
-          href="#"
           class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
@@ -142,7 +143,6 @@
       <li class="h-full flex items-center">
         <button
           (click)="onNextSection()"
-          href="#"
           class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span
@@ -155,7 +155,6 @@
       <li class="h-full flex items-center">
         <button
           (click)="onEnd()"
-          href="#"
           class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:bg-gray-400"
         >
           <span

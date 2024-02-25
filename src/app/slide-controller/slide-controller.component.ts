@@ -62,11 +62,33 @@ export class SlideControllerComponent
     {
       kind: TEACHING_ENUM.Exercise,
       id: 'exercise-1',
-      //questions:[{"Question 1", "Answer 1"}
       questions: [
-        { question: 'Question 1', answer: 'Answer 1' },
-        { question: 'Question 2', answer: 'Answer 2' },
-        { question: 'Question 3', answer: 'Answer 3' },
+        {
+          question: '1. Sed do eiusmod tempor incididunt ut ?',
+          answer:
+            'In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+        },
+        {
+          question: '2. Exercitation ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        },
+        {
+          question: '3. Quae ab illo inventore veritatis et?',
+          answer:
+            'Architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam',
+        },
+        {
+          question: '4. Exercitation4 ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem4 ipsum dolor sit amet, consectetur adipiscing elit',
+        },
+        {
+          question: '5. Exercitation ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem5 ipsum dolor sit amet, consectetur adipiscing elit',
+        },
+        {
+          question: '6. Exercitation ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem6 ipsum dolor sit amet, consectetur adipiscing elit',
+        },
       ],
       isVisited: false,
     },
@@ -75,9 +97,32 @@ export class SlideControllerComponent
       id: 'exercise-2',
       //questions:[{"Question 1", "Answer 1"}
       questions: [
-        { question: 'Question 1', answer: 'Answer 1' },
-        { question: 'Question 2', answer: 'Answer 2' },
-        { question: 'Question 3', answer: 'Answer 3' },
+        {
+          question: '1. Sed do eiusmod tempor incididunt ut ?',
+          answer:
+            'In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+        },
+        {
+          question: '2. Exercitation ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        },
+        {
+          question: '3. Quae ab illo inventore veritatis et?',
+          answer:
+            'Architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam',
+        },
+        {
+          question: '4. Exercitation4 ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem4 ipsum dolor sit amet, consectetur adipiscing elit',
+        },
+        {
+          question: '5. Exercitation ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem5 ipsum dolor sit amet, consectetur adipiscing elit',
+        },
+        {
+          question: '6. Exercitation ullamco laboris nisi ut aliquip e?',
+          answer: 'Lorem6 ipsum dolor sit amet, consectetur adipiscing elit',
+        },
       ],
       isVisited: false,
     },
@@ -449,7 +494,7 @@ export class SlideControllerComponent
   }
 
   private prepareSideBarMenuItems() {
-    this.vocabSidebarMenuItems = this.generateMenuItems(
+    this.vocabSidebarMenuItems = this.generateSidebarMenuItems(
       this.wordEntities,
       (e) => {
         this.updateDisplayedContent(e);
@@ -457,14 +502,14 @@ export class SlideControllerComponent
     );
     this.vocabMenuItemsToShow = [...this.vocabSidebarMenuItems];
 
-    this.summarySidebarMenuItems = this.generateMenuItems(
+    this.summarySidebarMenuItems = this.generateSidebarMenuItems(
       this.summaryEntities,
       (e) => {
         this.updateDisplayedContent(e);
       }
     );
 
-    this.exerciseSidebarMenuItems = this.generateMenuItems(
+    this.exerciseSidebarMenuItems = this.generateSidebarMenuItems(
       this.exerciseEntities,
       (e) => {
         this.updateDisplayedContent(e);
@@ -538,7 +583,7 @@ export class SlideControllerComponent
     }
   }
 
-  private generateMenuItems(
+  private generateSidebarMenuItems(
     teachingEntities: TeachingEntity[],
     callback: (...args: any[]) => void,
     label?: string
@@ -546,7 +591,7 @@ export class SlideControllerComponent
     let count = 1;
     let newLabel = '';
     let itemClass = '';
-    const menuItems: MenuItem[] = teachingEntities
+    const sidebarMenuItems: MenuItem[] = teachingEntities
 
       .filter((teachingEntity, i) => {
         //don't show vocab word until it has been visited if showContentAfterWordVisited is true
@@ -571,7 +616,7 @@ export class SlideControllerComponent
           }
         }
 
-        const newItem = {
+        const newSidebarMenuItem = {
           label: newLabel,
           styleClass: itemClass,
           icon: 'bi bi-record2',
@@ -579,10 +624,10 @@ export class SlideControllerComponent
           command: callback,
         };
 
-        return newItem;
+        return newSidebarMenuItem;
       });
 
-    return menuItems;
+    return sidebarMenuItems;
   }
 
   private generateSummaryEntities(

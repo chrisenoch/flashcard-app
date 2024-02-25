@@ -8,6 +8,7 @@ import {
   QueryList,
 } from '@angular/core';
 import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
+import { triggerCycle } from 'src/app/utlities/tick';
 
 @Component({
   selector: 'app-accordion',
@@ -22,8 +23,6 @@ export class AccordionComponent
     showAllTabs: false,
   };
 
-  accordionTabs: AccordionTabComponent[] = [];
-
   //Use this to get the isActive status of the accordion tabs
   @ContentChildren(AccordionTabComponent)
   private contentChildren!: QueryList<AccordionTabComponent>;
@@ -36,8 +35,7 @@ export class AccordionComponent
   }
 
   ngAfterContentInit(): void {
-    this.updateShowAllTabs();
-    this.initAccordionTabArr();
+    triggerCycle(this.updateShowAllTabs.bind(this));
   }
 
   ngAfterContentChecked() {
@@ -50,7 +48,7 @@ export class AccordionComponent
     //and updateShowAllTabs should not be run because the user just requested a tab to be hidden.
     //If we used a boolean, updateShowAllTabs would run.
     if (this.accordionState !== this.previousAccordionState) {
-      this.updateShowAllTabs();
+      triggerCycle(this.updateShowAllTabs.bind(this));
       this.previousAccordionState = this.accordionState;
     }
   }
@@ -76,15 +74,6 @@ export class AccordionComponent
           this.activeTabId = ele.tabId;
           break;
         }
-      }
-    }
-  }
-
-  private initAccordionTabArr() {
-    for (let i = 0; i < this.contentChildren.length; i++) {
-      const ele = this.contentChildren.get(i);
-      if (ele) {
-        this.accordionTabs.push(ele);
       }
     }
   }
