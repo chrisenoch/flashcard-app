@@ -5,18 +5,20 @@ import { SummaryEntity } from '../models/interfaces/summaryEntity';
 import { ExerciseEntity } from '../models/interfaces/exerciseEntity';
 import { capitalize } from '../utlities/text';
 import { WordService } from '../word.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { Inject } from '@angular/core';
 import { TEACHING_ENUM } from '../models/enums/teaching_enum';
 import { TeachingEntity } from '../models/types/teachingEntity';
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss'],
+  selector: 'app-slide-controller',
+  templateUrl: './slide-controller.component.html',
+  styleUrls: ['./slide-controller.component.scss'],
 })
-export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class SlideControllerComponent
+  implements OnInit, OnDestroy, AfterViewChecked
+{
   displayedContentInSlide: TeachingEntity | undefined;
   sidebarMenuItems: MenuItem[] = [];
   private vocabSidebarMenuItems: MenuItem[] = [];
