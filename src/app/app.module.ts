@@ -11,33 +11,33 @@ import { MultiSelectModule } from 'primeng/multiselect';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
 import { HomeComponent } from './home/home.component';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { WordSlideComponent } from './slides/word-slide/word-slide.component';
 import { SummarySlideComponent } from './slides/summary-slide/summary-slide.component';
 import ExerciseSlideComponent from './slides/exercise-slide/exercise-slide.component';
 import { MainNavComponent } from './layout/main-nav/main-nav.component';
-import { NoTeachingItemsErrorComponent } from './errors/no-teaching-items-error/no-teaching-items-error.component';
 import { NoSlideErrorComponent } from './errors/no-slide-error/no-slide-error.component';
-import { SlideOptionBarComponent } from './menu/slide-option-bar/slide-option-bar.component';
+import { SlideOptionBarComponent } from './slide-controller/slide-option-bar/slide-option-bar.component';
 import { AccordionComponent } from './custom-components/accordion/accordion.component';
 import { AccordionTabComponent } from './custom-components/accordion/accordion-tab/accordion-tab.component';
+import { NoTeachingEntitiesErrorComponent } from './errors/no-teaching-entities-error/no-teaching-entities-error.component';
+import { SlideControllerComponent } from './slide-controller/slide-controller.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MenuComponent,
     HomeComponent,
     WordSlideComponent,
     SummarySlideComponent,
     ExerciseSlideComponent,
     MainNavComponent,
-    NoTeachingItemsErrorComponent,
     NoSlideErrorComponent,
     SlideOptionBarComponent,
     AccordionComponent,
     AccordionTabComponent,
+    NoTeachingEntitiesErrorComponent,
+    SlideControllerComponent,
   ],
   imports: [
     BrowserModule,

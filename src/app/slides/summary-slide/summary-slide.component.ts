@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { WordItem } from 'src/app/models/interfaces/wordItem';
+import { WordEntity } from 'src/app/models/interfaces/wordEntity';
 
 @Component({
   selector: 'app-summary-slide',
@@ -7,6 +7,6 @@ import { WordItem } from 'src/app/models/interfaces/wordItem';
   styleUrls: ['./summary-slide.component.scss'],
 })
 export class SummarySlideComponent {
-  @Input() wordItems: WordItem[] = [];
+  @Input() wordEntities: WordEntity[] = [];
   @Input() showPrimaryWordFirst = false;
 }
