@@ -1,9 +1,9 @@
 import { Details } from '../types/details';
 
 //change this later
-export interface ExerciseItem {
+export interface ExerciseEntity {
   id: string;
-  type: 'EXERCISE';
+  kind: 'EXERCISE';
   questions: { question: string; answer: string }[];
   isVisited: boolean;
   // question: string;

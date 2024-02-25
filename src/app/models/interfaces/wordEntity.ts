@@ -1,8 +1,8 @@
 import { Details } from '../types/details';
 
-export interface WordItem {
+export interface WordEntity {
   id: string;
-  type: 'WORD';
+  kind: 'WORD';
   english: string;
   spanish: string;
   explanation: string;

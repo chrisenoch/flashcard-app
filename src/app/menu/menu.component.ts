@@ -6,16 +6,16 @@ import {
   OnInit,
 } from '@angular/core';
 import { MenuItem, MenuItemCommandEvent } from 'primeng/api';
-import { TeachingItem } from '../models/types/teachingItem';
-import { TEACHING_ITEM } from '../models/enums/teaching_item';
-import { WordItem } from '../models/interfaces/wordItem';
-import { SummaryItem } from '../models/interfaces/summaryItem';
-import { ExerciseItem } from '../models/interfaces/exerciseItem';
+import { WordEntity } from '../models/interfaces/wordEntity';
+import { SummaryEntity } from '../models/interfaces/summaryEntity';
+import { ExerciseEntity } from '../models/interfaces/exerciseEntity';
 import { capitalize } from '../utlities/text';
 import { WordService } from '../word.service';
 import { Subject, Subscription } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { Inject } from '@angular/core';
+import { TEACHING_ENUM } from '../models/enums/teaching_enum';
+import { TeachingEntity } from '../models/types/teachingEntity';
 
 @Component({
   selector: 'app-menu',
@@ -23,13 +23,13 @@ import { Inject } from '@angular/core';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
-  displayedContent: TeachingItem | undefined;
-  contents: MenuItem[] = [];
-  private vocabContents: MenuItem[] = [];
-  private summaryContents: MenuItem[] = [];
-  private exerciseContents: MenuItem[] = [];
-  private vocabContentsToShow: MenuItem[] = [];
-  isTeachingItemsError = false;
+  displayedContentInSlide: TeachingEntity | undefined;
+  sidebarMenuItems: MenuItem[] = [];
+  private vocabSidebarMenuItems: MenuItem[] = [];
+  private summarySidebarMenuItems: MenuItem[] = [];
+  private exerciseSidebarMenuItems: MenuItem[] = [];
+  private vocabMenuItemsToShow: MenuItem[] = [];
+  isTeachingEntityError = false;
   sidebarsOnRight = false;
   //change this - set to true for now for testing
   //showTranslation = false;
@@ -58,14 +58,13 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   private summarySection: MenuItem | null = null;
   private exerciseSection: MenuItem | null = null;
 
-  private wordItems: WordItem[] = [];
-  private summaryItems: SummaryItem[] = [];
-  private teachingItems: TeachingItem[] = [];
-
+  private wordEntities: WordEntity[] = [];
+  private summaryEntities: SummaryEntity[] = [];
+  private teachingEntities: TeachingEntity[] = [];
   //get these from service later
-  private exerciseItems: ExerciseItem[] = [
+  private exerciseEntities: ExerciseEntity[] = [
     {
-      type: TEACHING_ITEM.Exercise,
+      kind: TEACHING_ENUM.Exercise,
       id: 'exercise-1',
       //questions:[{"Question 1", "Answer 1"}
       questions: [
@@ -76,7 +75,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       isVisited: false,
     },
     {
-      type: TEACHING_ITEM.Exercise,
+      kind: TEACHING_ENUM.Exercise,
       id: 'exercise-2',
       //questions:[{"Question 1", "Answer 1"}
       questions: [
@@ -94,19 +93,19 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) {}
 
   ngOnInit() {
-    this.generateTeachingItems();
+    this.generateTeachingEntities();
 
-    if (this.teachingItems.length < 1) {
-      this.isTeachingItemsError = true;
+    if (this.teachingEntities.length < 1) {
+      this.isTeachingEntityError = true;
       return;
     }
 
-    this.prepareContents();
+    this.prepareSideBarMenuItems();
 
-    this.contents = this.generateContents();
+    this.sidebarMenuItems = this.generateSideBarMenuItems();
 
     //init first word
-    this.displayedContent = this.teachingItems[this.currentPos];
+    this.displayedContentInSlide = this.teachingEntities[this.currentPos];
   }
 
   ngAfterViewChecked() {
@@ -121,7 +120,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateContentAfterWordVisited() {
     this.showContentAfterWordVisited = !this.showContentAfterWordVisited;
-    this.updateWordItemsToBeShownOnSidebar();
+    this.updateWordEntitiesToBeShownOnSidebar();
   }
 
   updateShowTranslation() {
@@ -130,19 +129,19 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateToggleTranslation() {
     this.showPrimaryWordFirst = !this.showPrimaryWordFirst;
-    this.vocabContents.forEach((item) => {
-      let teachingItem;
-      if (item.id) {
-        teachingItem = this.getTeachingItemById(item.id);
+    this.vocabSidebarMenuItems.forEach((menuItem) => {
+      let teachingEntity;
+      if (menuItem.id) {
+        teachingEntity = this.getTeachingEntityById(menuItem.id);
       }
 
-      if (teachingItem && this.isWordItem(teachingItem)) {
-        item.label = this.showPrimaryWordFirst
-          ? capitalize(teachingItem.english)
-          : capitalize(teachingItem.spanish);
+      if (teachingEntity && this.isWordEntity(teachingEntity)) {
+        menuItem.label = this.showPrimaryWordFirst
+          ? capitalize(teachingEntity.english)
+          : capitalize(teachingEntity.spanish);
       }
     });
-    //this.contents = [...this.contents];
+    this.sidebarMenuItems = [...this.sidebarMenuItems];
   }
 
   updateShowAllExerciseAnswers() {
@@ -186,16 +185,20 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   //proper approach
-  isWordItem(item: TeachingItem): item is WordItem {
-    return (item as WordItem).type === TEACHING_ITEM.Word;
+  isWordEntity(teachingEntity: TeachingEntity): teachingEntity is WordEntity {
+    return (teachingEntity as WordEntity).kind === TEACHING_ENUM.Word;
   }
 
-  isSummaryItem(item: TeachingItem): item is SummaryItem {
-    return (item as SummaryItem).type === TEACHING_ITEM.Summary;
+  isSummaryEntity(
+    teachingEntity: TeachingEntity
+  ): teachingEntity is SummaryEntity {
+    return (teachingEntity as SummaryEntity).kind === TEACHING_ENUM.Summary;
   }
 
-  isExerciseItem(item: TeachingItem): item is ExerciseItem {
-    return (item as ExerciseItem).type === TEACHING_ITEM.Exercise;
+  isExerciseEntity(
+    teachingEntity: TeachingEntity
+  ): teachingEntity is ExerciseEntity {
+    return (teachingEntity as ExerciseEntity).kind === TEACHING_ENUM.Exercise;
   }
 
   onStart() {
@@ -212,8 +215,8 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.onBottomNavigationCommon();
   }
   onPreviousSection() {
-    const currentId = this.teachingItems[this.currentPos].id;
-    this.goToStartOfSection(currentId, true);
+    const currentTeachingEntityId = this.teachingEntities[this.currentPos].id;
+    this.goToStartOfSection(currentTeachingEntityId, true);
     this.onBottomNavigationCommon();
   }
   onNext() {
@@ -223,15 +226,16 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.onBottomNavigationCommon();
   }
   onNextSection() {
-    const currentId = this.teachingItems[this.currentPos].id;
-    this.goToStartOfSection(currentId);
+    const currentSlideEntityId = this.teachingEntities[this.currentPos].id;
+    this.goToStartOfSection(currentSlideEntityId);
     this.onBottomNavigationCommon();
   }
 
   //methods to be called on every bottom navigation method
   private onBottomNavigationCommon() {
-    this.displayedContent && this.setItemAsVisited(this.displayedContent);
-    this.updateWordItemsToBeShownOnSidebar();
+    this.displayedContentInSlide &&
+      this.setTeachingEntityAsVisited(this.displayedContentInSlide);
+    this.updateWordEntitiesToBeShownOnSidebar();
     this.runUpdateActiveWordsOnSidebar = true;
     this.autoExpandSection();
   }
@@ -240,25 +244,27 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //is true. If the user sets this to false, the words only appear on the sidebar, when they have been
   //visited even if the Vocabulary panel is expanded. This function ensures the correct words are shown
   //on the sidebar.
-  private updateWordItemsToBeShownOnSidebar() {
-    const wordItemIdsToShow = this.wordItems
-      .filter((item, i) => {
-        const shouldShow = this.isWordItemToBeShown(item, i);
+  private updateWordEntitiesToBeShownOnSidebar() {
+    const wordEntityIdsToShow = this.wordEntities
+      .filter((wordEntity, i) => {
+        const shouldShow = this.isWordEntityToBeShown(wordEntity, i);
         return shouldShow;
       })
-      .map((item) => item.id);
-    const wordItemIdsToShowSet = new Set(wordItemIdsToShow);
-    this.vocabContentsToShow = this.vocabContents?.filter((item: MenuItem) => {
-      if (item.id) {
-        return wordItemIdsToShowSet.has(item.id);
+      .map((wordEntity) => wordEntity.id);
+    const wordEntityIdsToShowSet = new Set(wordEntityIdsToShow);
+    this.vocabMenuItemsToShow = this.vocabSidebarMenuItems?.filter(
+      (menuItem: MenuItem) => {
+        if (menuItem.id) {
+          return wordEntityIdsToShowSet.has(menuItem.id);
+        }
+        return false;
       }
-      return false;
-    });
+    );
 
-    this.vocabSection && (this.vocabSection.items = this.vocabContentsToShow);
+    this.vocabSection && (this.vocabSection.items = this.vocabMenuItemsToShow);
     //Need to change the object reference or Angular does not re-render.
     //To do: Are there any better ways to trigger the re-render?
-    this.contents = [...this.contents];
+    this.sidebarMenuItems = [...this.sidebarMenuItems];
   }
 
   //The default behaviour is for the sections on the sidebar
@@ -266,7 +272,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   //the user can override this by opening/closing the section. In this case, the user's preference is honoured.
   private autoExpandSection() {
     if (
-      this.displayedContent?.type === TEACHING_ITEM.Word &&
+      this.displayedContentInSlide?.kind === TEACHING_ENUM.Word &&
       !this.autoExpandVocabulary &&
       this.wantsVocabularyExpanded === null
     ) {
@@ -275,7 +281,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.vocabSection && (this.vocabSection.expanded = isVocabularyExpanded);
     }
     if (
-      this.displayedContent?.type === TEACHING_ITEM.Summary &&
+      this.displayedContentInSlide?.kind === TEACHING_ENUM.Summary &&
       !this.autoExpandSummary &&
       this.wantsSummaryExpanded === null
     ) {
@@ -284,7 +290,7 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.summarySection && (this.summarySection.expanded = isSummaryExpanded);
     }
     if (
-      this.displayedContent?.type === TEACHING_ITEM.Exercise &&
+      this.displayedContentInSlide?.kind === TEACHING_ENUM.Exercise &&
       !this.autoExpandExercises &&
       this.wantsExercisesExpanded === null
     ) {
@@ -296,58 +302,60 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     //Not needed here but is needed in updateWordItemsToBeShownOnSidebar.
     //To do: Find out the reason. Keep it for now.
-    this.contents = [...this.contents];
+    this.sidebarMenuItems = [...this.sidebarMenuItems];
   }
 
-  private updateWantsExpanded(e: MenuItemCommandEvent) {
+  private updateWantsExpanded(event: MenuItemCommandEvent) {
     //find out expanded state of clicked on section
     let expandSection;
-    if (e?.item?.expanded !== undefined && e?.item?.expanded !== null) {
-      expandSection = e.item.expanded;
+    if (event?.item?.expanded !== undefined && event?.item?.expanded !== null) {
+      expandSection = event.item.expanded;
     } else {
       return;
     }
 
     //get expanded state of all sections
     const expandedStates = new Map();
-    this.contents.forEach((ele) => {
-      expandedStates.set(ele.label, ele.expanded);
+    this.sidebarMenuItems.forEach((menuItem) => {
+      expandedStates.set(menuItem.label, menuItem.expanded);
     });
 
     //if selected section is open update wantsExpanded of selected section to false.
     if (!expandSection) {
       //Also update wantsExpanded of all closed sections to false.
-      this.contents.forEach((ele) => {
-        let expanded = expandedStates.get(ele.label);
+      this.sidebarMenuItems.forEach((menuItem) => {
+        let expanded = expandedStates.get(menuItem.label);
         if (!expanded) {
-          if (ele.id === TEACHING_ITEM.Word) {
+          if (menuItem.id === TEACHING_ENUM.Word) {
             this.wantsVocabularyExpanded = false;
           }
-          if (ele.id === TEACHING_ITEM.Summary) {
+          if (menuItem.id === TEACHING_ENUM.Summary) {
             this.wantsSummaryExpanded = false;
           }
-          if (ele.id === TEACHING_ITEM.Exercise) {
+          if (menuItem.id === TEACHING_ENUM.Exercise) {
             this.wantsExercisesExpanded = false;
           }
         }
       });
     } else {
       //if selected section is open, update wantsExpanded to true for only the selected section
-      if (e.item.id === TEACHING_ITEM.Word) {
+      if (event.item.id === TEACHING_ENUM.Word) {
         this.wantsVocabularyExpanded = true;
       }
-      if (e.item.id === TEACHING_ITEM.Summary) {
+      if (event.item.id === TEACHING_ENUM.Summary) {
         this.wantsSummaryExpanded = true;
       }
-      if (e.item.id === TEACHING_ITEM.Exercise) {
+      if (event.item.id === TEACHING_ENUM.Exercise) {
         this.wantsExercisesExpanded = true;
       }
     }
   }
 
-  private getTeachingItemById(id: string) {
-    const teachingItem = this.teachingItems.find((item) => item.id === id);
-    return teachingItem;
+  private getTeachingEntityById(id: string) {
+    const teachingEntity = this.teachingEntities.find(
+      (teachingEntity) => teachingEntity.id === id
+    );
+    return teachingEntity;
   }
 
   private decideIfVocabularyExpanded() {
@@ -384,9 +392,9 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private updateActiveWordOnSidebar() {
-    if (this.displayedContent) {
+    if (this.displayedContentInSlide) {
       const newActiveWordContainer = this.injectedDocument.querySelector(
-        '.' + this.displayedContent.id
+        '.' + this.displayedContentInSlide.id
       );
 
       //remove class from all possible places
@@ -399,25 +407,25 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
       const exerciseElements = Array.from(
         this.injectedDocument.querySelectorAll("[class*='exercise']")
       );
-      const sideBarElements = [
+      const sidebarElements = [
         ...wordElements,
         ...summaryElements,
         ...exerciseElements,
       ];
 
-      sideBarElements.forEach((ele) => {
-        ele.classList.remove('active-word');
-        ele.classList.remove('active-summary');
-        ele.classList.remove('active-exercise');
+      sidebarElements.forEach((sidebarElement) => {
+        sidebarElement.classList.remove('active-word');
+        sidebarElement.classList.remove('active-summary');
+        sidebarElement.classList.remove('active-exercise');
       });
 
-      if (this.isWordItem(this.displayedContent)) {
+      if (this.isWordEntity(this.displayedContentInSlide)) {
         newActiveWordContainer?.classList.add('active-word');
       }
-      if (this.isSummaryItem(this.displayedContent)) {
+      if (this.isSummaryEntity(this.displayedContentInSlide)) {
         newActiveWordContainer?.classList.add('active-summary');
       }
-      if (this.isExerciseItem(this.displayedContent)) {
+      if (this.isExerciseEntity(this.displayedContentInSlide)) {
         newActiveWordContainer?.classList.add('active-exercise');
       }
     }
@@ -425,83 +433,86 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.runUpdateActiveWordsOnSidebar = false;
   }
 
-  private generateTeachingItems() {
+  private generateTeachingEntities() {
     this.wordsSubscription$ = this.wordService
-      .getWordItems()
-      .subscribe((wordItems: WordItem[]) => {
-        this.wordItems = wordItems;
+      .getWordEntities()
+      .subscribe((wordItems: WordEntity[]) => {
+        this.wordEntities = wordItems;
       });
 
-    this.summaryItems = this.generateSummaryItems(
+    this.summaryEntities = this.generateSummaryEntities(
       this.maxWordsOnSummarySlide,
-      this.wordItems
+      this.wordEntities
     );
 
-    this.teachingItems = [
-      ...this.wordItems,
-      ...this.summaryItems,
-      ...this.exerciseItems,
+    this.teachingEntities = [
+      ...this.wordEntities,
+      ...this.summaryEntities,
+      ...this.exerciseEntities,
     ];
   }
 
-  private prepareContents() {
-    this.vocabContents = this.generateContentsItems(this.wordItems, (e) => {
-      this.updateDisplayedContent(e);
-    });
-    this.vocabContentsToShow = [...this.vocabContents];
+  private prepareSideBarMenuItems() {
+    this.vocabSidebarMenuItems = this.generateMenuItems(
+      this.wordEntities,
+      (e) => {
+        this.updateDisplayedContent(e);
+      }
+    );
+    this.vocabMenuItemsToShow = [...this.vocabSidebarMenuItems];
 
-    this.summaryContents = this.generateContentsItems(
-      this.summaryItems,
+    this.summarySidebarMenuItems = this.generateMenuItems(
+      this.summaryEntities,
       (e) => {
         this.updateDisplayedContent(e);
       }
     );
 
-    this.exerciseContents = this.generateContentsItems(
-      this.exerciseItems,
+    this.exerciseSidebarMenuItems = this.generateMenuItems(
+      this.exerciseEntities,
       (e) => {
         this.updateDisplayedContent(e);
       }
     );
   }
 
-  private generateContents() {
+  private generateSideBarMenuItems() {
     const isVocabularyExpanded = this.decideIfVocabularyExpanded();
     const isSummaryExpanded = this.decideIfSummaryExpanded();
     const isExercisesExpanded = this.decideIfExercisesExpanded();
 
     this.vocabSection = {
       label: 'Vocabulary',
-      id: TEACHING_ITEM.Word,
+      id: TEACHING_ENUM.Word,
       //icon: 'pi pi-bolt',
       icon: 'bi bi-record-fill',
       expanded: isVocabularyExpanded,
       command: (e: MenuItemCommandEvent) => {
         this.updateWantsExpanded(e);
       },
-      items: this.vocabContentsToShow,
+      items: this.vocabMenuItemsToShow,
     };
 
     this.summarySection = {
       label: 'Summary',
-      id: TEACHING_ITEM.Summary,
+      id: TEACHING_ENUM.Summary,
       icon: 'bi bi-record-fill',
       expanded: isSummaryExpanded,
       command: (e: MenuItemCommandEvent) => {
         this.updateWantsExpanded(e);
       },
-      items: this.summaryContents,
+      items: this.summarySidebarMenuItems,
     };
 
     this.exerciseSection = {
       label: 'Exercises',
-      id: TEACHING_ITEM.Exercise,
+      id: TEACHING_ENUM.Exercise,
       icon: 'bi bi-record-fill',
       expanded: isExercisesExpanded,
       command: (e: MenuItemCommandEvent) => {
         this.updateWantsExpanded(e);
       },
-      items: this.exerciseContents,
+      items: this.exerciseSidebarMenuItems,
     };
 
     const generatedContents = [
@@ -515,12 +526,15 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     return generatedContents;
   }
 
-  private isWordItemToBeShown(item: TeachingItem, index: number): boolean {
+  private isWordEntityToBeShown(
+    teachingEntity: TeachingEntity,
+    index: number
+  ): boolean {
     if (
       index !== 0 &&
       this.showContentAfterWordVisited &&
-      this.isWordItem(item) &&
-      !item.isVisited
+      this.isWordEntity(teachingEntity) &&
+      !teachingEntity.isVisited
     ) {
       return false;
     } else {
@@ -528,36 +542,36 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  private generateContentsItems(
-    items: TeachingItem[],
+  private generateMenuItems(
+    teachingEntities: TeachingEntity[],
     callback: (...args: any[]) => void,
     label?: string
   ): any {
     let count = 1;
     let newLabel = '';
     let itemClass = '';
-    const contentsItems: any[] = items
+    const menuItems: MenuItem[] = teachingEntities
 
-      .filter((item, i) => {
+      .filter((teachingEntity, i) => {
         //don't show vocab word until it has been visited if showContentAfterWordVisited is true
-        return this.isWordItemToBeShown(item, i);
+        return this.isWordEntityToBeShown(teachingEntity, i);
       })
 
-      .map((item) => {
+      .map((teachingEntity) => {
         if (label === undefined) {
-          if (this.isWordItem(item)) {
+          if (this.isWordEntity(teachingEntity)) {
             newLabel = this.showPrimaryWordFirst
-              ? capitalize(item.english)
-              : capitalize(item.spanish);
-            itemClass = 'word ' + item.id;
+              ? capitalize(teachingEntity.english)
+              : capitalize(teachingEntity.spanish);
+            itemClass = 'word ' + teachingEntity.id;
           }
-          if (this.isSummaryItem(item)) {
-            newLabel = capitalize(item.type) + ' ' + count++;
-            itemClass = 'summary ' + item.id;
+          if (this.isSummaryEntity(teachingEntity)) {
+            newLabel = capitalize(teachingEntity.kind) + ' ' + count++;
+            itemClass = 'summary ' + teachingEntity.id;
           }
-          if (this.isExerciseItem(item)) {
-            newLabel = capitalize(item.type) + ' ' + count++;
-            itemClass = 'exercise ' + item.id;
+          if (this.isExerciseEntity(teachingEntity)) {
+            newLabel = capitalize(teachingEntity.kind) + ' ' + count++;
+            itemClass = 'exercise ' + teachingEntity.id;
           }
         }
 
@@ -565,186 +579,214 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewChecked {
           label: newLabel,
           styleClass: itemClass,
           icon: 'bi bi-record2',
-          id: item.id,
+          id: teachingEntity.id,
           command: callback,
         };
 
         return newItem;
       });
 
-    return contentsItems;
+    return menuItems;
   }
 
-  private generateSummaryItems(
+  private generateSummaryEntities(
     maxWordsPerPage: number,
-    wordItems: WordItem[]
-  ): SummaryItem[] {
+    wordEntities: WordEntity[]
+  ): SummaryEntity[] {
     if (maxWordsPerPage < 1) {
       return [];
     }
 
     let count = 1;
-    const type = TEACHING_ITEM.Summary;
-    const summaryItems: SummaryItem[] = [];
+    const type = TEACHING_ENUM.Summary;
+    const summaryEntities: SummaryEntity[] = [];
 
-    let summaryItem: SummaryItem = {
+    let summaryEntity: SummaryEntity = {
       id: 'summary-',
-      type,
+      kind: type,
       wordItems: [],
       isVisited: false,
     };
 
-    wordItems.forEach((wordItem, i, arr) => {
-      summaryItem.id = 'summary-' + count;
+    wordEntities.forEach((wordEntity, i, arr) => {
+      summaryEntity.id = 'summary-' + count;
       //continue adding wordItems to wordItems array on object until wordsPerPage = 8;
-      summaryItem.wordItems.push(wordItem);
+      summaryEntity.wordItems.push(wordEntity);
 
       //if last iteration, add the remaining summaryItem and end loop early
       if (i === arr.length - 1) {
-        summaryItems.push(summaryItem);
+        summaryEntities.push(summaryEntity);
         return;
       }
 
       if ((i + 1) % maxWordsPerPage === 0) {
         //when the wordsPerPage limit is reached, we add the SummaryItem to summaryItems
         //add to main summaryItems array
-        summaryItems.push(summaryItem);
+        summaryEntities.push(summaryEntity);
         //increment count
         count++;
 
-        summaryItem = {
+        summaryEntity = {
           id: 'summary-',
-          type,
+          kind: type,
           wordItems: [],
           isVisited: false,
         };
       }
     });
 
-    return summaryItems;
+    return summaryEntities;
   }
 
-  private setItemAsVisited(item: TeachingItem) {
-    item.isVisited = true;
+  private setTeachingEntityAsVisited(teachingEntity: TeachingEntity) {
+    teachingEntity.isVisited = true;
   }
 
   //Navigates to start of next section if goToPrevious argument is not provided or set to false. Set goToPrevious to true to navigate to start of previous section.
-  private goToStartOfSection(currentId: string, goToPrevious?: boolean): void {
+  private goToStartOfSection(
+    currentSlideEntityId: string,
+    goToPrevious?: boolean
+  ): void {
     let idNextSection: string;
 
     if (goToPrevious) {
-      idNextSection = this.getIdOfPreviousSectionStart(currentId);
+      idNextSection =
+        this.getIdOfPreviousTeachingSectionStart(currentSlideEntityId);
     } else {
-      idNextSection = this.getIdOfNextSectionStart(currentId);
+      idNextSection =
+        this.getIdOfNextTeachingSectionStart(currentSlideEntityId);
     }
 
-    const indexNextSection = this.teachingItems.findIndex(
-      (ele) => ele.id === idNextSection
+    const indexNextSection = this.teachingEntities.findIndex(
+      (teachingEntity) => teachingEntity.id === idNextSection
     );
 
     this.currentPos = indexNextSection;
 
-    this.displayedContent = this.teachingItems[this.currentPos];
+    this.displayedContentInSlide = this.teachingEntities[this.currentPos];
   }
 
-  private getIdOfPreviousSectionStart(currentId: string): string {
+  private getIdOfPreviousTeachingSectionStart(
+    currentSlideEntityId: string
+  ): string {
     //get the part of the id that comes before the last hyphen. This part of the id represents the section.
-    const currentSection = currentId.substring(0, currentId.lastIndexOf('-'));
-    let previousSection: string = currentSection;
-    let idOfPreviousSectionStart = currentId;
-    let isInPreviousSection = false;
+    const currentTeachingSection = currentSlideEntityId.substring(
+      0,
+      currentSlideEntityId.lastIndexOf('-')
+    );
+    let previousTeachingSection: string = currentTeachingSection;
+    let idOfPreviousTeachingSectionStart = currentSlideEntityId;
+    let isInPreviousTeachingSection = false;
 
     //only iterate back from the current position in the array
-    const filteredTeachingItems = this.teachingItems.slice(
+    const filteredTeachingEntities = this.teachingEntities.slice(
       0,
       this.currentPos + 1
     );
 
-    for (let i = filteredTeachingItems.length - 1; i >= 0; i--) {
-      let itemId = filteredTeachingItems[i].id;
+    for (let i = filteredTeachingEntities.length - 1; i >= 0; i--) {
+      let teachingEntityId = filteredTeachingEntities[i].id;
       //if is the first slide, return the id for the first slide
       if (i === 0) {
-        return itemId;
+        return teachingEntityId;
       }
 
       //get the part of the id that comes before the last hyphen. This part of the id represents the section.
-      let itemSection = itemId.substring(0, itemId.lastIndexOf('-'));
+      const teachingSection = teachingEntityId.substring(
+        0,
+        teachingEntityId.lastIndexOf('-')
+      );
+      console.log('itemSection ' + teachingSection);
 
-      if (isInPreviousSection) {
+      if (isInPreviousTeachingSection) {
         //if section changes a second time, return the id of the next slide
-        if (itemSection !== previousSection) {
-          idOfPreviousSectionStart = filteredTeachingItems[i + 1].id;
-          return idOfPreviousSectionStart;
+        if (teachingSection !== previousTeachingSection) {
+          idOfPreviousTeachingSectionStart = filteredTeachingEntities[i + 1].id;
+          return idOfPreviousTeachingSectionStart;
         }
       }
 
-      if (itemSection !== currentSection && !isInPreviousSection) {
-        previousSection = itemSection; //e.g. previousSection = 'word'
-        isInPreviousSection = true;
+      if (
+        teachingSection !== currentTeachingSection &&
+        !isInPreviousTeachingSection
+      ) {
+        previousTeachingSection = teachingSection; //e.g. previousSection = 'word'
+        isInPreviousTeachingSection = true;
       }
     }
-    return idOfPreviousSectionStart;
+    return idOfPreviousTeachingSectionStart;
   }
 
-  private getIdOfNextSectionStart(currentId: string): string {
+  private getIdOfNextTeachingSectionStart(
+    currentSlideEntityId: string
+  ): string {
     //get the part of the id that comes before the last hyphen. This part of the id represents the section.
-    const currentSection = currentId.substring(0, currentId.lastIndexOf('-'));
+    const currentTeachingSection = currentSlideEntityId.substring(
+      0,
+      currentSlideEntityId.lastIndexOf('-')
+    );
 
     //only iterate forward from the current position in the array
-    const filteredTeachingItems = this.teachingItems.slice(this.currentPos);
+    const filteredTeachingEntities = this.teachingEntities.slice(
+      this.currentPos
+    );
 
-    for (let i = 0; i < filteredTeachingItems.length; i++) {
-      let itemId = filteredTeachingItems[i].id;
+    for (let i = 0; i < filteredTeachingEntities.length; i++) {
+      let teachingEntityId = filteredTeachingEntities[i].id;
       //get the part of the id that comes before the last hyphen. This part of the id represents the section.
-      let itemSection = itemId.substring(0, itemId.lastIndexOf('-'));
+      let teachingSection = teachingEntityId.substring(
+        0,
+        teachingEntityId.lastIndexOf('-')
+      );
 
-      if (itemSection !== currentSection) {
-        return itemId;
+      if (teachingSection !== currentTeachingSection) {
+        return teachingEntityId;
       }
     }
-    return currentId;
+    return currentSlideEntityId;
   }
 
   private decrementCurrentPos() {
     if (this.currentPos - 1 < 0) {
       return;
     }
-    this.displayedContent = this.teachingItems[--this.currentPos];
+    this.displayedContentInSlide = this.teachingEntities[--this.currentPos];
   }
 
   private incrementCurrentPos() {
-    if (this.contents) {
-      if (this.currentPos + 1 > this.teachingItems.length - 1) {
+    if (this.sidebarMenuItems) {
+      if (this.currentPos + 1 > this.teachingEntities.length - 1) {
         return;
       }
-      this.displayedContent = this.teachingItems[++this.currentPos];
+      this.displayedContentInSlide = this.teachingEntities[++this.currentPos];
     }
   }
 
   private goToStart() {
     this.currentPos = 0;
-    this.displayedContent = this.teachingItems[this.currentPos];
+    this.displayedContentInSlide = this.teachingEntities[this.currentPos];
   }
   private goToEnd() {
-    this.currentPos = this.teachingItems.length - 1;
-    this.displayedContent = this.teachingItems[this.currentPos];
+    this.currentPos = this.teachingEntities.length - 1;
+    this.displayedContentInSlide = this.teachingEntities[this.currentPos];
   }
 
-  private updateDisplayedContent(e: MenuItemCommandEvent) {
-    if (e?.item?.id) {
-      const id = e.item.id;
-      const newDisplayedContent = this.teachingItems.find(
+  private updateDisplayedContent(event: MenuItemCommandEvent) {
+    if (event?.item?.id) {
+      const id = event.item.id;
+      const newDisplayedContent = this.teachingEntities.find(
         (itemDetails) => id === itemDetails.id
       );
 
       if (newDisplayedContent) {
-        this.displayedContent = newDisplayedContent;
+        this.displayedContentInSlide = newDisplayedContent;
 
-        this.currentPos = this.teachingItems.findIndex(
-          (ele) => ele.id === this.displayedContent!.id
+        this.currentPos = this.teachingEntities.findIndex(
+          (teachingEntity) =>
+            teachingEntity.id === this.displayedContentInSlide!.id
         );
 
-        this.setItemAsVisited(this.displayedContent);
+        this.setTeachingEntityAsVisited(this.displayedContentInSlide);
         this.runUpdateActiveWordsOnSidebar = true;
       }
     }

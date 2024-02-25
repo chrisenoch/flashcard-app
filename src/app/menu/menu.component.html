@@ -1,14 +1,14 @@
 <app-no-teaching-items-error
-  *ngIf="isTeachingItemsError"
+  *ngIf="isTeachingEntityError"
   class="h-[calc(100vh-80px)] block"
 ></app-no-teaching-items-error>
-<div *ngIf="!isTeachingItemsError" class="flex">
+<div *ngIf="!isTeachingEntityError" class="flex">
   <!--sidebar-->
   <div
     class="w-fit pl-10 pt-8 flex-shrink-0 overflow-y-auto h-[calc(100vh-80px)]"
     [ngClass]="sidebarsOnRight ? 'order-2' : 'order-0'"
   >
-    <p-panelMenu [model]="contents" [multiple]="true"></p-panelMenu>
+    <p-panelMenu [model]="sidebarMenuItems" [multiple]="true"></p-panelMenu>
   </div>
   <!--second sidebar-->
   <app-slide-option-bar
@@ -26,40 +26,50 @@
     [slideNavbarPos]="slideNavbarPos"
   ></app-slide-option-bar>
 
-  <ng-container *ngIf="!displayedContent; else elseBlock">
+  <ng-container *ngIf="!displayedContentInSlide; else elseBlock">
     <app-no-slide-error
       class="h-[calc(100vh-80px)] block grow"
     ></app-no-slide-error>
   </ng-container>
   <!--teaching slide -->
   <ng-template #elseBlock>
-    <ng-container *ngIf="displayedContent && isWordItem(displayedContent)">
+    <ng-container
+      *ngIf="displayedContentInSlide && isWordEntity(displayedContentInSlide)"
+    >
       <app-word-slide
         class="bg-white grow pr-8"
         ngClass="app-word-slide"
-        [primaryWord]="displayedContent.english"
-        [secondaryWord]="displayedContent.spanish"
+        [primaryWord]="displayedContentInSlide.english"
+        [secondaryWord]="displayedContentInSlide.spanish"
         [showTranslation]="showTranslation"
         [showExplanation]="showExplanation"
         [showPrimaryWordFirst]="showPrimaryWordFirst"
-        [explanation]="displayedContent.explanation"
+        [explanation]="displayedContentInSlide.explanation"
       ></app-word-slide>
     </ng-container>
 
-    <ng-container *ngIf="displayedContent && isSummaryItem(displayedContent)">
+    <ng-container
+      *ngIf="
+        displayedContentInSlide && isSummaryEntity(displayedContentInSlide)
+      "
+    >
       <app-summary-slide
         class="bg-white grow"
         ngClass="app-summary-slide"
-        [wordItems]="displayedContent.wordItems"
+        [wordItems]="displayedContentInSlide.wordItems"
         [showPrimaryWordFirst]="showPrimaryWordFirst"
       ></app-summary-slide>
     </ng-container>
 
-    <ng-container *ngIf="displayedContent && isExerciseItem(displayedContent)">
+    <ng-container
+      *ngIf="
+        displayedContentInSlide && isExerciseEntity(displayedContentInSlide)
+      "
+    >
       <app-exercise-slide
         class="bg-white grow"
         ngClass="app-exercise-slide"
-        [questions]="displayedContent.questions"
+        [questions]="displayedContentInSlide.questions"
         [accordionState]="accordionState"
       ></app-exercise-slide>
     </ng-container>
@@ -67,7 +77,7 @@
 </div>
 
 <div
-  *ngIf="!isTeachingItemsError"
+  *ngIf="!isTeachingEntityError"
   class="fixed bottom-4 z-10 flex gap-4 justify-center"
   [ngClass]="sidebarsOnRight ? 'left-0 right-[22rem] ' : 'left-[22rem] right-0'"
 >
