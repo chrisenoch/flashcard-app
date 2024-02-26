@@ -1,5 +1,6 @@
 <div class="w-full h-full bg-gray-400 p-2 rounded-lg">
   <h1>My tour guide {{ elementId }}</h1>
+
   <div class="flex gap-4">
     <button appElementControls [elementId]="elementId" [onShowAll]="true">
       Show All
@@ -14,14 +15,26 @@
     >
       Pre d
     </button>
-    <button appElementControls [elementId]="elementId" [onGoToFirstId]="true">
-      Fir d
+    <button
+      appElementControls
+      [elementId]="elementId"
+      onCloseAllOthersInGroup="tour-guide-group-2"
+    >
+      Close G2
     </button>
-    <button appElementControls [elementId]="elementId" [onGoToLastId]="true">
-      Las d
+    <button
+      appElementControls
+      [elementId]="elementId"
+      onShowAllOthersInGroup="tour-guide-group-2"
+    >
+      Show G2
     </button>
-    <button appElementControls [elementId]="elementId" [onClose]="true">
-      Close
+    <button
+      appElementControls
+      [elementId]="elementId"
+      [onCloseAllOthers]="true"
+    >
+      Close others
     </button>
   </div>
 </div>

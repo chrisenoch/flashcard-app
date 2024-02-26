@@ -16,19 +16,7 @@
 
     <div class="relative overflow-hidden">
       <div id="tour-guide-1-c-anchor" class="absolute invisible"></div>
-      <!-- <app-tour-guide
-        elementId="tour-guide-5"
-        elementGroupId="tour-guide-group-2"
-        position="RIGHT"
-        effectivePosition="other"
-        [show]="true"
-        [toggleOnClick]="true"
-        [showOnHover]="false"
-        [hideOnHoverOut]="false"
-        [animation]="true"
-      >
-        <app-tour-guide-content elementId="tour-guide-5"></app-tour-guide-content>
-      </app-tour-guide> -->
+
       <p class="text-8xl" *ngIf="!showPrimaryWordFirst" id="tour-guide-1-c">
         {{ secondaryWord }}
       </p>
@@ -52,7 +40,6 @@
     class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-pink-200 relative z-10"
   >
     <div class="relative overflow-hidden h-full">
-      <!-- <div id="tour-guide-1-d-anchor" class="absolute invisible"></div> -->
       <app-tour-guide
         elementId="tour-guide-6"
         elementGroupId="tour-guide-group-2"
