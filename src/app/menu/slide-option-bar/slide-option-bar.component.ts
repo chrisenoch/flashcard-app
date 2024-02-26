@@ -34,7 +34,7 @@ export class SlideOptionBarComponent {
     arrows?: Arrows;
   }[] = [
     { id: 'toast-1-a', position: 'LEFT', effectivePosition: 'absolute' },
-    { id: 'toast-1-b', position: 'RIGHT', effectivePosition: 'fixed' },
+    { id: 'toast-1-e', position: 'RIGHT', effectivePosition: 'fixed' },
     { id: 'toast-1-c', position: 'RIGHT', effectivePosition: 'absolute' },
 
     // { id: 'toast-destination-3', position: 'TOP', arrows: ['TOP', 'BOTTOM'] },

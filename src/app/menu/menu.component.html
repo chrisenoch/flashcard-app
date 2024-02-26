@@ -83,8 +83,8 @@
     <div class="flex gap-4 justify-center w-[40rem]">
       <div class="relative overflow-hidden">
         <div id="toast-1-b-anchor" class="absolute invisible"></div>
-        <!-- <app-toast
-          toastId="toast-3"
+        <app-toast
+          elementId="toast-1-b"
           toastGroupId="toast-group-2"
           position="LEFT"
           effectivePosition="fixed"
@@ -94,9 +94,10 @@
           [toggleOnClick]="true"
           [animation]="true"
         >
-          <app-toast-content toastId="toast-3"></app-toast-content>
-        </app-toast> -->
-        <button id="toast-1-b" class="p-4 bg-green-600 rounded-lg">Test</button>
+          <app-toast-content elementId="toast-1-b"></app-toast-content>
+        </app-toast>
+        <div id="toassst-1-e-anchor" class="absolute invisible"></div>
+        <button id="toast-1-e" class="p-4 bg-green-600 rounded-lg">Test</button>
       </div>
 
       <!-- <button
