@@ -79,12 +79,12 @@ export function initDelayTimers(thisOfResidingClass: InitDelayTimersArgs) {
         },
         error: (e: Error) => {
           self.ngZone.run(() => {
-            //Can be cancelled by the user clicking or hovering the toast destination before the delay has finished.
+            //Can be cancelled by the user clicking or hovering the element destination before the delay has finished.
             if (e instanceof ControlledError) {
               initDisplayAndVisibility(self);
-              //If the user hovers/clicks the toast destination, hideonInitDelay should also be cancelled.
+              //If the user hovers/clicks the element destination, hideonInitDelay should also be cancelled.
               //Thus we don't call defineHideOninitDelay here
-              self.keepShowing = false; //If hover events are enabled and the user hovers the toast destination, the toast closes upon hover-out rather than staying open.
+              self.keepShowing = false; //If hover events are enabled and the user hovers the element destination, the element closes upon hover-out rather than staying open.
             }
           });
         },
@@ -176,7 +176,7 @@ export function initDisplayAndVisibility(
   self.visibility = 'visible';
 }
 
-//KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the toast in defineCoords()
+//KeepShowing should not have a setter. Upon initialisation and window resize display must not be set to none even if show is set to false. Visibility:hidden is needed in order to calculate the coordinates of the element.
 export function updateShowState(
   thisOfResidingClass: UpdateShowStateArgs,
   isShow: boolean

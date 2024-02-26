@@ -25,7 +25,6 @@ import { AccordionComponent } from './custom-components/accordion/accordion.comp
 import { AccordionTabComponent } from './custom-components/accordion/accordion-tab/accordion-tab.component';
 import { ToastComponent } from './custom-components/toast/toast.component';
 import { ToastContentComponent } from './layout/main-nav/toast-content/toast-content.component';
-import { ToastDirective } from './custom-components/toast/toast.directive';
 import { ElementControlsDirective } from './custom-components/element-controls.directive';
 
 @NgModule({
@@ -44,8 +43,6 @@ import { ElementControlsDirective } from './custom-components/element-controls.d
     AccordionTabComponent,
     ToastComponent,
     ToastContentComponent,
-    ToastDirective,
-
     ElementControlsDirective,
   ],
   imports: [

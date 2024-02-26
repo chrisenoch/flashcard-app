@@ -98,16 +98,16 @@ export function addElementControlsSubscriptions(
   );
 
   self.subscriptions.push(
-    self.elementControlsService.close$.subscribe((toastInfo) => {
-      if (self.elementId === toastInfo?.elementId) {
+    self.elementControlsService.close$.subscribe((elementInfo) => {
+      if (self.elementId === elementInfo?.elementId) {
         closeElementFromControl(self);
       }
     })
   );
 
   self.subscriptions.push(
-    self.elementControlsService.closeAllOthers$.subscribe((toastInfo) => {
-      if (self.elementId !== toastInfo?.elementId) {
+    self.elementControlsService.closeAllOthers$.subscribe((elementInfo) => {
+      if (self.elementId !== elementInfo?.elementId) {
         closeElementFromControl(self);
       }
     })
@@ -115,8 +115,8 @@ export function addElementControlsSubscriptions(
 
   if (self.elementGroupId !== undefined) {
     self.subscriptions.push(
-      self.elementControlsService.closeAllInGroup$.subscribe((toastInfo) => {
-        if (self.elementGroupId === toastInfo?.elementGroupId) {
+      self.elementControlsService.closeAllInGroup$.subscribe((elementInfo) => {
+        if (self.elementGroupId === elementInfo?.elementGroupId) {
           closeElementFromControl(self);
         }
       })
@@ -126,10 +126,10 @@ export function addElementControlsSubscriptions(
   if (self.elementGroupId !== undefined) {
     self.subscriptions.push(
       self.elementControlsService.closeAllOthersInGroup$.subscribe(
-        (toastInfo) => {
+        (elementInfo) => {
           if (
-            self.elementId !== toastInfo?.elementId &&
-            self.elementGroupId === toastInfo?.elementGroupId
+            self.elementId !== elementInfo?.elementId &&
+            self.elementGroupId === elementInfo?.elementGroupId
           ) {
             closeElementFromControl(self);
           }
@@ -139,25 +139,27 @@ export function addElementControlsSubscriptions(
   }
 
   self.subscriptions.push(
-    self.elementControlsService.show$.subscribe((toastInfo) => {
-      if (self.elementId === toastInfo?.elementId) {
+    self.elementControlsService.show$.subscribe((elementInfo) => {
+      if (self.elementId === elementInfo?.elementId) {
         showElementFromControl(self);
       }
     })
   );
 
   self.subscriptions.push(
-    self.elementControlsService.showAll$.subscribe((toastInfo) => {
+    self.elementControlsService.showAll$.subscribe((elementInfo) => {
       showElementFromControl(self);
     })
   );
 
   self.subscriptions.push(
-    self.elementControlsService.showAllOthersInGroup$.subscribe((toastInfo) => {
-      if (self.elementGroupId === toastInfo?.elementGroupId) {
-        showElementFromControl(self);
+    self.elementControlsService.showAllOthersInGroup$.subscribe(
+      (elementInfo) => {
+        if (self.elementGroupId === elementInfo?.elementGroupId) {
+          showElementFromControl(self);
+        }
       }
-    })
+    )
   );
 }
 
