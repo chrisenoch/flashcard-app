@@ -31,7 +31,7 @@ import { compareDOMRectValues } from '../utilities';
 import { pauseTimers } from '../controllable-timer';
 import {
   addConvenienceClickHandler,
-  addTransitionEndToastListener,
+  addTransitionEndElementListener,
   initShowOnHoverListener,
   initHideOnHoverOutListener,
   initToggleOnClickListener,
@@ -66,7 +66,12 @@ export class ToastComponent
   ) {
     this.documentInjected = document;
   }
-
+  /*We use the word element because the idea is some of this code will be resuable for components such as
+  a tool-tip, a toast, a snackbar, an alert, a timeline, etc. The word 'element' in variable names refers to the a tool-tip, toast, snackbar,
+  timeline, etc. In this case it refers to the tour guide.
+  This tour guide component can be used for all the above cases but is overkill for many of them.
+  To do: Extract relevant code into separate components and remove features not needed for the above components.
+  */
   elementTop: string | null = '0px';
   elementBottom: string | null = null;
   elementLeft: string | null = '0px';
@@ -81,7 +86,7 @@ export class ToastComponent
   elementCSSClasses: string | undefined;
   isShowing = false;
   subscriptions: Subscription[] = [];
-  //elementDestination: the element the toast uses as a reference for the position. E.g. if you hover a button and the toast appears, the button would be the toast destination.
+  //elementDestination: the element the tour-guide uses as a reference for the position. E.g. If you hover a button and the tour-guide appears, the button would be the element destination.
   elementDestination!: HTMLElement;
   elementDestinations!: {
     id: string;
@@ -105,12 +110,12 @@ export class ToastComponent
   private isResizing = false;
   private elementAnchorDomRect!: DOMRect;
   private elementDestinationDomRect!: DOMRect;
-  private currentToastAnchor!: HTMLElement;
+  private currentElementAnchor!: HTMLElement;
   private displayWasNoneAtStartOfWindowResize = false;
   private firstOfResizeBatch = true;
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
-  private runUpdateToastPositionsOnScroll = false;
+  private runUpdateElementPositionsOnScroll = false;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -119,7 +124,7 @@ export class ToastComponent
   //E.g. if a button has position static but is inside a container with position fixed, the effectivePosition would be 'fixed.'
   //This could be calculated. But I don't think traversing parent elements recursively, is good for performance if the developer can easily just add it.
   @Input() effectivePosition!: 'absolute' | 'fixed';
-  //When set, toast does not hide on hover out.
+  //When set, element does not hide on hover out.
   @Input('show') keepShowing = false;
 
   @Input() showOnHover: boolean | 'mouseenter' = true;
@@ -141,7 +146,7 @@ export class ToastComponent
   @Input() arrowBottom: boolean | undefined;
   @Input() position: Position = 'RIGHT';
   @Input() gapInPx: number | undefined;
-  @Input() overrideToastCSSClasses: string | undefined;
+  @Input() overrideElementCSSClasses: string | undefined;
   @Input() addElementCSSClasses: string | undefined;
   @Input() elementAnchorCSSClasses: string | undefined;
   @Input() arrowLeftCSSClasses: string | undefined;
@@ -161,25 +166,20 @@ export class ToastComponent
       }[]
     | undefined;
 
-  @ViewChild('toast') elementVC!: ElementRef;
-  @ViewChild('toastAnchor') toastAnchorVC!: ElementRef;
+  @ViewChild('tourGuide') elementVC!: ElementRef;
+  @ViewChild('tourGuideAnchor') elementAnchorVC!: ElementRef;
   @ContentChild('show', { descendants: true }) showCC: ElementRef | undefined;
   @ContentChild('close') closeCC: ElementRef | undefined;
 
   ngOnInit(): void {
-    console.log('this');
-    console.log(this);
-
     this.checkInputs();
     this.windowInjected = this.documentInjected.defaultView;
-    //ensure toast has correct position type. Perhaps it needs to be 'sticky' or 'fixed.'
     this.initCSS();
     this.initPositionType();
     addElementControlsSubscriptions(this);
 
-    //add scroll event listener
     this.documentInjected.addEventListener('scrollend', () => {
-      this.runUpdateToastPositionsOnScroll = true;
+      this.runUpdateElementPositionsOnScroll = true;
     });
     this.initArrow();
 
@@ -206,51 +206,53 @@ export class ToastComponent
     //setTimeout to avoid error: "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked"
     //300ms delay necessary because Angular renders incorrect offsetHeight if not. The same problem occurs in AfterViewChecked. Thus delay implemented as per lack of other ideas and this stackoverflow answer. https://stackoverflow.com/questions/46637415/angular-4-viewchild-nativeelement-offsetwidth-changing-unexpectedly "This is a common painpoint .."
     setTimeout(() => {
-      //get height and width of toast and set them as fixed heights and widths on the toast anchor
+      //get height and width of the element and set them as fixed heights and widths on the element anchor
 
-      const originalToastHeight = this.elementVC.nativeElement.offsetHeight;
-      const originalToastWidth = this.elementVC.nativeElement.offsetWidth;
-      this.toastAnchorVC.nativeElement.style.height =
-        originalToastHeight + 'px';
-      this.toastAnchorVC.nativeElement.style.width = originalToastWidth + 'px';
+      const originalElementHeight = this.elementVC.nativeElement.offsetHeight;
+      const originalElementWidth = this.elementVC.nativeElement.offsetWidth;
+      this.elementAnchorVC.nativeElement.style.height =
+        originalElementHeight + 'px';
+      this.elementAnchorVC.nativeElement.style.width =
+        originalElementWidth + 'px';
 
-      this.moveToastToBody();
+      this.moveElementToBody();
 
-      //get coords of the parent to <app-toast>. Toast should show upon hovering this.
+      //get coords of the parent to the element. Element should show upon hovering this.
       this.elementDestinationDomRect =
         this.elementDestination.getBoundingClientRect();
 
-      this.elementHeight = originalToastHeight;
-      this.elementWidth = originalToastWidth;
+      this.elementHeight = originalElementHeight;
+      this.elementWidth = originalElementWidth;
 
-      this.defineToastAnchorCoords(this.elementDestinationDomRect);
+      this.defineElementAnchorCoords(this.elementDestinationDomRect);
 
-      //Because we need to read the updated position of toastAnchor
+      //We need to read the updated position of elementAnchor
       setTimeout(() => {
         this.elementAnchorDomRect =
-          this.toastAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
+          this.elementAnchorVC.nativeElement.getBoundingClientRect() as DOMRect;
 
         this.elementTop = this.elementAnchorDomRect.top + 'px';
         this.elementLeft = this.elementAnchorDomRect.left + 'px';
 
-        this.currentToastAnchor = this.toastAnchorVC.nativeElement;
+        this.currentElementAnchor = this.elementAnchorVC.nativeElement;
 
         initDelayTimers(this);
-        this.initToastDestinations();
+        this.initElementDestinations();
       }, 0);
     }, 300);
   }
 
   ngAfterViewChecked(): void {
-    //console.log('in ngViewChecked - toastId ' + this.toastId);
-
-    if (this.runUpdateToastPositionsOnScroll && this.positionType !== 'fixed') {
-      this.updateToastPositionsOnScroll();
-      this.runUpdateToastPositionsOnScroll = false;
+    if (
+      this.runUpdateElementPositionsOnScroll &&
+      this.positionType !== 'fixed'
+    ) {
+      this.updateElementPositionsOnScroll();
+      this.runUpdateElementPositionsOnScroll = false;
     }
 
-    //In case the toast destination is resized or moved.
-    this.updateToastDestinationDomRectIfChanged();
+    //In case the element destination is resized or moved.
+    this.updateElementDestinationDomRectIfChanged();
 
     if (this.runAfterViewCheckedSub) {
       this.afterViewChecked$.next(true);
@@ -264,7 +266,7 @@ export class ToastComponent
   }
 
   private initCSS() {
-    if (this.overrideToastCSSClasses === undefined) {
+    if (this.overrideElementCSSClasses === undefined) {
       this.elementCSSClasses = 'w-max h-fit';
     }
     if (this.addElementCSSClasses) {
@@ -292,8 +294,9 @@ export class ToastComponent
     }
   }
 
-  private updateToastPositionsOnScroll() {
-    this.elementAnchorDomRect = this.currentToastAnchor.getBoundingClientRect();
+  private updateElementPositionsOnScroll() {
+    this.elementAnchorDomRect =
+      this.currentElementAnchor.getBoundingClientRect();
     setTimeout(() => {
       this.elementTop =
         this.elementAnchorDomRect.top + this.windowInjected?.scrollY! + 'px';
@@ -313,42 +316,42 @@ export class ToastComponent
     }
   }
 
-  private updateToastIfToastAnchorDomRectChanged() {
+  private updateElementIfElementAnchorDomRectChanged() {
     if (this.elementAnchorDomRect) {
-      const newToastAnchorDomRect =
-        this.currentToastAnchor.getBoundingClientRect() as DOMRect;
+      const newElementAnchorDomRect =
+        this.currentElementAnchor.getBoundingClientRect() as DOMRect;
 
       const domRectsAreEqual = compareDOMRectValues(
         this.elementAnchorDomRect,
-        newToastAnchorDomRect
+        newElementAnchorDomRect
       );
       if (!domRectsAreEqual) {
-        this.elementAnchorDomRect = newToastAnchorDomRect;
+        this.elementAnchorDomRect = newElementAnchorDomRect;
         this.elementTop = this.elementAnchorDomRect.top + 'px';
         this.elementLeft = this.elementAnchorDomRect.left + 'px';
         // setTimeout(() => {
-        //   this.toastTop = this.toastAnchorDomRect.top + 'px';
-        //   this.toastLeft = this.toastAnchorDomRect.left + 'px';
+        //   this.elementTop = this.elementAnchorDomRect.top + 'px';
+        //   this.elementLeft = this.elementAnchorDomRect.left + 'px';
         // }, 0);
       }
     }
   }
 
-  private updateToastDestinationDomRectIfChanged() {
+  private updateElementDestinationDomRectIfChanged() {
     if (this.elementDestinationDomRect && !this.isResizing) {
-      const newToastDestinationDomRect =
+      const newElementDestinationDomRect =
         this.elementDestination.getBoundingClientRect();
 
       const domRectsAreEqual = compareDOMRectValues(
         this.elementDestinationDomRect,
-        newToastDestinationDomRect
+        newElementDestinationDomRect
       );
       if (!domRectsAreEqual) {
-        this.elementDestinationDomRect = newToastDestinationDomRect;
+        this.elementDestinationDomRect = newElementDestinationDomRect;
         setTimeout(() => {
-          this.defineToastAnchorCoords(this.elementDestinationDomRect);
+          this.defineElementAnchorCoords(this.elementDestinationDomRect);
           setTimeout(() => {
-            this.updateToastIfToastAnchorDomRectChanged();
+            this.updateElementIfElementAnchorDomRectChanged();
           }, 0);
         }, 0);
       }
@@ -357,7 +360,7 @@ export class ToastComponent
 
   private addElementListeners() {
     if (this.onElementTransitionEnd !== undefined) {
-      addTransitionEndToastListener(
+      addTransitionEndElementListener(
         this.elementVC.nativeElement,
         this.renderer2,
         this.onElementTransitionEnd
@@ -376,8 +379,8 @@ export class ToastComponent
     initToggleOnCustomListener(this, elementDestination);
   }
 
-  private moveToastToBody() {
-    //alternative: this.toastVC.nativeElement.parentElement.remove();
+  private moveElementToBody() {
+    //alternative: this.elementVC.nativeElement.parentElement.remove();
     this.renderer2.removeChild(
       this.elementVC.nativeElement.parentElement,
       this.elementVC.nativeElement
@@ -389,22 +392,9 @@ export class ToastComponent
     );
   }
 
-  // private defineCurrentToastAnchorCoords(destinationDomRect: DOMRect) {
-  //   const toastAnchors = this.defineToastAnchorCoords(destinationDomRect);
-  //   //if 0, the toast is the main toast
-  //   if (this.currentNextElementIndex === 0) {
-  //     this.toastAnchorTop = toastAnchors.toastAnchorTop;
-  //     this.toastAnchorLeft = toastAnchors.toastAnchorLeft;
-  //   } else {
-  //     //we are dealing with a toast destination
-  //     this.currentToastAnchor.style.top = toastAnchors.toastAnchorTop;
-  //     this.currentToastAnchor.style.left = toastAnchors.toastAnchorLeft;
-  //   }
-  // }
-
-  private defineToastAnchorCoords(destinationDomRect: DOMRect) {
-    let toastAnchorTop;
-    let toastAnchorLeft;
+  private defineElementAnchorCoords(destinationDomRect: DOMRect) {
+    let elementAnchorTop;
+    let elementAnchorLeft;
 
     if (this.gapInPx === undefined || this.gapInPx === null) {
       this.gapInPx = 8;
@@ -412,40 +402,40 @@ export class ToastComponent
 
     switch (this.position) {
       case 'LEFT':
-        toastAnchorLeft = 0 - this.elementWidth - this.gapInPx + 'px';
-        toastAnchorTop =
+        elementAnchorLeft = 0 - this.elementWidth - this.gapInPx + 'px';
+        elementAnchorTop =
           0 - this.elementHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'RIGHT':
-        toastAnchorLeft = 0 + destinationDomRect.width + this.gapInPx + 'px';
-        toastAnchorTop =
+        elementAnchorLeft = 0 + destinationDomRect.width + this.gapInPx + 'px';
+        elementAnchorTop =
           0 - this.elementHeight / 2 + destinationDomRect.height / 2 + 'px';
 
         break;
       case 'TOP':
-        toastAnchorLeft =
+        elementAnchorLeft =
           0 - this.elementWidth / 2 + destinationDomRect.width / 2 + 'px';
-        toastAnchorTop = 0 - this.elementHeight - this.gapInPx + 'px';
+        elementAnchorTop = 0 - this.elementHeight - this.gapInPx + 'px';
         break;
       case 'BOTTOM':
-        toastAnchorLeft =
+        elementAnchorLeft =
           0 - this.elementWidth / 2 + destinationDomRect.width / 2 + 'px';
-        toastAnchorTop = 0 + destinationDomRect.height + this.gapInPx + 'px';
+        elementAnchorTop = 0 + destinationDomRect.height + this.gapInPx + 'px';
         break;
       default:
         const exhaustiveCheck: never = this.position;
         throw new Error(exhaustiveCheck);
     }
 
-    //if 0, the toast is the main toast
+    //if 0, the element should be positioned relative to the original element destination.
     if (this.currentNextElementIndex === 0) {
-      this.elementAnchorTop = toastAnchorTop;
-      this.elementAnchorLeft = toastAnchorLeft;
+      this.elementAnchorTop = elementAnchorTop;
+      this.elementAnchorLeft = elementAnchorLeft;
     } else {
-      //we are dealing with a toast destination
-      this.currentToastAnchor.style.top = toastAnchorTop;
-      this.currentToastAnchor.style.left = toastAnchorLeft;
+      //a different element destination that the element will move to
+      this.currentElementAnchor.style.top = elementAnchorTop;
+      this.currentElementAnchor.style.left = elementAnchorLeft;
     }
   }
 
@@ -482,18 +472,18 @@ export class ToastComponent
   }
 
   defineNextElement() {
-    const toastDestinationArrows =
+    const elementDestinationArrows =
       this.elementDestinations[this.currentNextElementIndex].arrows;
     this.elementDestination =
       this.elementDestinations[this.currentNextElementIndex].element;
     this.position =
       this.elementDestinations[this.currentNextElementIndex].position;
-    this.currentToastAnchor =
+    this.currentElementAnchor =
       this.elementDestinations[this.currentNextElementIndex].elementAnchor;
     this.positionType =
       this.elementDestinations[this.currentNextElementIndex].effectivePosition;
 
-    //get the toast dimensions in case they have changed.
+    //get the element dimensions in case they have changed.
     //Perhaps dynamic content was added.
     this.elementHeight = this.elementVC.nativeElement.offsetHeight;
     this.elementWidth = this.elementVC.nativeElement.offsetWidth;
@@ -504,19 +494,19 @@ export class ToastComponent
     this.arrowLeft = false;
     this.arrowRight = false;
 
-    if (toastDestinationArrows === undefined) {
+    if (elementDestinationArrows === undefined) {
       this.autoDefineArrow();
-    } else if (!toastDestinationArrows.includes('NONE')) {
-      if (toastDestinationArrows.includes('TOP')) {
+    } else if (!elementDestinationArrows.includes('NONE')) {
+      if (elementDestinationArrows.includes('TOP')) {
         this.arrowTop = true;
       }
-      if (toastDestinationArrows.includes('BOTTOM')) {
+      if (elementDestinationArrows.includes('BOTTOM')) {
         this.arrowBottom = true;
       }
-      if (toastDestinationArrows.includes('RIGHT')) {
+      if (elementDestinationArrows.includes('RIGHT')) {
         this.arrowRight = true;
       }
-      if (toastDestinationArrows.includes('LEFT')) {
+      if (elementDestinationArrows.includes('LEFT')) {
         this.arrowLeft = true;
       }
     }
@@ -524,16 +514,16 @@ export class ToastComponent
     const eleDomRect = this.elementDestination.getBoundingClientRect();
     this.elementDestinationDomRect = eleDomRect;
 
-    this.defineToastAnchorCoords(eleDomRect);
+    this.defineElementAnchorCoords(eleDomRect);
 
-    //Because we need to read the updated position of toastAnchor
+    //We need to read the updated position of elementAnchor
     setTimeout(() => {
       this.elementAnchorDomRect =
-        this.currentToastAnchor.getBoundingClientRect() as DOMRect;
+        this.currentElementAnchor.getBoundingClientRect() as DOMRect;
 
-      //Normally we use the onscrollend EventListener along with updateToastPositionsOnScroll# to update the scroll. Here we cannot,
-      //as toastAnchorDomRect# retrieved in this method represents the DomRect as it was defined before scroll was considered. If you do not add scrollY and scrollX here, then if the user scrolls, and then clicks on "next toast destination,"
-      //the toast will move to the wrong destination because it won't take into account the scroll.
+      //Normally we use the onscrollend EventListener along with updateElementPositionsOnScroll# to update the scroll. Here we cannot,
+      //as elementAnchorDomRect# retrieved in this method represents the DomRect as it was defined before scroll was considered. If you do not add scrollY and scrollX here, then if the user scrolls, and then clicks on "next element destination,"
+      //the element will move to the wrong destination because it won't take into account the scroll.
       this.elementTop =
         this.positionType === 'fixed'
           ? this.elementAnchorDomRect.top + 'px'
@@ -599,21 +589,21 @@ export class ToastComponent
   }
 
   private handleWindowResizeEnd() {
-    //toast size may have changed
-    const toastVCHeight = this.elementVC.nativeElement.offsetHeight;
-    const toastVCWidth = this.elementVC.nativeElement.offsetWidth;
-    this.currentToastAnchor.style.height = toastVCHeight + 'px';
-    this.currentToastAnchor.style.width = toastVCWidth + 'px';
+    //element size may have changed
+    const elementVCHeight = this.elementVC.nativeElement.offsetHeight;
+    const elementVCWidth = this.elementVC.nativeElement.offsetWidth;
+    this.currentElementAnchor.style.height = elementVCHeight + 'px';
+    this.currentElementAnchor.style.width = elementVCWidth + 'px';
 
-    //toastDestintation size may have changed
+    //elementDestintation size may have changed
     this.elementDestinationDomRect =
       this.elementDestination.getBoundingClientRect();
-    this.defineToastAnchorCoords(this.elementDestinationDomRect);
+    this.defineElementAnchorCoords(this.elementDestinationDomRect);
 
-    //Because we need to read the updated position of toastAnchor
+    //Because we need to read the updated position of elementAnchor
     setTimeout(() => {
       this.elementAnchorDomRect =
-        this.currentToastAnchor.getBoundingClientRect() as DOMRect;
+        this.currentElementAnchor.getBoundingClientRect() as DOMRect;
 
       this.elementTop = this.elementAnchorDomRect.top + 'px';
       this.elementLeft = this.elementAnchorDomRect.left + 'px';
@@ -646,8 +636,8 @@ export class ToastComponent
     }, 0);
   }
 
-  private initToastDestinations() {
-    //get arrows of initial toast in case developer sets custom arrows
+  private initElementDestinations() {
+    //get arrows of initial element in case developer sets custom arrows
     const arrows: ArrowPosition[] = [];
     if (this.arrowTop) {
       arrows.push('TOP');
@@ -665,13 +655,13 @@ export class ToastComponent
       arrows.push('NONE');
     }
 
-    //store the original toast
+    //store the original element
     this.elementDestinations = [
       {
         id: this.elementId,
         element: this.elementDestination,
         position: this.position,
-        elementAnchor: this.toastAnchorVC.nativeElement,
+        elementAnchor: this.elementAnchorVC.nativeElement,
         effectivePosition: this.effectivePosition,
         //arrows must be an array of at least one value or undefined
         arrows: arrows.length > 0 ? (arrows as Arrows) : undefined,
@@ -683,19 +673,18 @@ export class ToastComponent
         const id = ele.id;
         if (id.toUpperCase() === this.elementId.toUpperCase()) {
           throw Error(
-            `Cannot have an id in nextElements that is named the same as the toastID (${this.elementId}) , as the toastId is reserved for the initial toastDestination.`
+            `Cannot have an id in nextElements that is named the same as the elementID (${this.elementId}) , as the elementId is reserved for the initial elementDestination.`
           );
         }
         const nextEle = this.documentInjected.getElementById(id);
-        const nextEleToastAnchor =
-          nextEle?.previousElementSibling as HTMLElement;
-        if (nextEle && nextEleToastAnchor) {
+        const nextEleAnchor = nextEle?.previousElementSibling as HTMLElement;
+        if (nextEle && nextEleAnchor) {
           this.elementDestinations.push({
             id,
             element: nextEle,
             position: ele.position,
             arrows: ele.arrows,
-            elementAnchor: nextEleToastAnchor,
+            elementAnchor: nextEleAnchor,
             effectivePosition: ele.effectivePosition,
           });
         }
@@ -721,9 +710,9 @@ export class ToastComponent
   private checkInputs() {
     if (!this.effectivePosition) {
       throw Error(
-        'You must set the effectivePosition attribute for toastId: ' +
+        'You must set the effectivePosition attribute for elementId: ' +
           this.elementId +
-          '. E.g. If the toast destination is a button and it has position:static, but the button is inside a div with position:fixed, the button will behave as if it were position:fixed. Thus the effectivePosition would be fixed.'
+          '. E.g. If the element destination is a button and it has position:static, but the button is inside a div with position:fixed, the button will behave as if it were position:fixed. Thus the effectivePosition would be fixed.'
       );
     }
 
@@ -740,7 +729,7 @@ export class ToastComponent
     }
 
     if (!this.elementId) {
-      throw Error('You must set the toastId attribute');
+      throw Error('You must set the elementId attribute');
     }
     if (this.hideDelay < 0) {
       throw Error('hideDelay must not be less than 0.');
@@ -757,10 +746,10 @@ export class ToastComponent
   }
 
   accept() {
-    console.log('inside accept in toast');
+    console.log('inside accept in tour guide');
   }
 
   deny() {
-    console.log('inside deny in toast');
+    console.log('inside deny in tour guide');
   }
 }

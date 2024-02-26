@@ -217,7 +217,7 @@ export function addShowElementWithTimersListener(
   });
 }
 
-export function addTransitionEndToastListener(
+export function addTransitionEndElementListener(
   host: ElementRef,
   renderer2: Renderer2,
   {
