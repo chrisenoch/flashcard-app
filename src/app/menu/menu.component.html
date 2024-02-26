@@ -82,10 +82,10 @@
   >
     <div class="flex gap-4 justify-center w-[40rem]">
       <div class="relative overflow-hidden">
-        <div id="toast-1-b-anchor" class="absolute invisible"></div>
-        <app-toast
-          elementId="toast-1-b"
-          toastGroupId="toast-group-2"
+        <div id="tour-guide-1-b-anchor" class="absolute invisible"></div>
+        <app-tour-guide
+          elementId="tour-guide-1-b"
+          elementGroupId="tour-guide-group-2"
           position="LEFT"
           effectivePosition="fixed"
           [show]="true"
@@ -94,22 +94,17 @@
           [toggleOnClick]="true"
           [animation]="true"
         >
-          <app-toast-content elementId="toast-1-b"></app-toast-content>
-        </app-toast>
-        <div id="toassst-1-e-anchor" class="absolute invisible"></div>
-        <button id="toast-1-e" class="p-4 bg-green-600 rounded-lg">Test</button>
+          <app-tour-guide-content
+            elementId="tour-guide-1-b"
+          ></app-tour-guide-content>
+        </app-tour-guide>
+        <div id="tour-guide-1-e-anchor" class="absolute invisible"></div>
+        <button id="tour-guide-1-e" class="p-4 bg-green-600 rounded-lg">
+          Test
+        </button>
       </div>
-
-      <!-- <button
-        appToast
-        toastId="toast-1"
-        [onToggleShowOther]="true"
-        class="p-4 bg-green-600 rounded-lg"
-      >
-        Test 2
-      </button> -->
       <p-button
-        id="toast-destination-2"
+        id="tour-guide-destination-2"
         label="Start"
         styleClass="p-button-rounded p-button-lg"
         (onClick)="onStart()"
@@ -135,9 +130,9 @@
         (onClick)="onNextSection()"
       ></p-button>
       <div class="relative overflow-hidden">
-        <app-toast
-          elementId="toast-4"
-          elementGroupId="toast-group-2"
+        <app-tour-guide
+          elementId="tour-guide-4"
+          elementGroupId="tour-guide-group-2"
           position="RIGHT"
           effectivePosition="fixed"
           [show]="true"
@@ -146,10 +141,12 @@
           hideOnCustom="dblclick"
           [animation]="true"
         >
-          <app-toast-content elementId="toast-4"></app-toast-content>
-        </app-toast>
+          <app-tour-guide-content
+            elementId="tour-guide-4"
+          ></app-tour-guide-content>
+        </app-tour-guide>
         <p-button
-          id="toast-destination-3"
+          id="tour-guide-destination-3"
           label="End"
           styleClass="p-button-rounded p-button-lg"
           (onClick)="onEnd()"

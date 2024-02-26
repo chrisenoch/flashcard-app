@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-toast-content',
-  templateUrl: './toast-content.component.html',
-  styleUrls: ['./toast-content.component.scss'],
+  selector: 'app-tour-guide-content',
+  templateUrl: './tour-guide-content.component.html',
+  styleUrls: ['./tour-guide-content.component.scss'],
 })
-export class ToastContentComponent implements OnInit {
+export class TourGuideContentComponent implements OnInit {
   @Input() elementId!: string;
   @Input() elementGroupId: string | undefined;
 

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Arrows } from 'src/app/custom-components/toast/models/arrows';
-import { Position } from 'src/app/custom-components/toast/models/position';
+import { Arrows } from 'src/app/custom-components/models/arrows';
+import { Position } from 'src/app/custom-components/models/position';
 
 @Component({
   selector: 'app-slide-option-bar',
@@ -20,32 +20,22 @@ export class SlideOptionBarComponent {
   @Input() sidebarsOnRight = false;
   @Input() slideNavbarPos: 'LEFT' | 'MIDDLE' | 'RIGHT' = 'MIDDLE';
 
-  //to test onToastTransitionEnd in custom toast component
-  onToastTransitionEnd = {
+  //to test
+  onTourGuideTransitionEnd = {
     callback: () => console.log('transition ended'),
     propertiesToFireOn: ['top'],
   };
 
-  //to test custom toast component
+  //to test custom tour-guide component
   nextElements: {
     id: string;
     position: Position;
     effectivePosition: 'absolute' | 'fixed';
     arrows?: Arrows;
   }[] = [
-    { id: 'toast-1-a', position: 'LEFT', effectivePosition: 'absolute' },
-    { id: 'toast-1-e', position: 'RIGHT', effectivePosition: 'fixed' },
-    { id: 'toast-1-c', position: 'RIGHT', effectivePosition: 'absolute' },
-
-    // { id: 'toast-destination-3', position: 'TOP', arrows: ['TOP', 'BOTTOM'] },
-  ];
-
-  toastDestinations!: [
-    {
-      id: string;
-      element: Element;
-      position: Position;
-    }
+    { id: 'tour-guide-1-a', position: 'LEFT', effectivePosition: 'absolute' },
+    { id: 'tour-guide-1-e', position: 'RIGHT', effectivePosition: 'fixed' },
+    { id: 'tour-guide-1-c', position: 'RIGHT', effectivePosition: 'absolute' },
   ];
 
   onShowContentAfterWordVisited() {

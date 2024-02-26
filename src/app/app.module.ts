@@ -23,9 +23,10 @@ import { NoSlideErrorComponent } from './errors/no-slide-error/no-slide-error.co
 import { SlideOptionBarComponent } from './menu/slide-option-bar/slide-option-bar.component';
 import { AccordionComponent } from './custom-components/accordion/accordion.component';
 import { AccordionTabComponent } from './custom-components/accordion/accordion-tab/accordion-tab.component';
-import { ToastComponent } from './custom-components/toast/toast.component';
-import { ToastContentComponent } from './layout/main-nav/toast-content/toast-content.component';
 import { ElementControlsDirective } from './custom-components/element-controls.directive';
+import { TourGuideComponent } from './custom-components/tour-guide/tour-guide.component';
+import { TourGuideDirective } from './custom-components/tour-guide/tour-guide.directive';
+import { TourGuideContentComponent } from './tour-guide-content/tour-guide-content.component';
 
 @NgModule({
   declarations: [
@@ -41,9 +42,10 @@ import { ElementControlsDirective } from './custom-components/element-controls.d
     SlideOptionBarComponent,
     AccordionComponent,
     AccordionTabComponent,
-    ToastComponent,
-    ToastContentComponent,
     ElementControlsDirective,
+    TourGuideComponent,
+    TourGuideDirective,
+    TourGuideContentComponent,
   ],
   imports: [
     BrowserModule,

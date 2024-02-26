@@ -15,10 +15,10 @@
     ></i>
 
     <div class="relative overflow-hidden">
-      <div id="toast-1-c-anchor" class="absolute invisible"></div>
-      <!-- <app-toast
-        toastId="toast-5"
-        toastGroupId="toast-group-2"
+      <div id="tour-guide-1-c-anchor" class="absolute invisible"></div>
+      <!-- <app-tour-guide
+        elementId="tour-guide-5"
+        elementGroupId="tour-guide-group-2"
         position="RIGHT"
         effectivePosition="other"
         [show]="true"
@@ -27,9 +27,9 @@
         [hideOnHoverOut]="false"
         [animation]="true"
       >
-        <app-toast-content toastId="toast-5"></app-toast-content>
-      </app-toast> -->
-      <p class="text-8xl" *ngIf="!showPrimaryWordFirst" id="toast-1-c">
+        <app-tour-guide-content elementId="tour-guide-5"></app-tour-guide-content>
+      </app-tour-guide> -->
+      <p class="text-8xl" *ngIf="!showPrimaryWordFirst" id="tour-guide-1-c">
         {{ secondaryWord }}
       </p>
     </div>
@@ -52,10 +52,10 @@
     class="mt-4 w-[70%] h-[45%] rounded-3xl border-4 border-pink-200 relative z-10"
   >
     <div class="relative overflow-hidden h-full">
-      <!-- <div id="toast-1-d-anchor" class="absolute invisible"></div> -->
-      <app-toast
-        elementId="toast-6"
-        elementGroupId="toast-group-2"
+      <!-- <div id="tour-guide-1-d-anchor" class="absolute invisible"></div> -->
+      <app-tour-guide
+        elementId="tour-guide-6"
+        elementGroupId="tour-guide-group-2"
         position="RIGHT"
         effectivePosition="absolute"
         [show]="true"
@@ -66,26 +66,15 @@
         [hideOnHoverOut]="false"
         [animation]="true"
       >
-        <app-toast-content elementId="toast-6"></app-toast-content>
-      </app-toast>
+        <app-tour-guide-content
+          elementId="tour-guide-6"
+        ></app-tour-guide-content>
+      </app-tour-guide>
       <p
         class="pt-6 text-2xl text-center rounded-3xl absolute inset-0 bg-gray-50"
-        id="toast-1-d"
+        id="tour-guide-1-d"
       >
         {{ explanation }}
-        <!-- <app-toast
-        toastId="toast-16"
-        toastGroupId="toast-group-16"
-        position="RIGHT"
-        effectivePosition="absolute"
-        [show]="true"
-        [toggleOnClick]="true"
-        [showOnHover]="false"
-        [hideOnHoverOut]="false"
-        [animation]="true"
-      >
-        <app-toast-content toastId="toast-16"></app-toast-content>
-      </app-toast> -->
       </p>
     </div>
   </div>

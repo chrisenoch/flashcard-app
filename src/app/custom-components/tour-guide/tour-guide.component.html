@@ -1,4 +1,4 @@
-<!-- toastAnchor stays with the toastDestination -->
+<!-- tourGuideAnchor stays with the tourGuideDestination -->
 <div
   #tourGuideAnchor
   [ngClass]="elementAnchorCSSClasses"
@@ -27,7 +27,6 @@
     }"
     [ngClass]="elementCSSClasses"
   >
-    <!-- <h1>My tooltip/toast header</h1> -->
     <ng-content></ng-content>
     <div
       *ngIf="showArrow && arrowLeft"

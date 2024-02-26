@@ -24,8 +24,8 @@ import {
   take,
 } from 'rxjs';
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
-import { Position } from './models/position';
-import { ArrowPosition, Arrows } from './models/arrows';
+import { Position } from '../models/position';
+import { ArrowPosition, Arrows } from '../models/arrows';
 
 import { compareDOMRectValues } from '../utilities';
 import { pauseTimers } from '../controllable-timer';
@@ -46,11 +46,11 @@ import { ElementControlsService } from '../element-controls.service';
 import { initDelayTimers } from '../element-visibility';
 
 @Component({
-  selector: 'app-toast',
-  templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.scss'],
+  selector: 'app-tour-guide',
+  templateUrl: './tour-guide.component.html',
+  styleUrls: ['./tour-guide.component.scss'],
 })
-export class ToastComponent
+export class TourGuideComponent
   implements
     OnInit,
     AfterContentInit,
@@ -67,11 +67,11 @@ export class ToastComponent
     this.documentInjected = document;
   }
   /*We use the word element because the idea is some of this code will be resuable for components such as
-  a tool-tip, a toast, a snackbar, an alert, a timeline, etc. The word 'element' in variable names refers to the a tool-tip, toast, snackbar,
-  timeline, etc. In this case it refers to the tour guide.
-  This tour guide component can be used for all the above cases but is overkill for many of them.
-  To do: Extract relevant code into separate components and remove features not needed for the above components.
-  */
+a tool-tip, a toast, a snackbar, an alert, a timeline, etc. The word 'element' in variable names refers to the a tool-tip, toast, snackbar,
+timeline, etc. In this case it refers to the tour guide.
+This tour guide component can be used for all the above cases but is overkill for many of them.
+To do: Extract relevant code into separate components and remove features not needed for the above components.
+*/
   elementTop: string | null = '0px';
   elementBottom: string | null = null;
   elementLeft: string | null = '0px';

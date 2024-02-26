@@ -1,7 +1,7 @@
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
 import { cancelTimers } from './controllable-timer';
-import { Position } from './toast/models/position';
-import { Arrows } from './toast/models/arrows';
+import { Position } from './models/position';
+import { Arrows } from './models/arrows';
 import { ElementControlsService } from './element-controls.service';
 import { Subscription } from 'rxjs';
 import { UpdateShowState, updateShowState } from './element-visibility';
