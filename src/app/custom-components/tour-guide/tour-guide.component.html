@@ -1,0 +1,60 @@
+<!-- tourGuideAnchor stays with the tourGuideDestination -->
+<div
+  #tourGuideAnchor
+  [ngClass]="elementAnchorCSSClasses"
+  [ngStyle]="{
+    top: elementAnchorTop,
+    left: elementAnchorLeft,
+    right: elementAnchorRight,
+    bottom: elementAnchorBottom,
+    visibility: 'hidden',
+
+  }"
+  id="{{ elementId + '-anchor' }}"
+>
+  <!--this becomes a direct child of the body-->
+  <div
+    #tourGuide
+    [ngStyle]="{
+      top: elementTop,
+      left: elementLeft,
+      right: elementRight,
+      bottom: elementBottom,
+      visibility: visibility,
+      display: display,
+      position: positionType,
+      zIndex: zIndex
+    }"
+    [ngClass]="elementCSSClasses"
+  >
+    <ng-content></ng-content>
+    <div
+      *ngIf="showArrow && arrowLeft"
+      [ngClass]="arrowLeftCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+    <div
+      *ngIf="showArrow && arrowRight"
+      [ngClass]="arrowRightCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+    <div
+      *ngIf="showArrow && arrowTop"
+      [ngClass]="arrowTopCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+    <div
+      *ngIf="showArrow && arrowBottom"
+      [ngClass]="arrowBottomCSSClasses"
+      [ngStyle]="{
+        zIndex: zIndex
+      }"
+    ></div>
+  </div>
+</div>
