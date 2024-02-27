@@ -48,7 +48,9 @@ export class AccordionComponent
   }
 
   ngDoCheck(): void {
-    console.log('in ngDoCheck');
+    if (this.accordionTabsCC && !this.multiple) {
+      this.ensureOnlyOneTabIsActive();
+    }
   }
 
   ngAfterContentInit(): void {
@@ -69,10 +71,10 @@ export class AccordionComponent
   }
 
   ngAfterContentChecked() {
-    if (!this.multiple) {
-      this.ensureOnlyOneTabIsActive();
-    }
-
+    // Can't run it here due to ExpressionChangedAfterItsHasBeenChecked error
+    // if (!this.multiple) {
+    //   this.ensureOnlyOneTabIsActive();
+    // }
     // Can do this here instead of in ngOnChanges, but in this case Angular conducts an extra change detection check.
     // if (this.accordionState !== this.previousAccordionState) {
     //   triggerCycle(this.updateShowAllTabs.bind(this));
