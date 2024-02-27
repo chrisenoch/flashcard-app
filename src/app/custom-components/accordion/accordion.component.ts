@@ -6,6 +6,7 @@ import {
   DoCheck,
   Input,
   OnChanges,
+  OnInit,
   QueryList,
   SimpleChanges,
 } from '@angular/core';
@@ -22,7 +23,7 @@ import {
   styleUrls: ['./accordion.component.scss'],
 })
 export class AccordionComponent
-  implements AfterContentChecked, AfterContentInit, OnChanges, DoCheck
+  implements OnInit, AfterContentChecked, AfterContentInit, OnChanges, DoCheck
 {
   //This allows us to use typed values for SimpleChanges in ngOnChanges
   private fields;
@@ -32,8 +33,10 @@ export class AccordionComponent
   // Imagine the user clicks "show all tabs", and then subsequently hides a tab. When the user hides a tab, ngOnChanges will run
   // and updateShowAllTabs should not be run because the user just requested a tab to be hidden.
   // If we used a boolean, updateShowAllTabs would run.
-  @Input() accordionState = {
-    showAllTabs: false,
+  @Input() accordionState: {
+    showAllTabs: 'NOT_INITIALISED' | boolean;
+  } = {
+    showAllTabs: 'NOT_INITIALISED',
   };
 
   //Use this to get the isActive status of the accordion tabs
@@ -44,6 +47,16 @@ export class AccordionComponent
 
   constructor() {
     this.fields = getKeysAsValues(this) as PropertyNamesAsStrings<typeof this>;
+  }
+  ngOnInit(): void {
+    if (
+      !this.multiple &&
+      this.accordionState.showAllTabs !== 'NOT_INITIALISED'
+    ) {
+      console.error(
+        'If multiple is equal to false, you should not provide a value for accordionState.showAllTabs.'
+      );
+    }
   }
 
   ngDoCheck(): void {
@@ -82,10 +95,12 @@ export class AccordionComponent
   }
 
   private updateShowAllTabs() {
-    for (let i = 0; i < this.accordionTabsCC.length; i++) {
-      let ele = this.accordionTabsCC.get(i);
-      if (ele) {
-        ele.isActive = this.accordionState.showAllTabs;
+    if (this.accordionState.showAllTabs !== 'NOT_INITIALISED') {
+      for (let i = 0; i < this.accordionTabsCC.length; i++) {
+        let ele = this.accordionTabsCC.get(i);
+        if (ele) {
+          ele.isActive = this.accordionState.showAllTabs;
+        }
       }
     }
   }
