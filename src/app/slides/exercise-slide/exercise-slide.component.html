@@ -7,7 +7,7 @@
   >
     <app-accordion-tab
       *ngFor="let question of questions"
-      tabId="1"
+      tabId="{{ question.questionId }}"
       class="w-[50%] mb-4 hover:cursor-pointer"
     >
       <span header class="mr-4">

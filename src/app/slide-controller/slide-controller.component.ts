@@ -64,28 +64,34 @@ export class SlideControllerComponent
       id: 'exercise-1',
       questions: [
         {
+          questionId: '1',
           question: '1. Sed do eiusmod tempor incididunt ut ?',
           answer:
             'In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
         },
         {
+          questionId: '2',
           question: '2. Exercitation ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
         },
         {
+          questionId: '3',
           question: '3. Quae ab illo inventore veritatis et?',
           answer:
             'Architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam',
         },
         {
+          questionId: '4',
           question: '4. Exercitation4 ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem4 ipsum dolor sit amet, consectetur adipiscing elit',
         },
         {
+          questionId: '5',
           question: '5. Exercitation ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem5 ipsum dolor sit amet, consectetur adipiscing elit',
         },
         {
+          questionId: '6',
           question: '6. Exercitation ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem6 ipsum dolor sit amet, consectetur adipiscing elit',
         },
@@ -98,28 +104,34 @@ export class SlideControllerComponent
       //questions:[{"Question 1", "Answer 1"}
       questions: [
         {
+          questionId: '7',
           question: '1. Sed do eiusmod tempor incididunt ut ?',
           answer:
             'In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
         },
         {
+          questionId: '8',
           question: '2. Exercitation ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
         },
         {
+          questionId: '9',
           question: '3. Quae ab illo inventore veritatis et?',
           answer:
             'Architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam',
         },
         {
+          questionId: '10',
           question: '4. Exercitation4 ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem4 ipsum dolor sit amet, consectetur adipiscing elit',
         },
         {
+          questionId: '11',
           question: '5. Exercitation ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem5 ipsum dolor sit amet, consectetur adipiscing elit',
         },
         {
+          questionId: '12',
           question: '6. Exercitation ullamco laboris nisi ut aliquip e?',
           answer: 'Lorem6 ipsum dolor sit amet, consectetur adipiscing elit',
         },

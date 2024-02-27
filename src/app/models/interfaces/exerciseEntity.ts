@@ -4,7 +4,7 @@ import { Details } from '../types/details';
 export interface ExerciseEntity {
   id: string;
   kind: 'EXERCISE';
-  questions: { question: string; answer: string }[];
+  questions: { questionId: string; question: string; answer: string }[];
   isVisited: boolean;
   // question: string;
   // answer: string;
