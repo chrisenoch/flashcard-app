@@ -6,7 +6,6 @@ import {
   DoCheck,
   Input,
   OnChanges,
-  OnInit,
   QueryList,
   SimpleChanges,
 } from '@angular/core';
@@ -92,17 +91,28 @@ export class AccordionComponent
   }
 
   private ensureOnlyOneTabIsActive() {
+    //get new active tab
     for (let i = 0; i < this.accordionTabsCC.length; i++) {
-      const ele = this.accordionTabsCC.get(i);
-      if (ele) {
-        if (ele.isActive && this.activeTabId === 'NO_ACTIVE_TAB') {
+      const accordionTab = this.accordionTabsCC.get(i);
+      if (accordionTab) {
+        if (accordionTab.isActive && this.activeTabId === 'NO_ACTIVE_TAB') {
           //no previous activeTab so just update it
-          this.activeTabId = ele.tabId;
-        } else if (ele.isActive && ele.tabId !== this.activeTabId) {
-          ele.isActive = false;
-          this.activeTabId = ele.tabId;
+          this.activeTabId = accordionTab.tabId;
+        } else if (
+          accordionTab.isActive &&
+          accordionTab.tabId !== this.activeTabId
+        ) {
+          this.activeTabId = accordionTab.tabId;
           break;
         }
+      }
+    }
+
+    //remove other active tabs
+    for (let i = 0; i < this.accordionTabsCC.length; i++) {
+      const accordionTab = this.accordionTabsCC.get(i);
+      if (accordionTab && this.activeTabId !== accordionTab.tabId) {
+        accordionTab.isActive = false;
       }
     }
   }
