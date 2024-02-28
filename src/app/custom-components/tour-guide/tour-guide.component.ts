@@ -46,6 +46,10 @@ import {
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
 import { initDelayTimers } from '../element-visibility';
+import {
+  PropertyNamesAsStrings,
+  initFields,
+} from 'src/app/models/types/getFields';
 
 @Component({
   selector: 'app-tour-guide',
@@ -68,6 +72,8 @@ export class TourGuideComponent
     readonly elementControlsService: ElementControlsService
   ) {
     this.documentInjected = document;
+    //A function I created to give typed values for SimpleChanges
+    this.classFields = initFields<typeof this>(this, TourGuideComponent);
   }
 
   /*We use the word element because the idea is some of this code will be resuable for components such as
@@ -105,6 +111,7 @@ To do: Extract relevant code into separate components and remove features not ne
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
+  private classFields: PropertyNamesAsStrings<this>;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private documentInjected!: Document;
@@ -197,8 +204,8 @@ To do: Extract relevant code into separate components and remove features not ne
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes['showOnHover'].currentValue !==
-      changes['showOnHover'].previousValue
+      changes[this.classFields.showOnHover].currentValue !==
+      changes[this.classFields.showOnHover].previousValue
     ) {
       console.log('show on hover changed');
       if (!this.showOnHover) {
