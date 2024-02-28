@@ -10,14 +10,17 @@
       position="RIGHT"
       [toggleOnClick]="true"
       [showOnHover]="false"
-      [show]="true"
       [hideOnHoverOut]="false"
+      [show]="true"
       [arrowLeftCSSClasses]="
         'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
       "
     >
       <app-tour-guide-help elementId="tour-guide-1">
-        <app-tour-guide-help-action-bar />
+        <app-tour-guide-help-action-bar
+          elementId="tour-guide-1"
+          (updateToggleTooltips)="updateToggleTooltips()"
+        />
       </app-tour-guide-help>
     </app-tour-guide>
     <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
@@ -36,8 +39,7 @@
       effectivePosition="absolute"
       position="RIGHT"
       [toggleOnClick]="false"
-      [showOnHover]="false"
-      [hideOnHoverOut]="false"
+      [showOnHover]="showTooltips"
       [arrowLeftCSSClasses]="
         'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
       "
@@ -61,8 +63,7 @@
       effectivePosition="absolute"
       position="RIGHT"
       [toggleOnClick]="false"
-      [showOnHover]="false"
-      [hideOnHoverOut]="false"
+      [showOnHover]="showTooltips"
       [arrowLeftCSSClasses]="
         'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
       "
@@ -87,8 +88,7 @@
       effectivePosition="absolute"
       position="RIGHT"
       [toggleOnClick]="false"
-      [showOnHover]="false"
-      [hideOnHoverOut]="false"
+      [showOnHover]="showTooltips"
       [arrowLeftCSSClasses]="
         'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
       "
@@ -112,8 +112,7 @@
       effectivePosition="absolute"
       position="RIGHT"
       [toggleOnClick]="false"
-      [showOnHover]="false"
-      [hideOnHoverOut]="false"
+      [showOnHover]="showTooltips"
       [arrowLeftCSSClasses]="
         'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
       "
@@ -134,8 +133,7 @@
       effectivePosition="absolute"
       position="RIGHT"
       [toggleOnClick]="false"
-      [showOnHover]="false"
-      [hideOnHoverOut]="false"
+      [showOnHover]="showTooltips"
       [arrowLeftCSSClasses]="
         'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
       "
