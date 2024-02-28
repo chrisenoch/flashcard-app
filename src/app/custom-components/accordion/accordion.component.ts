@@ -14,8 +14,11 @@ import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
 import { triggerCycle } from 'src/app/utlities/tick';
 import {
   PropertyNamesAsStrings,
+  initFields,
   getKeysAsValues,
+  initFieldsNoSetters,
 } from 'src/app/models/types/getFields';
+import { ChevronLeftIcon } from 'primeng/icons/chevronleft';
 
 @Component({
   selector: 'app-accordion',
@@ -39,6 +42,16 @@ export class AccordionComponent
     showAllTabs: 'NOT_INITIALISED',
   };
 
+  _allowDay = true;
+
+  @Input() set allowDay(value: boolean) {
+    this._allowDay = value;
+  }
+
+  get allowDay(): boolean {
+    return this._allowDay;
+  }
+
   //Use this to get the isActive status of the accordion tabs
   @ContentChildren(AccordionTabComponent)
   private accordionTabsCC!: QueryList<AccordionTabComponent>;
@@ -46,8 +59,12 @@ export class AccordionComponent
   private activeTabId: string | 'NO_ACTIVE_TAB' = 'NO_ACTIVE_TAB';
 
   constructor() {
-    this.fields = getKeysAsValues(this) as PropertyNamesAsStrings<typeof this>;
+    this.fields = initFields<typeof this>(this, AccordionComponent);
+    //this.fields.
+    console.log('fields below');
+    console.log(this.fields);
   }
+
   ngOnInit(): void {
     if (
       !this.multiple &&
@@ -70,6 +87,8 @@ export class AccordionComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log('changes below');
+    console.log(changes);
     //As far as I understand, we can act on the content children here because we are telling the contentChildren what to do from a parent.
     //If a parent were responding to changes in a content child (e.g. user form input), then we would need to use AfterContentChecked.
     //Saves a render compared to using AfterContentChecked.
