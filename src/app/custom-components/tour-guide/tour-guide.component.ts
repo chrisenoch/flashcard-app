@@ -127,8 +127,7 @@ To do: Extract relevant code into separate components and remove features not ne
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
   private runUpdateElementPositionsOnScroll = false;
-  private showOnHoverUnListenFn: null | (() => void) = null;
-  private eventUnlistenFns: Map<string, () => void> = new Map();
+  private eventUnlistenFns: Map<string, (() => void) | null> = new Map();
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -204,45 +203,37 @@ To do: Extract relevant code into separate components and remove features not ne
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (
-      changes &&
-      changes[this.f.showOnHover]?.currentValue !==
-        changes[this.f.showOnHover]?.previousValue
-    ) {
-      console.log('show on hover changed');
-      if (!this.showOnHover) {
-        const unListener = this.eventUnlistenFns.get(this.f.showOnHover);
-        unListener && unListener();
-      } else if (this.elementDestination) {
-        const unListener = initShowOnHoverListener(
-          this,
-          this.elementDestination
-        );
-        unListener && this.eventUnlistenFns.set(this.f.showOnHover, unListener);
-      }
-    }
+    this.updateElementDestinationListener(
+      changes,
+      this.f.showOnHover,
+      this.showOnHover,
+      initShowOnHoverListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.f.hideOnHoverOut,
+      this.hideOnHoverOut,
+      initHideOnHoverOutListener
+    );
+  }
 
-    console.log('changes below');
-    console.log('fields value');
-    console.log(this.f.hideOnHoverOut);
-    console.log('map below');
-    console.log(this.eventUnlistenFns);
+  private updateElementDestinationListener(
+    changes: SimpleChanges,
+    inputPropName: string,
+    inputField: any,
+    callback: (a: this, b: HTMLElement) => (() => void) | null
+  ) {
     if (
       changes &&
-      changes[this.f.hideOnHoverOut]?.currentValue !==
-        changes[this.f.hideOnHoverOut]?.previousValue
+      changes[inputPropName]?.currentValue !==
+        changes[inputPropName]?.previousValue
     ) {
-      console.log('show on hover changed');
-      if (!this.hideOnHoverOut) {
-        const unListener = this.eventUnlistenFns.get(this.f.hideOnHoverOut);
+      if (!inputField) {
+        const unListener = this.eventUnlistenFns.get(inputPropName);
         unListener && unListener();
       } else if (this.elementDestination) {
-        const unListener = initHideOnHoverOutListener(
-          this,
-          this.elementDestination
-        );
-        unListener &&
-          this.eventUnlistenFns.set(this.f.hideOnHoverOut, unListener);
+        const unListener = callback(this, this.elementDestination);
+        unListener && this.eventUnlistenFns.set(inputPropName, unListener);
       }
     }
   }
@@ -426,14 +417,11 @@ To do: Extract relevant code into separate components and remove features not ne
   }
 
   private addElementDestinationListeners(elementDestination: HTMLElement) {
-    console.log('adding element destination listeners');
-    const showOnHoverUnListenFn = initShowOnHoverListener(
-      this,
-      elementDestination
+    this.eventUnlistenFns.set(
+      this.f.showOnHover,
+      initShowOnHoverListener(this, elementDestination)
     );
-    showOnHoverUnListenFn &&
-      this.eventUnlistenFns.set(this.f.showOnHover, showOnHoverUnListenFn);
-    //initHideOnHoverOutListener(this, elementDestination);
+
     const hideOnHoverOutUnListenFn = initHideOnHoverOutListener(
       this,
       elementDestination
