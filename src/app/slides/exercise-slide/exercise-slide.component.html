@@ -4,6 +4,7 @@
   <app-accordion
     class="text-2xl content-around flex flex-col flex-wrap gap-8 w-[90%] h-[32rem]"
     [accordionState]="accordionState"
+    [allowDay]="accordionState.showAllTabs"
   >
     <app-accordion-tab
       *ngFor="let question of questions"
