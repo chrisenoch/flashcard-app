@@ -64,21 +64,21 @@ export type InitShowOnClickListener = {
 export interface InitShowOnClickListenerArgs extends InitShowOnClickListener {}
 
 export type InitShowOnCustomListener = {
-  showOnCustom: string | undefined;
+  showOnCustom: string | false;
 } & AddShowElementWithTimersListener;
 
 export interface InitShowOnCustomListenerArgs
   extends InitShowOnCustomListener {}
 
 export type InitHideOnCustomListener = {
-  hideOnCustom: string | undefined;
+  hideOnCustom: string | false;
 } & AddHideElementWithTimersListener;
 
 export interface InitHideOnCustomListenerArgs
   extends InitHideOnCustomListener {}
 
 export type InitToggleOnCustomListener = {
-  toggleOnCustom: string | undefined;
+  toggleOnCustom: string | false;
 } & AddToggleElementWithTimersListener;
 
 export interface InitToggleOnCustomListenerArgs
@@ -89,9 +89,16 @@ export function initToggleOnCustomListener(
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.toggleOnCustom) {
-    addToggleElementWithTimersListener(self, self.toggleOnCustom, target, true);
+    unListenFn = addToggleElementWithTimersListener(
+      self,
+      self.toggleOnCustom,
+      target,
+      true
+    );
   }
+  return unListenFn;
 }
 
 export function initHideOnCustomListener(
@@ -99,9 +106,16 @@ export function initHideOnCustomListener(
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.hideOnCustom) {
-    addHideElementWithTimersListener(self, self.hideOnCustom, target, true);
+    unListenFn = addHideElementWithTimersListener(
+      self,
+      self.hideOnCustom,
+      target,
+      true
+    );
   }
+  return unListenFn;
 }
 
 export function initShowOnCustomListener(
@@ -109,9 +123,15 @@ export function initShowOnCustomListener(
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.showOnCustom) {
-    addShowElementWithTimersListener(self, self.showOnCustom, target);
+    unListenFn = addShowElementWithTimersListener(
+      self,
+      self.showOnCustom,
+      target
+    );
   }
+  return unListenFn;
 }
 
 export function initShowOnClickListener(
@@ -131,9 +151,11 @@ export function initHideOnClickListener(
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.hideOnClick) {
-    addHideElementWithTimersListener(self, 'click', target, true);
+    unListenFn = addHideElementWithTimersListener(self, 'click', target, true);
   }
+  return unListenFn;
 }
 
 export function initToggleOnClickListener(

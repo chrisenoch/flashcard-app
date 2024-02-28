@@ -144,9 +144,9 @@ To do: Extract relevant code into separate components and remove features not ne
   @Input() showOnClick = false;
   @Input() hideOnClick = false;
   @Input() toggleOnClick = false;
-  @Input() hideOnCustom: string | undefined;
-  @Input() showOnCustom: string | undefined;
-  @Input() toggleOnCustom: string | undefined;
+  @Input() hideOnCustom: string | false = false;
+  @Input() showOnCustom: string | false = false;
+  @Input() toggleOnCustom: string | false = false;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
   @Input() showOnInitDelay = 0;
@@ -227,27 +227,30 @@ To do: Extract relevant code into separate components and remove features not ne
       this.showOnClick,
       initShowOnClickListener
     );
-  }
-
-  private updateElementDestinationListener(
-    changes: SimpleChanges,
-    inputPropName: string,
-    inputField: any,
-    callback: (a: this, b: HTMLElement) => (() => void) | null
-  ) {
-    if (
-      changes &&
-      changes[inputPropName]?.currentValue !==
-        changes[inputPropName]?.previousValue
-    ) {
-      if (!inputField) {
-        const unListener = this.eventUnlistenFns.get(inputPropName);
-        unListener && unListener();
-      } else if (this.elementDestination) {
-        const unListener = callback(this, this.elementDestination);
-        unListener && this.eventUnlistenFns.set(inputPropName, unListener);
-      }
-    }
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.hideOnClick,
+      this.hideOnClick,
+      initHideOnClickListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.showOnCustom,
+      this.showOnCustom,
+      initShowOnCustomListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.hideOnCustom,
+      this.hideOnCustom,
+      initHideOnCustomListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.toggleOnCustom,
+      this.toggleOnCustom,
+      initToggleOnCustomListener
+    );
   }
 
   ngAfterContentInit(): void {
@@ -428,6 +431,27 @@ To do: Extract relevant code into separate components and remove features not ne
     }
   }
 
+  private updateElementDestinationListener(
+    changes: SimpleChanges,
+    inputPropName: string,
+    inputField: any,
+    callback: (a: this, b: HTMLElement) => (() => void) | null
+  ) {
+    if (
+      changes &&
+      changes[inputPropName]?.currentValue !==
+        changes[inputPropName]?.previousValue
+    ) {
+      if (!inputField) {
+        const unListener = this.eventUnlistenFns.get(inputPropName);
+        unListener && unListener();
+      } else if (this.elementDestination) {
+        const unListener = callback(this, this.elementDestination);
+        unListener && this.eventUnlistenFns.set(inputPropName, unListener);
+      }
+    }
+  }
+
   private addElementDestinationListeners(elementDestination: HTMLElement) {
     this.eventUnlistenFns.set(
       this.fields.showOnHover,
@@ -449,10 +473,25 @@ To do: Extract relevant code into separate components and remove features not ne
       initShowOnClickListener(this, elementDestination)
     );
 
-    initHideOnClickListener(this, elementDestination);
-    initShowOnCustomListener(this, elementDestination);
-    initHideOnCustomListener(this, elementDestination);
-    initToggleOnCustomListener(this, elementDestination);
+    this.eventUnlistenFns.set(
+      this.fields.hideOnClick,
+      initHideOnClickListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.showOnCustom,
+      initShowOnCustomListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.hideOnCustom,
+      initHideOnCustomListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.toggleOnCustom,
+      initToggleOnCustomListener(this, elementDestination)
+    );
   }
 
   private moveElementToBody() {
