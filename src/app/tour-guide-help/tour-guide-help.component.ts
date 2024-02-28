@@ -8,6 +8,7 @@ import { Component, Input } from '@angular/core';
 export class TourGuideHelpComponent {
   @Input() elementId!: string;
   @Input() elementGroupId: string | undefined;
+  @Input() showCloseIcon: boolean = true;
 
   ngOnInit(): void {
     if (!this.elementId) {

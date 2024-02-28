@@ -13,12 +13,12 @@
     [onCloseAllOthers]="true"
     class="text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
   >
-    Close All Tooltips
+    Close All
   </button>
   <button
     class="mr-4 text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
     (click)="onToggleTooltips()"
   >
-    Turn on Tooltips
+    Turn {{ showTooltips ? "off" : "on" }} Tooltips
   </button>
 </div>

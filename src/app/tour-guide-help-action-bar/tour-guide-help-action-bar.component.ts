@@ -8,6 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class TourGuideHelpActionBarComponent {
   @Input() elementId!: string;
   @Input() elementGroupId: string | undefined;
+  @Input() showTooltips: boolean | undefined;
 
   @Output() updateToggleTooltips = new EventEmitter();
 

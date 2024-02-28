@@ -1,11 +1,12 @@
 <div class="relative max-w-2xl h-full bg-blue-100 p-2 rounded-lg">
   <button
+    *ngIf="showCloseIcon"
     appElementControls
     [elementId]="elementId"
     [onClose]="true"
     class="absolute -top-2 -right-2"
   >
-    <i class="bi bi-x-circle-fill font-black text-blue-500 text-xl"></i>
+    <i class="bi bi-x-circle-fill font-black text-blue-400 text-xl"></i>
   </button>
   <!-- <p>Shows all exercise answers</p>
   <div class="w-11/12 h-[1px] my-1 bg-blue-300"></div> -->
