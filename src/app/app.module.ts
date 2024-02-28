@@ -23,6 +23,10 @@ import { AccordionComponent } from './custom-components/accordion/accordion.comp
 import { AccordionTabComponent } from './custom-components/accordion/accordion-tab/accordion-tab.component';
 import { NoTeachingEntitiesErrorComponent } from './errors/no-teaching-entities-error/no-teaching-entities-error.component';
 import { SlideControllerComponent } from './slide-controller/slide-controller.component';
+import { ElementControlsDirective } from './custom-components/element-controls.directive';
+import { TourGuideComponent } from './custom-components/tour-guide/tour-guide.component';
+import { TourGuideDirective } from './custom-components/tour-guide/tour-guide.directive';
+import { TourGuideContentComponent } from './tour-guide-content/tour-guide-content.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +42,10 @@ import { SlideControllerComponent } from './slide-controller/slide-controller.co
     AccordionTabComponent,
     NoTeachingEntitiesErrorComponent,
     SlideControllerComponent,
+    ElementControlsDirective,
+    TourGuideComponent,
+    TourGuideDirective,
+    TourGuideContentComponent,
   ],
   imports: [
     BrowserModule,
