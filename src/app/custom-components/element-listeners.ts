@@ -149,13 +149,15 @@ export function initHideOnHoverOutListener(
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.hideOnHoverOut) {
     if (self.hideOnHoverOut === 'mouseleave') {
-      addHideElementWithTimersListener(self, 'mouseleave', target);
+      unListenFn = addHideElementWithTimersListener(self, 'mouseleave', target);
     } else {
-      addHideElementWithTimersListener(self, 'mouseout', target);
+      unListenFn = addHideElementWithTimersListener(self, 'mouseout', target);
     }
   }
+  return unListenFn;
 }
 
 export function initShowOnHoverListener(
@@ -200,12 +202,13 @@ export function addHideElementWithTimersListener(
   overrideKeepShowing: boolean = false
 ) {
   const self = thisofResidingClass;
-  self.renderer2.listen(target, eventType, (e: Event) => {
+  const unListenFn = self.renderer2.listen(target, eventType, (e: Event) => {
     if (overrideKeepShowing) {
       self.keepShowing = false;
     }
     hideElementWithTimers(self);
   });
+  return unListenFn;
 }
 
 export function addShowElementWithTimersListener(

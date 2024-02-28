@@ -73,7 +73,7 @@ export class TourGuideComponent
   ) {
     this.documentInjected = document;
     //A function I created to give typed values for SimpleChanges
-    this.classFields = initFields<typeof this>(this, TourGuideComponent);
+    this.f = initFields<typeof this>(this, TourGuideComponent);
   }
 
   /*We use the word element because the idea is some of this code will be resuable for components such as
@@ -111,7 +111,7 @@ To do: Extract relevant code into separate components and remove features not ne
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
-  private classFields: PropertyNamesAsStrings<this>;
+  private f: PropertyNamesAsStrings<this>;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private documentInjected!: Document;
@@ -205,22 +205,44 @@ To do: Extract relevant code into separate components and remove features not ne
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes[this.classFields.showOnHover].currentValue !==
-      changes[this.classFields.showOnHover].previousValue
+      changes &&
+      changes[this.f.showOnHover]?.currentValue !==
+        changes[this.f.showOnHover]?.previousValue
     ) {
       console.log('show on hover changed');
       if (!this.showOnHover) {
-        const unListener = this.eventUnlistenFns.get(
-          this.classFields.showOnHover
-        );
+        const unListener = this.eventUnlistenFns.get(this.f.showOnHover);
         unListener && unListener();
       } else if (this.elementDestination) {
         const unListener = initShowOnHoverListener(
           this,
           this.elementDestination
         );
+        unListener && this.eventUnlistenFns.set(this.f.showOnHover, unListener);
+      }
+    }
+
+    console.log('changes below');
+    console.log('fields value');
+    console.log(this.f.hideOnHoverOut);
+    console.log('map below');
+    console.log(this.eventUnlistenFns);
+    if (
+      changes &&
+      changes[this.f.hideOnHoverOut]?.currentValue !==
+        changes[this.f.hideOnHoverOut]?.previousValue
+    ) {
+      console.log('show on hover changed');
+      if (!this.hideOnHoverOut) {
+        const unListener = this.eventUnlistenFns.get(this.f.hideOnHoverOut);
+        unListener && unListener();
+      } else if (this.elementDestination) {
+        const unListener = initHideOnHoverOutListener(
+          this,
+          this.elementDestination
+        );
         unListener &&
-          this.eventUnlistenFns.set(this.classFields.showOnHover, unListener);
+          this.eventUnlistenFns.set(this.f.hideOnHoverOut, unListener);
       }
     }
   }
@@ -404,16 +426,24 @@ To do: Extract relevant code into separate components and remove features not ne
   }
 
   private addElementDestinationListeners(elementDestination: HTMLElement) {
+    console.log('adding element destination listeners');
     const showOnHoverUnListenFn = initShowOnHoverListener(
       this,
       elementDestination
     );
     showOnHoverUnListenFn &&
+      this.eventUnlistenFns.set(this.f.showOnHover, showOnHoverUnListenFn);
+    //initHideOnHoverOutListener(this, elementDestination);
+    const hideOnHoverOutUnListenFn = initHideOnHoverOutListener(
+      this,
+      elementDestination
+    );
+    hideOnHoverOutUnListenFn &&
       this.eventUnlistenFns.set(
-        this.classFields.showOnHover,
-        showOnHoverUnListenFn
+        this.f.hideOnHoverOut,
+        hideOnHoverOutUnListenFn
       );
-    initHideOnHoverOutListener(this, elementDestination);
+
     initToggleOnClickListener(this, elementDestination);
     initShowOnClickListener(this, elementDestination);
     initHideOnClickListener(this, elementDestination);
