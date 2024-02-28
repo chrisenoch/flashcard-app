@@ -119,9 +119,11 @@ export function initShowOnClickListener(
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.showOnClick) {
-    addShowElementWithTimersListener(self, 'click', target);
+    unListenFn = addShowElementWithTimersListener(self, 'click', target);
   }
+  return unListenFn;
 }
 
 export function initHideOnClickListener(
@@ -139,9 +141,16 @@ export function initToggleOnClickListener(
   target: HTMLElement
 ) {
   const self = thisOfResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.toggleOnClick) {
-    addToggleElementWithTimersListener(self, 'click', target, true);
+    unListenFn = addToggleElementWithTimersListener(
+      self,
+      'click',
+      target,
+      true
+    );
   }
+  return unListenFn;
 }
 
 export function initHideOnHoverOutListener(
@@ -183,7 +192,7 @@ export function addToggleElementWithTimersListener(
   overrideKeepShowing: boolean = false
 ) {
   const self = thisofResidingClass;
-  self.renderer2.listen(target, eventType, (e: Event) => {
+  const unListenFn = self.renderer2.listen(target, eventType, (e: Event) => {
     if (self.isShowing) {
       if (overrideKeepShowing) {
         self.keepShowing = false;
@@ -193,6 +202,7 @@ export function addToggleElementWithTimersListener(
       showElementWithTimers(self);
     }
   });
+  return unListenFn;
 }
 
 export function addHideElementWithTimersListener(

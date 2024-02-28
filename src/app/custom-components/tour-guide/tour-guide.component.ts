@@ -73,7 +73,7 @@ export class TourGuideComponent
   ) {
     this.documentInjected = document;
     //A function I created to give typed values for SimpleChanges
-    this.f = initFields<typeof this>(this, TourGuideComponent);
+    this.fields = initFields<typeof this>(this, TourGuideComponent);
   }
 
   /*We use the word element because the idea is some of this code will be resuable for components such as
@@ -111,7 +111,7 @@ To do: Extract relevant code into separate components and remove features not ne
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
-  private f: PropertyNamesAsStrings<this>;
+  private fields: PropertyNamesAsStrings<this>;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private documentInjected!: Document;
@@ -205,15 +205,27 @@ To do: Extract relevant code into separate components and remove features not ne
   ngOnChanges(changes: SimpleChanges): void {
     this.updateElementDestinationListener(
       changes,
-      this.f.showOnHover,
+      this.fields.showOnHover,
       this.showOnHover,
       initShowOnHoverListener
     );
     this.updateElementDestinationListener(
       changes,
-      this.f.hideOnHoverOut,
+      this.fields.hideOnHoverOut,
       this.hideOnHoverOut,
       initHideOnHoverOutListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.toggleOnClick,
+      this.toggleOnClick,
+      initToggleOnClickListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.showOnClick,
+      this.showOnClick,
+      initShowOnClickListener
     );
   }
 
@@ -418,22 +430,25 @@ To do: Extract relevant code into separate components and remove features not ne
 
   private addElementDestinationListeners(elementDestination: HTMLElement) {
     this.eventUnlistenFns.set(
-      this.f.showOnHover,
+      this.fields.showOnHover,
       initShowOnHoverListener(this, elementDestination)
     );
 
-    const hideOnHoverOutUnListenFn = initHideOnHoverOutListener(
-      this,
-      elementDestination
+    this.eventUnlistenFns.set(
+      this.fields.hideOnHoverOut,
+      initHideOnHoverOutListener(this, elementDestination)
     );
-    hideOnHoverOutUnListenFn &&
-      this.eventUnlistenFns.set(
-        this.f.hideOnHoverOut,
-        hideOnHoverOutUnListenFn
-      );
 
-    initToggleOnClickListener(this, elementDestination);
-    initShowOnClickListener(this, elementDestination);
+    this.eventUnlistenFns.set(
+      this.fields.toggleOnClick,
+      initToggleOnClickListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.showOnClick,
+      initShowOnClickListener(this, elementDestination)
+    );
+
     initHideOnClickListener(this, elementDestination);
     initShowOnCustomListener(this, elementDestination);
     initHideOnCustomListener(this, elementDestination);
