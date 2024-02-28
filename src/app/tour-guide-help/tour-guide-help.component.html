@@ -1,17 +1,35 @@
-<div class="w-full h-full bg-blue-100 p-2 rounded-lg">
-  <div class="flex gap-4">
-    <button appElementControls [elementId]="elementId" [onClose]="true">
-      Close
-    </button>
-    <button appElementControls [elementId]="elementId" [onShowAll]="true">
+<div class="relative max-w-2xl h-full bg-blue-100 p-2 rounded-lg">
+  <!-- <p>Shows all exercise answers</p>
+  <div class="w-11/12 h-[1px] my-1 bg-blue-300"></div> -->
+  <div class="flex gap-2">
+    <button
+      appElementControls
+      [elementId]="elementId"
+      [onShowAll]="true"
+      class="text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+    >
       Show All
     </button>
     <button
       appElementControls
       [elementId]="elementId"
       [onCloseAllOthers]="true"
+      class="text-blue-950 hover:enabled::bg-blue-200 py-1 px-2 rounded-lg"
     >
-      Close All Others
+      Close All Tooltips
+    </button>
+    <button
+      class="mr-4 text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+    >
+      Turn on Tooltips
+    </button>
+    <button
+      appElementControls
+      [elementId]="elementId"
+      [onClose]="true"
+      class="absolute -top-2 -right-2"
+    >
+      <i class="bi bi-x-circle-fill font-black text-blue-500 text-xl"></i>
     </button>
   </div>
 </div>
