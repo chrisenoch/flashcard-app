@@ -128,6 +128,7 @@ To do: Extract relevant code into separate components and remove features not ne
   private runAfterViewCheckedSub = false;
   private runUpdateElementPositionsOnScroll = false;
   private showOnHoverUnListenFn: null | (() => void) = null;
+  private eventUnlistenFns: Map<string, () => void> = new Map();
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -209,7 +210,17 @@ To do: Extract relevant code into separate components and remove features not ne
     ) {
       console.log('show on hover changed');
       if (!this.showOnHover) {
-        this.showOnHoverUnListenFn && this.showOnHoverUnListenFn();
+        const unListener = this.eventUnlistenFns.get(
+          this.classFields.showOnHover
+        );
+        unListener && unListener();
+      } else if (this.elementDestination) {
+        const unListener = initShowOnHoverListener(
+          this,
+          this.elementDestination
+        );
+        unListener &&
+          this.eventUnlistenFns.set(this.classFields.showOnHover, unListener);
       }
     }
   }
@@ -393,10 +404,15 @@ To do: Extract relevant code into separate components and remove features not ne
   }
 
   private addElementDestinationListeners(elementDestination: HTMLElement) {
-    this.showOnHoverUnListenFn = initShowOnHoverListener(
+    const showOnHoverUnListenFn = initShowOnHoverListener(
       this,
       elementDestination
     );
+    showOnHoverUnListenFn &&
+      this.eventUnlistenFns.set(
+        this.classFields.showOnHover,
+        showOnHoverUnListenFn
+      );
     initHideOnHoverOutListener(this, elementDestination);
     initToggleOnClickListener(this, elementDestination);
     initShowOnClickListener(this, elementDestination);
