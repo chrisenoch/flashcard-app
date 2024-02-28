@@ -1,0 +1,23 @@
+<div class="flex gap-2">
+  <button
+    appElementControls
+    [elementId]="elementId"
+    [onShowAll]="true"
+    class="text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+  >
+    Show All
+  </button>
+  <button
+    appElementControls
+    [elementId]="elementId"
+    [onCloseAllOthers]="true"
+    class="text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+  >
+    Close All Tooltips
+  </button>
+  <button
+    class="mr-4 text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+  >
+    Turn on Tooltips
+  </button>
+</div>

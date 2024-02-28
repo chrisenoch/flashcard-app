@@ -27,6 +27,7 @@ import { ElementControlsDirective } from './custom-components/element-controls.d
 import { TourGuideComponent } from './custom-components/tour-guide/tour-guide.component';
 import { TourGuideDirective } from './custom-components/tour-guide/tour-guide.directive';
 import { TourGuideHelpComponent } from './tour-guide-help/tour-guide-help.component';
+import { TourGuideHelpActionBarComponent } from './tour-guide-help-action-bar/tour-guide-help-action-bar.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { TourGuideHelpComponent } from './tour-guide-help/tour-guide-help.compon
     TourGuideComponent,
     TourGuideDirective,
     TourGuideHelpComponent,
+    TourGuideHelpActionBarComponent,
   ],
   imports: [
     BrowserModule,
