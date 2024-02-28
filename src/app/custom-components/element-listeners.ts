@@ -163,13 +163,15 @@ export function initShowOnHoverListener(
   target: HTMLElement
 ) {
   const self = thisofResidingClass;
+  let unListenFn: (() => void) | null = null;
   if (self.showOnHover) {
     if (self.showOnHover === 'mouseenter') {
-      addShowElementWithTimersListener(self, 'mouseenter', target);
+      unListenFn = addShowElementWithTimersListener(self, 'mouseenter', target);
     } else {
-      addShowElementWithTimersListener(self, 'mouseover', target);
+      unListenFn = addShowElementWithTimersListener(self, 'mouseover', target);
     }
   }
+  return unListenFn;
 }
 
 export function addToggleElementWithTimersListener(
@@ -210,11 +212,13 @@ export function addShowElementWithTimersListener(
   thisofResidingClass: AddShowElementWithTimersListenerArgs,
   eventType: string,
   target: HTMLElement
-) {
+): () => void {
   const self = thisofResidingClass;
-  self.renderer2.listen(target, eventType, (e: Event) => {
+  const unListenFn = self.renderer2.listen(target, eventType, (e: Event) => {
     showElementWithTimers(self);
   });
+
+  return unListenFn;
 }
 
 export function addTransitionEndElementListener(

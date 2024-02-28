@@ -13,6 +13,8 @@ import {
   ViewChild,
   NgZone,
   AfterViewChecked,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import {
   Observable,
@@ -53,6 +55,7 @@ import { initDelayTimers } from '../element-visibility';
 export class TourGuideComponent
   implements
     OnInit,
+    OnChanges,
     AfterContentInit,
     AfterViewInit,
     AfterViewChecked,
@@ -66,6 +69,7 @@ export class TourGuideComponent
   ) {
     this.documentInjected = document;
   }
+
   /*We use the word element because the idea is some of this code will be resuable for components such as
 a tool-tip, a toast, a snackbar, an alert, a timeline, etc. The word 'element' in variable names refers to the a tool-tip, toast, snackbar,
 timeline, etc. In this case it refers to the tour guide.
@@ -116,6 +120,7 @@ To do: Extract relevant code into separate components and remove features not ne
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
   private runUpdateElementPositionsOnScroll = false;
+  private showOnHoverUnListenFn: null | (() => void) = null;
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -188,6 +193,18 @@ To do: Extract relevant code into separate components and remove features not ne
     }
 
     this.addWindowResizeHandler();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes['showOnHover'].currentValue !==
+      changes['showOnHover'].previousValue
+    ) {
+      console.log('show on hover changed');
+      if (!this.showOnHover) {
+        this.showOnHoverUnListenFn && this.showOnHoverUnListenFn();
+      }
+    }
   }
 
   ngAfterContentInit(): void {
@@ -369,7 +386,10 @@ To do: Extract relevant code into separate components and remove features not ne
   }
 
   private addElementDestinationListeners(elementDestination: HTMLElement) {
-    initShowOnHoverListener(this, elementDestination);
+    this.showOnHoverUnListenFn = initShowOnHoverListener(
+      this,
+      elementDestination
+    );
     initHideOnHoverOutListener(this, elementDestination);
     initToggleOnClickListener(this, elementDestination);
     initShowOnClickListener(this, elementDestination);
