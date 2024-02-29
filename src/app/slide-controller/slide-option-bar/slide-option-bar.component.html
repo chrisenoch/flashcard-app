@@ -18,7 +18,7 @@
     >
       <app-tour-guide-help [showCloseIcon]="true" elementId="tour-guide-1">
         <app-tour-guide-help-action-bar
-          [showTooltips]="showTooltips"
+          [showTooltipsOnUserAction]="showTooltips"
           elementId="tour-guide-1"
           (updateToggleTooltips)="updateToggleTooltips()"
         />
@@ -45,7 +45,9 @@
       "
     >
       <app-tour-guide-help elementId="tour-guide-2">
-        <p message class="mr-4">Show/Hide translation</p>
+        <p message class="mr-4">
+          Show/Hide <span class="underline">translation</span>
+        </p>
       </app-tour-guide-help>
     </app-tour-guide>
     <button
@@ -69,7 +71,9 @@
       "
     >
       <app-tour-guide-help elementId="tour-guide-3">
-        <p message class="mr-4">Toggle primary language</p>
+        <p message class="mr-4">
+          Toggle <span class="underline">primary language</span>
+        </p>
       </app-tour-guide-help>
     </app-tour-guide>
     <button
@@ -94,7 +98,9 @@
       "
     >
       <app-tour-guide-help elementId="tour-guide-4">
-        <p message class="mr-4">Show/Hide explanation</p>
+        <p message class="mr-4">
+          Show/Hide <span class="underline">explanation</span>
+        </p>
       </app-tour-guide-help>
     </app-tour-guide>
     <button
@@ -118,7 +124,9 @@
       "
     >
       <app-tour-guide-help elementId="tour-guide-5">
-        <p message class="mr-4">Show/Hide example sentences</p>
+        <p message class="mr-4">
+          Show/Hide <span class="underline">example sentences</span>
+        </p>
       </app-tour-guide-help>
     </app-tour-guide>
     <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
@@ -139,7 +147,9 @@
       "
     >
       <app-tour-guide-help elementId="tour-guide-6">
-        <p message class="mr-4">Only show visited words on sidebar</p>
+        <p message class="mr-4">
+          Only show <span class="underline">visited words</span> on sidebar
+        </p>
       </app-tour-guide-help>
     </app-tour-guide>
     <button

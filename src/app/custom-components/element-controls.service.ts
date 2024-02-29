@@ -24,6 +24,7 @@ export class ElementControlsService {
   //show$ Can be called from outside the element component.
   show$ = new Subject<{ event: Event; elementId: string } | null>();
   showAll$ = new Subject<Event | null>();
+  showAll: boolean | undefined;
 
   showAllOthersInGroup$ = new Subject<{
     event: Event;
@@ -81,5 +82,6 @@ export class ElementControlsService {
 
   onShowAll(e: Event) {
     this.showAll$.next(e);
+    console.log('in next showAll');
   }
 }
