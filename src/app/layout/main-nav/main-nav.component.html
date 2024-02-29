@@ -1,5 +1,5 @@
 <!-- IMPORTANT: I haven't extracted these into button components because soon I will start my own component library and use the button components from there.-->
-<!--To do: Disable hover on buttons when buttons are disabled.-->
+<!--To do: Disable hover on buttons when buttons are disabled and map over nav items.-->
 <nav
   class="font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
 >
@@ -13,36 +13,14 @@
     </div>
 
     <ul class="flex grow h-full items-center justify-end gap-5">
-      <li class="h-full flex items-center">
+      <li *ngFor="let item of navItems" class="h-full flex items-center">
         <a
-          href="#"
+          href="{{ item.href }}"
           class="p-1 h-fit w-fit hover:bg-gray-300 inline-block rounded-full bg-gray-200"
         >
           <span
             class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>Flashcards</span></span
-          ></a
-        >
-      </li>
-      <li class="h-full flex items-center">
-        <a
-          href="#"
-          class="p-1 h-fit w-fit hover:bg-gray-300 inline-block rounded-full bg-gray-200"
-        >
-          <span
-            class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>Classes</span></span
-          ></a
-        >
-      </li>
-      <li class="h-full flex items-center">
-        <a
-          href="#"
-          class="p-1 h-fit w-fit hover:bg-gray-300 inline-block rounded-full bg-gray-200"
-        >
-          <span
-            class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>Games</span></span
+            ><span>{{ item.name }}</span></span
           ></a
         >
       </li>
