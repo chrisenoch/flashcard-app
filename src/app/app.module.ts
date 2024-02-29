@@ -31,6 +31,7 @@ import { TourGuideHelpActionBarComponent } from './tour-guide-help-action-bar/to
 import { TourGuideContainerComponent } from './custom-components/tour-guide/tour-guide-container/tour-guide-container.component';
 import { SlideOptionBarTextButtonComponent } from './slide-controller/slide-option-bar/slide-option-bar-text-button/slide-option-bar-text-button.component';
 import { SlideOptionBarIconButtonComponent } from './slide-controller/slide-option-bar/slide-option-bar-icon-button/slide-option-bar-icon-button.component';
+import { DisableLinkDirective } from './custom-directives/disable-link.directive';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { SlideOptionBarIconButtonComponent } from './slide-controller/slide-opti
     TourGuideContainerComponent,
     SlideOptionBarTextButtonComponent,
     SlideOptionBarIconButtonComponent,
+    DisableLinkDirective,
   ],
   imports: [
     BrowserModule,

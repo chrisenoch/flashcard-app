@@ -7,8 +7,8 @@ import { Component } from '@angular/core';
 })
 export class MainNavComponent {
   navItems = [
-    { name: 'Flascards', href: '#' },
-    { name: 'Classes', href: '#' },
-    { name: 'Games', href: '#' },
+    { name: 'Still to do', href: '#' },
+    { name: 'Still to do', href: '#' },
+    { name: 'Still to do', href: '#' },
   ];
 }
