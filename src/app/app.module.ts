@@ -28,6 +28,7 @@ import { TourGuideComponent } from './custom-components/tour-guide/tour-guide.co
 import { TourGuideDirective } from './custom-components/tour-guide/tour-guide.directive';
 import { TourGuideHelpComponent } from './tour-guide-help/tour-guide-help.component';
 import { TourGuideHelpActionBarComponent } from './tour-guide-help-action-bar/tour-guide-help-action-bar.component';
+import { TourGuideContainerComponent } from './custom-components/tour-guide/tour-guide-container/tour-guide-container.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { TourGuideHelpActionBarComponent } from './tour-guide-help-action-bar/to
     TourGuideDirective,
     TourGuideHelpComponent,
     TourGuideHelpActionBarComponent,
+    TourGuideContainerComponent,
   ],
   imports: [
     BrowserModule,
