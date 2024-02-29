@@ -7,14 +7,15 @@
       elementId="tour-guide-1"
       elementGroupId="tour-guide-group-1"
       effectivePosition="absolute"
-      position="RIGHT"
       [toggleOnClick]="true"
       [showOnHover]="false"
       [hideOnHoverOut]="false"
       [show]="true"
-      [arrowLeftCSSClasses]="
-        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
-      "
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help [showCloseIcon]="true" elementId="tour-guide-1">
         <app-tour-guide-help-action-bar
@@ -37,12 +38,13 @@
     <app-tour-guide
       elementId="tour-guide-2"
       elementGroupId="tour-guide-group-1"
-      effectivePosition="absolute"
-      position="RIGHT"
       [showOnHover]="showTooltips"
-      [arrowLeftCSSClasses]="
-        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
-      "
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-2">
         <p message class="mr-4">
@@ -62,13 +64,13 @@
     <app-tour-guide
       elementId="tour-guide-3"
       elementGroupId="tour-guide-group-1"
-      effectivePosition="absolute"
-      position="RIGHT"
-      [toggleOnClick]="false"
       [showOnHover]="showTooltips"
-      [arrowLeftCSSClasses]="
-        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
-      "
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-3">
         <p message class="mr-4">
@@ -89,13 +91,13 @@
     <app-tour-guide
       elementId="tour-guide-4"
       elementGroupId="tour-guide-group-1"
-      effectivePosition="absolute"
-      position="RIGHT"
-      [toggleOnClick]="false"
       [showOnHover]="showTooltips"
-      [arrowLeftCSSClasses]="
-        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
-      "
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-4">
         <p message class="mr-4">
@@ -115,13 +117,13 @@
     <app-tour-guide
       elementId="tour-guide-5"
       elementGroupId="tour-guide-group-1"
-      effectivePosition="absolute"
-      position="RIGHT"
-      [toggleOnClick]="false"
       [showOnHover]="showTooltips"
-      [arrowLeftCSSClasses]="
-        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
-      "
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-5">
         <p message class="mr-4">
@@ -138,13 +140,13 @@
     <app-tour-guide
       elementId="tour-guide-6"
       elementGroupId="tour-guide-group-1"
-      effectivePosition="absolute"
-      position="RIGHT"
-      [toggleOnClick]="false"
       [showOnHover]="showTooltips"
-      [arrowLeftCSSClasses]="
-        'absolute top-[50%] left-0 w-0 h-0 border-r-8 -mt-2 -ml-2 border-b-8 border-t-8 border-b-transparent border-t-transparent border-r-blue-100'
-      "
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-6">
         <p message class="mr-4">
