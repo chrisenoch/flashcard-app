@@ -13,6 +13,8 @@ import {
   ViewChild,
   NgZone,
   AfterViewChecked,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import {
   Observable,
@@ -44,6 +46,10 @@ import {
 import { addElementControlsSubscriptions } from '../element-controls';
 import { ElementControlsService } from '../element-controls.service';
 import { initDelayTimers } from '../element-visibility';
+import {
+  PropertyNamesAsStrings,
+  initFields,
+} from 'src/app/models/types/getFields';
 
 @Component({
   selector: 'app-tour-guide',
@@ -53,6 +59,7 @@ import { initDelayTimers } from '../element-visibility';
 export class TourGuideComponent
   implements
     OnInit,
+    OnChanges,
     AfterContentInit,
     AfterViewInit,
     AfterViewChecked,
@@ -65,7 +72,10 @@ export class TourGuideComponent
     readonly elementControlsService: ElementControlsService
   ) {
     this.documentInjected = document;
+    //A function I created to give typed values for SimpleChanges
+    this.fields = initFields<typeof this>(this, TourGuideComponent);
   }
+
   /*We use the word element because the idea is some of this code will be resuable for components such as
 a tool-tip, a toast, a snackbar, an alert, a timeline, etc. The word 'element' in variable names refers to the a tool-tip, toast, snackbar,
 timeline, etc. In this case it refers to the tour guide.
@@ -101,6 +111,7 @@ To do: Extract relevant code into separate components and remove features not ne
   hideOnInitDelayTimer: controlledTimer | undefined;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
+  private fields: PropertyNamesAsStrings<this>;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private documentInjected!: Document;
@@ -116,6 +127,7 @@ To do: Extract relevant code into separate components and remove features not ne
   private afterViewChecked$ = new Subject<boolean>();
   private runAfterViewCheckedSub = false;
   private runUpdateElementPositionsOnScroll = false;
+  private eventUnlistenFns: Map<string, (() => void) | null> = new Map();
 
   @Input() zIndex = 100;
   @Input() animation: boolean | null = null;
@@ -132,9 +144,9 @@ To do: Extract relevant code into separate components and remove features not ne
   @Input() showOnClick = false;
   @Input() hideOnClick = false;
   @Input() toggleOnClick = false;
-  @Input() hideOnCustom: string | undefined;
-  @Input() showOnCustom: string | undefined;
-  @Input() toggleOnCustom: string | undefined;
+  @Input() hideOnCustom: string | false = false;
+  @Input() showOnCustom: string | false = false;
+  @Input() toggleOnCustom: string | false = false;
   @Input() hideDelay = 0;
   @Input() showDelay = 0;
   @Input() showOnInitDelay = 0;
@@ -188,6 +200,57 @@ To do: Extract relevant code into separate components and remove features not ne
     }
 
     this.addWindowResizeHandler();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.showOnHover,
+      this.showOnHover,
+      initShowOnHoverListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.hideOnHoverOut,
+      this.hideOnHoverOut,
+      initHideOnHoverOutListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.toggleOnClick,
+      this.toggleOnClick,
+      initToggleOnClickListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.showOnClick,
+      this.showOnClick,
+      initShowOnClickListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.hideOnClick,
+      this.hideOnClick,
+      initHideOnClickListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.showOnCustom,
+      this.showOnCustom,
+      initShowOnCustomListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.hideOnCustom,
+      this.hideOnCustom,
+      initHideOnCustomListener
+    );
+    this.updateElementDestinationListener(
+      changes,
+      this.fields.toggleOnCustom,
+      this.toggleOnCustom,
+      initToggleOnCustomListener
+    );
   }
 
   ngAfterContentInit(): void {
@@ -368,15 +431,67 @@ To do: Extract relevant code into separate components and remove features not ne
     }
   }
 
+  private updateElementDestinationListener(
+    changes: SimpleChanges,
+    inputPropName: string,
+    inputField: any,
+    callback: (a: this, b: HTMLElement) => (() => void) | null
+  ) {
+    if (
+      changes &&
+      changes[inputPropName]?.currentValue !==
+        changes[inputPropName]?.previousValue
+    ) {
+      if (!inputField) {
+        const unListener = this.eventUnlistenFns.get(inputPropName);
+        unListener && unListener();
+      } else if (this.elementDestination) {
+        const unListener = callback(this, this.elementDestination);
+        unListener && this.eventUnlistenFns.set(inputPropName, unListener);
+      }
+    }
+  }
+
   private addElementDestinationListeners(elementDestination: HTMLElement) {
-    initShowOnHoverListener(this, elementDestination);
-    initHideOnHoverOutListener(this, elementDestination);
-    initToggleOnClickListener(this, elementDestination);
-    initShowOnClickListener(this, elementDestination);
-    initHideOnClickListener(this, elementDestination);
-    initShowOnCustomListener(this, elementDestination);
-    initHideOnCustomListener(this, elementDestination);
-    initToggleOnCustomListener(this, elementDestination);
+    this.eventUnlistenFns.set(
+      this.fields.showOnHover,
+      initShowOnHoverListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.hideOnHoverOut,
+      initHideOnHoverOutListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.toggleOnClick,
+      initToggleOnClickListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.showOnClick,
+      initShowOnClickListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.hideOnClick,
+      initHideOnClickListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.showOnCustom,
+      initShowOnCustomListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.hideOnCustom,
+      initHideOnCustomListener(this, elementDestination)
+    );
+
+    this.eventUnlistenFns.set(
+      this.fields.toggleOnCustom,
+      initToggleOnCustomListener(this, elementDestination)
+    );
   }
 
   private moveElementToBody() {

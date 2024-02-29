@@ -1,78 +1,273 @@
 <div
+  class="my-4 px-2 py-4 flex flex-col items-center gap-2 p-x-8 rounded-3xl bg-gray-300"
+>
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-1"
+      effectivePosition="absolute"
+      [toggleOnClick]="true"
+      [showOnHover]="false"
+      [hideOnHoverOut]="false"
+      [show]="true"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help [showCloseIcon]="true" elementId="tour-guide-1">
+        <app-tour-guide-help-action-bar
+          [showTooltipsOnUserAction]="showTooltips"
+          elementId="tour-guide-1"
+          (updateToggleTooltips)="updateToggleTooltips()"
+        />
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
+      <i class="bi bi-question font-black text-gray-900 text-3xl"></i>
+    </button>
+  </app-tour-guide-container>
+</div>
+<div
   class="my-4 px-2 py-4 flex flex-col items-center gap-2 p-x-8 rounded-3xl bg-purple-300"
 >
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onShowTranslation()"
-  >
-    <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
-  </button>
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onToggleTranslation()"
-  >
-    <i class="bi bi-arrow-repeat font-black text-gray-900 text-3xl"></i>
-  </button>
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onShowExplanation()"
-  >
-    <span class="text-gray-900 text-2xl">Ex</span>
-  </button>
-  <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
-    <span class="text-gray-900 text-2xl">Eg</span>
-  </button>
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onShowContentAfterWordVisited()"
-  >
-    <i class="bi bi-eyeglasses font-black text-gray-900 text-3xl"></i>
-  </button>
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-2"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-2">
+        <p message class="mr-4">
+          Show/Hide <span class="underline">translation</span>
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onShowTranslation()"
+    >
+      <i class="bi bi-translate font-black text-gray-900 text-3xl"></i>
+    </button>
+  </app-tour-guide-container>
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-3"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-3">
+        <p message class="mr-4">
+          Toggle <span class="underline">primary language</span>
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onToggleTranslation()"
+    >
+      <i class="bi bi-arrow-repeat font-black text-gray-900 text-3xl"></i>
+    </button>
+  </app-tour-guide-container>
+
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-4"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-4">
+        <p message class="mr-4">
+          Show/Hide <span class="underline">explanation</span>
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onShowExplanation()"
+    >
+      <span class="text-gray-900 text-2xl">Ex</span>
+    </button>
+  </app-tour-guide-container>
+
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-5"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-5">
+        <p message class="mr-4">
+          Show/Hide <span class="underline">example sentences</span>
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12">
+      <span class="text-gray-900 text-2xl">Eg</span>
+    </button>
+  </app-tour-guide-container>
+
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-6"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-6">
+        <p message class="mr-4">
+          Only show <span class="underline">visited words</span> on sidebar
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onShowContentAfterWordVisited()"
+    >
+      <i class="bi bi-eyeglasses font-black text-gray-900 text-3xl"></i>
+    </button>
+  </app-tour-guide-container>
 </div>
 <div
   class="my-4 py-4 px-2 flex flex-col items-center gap-2 p-x-8 rounded-3xl bg-pink-300"
 >
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onShowAllExerciseAnswers()"
-  >
-    <i class="bi bi-eye font-black text-gray-900 text-3xl"></i>
-  </button>
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onHideAllExerciseAnswers()"
-  >
-    <i
-      class="bi bi-eye-slash font-black before:content-['\f340'] before:text-white before:bg-gray-800 before:rounded-full text-3xl"
-    ></i>
-  </button>
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-6"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-6">
+        <p message class="mr-4">
+          Show all <span class="underline">exercise answers</span>
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onShowAllExerciseAnswers()"
+    >
+      <i class="bi bi-eye font-black text-gray-900 text-3xl"></i>
+    </button>
+  </app-tour-guide-container>
+
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-6"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-6">
+        <p message class="mr-4">
+          Hide all <span class="underline">exercise answers</span>
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onHideAllExerciseAnswers()"
+    >
+      <i
+        class="bi bi-eye-slash font-black before:content-['\f340'] before:text-white before:bg-gray-800 before:rounded-full text-3xl"
+      ></i>
+    </button>
+  </app-tour-guide-container>
 </div>
 <div
   class="my-4 px-2 py-4 flex flex-col items-center gap-2 p-x-8 rounded-3xl bg-gray-400"
 >
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onMoveSidebar()"
-  >
-    <i
-      *ngIf="!sidebarsOnRight"
-      class="bi bi-arrow-bar-right font-black text-gray-900 text-3xl"
-    ></i>
-    <i
-      *ngIf="sidebarsOnRight"
-      class="bi bi-arrow-bar-left font-black text-gray-900 text-3xl"
-    ></i>
-  </button>
-  <button
-    class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
-    (click)="onChangeSlideNavbarPos()"
-  >
-    <i
-      class="bi bi-sign-turn-right font-black text-gray-900 text-3xl"
-      [ngClass]="{
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-6"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-6">
+        <p message class="mr-4">Move <span class="underline">sidebar</span></p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onMoveSidebar()"
+    >
+      <i
+        *ngIf="!sidebarsOnRight"
+        class="bi bi-arrow-bar-right font-black text-gray-900 text-3xl"
+      ></i>
+      <i
+        *ngIf="sidebarsOnRight"
+        class="bi bi-arrow-bar-left font-black text-gray-900 text-3xl"
+      ></i>
+    </button>
+  </app-tour-guide-container>
+
+  <app-tour-guide-container>
+    <app-tour-guide
+      elementId="tour-guide-6"
+      [showOnHover]="showTooltips"
+      effectivePosition="absolute"
+      [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
+      [arrowLeft]="sidebarsOnRight ? false : true"
+      [arrowRight]="sidebarsOnRight ? true : false"
+      [arrowLeftCSSClasses]="tourGuideArrowLeftCSSClasses"
+      [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
+    >
+      <app-tour-guide-help elementId="tour-guide-6">
+        <p message class="mr-4">
+          Move <span class="underline">bottom navigation</span>
+        </p>
+      </app-tour-guide-help>
+    </app-tour-guide>
+    <button
+      class="rounded-full bg-gray-50 hover:bg-gray-200 h-12 w-12"
+      (click)="onChangeSlideNavbarPos()"
+    >
+      <i
+        class="bi bi-sign-turn-right font-black text-gray-900 text-3xl"
+        [ngClass]="{
       'bi bi-sign-turn-right': slideNavbarPos === 'MIDDLE' || slideNavbarPos === 'LEFT',
       'bi bi-sign-turn-left': slideNavbarPos === 'RIGHT',
     }"
-    ></i>
-  </button>
+      ></i>
+    </button>
+  </app-tour-guide-container>
 </div>

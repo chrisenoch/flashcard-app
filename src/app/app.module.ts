@@ -26,7 +26,9 @@ import { SlideControllerComponent } from './slide-controller/slide-controller.co
 import { ElementControlsDirective } from './custom-components/element-controls.directive';
 import { TourGuideComponent } from './custom-components/tour-guide/tour-guide.component';
 import { TourGuideDirective } from './custom-components/tour-guide/tour-guide.directive';
-import { TourGuideContentComponent } from './tour-guide-content/tour-guide-content.component';
+import { TourGuideHelpComponent } from './tour-guide-help/tour-guide-help.component';
+import { TourGuideHelpActionBarComponent } from './tour-guide-help-action-bar/tour-guide-help-action-bar.component';
+import { TourGuideContainerComponent } from './custom-components/tour-guide/tour-guide-container/tour-guide-container.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import { TourGuideContentComponent } from './tour-guide-content/tour-guide-conte
     ElementControlsDirective,
     TourGuideComponent,
     TourGuideDirective,
-    TourGuideContentComponent,
+    TourGuideHelpComponent,
+    TourGuideHelpActionBarComponent,
+    TourGuideContainerComponent,
   ],
   imports: [
     BrowserModule,
