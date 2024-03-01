@@ -12,6 +12,10 @@ export class SignInComponent {
   onSubmit(form: NgForm) {
     console.log('in submit button');
     console.log(form);
-    this.helperTextVariant = 'success';
+    if (this.helperTextVariant === 'error') {
+      this.helperTextVariant = 'success';
+    } else {
+      this.helperTextVariant = 'error';
+    }
   }
 }

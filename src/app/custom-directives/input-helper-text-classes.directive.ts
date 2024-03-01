@@ -11,39 +11,24 @@ import { DefaultClassesDirective } from './default-classes.directive';
 
 @Directive({
   selector: '[appInputHelperTextClasses]',
+  exportAs: 'appInputHelperTextClasses',
 })
-export class InputHelperTextClassesDirective
-  extends DefaultClassesDirective
-  implements OnChanges
-{
-  private helperTextDefaultVariant: string;
-  constructor(
-    renderer: Renderer2,
-    hostElement: ElementRef,
-    ref: ChangeDetectorRef
-  ) {
-    const helperTextDefaultVariant = 'text-red-600';
-    super(
-      renderer,
-      hostElement,
-      new Set(['ml-4', 'mb-2', 'text-xs', helperTextDefaultVariant]),
-      ref
-    );
-    this.helperTextDefaultVariant = helperTextDefaultVariant;
+export class InputHelperTextClassesDirective extends DefaultClassesDirective {
+  constructor(renderer: Renderer2, hostElement: ElementRef) {
+    super(renderer, hostElement, new Set(['ml-4', 'mb-2', 'text-xs']));
   }
 
   @Input() set variant(variant: 'error' | 'success') {
-    console.log('in input setter');
-    if (variant !== 'error') {
-      this.elementCSSClasses.delete(this.helperTextDefaultVariant);
+    this.deleteClasses = ['text-red-600', 'text-green-600'];
+    if (variant === 'error') {
+      this.elementCSSClasses.add('text-red-600');
     }
+
     if (variant === 'success') {
       this.elementCSSClasses.add('text-green-600');
     }
 
     console.log('new element css classes');
     console.log(this.elementCSSClasses);
-
-    this.ref.detectChanges();
   }
 }
