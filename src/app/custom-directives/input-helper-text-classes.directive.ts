@@ -32,8 +32,5 @@ export class InputHelperTextClassesDirective extends DefaultClassesDirective {
     if (variant === 'success') {
       this.elementCSSClasses.add(this.variants.success);
     }
-
-    console.log('new element css classes');
-    console.log(this.elementCSSClasses);
   }
 }

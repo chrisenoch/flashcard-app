@@ -37,6 +37,7 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout.component'
 import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { DefaultClassesDirective } from './custom-directives/default-classes.directive';
 import { InputHelperTextClassesDirective } from './custom-directives/input-helper-text-classes.directive';
+import { InputClassesDirective } from './custom-directives/input-classes.directive';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { InputHelperTextClassesDirective } from './custom-directives/input-helpe
     DefaultClassesDirective,
 
     InputHelperTextClassesDirective,
+      InputClassesDirective,
   ],
   imports: [
     BrowserModule,

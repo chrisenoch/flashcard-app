@@ -4,18 +4,12 @@ import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
   selector: '[appDefaultClasses]',
   exportAs: 'appDefaultClasses',
 })
-export class DefaultClassesDirective implements OnInit {
+export class DefaultClassesDirective {
   constructor(
     public renderer: Renderer2,
     public hostElement: ElementRef,
     public elementCSSClasses: Set<string>
   ) {}
-
-  ngOnInit(): void {
-    //   // Array.from(this.elementCSSClasses.keys()).forEach((cssClass) => {
-    //   //   this.renderer.addClass(this.hostElement.nativeElement, cssClass);
-    //   // });
-  }
 
   @Input() set deleteClass(cssClass: string) {
     this.elementCSSClasses.delete(cssClass);
