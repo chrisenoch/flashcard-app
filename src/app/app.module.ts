@@ -35,6 +35,7 @@ import { DisableLinkDirective } from './custom-directives/disable-link.directive
 
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
+import { DefaultClassesDirective } from './custom-directives/default-classes.directive';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { SignInComponent } from './auth/sign-in/sign-in.component';
 
     MainLayoutComponent,
       SignInComponent,
+      DefaultClassesDirective,
   ],
   imports: [
     BrowserModule,
