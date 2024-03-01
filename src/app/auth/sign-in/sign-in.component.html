@@ -18,8 +18,8 @@
         />
         <p
           *ngIf="!email.valid && email.touched"
-          appDefaultClasses
-          #appDefaultClasses="appDefaultClasses"
+          appInheritTest
+          variant="success"
         >
           Enter a valid email
         </p>
@@ -40,10 +40,9 @@
         />
         <p
           *ngIf="!password.valid && password.touched"
-          appDefaultClasses
-          #appDefaultClasses="appDefaultClasses"
-          addClass="text-green-600"
-          deleteClass="text-red-600"
+          appInheritTest
+          deleteClass="text-blue-600"
+          addClass="text-yellow-600"
         >
           At least 8 characters
         </p>
