@@ -11,12 +11,13 @@ export class DefaultClassesDirective implements OnInit {
     'text-xs',
     'text-red-600',
   ]);
-  get errorText() {
-    return Array.from(this.errorTextValues.keys()).join(' ');
-  }
 
   @Input() set deleteClass(cssClass: string) {
     this.errorTextValues.delete(cssClass);
+  }
+
+  @Input() set addClass(cssClass: string) {
+    this.errorTextValues.add(cssClass);
   }
 
   constructor(private renderer: Renderer2, private hostElement: ElementRef) {}
@@ -24,5 +25,9 @@ export class DefaultClassesDirective implements OnInit {
     Array.from(this.errorTextValues.keys()).forEach((cssClass) => {
       this.renderer.addClass(this.hostElement.nativeElement, cssClass);
     });
+  }
+
+  get errorText() {
+    return Array.from(this.errorTextValues.keys()).join(' ');
   }
 }
