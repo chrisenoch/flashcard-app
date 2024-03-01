@@ -1,0 +1,51 @@
+<app-main-layout>
+  <div class="flex flex-col gap-3 w-96 mx-auto my-20 justify-center">
+    <h1 class="mb-8 text-5xl text-center">Sign In</h1>
+    <form class="flex flex-col">
+      <div>
+        <input
+          aria-label="email"
+          type="text"
+          name="email"
+          id="email"
+          placeholder="Email"
+          class="mb-2 outline-none border border-purple-500 rounded-md w-full items-center inline-flex h-12 justify-start leading-6 p-4 focus:shadow-[0_0_0_0.125em] focus:shadow-purple-500/50"
+        />
+        <p class="ml-4 mb-2 text-xs">Helper text</p>
+      </div>
+      <div>
+        <input
+          aria-label="password"
+          type="text"
+          name="password"
+          id="password"
+          placeholder="Password"
+          class="mb-2 outline-none border border-purple-500 rounded-md w-full items-center inline-flex h-12 justify-start leading-6 p-4 focus:shadow-[0_0_0_0.125em] focus:shadow-purple-500/50"
+        />
+        <p class="ml-4 mb-2 text-xs">Helper text</p>
+      </div>
+    </form>
+    <button class="rounded-full bg-gray-700 hover:enabled:bg-gray-800 p-3">
+      <span class="text-white">Submit</span>
+    </button>
+  </div>
+</app-main-layout>
+
+<!-- <Stack
+spacing={2}
+maxWidth={"500px"}
+mx={"auto"}
+marginTop={2}
+marginBottom={2}
+justifyContent={"center"}>
+<CurvedUnderlineTitle
+  component={"h1"}
+  variant={isProtectedPage ? "h4" : "h3"}
+  title={"Sign In"}
+  color={orange[300]}
+  sxUnderline={{ left: 2, borderRadius: "30%" }}
+  sxTypography={{
+    marginBottom: "12px !important",
+    alignSelf: "center",
+  }}
+/> -->

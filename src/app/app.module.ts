@@ -33,6 +33,9 @@ import { SlideOptionBarTextButtonComponent } from './slide-controller/slide-opti
 import { SlideOptionBarIconButtonComponent } from './slide-controller/slide-option-bar/slide-option-bar-icon-button/slide-option-bar-icon-button.component';
 import { DisableLinkDirective } from './custom-directives/disable-link.directive';
 
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { SignInComponent } from './auth/sign-in/sign-in.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,6 +59,9 @@ import { DisableLinkDirective } from './custom-directives/disable-link.directive
     SlideOptionBarTextButtonComponent,
     SlideOptionBarIconButtonComponent,
     DisableLinkDirective,
+
+    MainLayoutComponent,
+      SignInComponent,
   ],
   imports: [
     BrowserModule,
