@@ -7,10 +7,11 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./sign-in.component.scss'],
 })
 export class SignInComponent {
+  helperTextVariant: 'success' | 'error' = 'error';
+
   onSubmit(form: NgForm) {
     console.log('in submit button');
     console.log(form);
+    this.helperTextVariant = 'success';
   }
-
-  testSet = new Set(['ml-4', 'mb-2', 'text-xs', 'text-green-600']);
 }

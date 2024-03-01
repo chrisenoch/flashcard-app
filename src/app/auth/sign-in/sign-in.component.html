@@ -37,8 +37,10 @@
         <p
           *ngIf="!password.valid && password.touched"
           appInputHelperTextClasses
+          [variant]="helperTextVariant"
         >
           At least 8 characters
+          {{ helperTextVariant }}
         </p>
       </div>
       <button
