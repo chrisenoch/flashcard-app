@@ -36,7 +36,7 @@ import { DisableLinkDirective } from './custom-directives/disable-link.directive
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { DefaultClassesDirective } from './custom-directives/default-classes.directive';
-import { InheritTestDirective } from './custom-directives/inherit-test.directive';
+import { InputHelperTextClassesDirective } from './custom-directives/input-helper-text-classes.directive';
 
 @NgModule({
   declarations: [
@@ -63,9 +63,10 @@ import { InheritTestDirective } from './custom-directives/inherit-test.directive
     DisableLinkDirective,
 
     MainLayoutComponent,
-      SignInComponent,
-      DefaultClassesDirective,
-      InheritTestDirective,
+    SignInComponent,
+    DefaultClassesDirective,
+
+    InputHelperTextClassesDirective,
   ],
   imports: [
     BrowserModule,

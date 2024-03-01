@@ -16,11 +16,7 @@
           required
           class="mb-2 outline-none border border-purple-500 rounded-md w-full items-center inline-flex h-12 justify-start leading-6 p-4 focus:shadow-[0_0_0_0.125em] focus:shadow-purple-500/50"
         />
-        <p
-          *ngIf="!email.valid && email.touched"
-          appInheritTest
-          variant="success"
-        >
+        <p *ngIf="!email.valid && email.touched" appInputHelperTextClasses>
           Enter a valid email
         </p>
       </div>
@@ -40,9 +36,7 @@
         />
         <p
           *ngIf="!password.valid && password.touched"
-          appInheritTest
-          deleteClass="text-blue-600"
-          addClass="text-yellow-600"
+          appInputHelperTextClasses
         >
           At least 8 characters
         </p>
