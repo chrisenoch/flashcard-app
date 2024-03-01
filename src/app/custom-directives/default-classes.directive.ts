@@ -5,29 +5,52 @@ import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
   exportAs: 'appDefaultClasses',
 })
 export class DefaultClassesDirective implements OnInit {
-  @Input() errorTextValues = new Set([
+  private helperTextDefaultVariant = 'text-red-600';
+
+  @Input() helperTextValues = new Set([
     'ml-4',
     'mb-2',
     'text-xs',
-    'text-red-600',
+    this.helperTextDefaultVariant,
   ]);
 
+  @Input() set variant(variant: 'error' | 'success') {
+    if (variant !== 'error') {
+      this.helperTextValues.delete(this.helperTextDefaultVariant);
+    }
+    if (variant === 'success') {
+      this.helperTextValues.add('text-green-600');
+    }
+  }
+
   @Input() set deleteClass(cssClass: string) {
-    this.errorTextValues.delete(cssClass);
+    this.helperTextValues.delete(cssClass);
+  }
+
+  @Input() set deleteClasses(cssClasses: string[]) {
+    cssClasses.forEach((cssClass) => {
+      this.helperTextValues.delete(cssClass);
+    });
   }
 
   @Input() set addClass(cssClass: string) {
-    this.errorTextValues.add(cssClass);
+    this.helperTextValues.add(cssClass);
+  }
+
+  @Input() set addClasses(cssClasses: string[]) {
+    cssClasses.forEach((cssClass) => {
+      this.helperTextValues.add(cssClass);
+    });
   }
 
   constructor(private renderer: Renderer2, private hostElement: ElementRef) {}
   ngOnInit(): void {
-    Array.from(this.errorTextValues.keys()).forEach((cssClass) => {
+    Array.from(this.helperTextValues.keys()).forEach((cssClass) => {
       this.renderer.addClass(this.hostElement.nativeElement, cssClass);
     });
   }
 
-  get errorText() {
-    return Array.from(this.errorTextValues.keys()).join(' ');
+  get helperText() {
+    return Array.from(this.helperTextValues.keys()).join(' ');
   }
 }
