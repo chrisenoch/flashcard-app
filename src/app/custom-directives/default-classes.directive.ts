@@ -67,4 +67,9 @@ export class DefaultClassesDirective {
       }
     }
   }
+
+  removeVariants(variants: { [key: string]: string[] }) {
+    const flattenedArr = Object.values(variants).flatMap((ele) => ele);
+    this.removeClasses = flattenedArr;
+  }
 }
