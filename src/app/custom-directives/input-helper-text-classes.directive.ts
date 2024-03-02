@@ -18,19 +18,16 @@ export class InputHelperTextClassesDirective extends DefaultClassesDirective {
     super(renderer, hostElement, new Set(['ml-4', 'mb-2', 'text-xs']));
   }
 
-  variants = {
-    success: 'text-green-600',
-    error: 'text-red-600',
-  };
+  private getVariants() {
+    const variants = {
+      success: ['text-green-600'],
+      error: ['text-red-600'],
+    };
+    return variants;
+  }
 
   @Input() set variant(variant: 'error' | 'success') {
-    this.removeClasses = [...Object.values(this.variants)];
-    if (variant === 'error') {
-      this.elementCSSClasses.add(this.variants.error);
-    }
-
-    if (variant === 'success') {
-      this.elementCSSClasses.add(this.variants.success);
-    }
+    this.removeVariants(this.getVariants());
+    this.addClasses = this.getVariants()[variant];
   }
 }
