@@ -28,7 +28,7 @@
           [variant]="helperTextVariant"
           [ngClass]="emailHelperClasses.cssClasses"
         >
-          Enter a valid email
+          - Enter a valid email
         </p>
       </div>
       <div>
@@ -70,6 +70,7 @@
         </p>
       </div>
       <button
+        [disabled]="!f.valid"
         class="mt-1 rounded-full bg-gray-700 hover:enabled:bg-gray-800 p-3 disabled:cursor-not-allowed"
       >
         <span class="text-white">Submit</span>

@@ -14,8 +14,8 @@ import { DefaultClassesDirective } from './default-classes.directive';
   exportAs: 'appInputHelperTextClasses',
 })
 export class InputHelperTextClassesDirective extends DefaultClassesDirective {
-  constructor(renderer: Renderer2, hostElement: ElementRef) {
-    super(renderer, hostElement, new Set(['ml-4', 'mb-2', 'text-xs']));
+  constructor() {
+    super(new Set(['ml-4', 'mb-2', 'text-xs']));
   }
 
   private getVariants() {

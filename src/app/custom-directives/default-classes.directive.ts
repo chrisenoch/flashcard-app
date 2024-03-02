@@ -5,11 +5,7 @@ import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
   exportAs: 'appDefaultClasses',
 })
 export class DefaultClassesDirective {
-  constructor(
-    public renderer: Renderer2,
-    public hostElement: ElementRef,
-    public elementCSSClasses: Set<string>
-  ) {}
+  constructor(public elementCSSClasses: Set<string>) {}
 
   get cssClasses() {
     return Array.from(this.elementCSSClasses.keys()).join(' ');
@@ -17,16 +13,12 @@ export class DefaultClassesDirective {
 
   @Input() set removeClass(cssClass: string) {
     this.elementCSSClasses.delete(cssClass);
-    console.log('final elementCSSClasses');
-    console.log(this.elementCSSClasses);
   }
 
   @Input() set removeClasses(cssClasses: string[]) {
     cssClasses.forEach((cssClass) => {
       this.elementCSSClasses.delete(cssClass);
     });
-    console.log('final elementCSSClasses');
-    console.log(this.elementCSSClasses);
   }
 
   @Input() set addClass(cssClass: string) {

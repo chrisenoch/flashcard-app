@@ -7,7 +7,7 @@ import { DefaultClassesDirective } from './default-classes.directive';
 })
 export class InputClassesDirective extends DefaultClassesDirective {
   defaultVariantProps: string[];
-  constructor(renderer: Renderer2, hostElement: ElementRef) {
+  constructor() {
     //I can't define these classes in the class member defaultVariantProps because I can't use this.defaultVariantProps before super.
     const defaultVariantProps = [
       'border-purple-500',
@@ -15,8 +15,6 @@ export class InputClassesDirective extends DefaultClassesDirective {
       'focus:shadow-purple-500/50',
     ];
     super(
-      renderer,
-      hostElement,
       new Set([
         'mb-2',
         'outline-none',
