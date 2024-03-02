@@ -24,7 +24,7 @@ export class InputHelperTextClassesDirective extends DefaultClassesDirective {
   };
 
   @Input() set variant(variant: 'error' | 'success') {
-    this.deleteClasses = [...Object.values(this.variants)];
+    this.removeClasses = [...Object.values(this.variants)];
     if (variant === 'error') {
       this.elementCSSClasses.add(this.variants.error);
     }

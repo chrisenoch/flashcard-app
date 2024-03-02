@@ -11,14 +11,22 @@ export class DefaultClassesDirective {
     public elementCSSClasses: Set<string>
   ) {}
 
-  @Input() set deleteClass(cssClass: string) {
-    this.elementCSSClasses.delete(cssClass);
+  get cssClasses() {
+    return Array.from(this.elementCSSClasses.keys()).join(' ');
   }
 
-  @Input() set deleteClasses(cssClasses: string[]) {
+  @Input() set removeClass(cssClass: string) {
+    this.elementCSSClasses.delete(cssClass);
+    console.log('final elementCSSClasses');
+    console.log(this.elementCSSClasses);
+  }
+
+  @Input() set removeClasses(cssClasses: string[]) {
     cssClasses.forEach((cssClass) => {
       this.elementCSSClasses.delete(cssClass);
     });
+    console.log('final elementCSSClasses');
+    console.log(this.elementCSSClasses);
   }
 
   @Input() set addClass(cssClass: string) {
@@ -31,7 +39,32 @@ export class DefaultClassesDirective {
     });
   }
 
-  get cssClasses() {
-    return Array.from(this.elementCSSClasses.keys()).join(' ');
+  @Input() set editClasses(changes: {
+    add?: string | string[];
+    remove?: string | string[];
+  }) {
+    const { add, remove } = changes;
+    if (add) {
+      if (typeof add === 'string') {
+        const cssClass = add;
+        this.elementCSSClasses.add(cssClass);
+      } else {
+        const cssClasses = add;
+        cssClasses.forEach((cssClass) => {
+          this.elementCSSClasses.add(cssClass);
+        });
+      }
+    }
+    if (remove) {
+      if (typeof remove === 'string') {
+        const cssClass = remove;
+        this.elementCSSClasses.delete(cssClass);
+      } else {
+        const cssClasses = remove;
+        cssClasses.forEach((cssClass) => {
+          this.elementCSSClasses.delete(cssClass);
+        });
+      }
+    }
   }
 }

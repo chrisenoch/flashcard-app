@@ -14,14 +14,16 @@
           email
           #email="ngModel"
           required
-          class="mb-2 outline-none border border-purple-500 rounded-md w-full items-center inline-flex h-12 justify-start leading-6 p-4 focus:shadow-[0_0_0_0.125em] focus:shadow-purple-500/50"
+          appInputClasses
+          #emailClasses="appInputClasses"
+          [ngClass]="emailClasses.cssClasses"
         />
         <p
           *ngIf="!email.valid && email.touched"
           appInputHelperTextClasses
-          #helperClasses="appInputHelperTextClasses"
+          #emailHelperClasses="appInputHelperTextClasses"
           [variant]="helperTextVariant"
-          [ngClass]="helperClasses.cssClasses"
+          [ngClass]="emailHelperClasses.cssClasses"
         >
           Enter a valid email
         </p>
@@ -39,18 +41,17 @@
           [minlength]="8"
           required
           appInputClasses
-          #inputClasses="appInputClasses"
-          [ngClass]="inputClasses.cssClasses"
+          #passwordClasses="appInputClasses"
+          [ngClass]="passwordClasses.cssClasses"
         />
         <p
           *ngIf="!password.valid && password.touched"
           appInputHelperTextClasses
-          #helperClasses="appInputHelperTextClasses"
+          #passwordHelperClasses="appInputHelperTextClasses"
           [variant]="helperTextVariant"
-          [ngClass]="helperClasses.cssClasses"
+          [ngClass]="passwordHelperClasses.cssClasses"
         >
           At least 8 characters
-          {{ helperTextVariant }}
         </p>
       </div>
       <button
@@ -61,22 +62,3 @@
     </form>
   </div>
 </app-main-layout>
-
-<!-- <Stack
-spacing={2}
-maxWidth={"500px"}
-mx={"auto"}
-marginTop={2}
-marginBottom={2}
-justifyContent={"center"}>
-<CurvedUnderlineTitle
-  component={"h1"}
-  variant={isProtectedPage ? "h4" : "h3"}
-  title={"Sign In"}
-  color={orange[300]}
-  sxUnderline={{ left: 2, borderRadius: "30%" }}
-  sxTypography={{
-    marginBottom: "12px !important",
-    alignSelf: "center",
-  }}
-/> -->
