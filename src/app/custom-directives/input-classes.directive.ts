@@ -34,6 +34,11 @@ export class InputClassesDirective extends DefaultClassesDirective {
     this.defaultVariantProps = defaultVariantProps;
   }
 
+  @Input() set variant(variant: 'primary' | 'secondary' | 'error') {
+    this.removeVariants(this.getVariants());
+    this.addClasses = this.getVariants()[variant];
+  }
+
   private getVariants() {
     const variants = {
       primary: this.defaultVariantProps,
@@ -50,10 +55,5 @@ export class InputClassesDirective extends DefaultClassesDirective {
       ],
     };
     return variants;
-  }
-
-  @Input() set variant(variant: 'primary' | 'secondary' | 'error') {
-    this.removeVariants(this.getVariants());
-    this.addClasses = this.getVariants()[variant];
   }
 }

@@ -17,9 +17,7 @@
           appFocusForm
           [shouldFocus]="emailFocuser"
           appInputClasses
-          #emailClasses="appInputClasses"
           [variant]="!email.valid && email.touched ? 'error' : 'primary'"
-          [ngClass]="emailClasses.cssClasses"
         />
         <p
           *ngIf="!email.valid && email.touched"
@@ -44,9 +42,7 @@
           appNoContent
           required
           appInputClasses
-          #passwordClasses="appInputClasses"
           [variant]="!password.valid && password.touched ? 'error' : 'primary'"
-          [ngClass]="passwordClasses.cssClasses"
         />
         <p
           *ngIf="!password.valid && password.touched && (password.errors?.['minlength'] || password.errors?.['noContent'] )"
@@ -70,13 +66,5 @@
         <span class="text-white">Submit</span>
       </button>
     </form>
-    <div
-      class="w-12 h-12 border-2 border-blue-500"
-      appInputHelperTextClasses
-      [variant]="testVariant"
-    >
-      Test
-    </div>
-    <button (click)="updateTestVariant()">Update Test</button>
   </div>
 </app-main-layout>

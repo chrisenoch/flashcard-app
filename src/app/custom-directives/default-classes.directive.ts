@@ -1,23 +1,37 @@
 import {
   Directive,
+  DoCheck,
   ElementRef,
   HostBinding,
   Input,
   OnInit,
   Renderer2,
+  SimpleChanges,
 } from '@angular/core';
 
 @Directive({
   selector: '[appDefaultClasses]',
   exportAs: 'appDefaultClasses',
 })
-export class DefaultClassesDirective {
-  constructor(public elementCSSClasses: Set<string>) {}
+export class DefaultClassesDirective implements DoCheck {
+  previousCSSClasses: string;
+  constructor(public elementCSSClasses: Set<string>) {
+    this.previousCSSClasses = this.cssClasses;
+  }
 
-  @HostBinding('class') clazz: string = this.cssClasses;
+  @HostBinding('class') boundClasses: string = this.cssClasses;
 
   get cssClasses() {
     return Array.from(this.elementCSSClasses.keys()).join(' ');
+  }
+
+  //We use doCheck and not ngOnChanges because we care about the changes in the cssClasses, which are not bound to inputs
+  //We do not know which input properties child classes will use so we use doCheck.
+  ngDoCheck(): void {
+    if (this.previousCSSClasses !== this.cssClasses) {
+      this.boundClasses = this.cssClasses;
+      this.previousCSSClasses = this.cssClasses;
+    }
   }
 
   @Input() set removeClass(cssClass: string) {
