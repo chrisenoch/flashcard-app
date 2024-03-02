@@ -5,7 +5,7 @@
       <div>
         <input
           aria-label="email"
-          type="text"
+          type="email"
           name="email"
           id="email"
           placeholder="Email"
@@ -34,7 +34,7 @@
       <div>
         <input
           aria-label="password"
-          type="text"
+          type="password"
           name="password"
           id="password"
           placeholder="Password"
@@ -42,6 +42,8 @@
           name="password"
           #password="ngModel"
           [minlength]="8"
+          appNoSpaces
+          appNoContent
           required
           appInputClasses
           #passwordClasses="appInputClasses"
@@ -49,17 +51,25 @@
           [ngClass]="passwordClasses.cssClasses"
         />
         <p
-          *ngIf="!password.valid && password.touched"
+          *ngIf="!password.valid && password.touched && (password.errors?.['minlength'] || password.errors?.['noContent'] )"
           appInputHelperTextClasses
           #passwordHelperClasses="appInputHelperTextClasses"
           [variant]="helperTextVariant"
           [ngClass]="passwordHelperClasses.cssClasses"
         >
-          At least 8 characters
+          - At least 8 characters
+        </p>
+        <p
+          *ngIf="!password.valid && password.touched && password.errors?.['hasSpaces'] "
+          appInputHelperTextClasses
+          #passwordHelperClasses="appInputHelperTextClasses"
+          [variant]="helperTextVariant"
+          [ngClass]="passwordHelperClasses.cssClasses"
+        >
+          - May not include spaces
         </p>
       </div>
       <button
-        [disabled]="!f.valid"
         class="mt-1 rounded-full bg-gray-700 hover:enabled:bg-gray-800 p-3 disabled:cursor-not-allowed"
       >
         <span class="text-white">Submit</span>

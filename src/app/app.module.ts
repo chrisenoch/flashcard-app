@@ -39,6 +39,8 @@ import { DefaultClassesDirective } from './custom-directives/default-classes.dir
 import { InputHelperTextClassesDirective } from './custom-directives/input-helper-text-classes.directive';
 import { InputClassesDirective } from './custom-directives/input-classes.directive';
 import { FocusFormDirective } from './custom-directives/focus-form.directive';
+import { NoSpacesDirective } from './custom-directives/custom-validators/no-spaces.directive';
+import { NoContentDirective } from './custom-directives/custom-validators/no-content.directive';
 
 @NgModule({
   declarations: [
@@ -69,8 +71,10 @@ import { FocusFormDirective } from './custom-directives/focus-form.directive';
     DefaultClassesDirective,
 
     InputHelperTextClassesDirective,
-      InputClassesDirective,
-      FocusFormDirective,
+    InputClassesDirective,
+    FocusFormDirective,
+    NoSpacesDirective,
+    NoContentDirective,
   ],
   imports: [
     BrowserModule,

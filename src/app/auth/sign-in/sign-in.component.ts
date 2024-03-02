@@ -11,6 +11,8 @@ export class SignInComponent {
   emailFocuser = { shouldFocus: true };
 
   onSubmit(form: NgForm) {
+    console.log('form below');
+    console.log(form);
     form.reset();
     this.emailFocuser = { shouldFocus: true };
   }
