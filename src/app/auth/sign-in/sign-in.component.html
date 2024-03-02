@@ -1,0 +1,70 @@
+<app-main-layout>
+  <div class="flex flex-col gap-3 w-96 mx-auto my-20 justify-center">
+    <h1 class="mb-8 text-5xl text-center">Sign In</h1>
+    <form class="flex flex-col" (ngSubmit)="onSubmit(f)" #f="ngForm">
+      <div>
+        <input
+          aria-label="email"
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Email"
+          ngModel
+          name="email"
+          email
+          #email="ngModel"
+          required
+          appFocusForm
+          [shouldFocus]="emailFocuser"
+          appInputClasses
+          [variant]="!email.valid && email.touched ? 'error' : 'primary'"
+        />
+        <p
+          *ngIf="!email.valid && email.touched"
+          appInputHelperTextClasses
+          [variant]="helperTextVariant"
+        >
+          - Enter a valid email
+        </p>
+      </div>
+      <div>
+        <input
+          aria-label="password"
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Password"
+          ngModel
+          name="password"
+          #password="ngModel"
+          [minlength]="8"
+          appNoSpaces
+          appNoContent
+          required
+          appInputClasses
+          [variant]="!password.valid && password.touched ? 'error' : 'primary'"
+        />
+        <p
+          *ngIf="!password.valid && password.touched && (password.errors?.['minlength'] || password.errors?.['noContent'] )"
+          appInputHelperTextClasses
+          [variant]="helperTextVariant"
+        >
+          - At least 8 characters
+        </p>
+        <p
+          *ngIf="!password.valid && password.touched && password.errors?.['hasSpaces'] "
+          appInputHelperTextClasses
+          [variant]="helperTextVariant"
+        >
+          - May not include spaces
+        </p>
+      </div>
+      <button
+        [disabled]="!f.valid"
+        class="mt-1 rounded-full bg-gray-700 hover:enabled:bg-gray-800 p-3 disabled:cursor-not-allowed"
+      >
+        <span class="text-white">Submit</span>
+      </button>
+    </form>
+  </div>
+</app-main-layout>

@@ -31,6 +31,16 @@ import { TourGuideHelpActionBarComponent } from './tour-guide-help-action-bar/to
 import { TourGuideContainerComponent } from './custom-components/tour-guide/tour-guide-container/tour-guide-container.component';
 import { SlideOptionBarTextButtonComponent } from './slide-controller/slide-option-bar/slide-option-bar-text-button/slide-option-bar-text-button.component';
 import { SlideOptionBarIconButtonComponent } from './slide-controller/slide-option-bar/slide-option-bar-icon-button/slide-option-bar-icon-button.component';
+import { DisableLinkDirective } from './custom-directives/disable-link.directive';
+
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { SignInComponent } from './auth/sign-in/sign-in.component';
+import { DefaultClassesDirective } from './custom-directives/default-classes.directive';
+import { InputHelperTextClassesDirective } from './custom-directives/input-helper-text-classes.directive';
+import { InputClassesDirective } from './custom-directives/input-classes.directive';
+import { FocusFormDirective } from './custom-directives/focus-form.directive';
+import { NoSpacesDirective } from './custom-directives/custom-validators/no-spaces.directive';
+import { NoContentDirective } from './custom-directives/custom-validators/no-content.directive';
 
 @NgModule({
   declarations: [
@@ -54,6 +64,17 @@ import { SlideOptionBarIconButtonComponent } from './slide-controller/slide-opti
     TourGuideContainerComponent,
     SlideOptionBarTextButtonComponent,
     SlideOptionBarIconButtonComponent,
+    DisableLinkDirective,
+
+    MainLayoutComponent,
+    SignInComponent,
+    DefaultClassesDirective,
+
+    InputHelperTextClassesDirective,
+    InputClassesDirective,
+    FocusFormDirective,
+    NoSpacesDirective,
+    NoContentDirective,
   ],
   imports: [
     BrowserModule,
