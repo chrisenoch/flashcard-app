@@ -14,8 +14,11 @@
           email
           #email="ngModel"
           required
+          appFocusForm
+          [shouldFocus]="emailFocuser"
           appInputClasses
           #emailClasses="appInputClasses"
+          [variant]="!email.valid && email.touched ? 'error' : 'primary'"
           [ngClass]="emailClasses.cssClasses"
         />
         <p
@@ -42,6 +45,7 @@
           required
           appInputClasses
           #passwordClasses="appInputClasses"
+          [variant]="!password.valid && password.touched ? 'error' : 'primary'"
           [ngClass]="passwordClasses.cssClasses"
         />
         <p
@@ -55,7 +59,8 @@
         </p>
       </div>
       <button
-        class="mt-1 rounded-full bg-gray-700 hover:enabled:bg-gray-800 p-3"
+        [disabled]="!f.valid"
+        class="mt-1 rounded-full bg-gray-700 hover:enabled:bg-gray-800 p-3 disabled:cursor-not-allowed"
       >
         <span class="text-white">Submit</span>
       </button>

@@ -38,6 +38,7 @@ import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { DefaultClassesDirective } from './custom-directives/default-classes.directive';
 import { InputHelperTextClassesDirective } from './custom-directives/input-helper-text-classes.directive';
 import { InputClassesDirective } from './custom-directives/input-classes.directive';
+import { FocusFormDirective } from './custom-directives/focus-form.directive';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { InputClassesDirective } from './custom-directives/input-classes.directi
 
     InputHelperTextClassesDirective,
       InputClassesDirective,
+      FocusFormDirective,
   ],
   imports: [
     BrowserModule,

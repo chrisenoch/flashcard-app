@@ -8,14 +8,10 @@ import { NgForm } from '@angular/forms';
 })
 export class SignInComponent {
   helperTextVariant: 'success' | 'error' = 'error';
+  emailFocuser = { shouldFocus: true };
 
   onSubmit(form: NgForm) {
-    console.log('in submit button');
-    console.log(form);
-    if (this.helperTextVariant === 'error') {
-      this.helperTextVariant = 'success';
-    } else {
-      this.helperTextVariant = 'error';
-    }
+    form.reset();
+    this.emailFocuser = { shouldFocus: true };
   }
 }
