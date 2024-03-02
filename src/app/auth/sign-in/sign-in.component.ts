@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -11,9 +11,27 @@ export class SignInComponent {
   emailFocuser = { shouldFocus: true };
 
   onSubmit(form: NgForm) {
-    console.log('form below');
-    console.log(form);
     form.reset();
     this.emailFocuser = { shouldFocus: true };
+  }
+
+  testVariant: 'success' | 'error' = 'success';
+  updateTestVariant() {
+    console.log('in updateTestVariant');
+    if (this.testVariant === 'success') {
+      this.testVariant = 'error';
+    } else {
+      this.testVariant = 'success';
+    }
+  }
+
+  ngOnInit(): void {
+    console.log('in SignIn ngonInit');
+  }
+  ngDoCheck(): void {
+    console.log('in SignIn docheck');
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('in SignIn onChanges');
   }
 }

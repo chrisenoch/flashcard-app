@@ -24,9 +24,7 @@
         <p
           *ngIf="!email.valid && email.touched"
           appInputHelperTextClasses
-          #emailHelperClasses="appInputHelperTextClasses"
           [variant]="helperTextVariant"
-          [ngClass]="emailHelperClasses.cssClasses"
         >
           - Enter a valid email
         </p>
@@ -53,18 +51,14 @@
         <p
           *ngIf="!password.valid && password.touched && (password.errors?.['minlength'] || password.errors?.['noContent'] )"
           appInputHelperTextClasses
-          #passwordHelperClasses="appInputHelperTextClasses"
           [variant]="helperTextVariant"
-          [ngClass]="passwordHelperClasses.cssClasses"
         >
           - At least 8 characters
         </p>
         <p
           *ngIf="!password.valid && password.touched && password.errors?.['hasSpaces'] "
           appInputHelperTextClasses
-          #passwordHelperClasses="appInputHelperTextClasses"
           [variant]="helperTextVariant"
-          [ngClass]="passwordHelperClasses.cssClasses"
         >
           - May not include spaces
         </p>
@@ -76,5 +70,13 @@
         <span class="text-white">Submit</span>
       </button>
     </form>
+    <div
+      class="w-12 h-12 border-2 border-blue-500"
+      appInputHelperTextClasses
+      [variant]="testVariant"
+    >
+      Test
+    </div>
+    <button (click)="updateTestVariant()">Update Test</button>
   </div>
 </app-main-layout>

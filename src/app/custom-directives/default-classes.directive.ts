@@ -1,4 +1,11 @@
-import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 
 @Directive({
   selector: '[appDefaultClasses]',
@@ -6,6 +13,8 @@ import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
 })
 export class DefaultClassesDirective {
   constructor(public elementCSSClasses: Set<string>) {}
+
+  @HostBinding('class') clazz: string = this.cssClasses;
 
   get cssClasses() {
     return Array.from(this.elementCSSClasses.keys()).join(' ');
