@@ -8,7 +8,7 @@ import { DefaultClassesDirective } from './default-classes.directive';
 export class InputClassesDirective extends DefaultClassesDirective {
   defaultVariantProps: string[];
   constructor(renderer: Renderer2, hostElement: ElementRef) {
-    //I can't define these classes in the class member defaultVariantProps because I can't use this before super.
+    //I can't define these classes in the class member defaultVariantProps because I can't use this.defaultVariantProps before super.
     const defaultVariantProps = [
       'border-purple-500',
       'focus:shadow-[0_0_0_0.125em]',
@@ -38,7 +38,13 @@ export class InputClassesDirective extends DefaultClassesDirective {
 
   getVariants() {
     const variants = {
-      secondary: this.defaultVariantProps,
+      primary: this.defaultVariantProps,
+      secondary: [
+        'border-pink-500',
+        'focus:shadow-[0_0_0_0.125em]',
+        'focus:shadow-pink-500/50',
+      ],
+
       error: [
         'border-red-500',
         'focus:shadow-[0_0_0_0.125em]',
@@ -49,7 +55,7 @@ export class InputClassesDirective extends DefaultClassesDirective {
   }
 
   //To do: should have default variant
-  @Input() set variant(variant: 'secondary' | 'error') {
+  @Input() set variant(variant: 'primary' | 'secondary' | 'error') {
     this.removeVariants(this.getVariants());
     this.addClasses = this.getVariants()[variant];
   }
