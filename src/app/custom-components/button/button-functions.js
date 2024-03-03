@@ -57,6 +57,7 @@ class ButtonFunctions {
   };
 
   //new Classes would be global theme object imported from elsewhere
+  //To do: make sure this object cannot be manipulated from outside the class, Make it private
   newClassesObj = {
     button: {
       //represent different layers of the HTML
@@ -96,8 +97,6 @@ class ButtonFunctions {
     const returnObject = {};
     Object.keys(classesSets).forEach((HTMLLevel) => {
       const classesSet = classesSets[HTMLLevel];
-      console.log("classesSet in mod");
-      console.log(classesSet);
 
       let finalClassesSet;
       if (changesObj[HTMLLevel]) {
@@ -172,7 +171,7 @@ const myArgs = {
   },
   textContent: {
     size: 'md',
-    variant: 'primaryOutlined'
+    variant: 'primaryOutlined',
   }
 }
 
@@ -197,43 +196,32 @@ const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs,
 console.log(modifiedClassesAsStrings);
 
 /*
-Target output:const myArgs = {
-  container: {
-    rounded: 'full',
-    size: 'md',
-    variant: 'primaryOutlined'
-  },
-  textContent: {
-    size: 'md',
-    variant: 'primaryOutlined'
-  }
+Simulate @Input props
+Input format of function?/Array of {inputpropStringname:InputpropValue} - use my getFields to transform class variables into strings
+Need to construct this array manually? - Good use for a tuple? - No, in case add more valeus later
+{
+  inputPropAsString:<string evrsion of input prop>,
+  inputPropVariable:inputPropVariable
 }
 
-Input:
-  rounded->full, size->md, variant->primayOutlined
 */
-
-//Simulate @Input props
 function transformComponentInput(rounded, size, variant) {
   //Imagine input is: rounded->full, size->md, variant->primayOutlined
   const buttonObj = buttonClass.newClassesObj.button;
   const classesObj = {};
-  Object.entries(buttonObj).forEach(([key, value]) => {
+  Object.entries(buttonObj).forEach(([HTMLLevel, propObj]) => {
     //To do: turn this into a generic loop so will work automatically regardles of the function arguments.
     //Use spread syntax as function args.
-    classesObj[key] = value;
+    classesObj[HTMLLevel] = propObj;
 
-    console.log("value");
-    console.log(value);
-
-    if (value['rounded']) {
-      classesObj[key]['rounded'] = rounded;
+    if (propObj['rounded']) {
+      classesObj[HTMLLevel]['rounded'] = rounded;
     }
-    if (value['size']) {
-      classesObj[key]['size'] = size;
+    if (propObj['size']) {
+      classesObj[HTMLLevel]['size'] = size;
     }
-    if (value['variant']) {
-      classesObj[key]['variant'] = variant;
+    if (propObj['variant']) {
+      classesObj[HTMLLevel]['variant'] = variant;
     }
 
   })
@@ -242,8 +230,39 @@ function transformComponentInput(rounded, size, variant) {
 }
 
 const transformedInput = transformComponentInput('full', 'md', 'primaryOutlined');
-console.log("transformedInput below");
-console.log(transformedInput);
+// console.log("transformedInput below");
+// console.log(transformedInput);
 
 
+function transformComponentInputDynamic(inputPropObjects) {
+  //Imagine input is: rounded->full, size->md, variant->primayOutlined
+  const buttonObj = buttonClass.newClassesObj.button;
+  const classesObj = {};
+  Object.entries(buttonObj).forEach(([HTMLLevel, propObj]) => {
+    classesObj[HTMLLevel] = propObj;
+    inputPropObjects.forEach((inputPropObj) => {
+      if (classesObj[HTMLLevel][inputPropObj.inputPropName]) {
+        classesObj[HTMLLevel][inputPropObj.inputPropName] = inputPropObj.inputPropValue;
+      }
+    })
+  })
 
+  return classesObj;
+}
+
+const transformedArgs = [
+  {
+    inputPropName: 'rounded',
+    inputPropValue: 'full'
+  }, {
+    inputPropName: 'size',
+    inputPropValue: 'md'
+  }, {
+    inputPropName: 'variant',
+    inputPropValue: 'primaryOutlined'
+  },
+
+];
+const transformedInputDynamic = transformComponentInputDynamic(transformedArgs);
+console.log("transformedInputDynamic below");
+console.log(transformedInputDynamic);
