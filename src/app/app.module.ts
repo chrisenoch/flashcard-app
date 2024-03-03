@@ -41,6 +41,7 @@ import { InputClassesDirective } from './custom-directives/input-classes.directi
 import { FocusFormDirective } from './custom-directives/focus-form.directive';
 import { NoSpacesDirective } from './custom-directives/custom-validators/no-spaces.directive';
 import { NoContentDirective } from './custom-directives/custom-validators/no-content.directive';
+import { ButtonComponent } from './custom-components/button/button.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { NoContentDirective } from './custom-directives/custom-validators/no-con
     FocusFormDirective,
     NoSpacesDirective,
     NoContentDirective,
+    ButtonComponent,
   ],
   imports: [
     BrowserModule,
