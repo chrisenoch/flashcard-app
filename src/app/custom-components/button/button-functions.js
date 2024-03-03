@@ -4,6 +4,8 @@
 //Default values?
 //How deal with if outlined or not? - Separate entirely?
 //How get the classes
+//Media queries?
+//Light and dark theme
 
 //   if (isDisabled) {
 //     classes.add('cursor-not-allowed');
@@ -74,11 +76,37 @@ class ButtonFunctions {
     return Array.from(classesSet.keys()).join(' ');
   }
 
+  //To do: merge with getModifiedClassesAsStrings
   getClassesAsStrings(desiredClassesObj) {
     const classesSets = this.getClassesAsSets(desiredClassesObj);
     const returnObject = {};
-    Object.entries(classesSets).forEach(([HTMLLevel, theSet]) => {
-      returnObject[HTMLLevel] = this.getClasses(classesSets[HTMLLevel]);
+    Object.keys(classesSets).forEach((HTMLLevel) => {
+      const classesSet = classesSets[HTMLLevel];
+      returnObject[HTMLLevel] = this.getClasses(classesSet);
+    })
+    return returnObject;
+  }
+
+  //To do: merge with getClassesAsStrings
+  //Problem: editClasses expects changesObj for ONE set. changesObj has multiple changesObjs
+  //Solution:changesObj has ses by the name of the HTMLLevel which must match with the button object HTML Levels
+  getModifiedClassesAsStrings(desiredClassesObj, changesObj) {
+    const classesSets = this.getClassesAsSets(desiredClassesObj);
+
+    const returnObject = {};
+    Object.keys(classesSets).forEach((HTMLLevel) => {
+      const classesSet = classesSets[HTMLLevel];
+      console.log("classesSet in mod");
+      console.log(classesSet);
+
+      let finalClassesSet;
+      if (changesObj[HTMLLevel]) {
+        finalClassesSet = this.editClasses(classesSet, changesObj[HTMLLevel]);
+      } else {
+        finalClassesSet = classesSet;
+      }
+
+      returnObject[HTMLLevel] = this.getClasses(finalClassesSet);
     })
     return returnObject;
   }
@@ -105,6 +133,35 @@ class ButtonFunctions {
     );
     return returnObject;
   }
+
+  editClasses(classesSet, changes) {
+    const { add, remove } = changes;
+    if (add) {
+      if (typeof add === 'string') {
+        const cssClass = add;
+        classesSet.add(cssClass);
+      } else {
+        const cssClasses = add;
+        cssClasses.forEach((cssClass) => {
+          classesSet.add(cssClass);
+        });
+      }
+    }
+    if (remove) {
+      if (typeof remove === 'string') {
+        const cssClass = remove;
+        classesSet.delete(cssClass);
+      } else {
+        const cssClasses = remove;
+        cssClasses.forEach((cssClass) => {
+          classesSet.delete(cssClass);
+        });
+      }
+    }
+
+    return classesSet;
+  }
+
 }
 
 const myArgs = {
@@ -115,22 +172,31 @@ const myArgs = {
   },
   textContent: {
     size: 'md',
-    variant: 'primary'
+    variant: 'primaryOutlined'
   }
 }
 
 const buttonClass = new ButtonFunctions();
 const classesAsSets = buttonClass.getClassesAsSets(myArgs);
-//returns the HTMLLevel:Set of classnames
 console.log(classesAsSets);
 
 const classesAsStrings = buttonClass.getClassesAsStrings(myArgs);
 console.log(classesAsStrings);
 
-//1. Now IN A DIFFERENT FUNCTION I need to convert it into a string of class names so I can apply to the button
-//2. Another function in the class that wraps getClasses. Before returning the final classnames, executes the developer callback.
-//Callback, could be addClasses, editClasses, etc.
-//Would need a callback for each HTM Level
+//This is what is called inside the component after having received the developer arguments.
+//The developer would not provide separate args for container and textContent as is the case in myArgs above.
+//The dev would just write rounded=full, size=md.
+//To do: convert the variables the developer provides (e.g. rounded=full), to the object like myArgs above.
+//To do: Same but for media queries.
+const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs, {
+  container: {
+    add: ["sm:rounded-sm", "md:rounded-md", "sm:font-medium"],
+    remove: "rounded-full"
+  }
+});
+console.log(modifiedClassesAsStrings);
+
+
 
 
 
