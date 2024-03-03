@@ -15,6 +15,7 @@
 
 class ButtonFunctions {
   container = { //HTMLLevel
+    disabled: false,
     rounded: {  //prop name
       //always use Sets to have a consistent API?
       full: new Set(['rounded-full']),
@@ -105,6 +106,15 @@ class ButtonFunctions {
       ([HTMLLevel, HTMLLevelProps]) => {
         returnObject[HTMLLevel] = new Set();
         Object.keys(HTMLLevelProps).forEach((propName) => {
+          //if disabled, add disabled props to the appropriate HTMLLevel.
+          if (propName.toLowerCase() === 'disabled') {
+            if (HTMLLevelProps.disabled) {
+              returnObject[HTMLLevel].add('cursor-not-allowed');
+              returnObject[HTMLLevel].add('opacity-50');
+            }
+            return;
+          }
+
           const propVariant = HTMLLevelProps[propName];
           const propVariantSet =
             this.newClassesObj.button[HTMLLevel][propName][propVariant];
@@ -151,6 +161,7 @@ class ButtonFunctions {
 
 const myArgs = {
   container: {
+    disabled: false,
     rounded: 'full',
     size: 'md',
     variant: 'primaryOutlined'
