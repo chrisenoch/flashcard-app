@@ -111,9 +111,14 @@ class ButtonFunctions {
         returnObject[HTMLLevel] = new Set();
         Object.keys(HTMLLevelProps).forEach((propName) => {
           const propVariant = HTMLLevelProps[propName];
+          console.log("**propVariant " + propVariant);
 
           const propVariantSet =
             this.newClassesObj.button[HTMLLevel][propName][propVariant];
+          console.log("propVariantSet ");
+          console.log("start-------------------");
+          console.log(propVariant);
+          console.log("end-------------------");
           const propVariantSetCopy = new Set([...propVariantSet]);
           //add to main classesSet
           returnObject[HTMLLevel] = new Set([
@@ -159,14 +164,37 @@ class ButtonFunctions {
 function transformComponentInput(inputPropObjects) {
   const buttonObj = structuredClone(buttonClass.newClassesObj.button);
   const classesObj = {};
+  const buttonObjHTMLLevelKeys = []; //For error checking
+  const inputPropObjectsHTMLLevelKeys = []; //For error checking
   Object.entries(buttonObj).forEach(([HTMLLevel, propObj]) => {
+    buttonObjHTMLLevelKeys.push(Object.keys(buttonObj[HTMLLevel]));
     classesObj[HTMLLevel] = propObj;
     inputPropObjects.forEach((inputPropObj) => {
       if (classesObj[HTMLLevel][inputPropObj.inputPropName]) {
+        inputPropObjectsHTMLLevelKeys.push(inputPropObj.inputPropName);
         classesObj[HTMLLevel][inputPropObj.inputPropName] = inputPropObj.inputPropValue;
       }
     })
   })
+  const flattenedButtonObjHTMLLevelKeys = buttonObjHTMLLevelKeys.flatMap((key) => key);
+  if (flattenedButtonObjHTMLLevelKeys.length !== inputPropObjectsHTMLLevelKeys.length) {
+    let errorMessageHint = '';
+    if (flattenedButtonObjHTMLLevelKeys.length > inputPropObjectsHTMLLevelKeys.length) {
+      const flattenedButtonObjHTMLLevelKeysSet = new Set([...flattenedButtonObjHTMLLevelKeys]);
+      inputPropObjectsHTMLLevelKeys.forEach((key) => {
+        flattenedButtonObjHTMLLevelKeysSet.delete(key);
+      })
+      errorMessageHint = 'The extra keys are in the button theme object and are: ' + [...flattenedButtonObjHTMLLevelKeysSet].join();
+    } else {
+      const inputPropObjectsHTMLLevelKeysSet = new Set([...flattenedButtonObjHTMLLevelKeys]);
+      flattenedButtonObjHTMLLevelKeys.forEach((key) => {
+        inputPropObjectsHTMLLevelKeysSet.delete(key);
+      })
+      errorMessageHint = 'The extra keys are in the inputPropObjects array argument for this function and are: ' + [...inputPropObjectsHTMLLevelKeysSet].join();
+    }
+
+    throw new Error("Input mismatch. You must account for all the prop names in the button theme object in the inputPropObjects array argument for this function. " + errorMessageHint);
+  }
 
   return classesObj;
 }
@@ -186,11 +214,11 @@ const myArgs = {
 
 const buttonClass = new ButtonFunctions();
 const classesAsSets = buttonClass.getClassesAsSets(myArgs);
-console.log("**** getClassesAsSets below");
-console.log(classesAsSets);
+// console.log("**** getClassesAsSets below");
+// console.log(classesAsSets);
 
 const classesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs);
-console.log(classesAsStrings);
+//console.log(classesAsStrings);
 
 //buttonClass is what is called inside the component after having received the developer arguments.
 const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs, {
@@ -199,7 +227,7 @@ const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs,
     remove: "rounded-full"
   }
 });
-console.log(modifiedClassesAsStrings);
+//console.log(modifiedClassesAsStrings);
 
 /*
 Simulate @Input props
