@@ -15,7 +15,10 @@
 
 class ButtonFunctions {
   container = { //HTMLLevel
-    disabled: false,
+    disabled: {
+      isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  sm:propvariant //  text-sm:propClass
+      isEnabled: new Set(),
+    },
     rounded: {  //prop name
       //always use Sets to have a consistent API?
       full: new Set(['rounded-full']),
@@ -63,6 +66,7 @@ class ButtonFunctions {
     button: {
       //represent different layers of the HTML
       container: {
+        disabled: this.container.disabled,
         rounded: this.container.rounded,
         variant: this.container.variant,
         size: this.container.size,
@@ -106,22 +110,15 @@ class ButtonFunctions {
       ([HTMLLevel, HTMLLevelProps]) => {
         returnObject[HTMLLevel] = new Set();
         Object.keys(HTMLLevelProps).forEach((propName) => {
-          //if disabled, add disabled props to the appropriate HTMLLevel.
-          if (propName.toLowerCase() === 'disabled') {
-            if (HTMLLevelProps.disabled) {
-              returnObject[HTMLLevel].add('cursor-not-allowed');
-              returnObject[HTMLLevel].add('opacity-50');
-            }
-            return;
-          }
-
           const propVariant = HTMLLevelProps[propName];
+
           const propVariantSet =
             this.newClassesObj.button[HTMLLevel][propName][propVariant];
+          const propVariantSetCopy = new Set([...propVariantSet]);
           //add to main classesSet
           returnObject[HTMLLevel] = new Set([
             ...returnObject[HTMLLevel],
-            ...propVariantSet,
+            ...propVariantSetCopy,
           ]);
         });
       }
@@ -159,42 +156,8 @@ class ButtonFunctions {
 
 }
 
-const myArgs = {
-  container: {
-    disabled: false,
-    rounded: 'full',
-    size: 'md',
-    variant: 'primaryOutlined'
-  },
-  textContent: {
-    size: 'md',
-    variant: 'primaryOutlined',
-  }
-}
-
-const buttonClass = new ButtonFunctions();
-const classesAsSets = buttonClass.getClassesAsSets(myArgs);
-console.log(classesAsSets);
-
-const classesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs);
-console.log(classesAsStrings);
-
-//This is what is called inside the component after having received the developer arguments.
-const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs, {
-  container: {
-    add: ["sm:rounded-sm", "md:rounded-md", "sm:font-medium"],
-    remove: "rounded-full"
-  }
-});
-console.log(modifiedClassesAsStrings);
-
-/*
-Simulate @Input props
-*/
-
 function transformComponentInput(inputPropObjects) {
-  //Imagine input is: rounded->full, size->md, variant->primayOutlined
-  const buttonObj = buttonClass.newClassesObj.button;
+  const buttonObj = structuredClone(buttonClass.newClassesObj.button);
   const classesObj = {};
   Object.entries(buttonObj).forEach(([HTMLLevel, propObj]) => {
     classesObj[HTMLLevel] = propObj;
@@ -208,6 +171,39 @@ function transformComponentInput(inputPropObjects) {
   return classesObj;
 }
 
+const myArgs = {
+  container: {
+    disabled: 'isDisabled',
+    rounded: 'full',
+    size: 'md',
+    variant: 'primaryOutlined'
+  },
+  textContent: {
+    size: 'md',
+    variant: 'primaryOutlined',
+  }
+}
+
+const buttonClass = new ButtonFunctions();
+const classesAsSets = buttonClass.getClassesAsSets(myArgs);
+console.log("**** getClassesAsSets below");
+console.log(classesAsSets);
+
+const classesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs);
+console.log(classesAsStrings);
+
+//buttonClass is what is called inside the component after having received the developer arguments.
+const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs, {
+  container: {
+    add: ["sm:rounded-sm", "md:rounded-md", "sm:font-medium"],
+    remove: "rounded-full"
+  }
+});
+console.log(modifiedClassesAsStrings);
+
+/*
+Simulate @Input props
+*/
 const transformedArgs = [
   {
     inputPropName: 'rounded',
@@ -215,12 +211,26 @@ const transformedArgs = [
   }, {
     inputPropName: 'size',
     inputPropValue: 'md'
-  }, {
+  },
+
+  {
     inputPropName: 'variant',
     inputPropValue: 'primaryOutlined'
+  },
+
+  {
+    inputPropName: 'disabled',
+    inputPropValue: 'isEnabled'
   },
 
 ];
 const transformedInput = transformComponentInput(transformedArgs);
 console.log("transformedInput below");
 console.log(transformedInput);
+
+const classesAsSetsWithtransformed = buttonClass.getClassesAsSets(transformedInput);
+console.log("*** classesAsSetsWithtransformed");
+console.log(classesAsSetsWithtransformed);
+// const classesAsSets2 = buttonClass.getClassesAsSets(myArgs);
+// console.log("getClassesAsSets2 below");
+// console.log(classesAsSets2);
