@@ -196,7 +196,54 @@ const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs,
 });
 console.log(modifiedClassesAsStrings);
 
+/*
+Target output:const myArgs = {
+  container: {
+    rounded: 'full',
+    size: 'md',
+    variant: 'primaryOutlined'
+  },
+  textContent: {
+    size: 'md',
+    variant: 'primaryOutlined'
+  }
+}
 
+Input:
+  rounded->full, size->md, variant->primayOutlined
+*/
+
+//Simulate @Input props
+function transformComponentInput(rounded, size, variant) {
+  //Imagine input is: rounded->full, size->md, variant->primayOutlined
+  const buttonObj = buttonClass.newClassesObj.button;
+  const classesObj = {};
+  Object.entries(buttonObj).forEach(([key, value]) => {
+    //To do: turn this into a generic loop so will work automatically regardles of the function arguments.
+    //Use spread syntax as function args.
+    classesObj[key] = value;
+
+    console.log("value");
+    console.log(value);
+
+    if (value['rounded']) {
+      classesObj[key]['rounded'] = rounded;
+    }
+    if (value['size']) {
+      classesObj[key]['size'] = size;
+    }
+    if (value['variant']) {
+      classesObj[key]['variant'] = variant;
+    }
+
+  })
+
+  return classesObj;
+}
+
+const transformedInput = transformComponentInput('full', 'md', 'primaryOutlined');
+console.log("transformedInput below");
+console.log(transformedInput);
 
 
 
