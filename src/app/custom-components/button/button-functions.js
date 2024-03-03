@@ -30,12 +30,12 @@ class ButtonFunctions {
       primary: new Set([' bg-purple-500', 'hover:enabled:bg-purple-600']),
       secondary: new Set([' bg-pink-500', 'hover:enabled:bg-pink-600']),
       primaryOutlined: new Set([
-        ' bg-white',
+        'bg-white',
         'hover:enabled:bg-purple-500',
         'border-2 border-purple-500',
       ]),
       secondaryOutlined: new Set([
-        ' bg-white',
+        'bg-white',
         'hover:enabled:bg-pink-500',
         'border-2 border-purple-500',
       ]),
@@ -73,39 +73,25 @@ class ButtonFunctions {
     },
   };
 
-  getClasses(classesSet) {
+  convertSetToSpacedString(classesSet) {
     return Array.from(classesSet.keys()).join(' ');
   }
 
-  //To do: merge with getModifiedClassesAsStrings
-  getClassesAsStrings(desiredClassesObj) {
-    const classesSets = this.getClassesAsSets(desiredClassesObj);
-    const returnObject = {};
-    Object.keys(classesSets).forEach((HTMLLevel) => {
-      const classesSet = classesSets[HTMLLevel];
-      returnObject[HTMLLevel] = this.getClasses(classesSet);
-    })
-    return returnObject;
-  }
-
-  //To do: merge with getClassesAsStrings
-  //Problem: editClasses expects changesObj for ONE set. changesObj has multiple changesObjs
-  //Solution:changesObj has ses by the name of the HTMLLevel which must match with the button object HTML Levels
+  //To do:changesObj should be optional argument
   getModifiedClassesAsStrings(desiredClassesObj, changesObj) {
     const classesSets = this.getClassesAsSets(desiredClassesObj);
-
     const returnObject = {};
     Object.keys(classesSets).forEach((HTMLLevel) => {
       const classesSet = classesSets[HTMLLevel];
-
       let finalClassesSet;
-      if (changesObj[HTMLLevel]) {
+      //If changesObj exists, then the developer wants to add/delete some of the classes
+      if (changesObj && changesObj[HTMLLevel]) {
         finalClassesSet = this.editClasses(classesSet, changesObj[HTMLLevel]);
       } else {
         finalClassesSet = classesSet;
       }
 
-      returnObject[HTMLLevel] = this.getClasses(finalClassesSet);
+      returnObject[HTMLLevel] = this.convertSetToSpacedString(finalClassesSet);
     })
     return returnObject;
   }
@@ -179,14 +165,10 @@ const buttonClass = new ButtonFunctions();
 const classesAsSets = buttonClass.getClassesAsSets(myArgs);
 console.log(classesAsSets);
 
-const classesAsStrings = buttonClass.getClassesAsStrings(myArgs);
+const classesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs);
 console.log(classesAsStrings);
 
 //This is what is called inside the component after having received the developer arguments.
-//The developer would not provide separate args for container and textContent as is the case in myArgs above.
-//The dev would just write rounded=full, size=md.
-//To do: convert the variables the developer provides (e.g. rounded=full), to the object like myArgs above.
-//To do: Same but for media queries.
 const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs, {
   container: {
     add: ["sm:rounded-sm", "md:rounded-md", "sm:font-medium"],
@@ -197,44 +179,9 @@ console.log(modifiedClassesAsStrings);
 
 /*
 Simulate @Input props
-Input format of function?/Array of {inputpropStringname:InputpropValue} - use my getFields to transform class variables into strings
-Need to construct this array manually? - Good use for a tuple? - No, in case add more valeus later
-{
-  inputPropAsString:<string evrsion of input prop>,
-  inputPropVariable:inputPropVariable
-}
-
 */
-function transformComponentInput(rounded, size, variant) {
-  //Imagine input is: rounded->full, size->md, variant->primayOutlined
-  const buttonObj = buttonClass.newClassesObj.button;
-  const classesObj = {};
-  Object.entries(buttonObj).forEach(([HTMLLevel, propObj]) => {
-    //To do: turn this into a generic loop so will work automatically regardles of the function arguments.
-    //Use spread syntax as function args.
-    classesObj[HTMLLevel] = propObj;
 
-    if (propObj['rounded']) {
-      classesObj[HTMLLevel]['rounded'] = rounded;
-    }
-    if (propObj['size']) {
-      classesObj[HTMLLevel]['size'] = size;
-    }
-    if (propObj['variant']) {
-      classesObj[HTMLLevel]['variant'] = variant;
-    }
-
-  })
-
-  return classesObj;
-}
-
-const transformedInput = transformComponentInput('full', 'md', 'primaryOutlined');
-// console.log("transformedInput below");
-// console.log(transformedInput);
-
-
-function transformComponentInputDynamic(inputPropObjects) {
+function transformComponentInput(inputPropObjects) {
   //Imagine input is: rounded->full, size->md, variant->primayOutlined
   const buttonObj = buttonClass.newClassesObj.button;
   const classesObj = {};
@@ -263,6 +210,6 @@ const transformedArgs = [
   },
 
 ];
-const transformedInputDynamic = transformComponentInputDynamic(transformedArgs);
-console.log("transformedInputDynamic below");
-console.log(transformedInputDynamic);
+const transformedInput = transformComponentInput(transformedArgs);
+console.log("transformedInput below");
+console.log(transformedInput);
