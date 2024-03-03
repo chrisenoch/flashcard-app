@@ -1,32 +1,22 @@
 //TO DO
-//How to handle disabled?
-//If disabled do not return certian values, liek primary colours. Also, set cursor to not-allowed.
-//Default values?
-//How deal with if outlined or not? - Separate entirely?
-//How get the classes
-//Media queries?
 //Light and dark theme
-
-//   if (isDisabled) {
-//     classes.add('cursor-not-allowed');
-//     //To do: Maybe change this.
-//     classes.add('opacity-50');
-//   }
+//Construct instance of the class with the current theme.
 
 class ButtonFunctions {
   container = { //HTMLLevel
     disabled: {
-      isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  sm:propvariant //  text-sm:propClass
+      //isDisabled so as to avoid disabled.disabled
+      isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  isDisabled:propVariant //  'opacity-50':propClass
       isEnabled: new Set(),
     },
     rounded: {  //prop name
-      //always use Sets to have a consistent API?
+      //always use Sets to have a consistent API.
       full: new Set(['rounded-full']),
       sm: new Set(['rounded-sm']),
       md: new Set(['rounded-md']),
     },
     size: {
-      sm: new Set(['px-1', 'py-2']), //  sm:propvariant //  text-sm:propClass
+      sm: new Set(['px-1', 'py-2']),
       md: new Set(['px-2', 'py-3']),
     },
 
@@ -60,9 +50,9 @@ class ButtonFunctions {
     },
   };
 
-  //new Classes would be global theme object imported from elsewhere
+  //This would be imported from elsewhere.
   //To do: make sure this object cannot be manipulated from outside the class, Make it private
-  newClassesObj = {
+  themeObj = {
     button: {
       //represent different layers of the HTML
       container: {
@@ -76,6 +66,12 @@ class ButtonFunctions {
         variant: this.textContent.variant,
       },
     },
+    /* Add your own custom objects under the custom key
+    custom:{
+      button:{//....}
+      CTAButton:{//...}
+    }
+    */
   };
 
   convertSetToSpacedString(classesSet) {
@@ -83,8 +79,8 @@ class ButtonFunctions {
   }
 
   //To do:changesObj should be optional argument
-  getModifiedClassesAsStrings(desiredClassesObj, changesObj) {
-    const classesSets = this.getClassesAsSets(desiredClassesObj);
+  getPossiblyModifiedClassesAsStrings(desiredClassesObj, changesObj) {
+    const classesSets = this.getClassesByHTMLLevelAsSets(desiredClassesObj);
     const returnObject = {};
     Object.keys(classesSets).forEach((HTMLLevel) => {
       const classesSet = classesSets[HTMLLevel];
@@ -101,7 +97,7 @@ class ButtonFunctions {
     return returnObject;
   }
 
-  getClassesAsSets(desiredClassesObj) {
+  getClassesByHTMLLevelAsSets(desiredClassesObj) {
     const returnObject = {
       container: new Set(),
       textContent: new Set(),
@@ -111,16 +107,9 @@ class ButtonFunctions {
         returnObject[HTMLLevel] = new Set();
         Object.keys(HTMLLevelProps).forEach((propName) => {
           const propVariant = HTMLLevelProps[propName];
-          console.log("**propVariant " + propVariant);
-
           const propVariantSet =
-            this.newClassesObj.button[HTMLLevel][propName][propVariant];
-          console.log("propVariantSet ");
-          console.log("start-------------------");
-          console.log(propVariant);
-          console.log("end-------------------");
+            this.themeObj.button[HTMLLevel][propName][propVariant];
           const propVariantSetCopy = new Set([...propVariantSet]);
-          //add to main classesSet
           returnObject[HTMLLevel] = new Set([
             ...returnObject[HTMLLevel],
             ...propVariantSetCopy,
@@ -162,7 +151,7 @@ class ButtonFunctions {
 }
 
 function transformComponentInput(inputPropObjects) {
-  const buttonObj = structuredClone(buttonClass.newClassesObj.button);
+  const buttonObj = structuredClone(buttonClass.themeObj.button);
   const classesObj = {};
   const buttonObjHTMLLevelKeys = []; //For error checking
   const inputPropObjectsHTMLLevelKeys = []; //For error checking
@@ -213,24 +202,26 @@ const myArgs = {
 }
 
 const buttonClass = new ButtonFunctions();
-const classesAsSets = buttonClass.getClassesAsSets(myArgs);
-// console.log("**** getClassesAsSets below");
-// console.log(classesAsSets);
+const classesAsSets = buttonClass.getClassesByHTMLLevelAsSets(myArgs);
+console.log("**** getClassesAsSets below");
+console.log(classesAsSets);
 
-const classesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs);
-//console.log(classesAsStrings);
+const classesAsStrings = buttonClass.getPossiblyModifiedClassesAsStrings(myArgs);
+console.log(classesAsStrings);
 
 //buttonClass is what is called inside the component after having received the developer arguments.
-const modifiedClassesAsStrings = buttonClass.getModifiedClassesAsStrings(myArgs, {
+const modifiedClassesAsStrings = buttonClass.getPossiblyModifiedClassesAsStrings(myArgs, {
   container: {
     add: ["sm:rounded-sm", "md:rounded-md", "sm:font-medium"],
     remove: "rounded-full"
   }
 });
-//console.log(modifiedClassesAsStrings);
+console.log(modifiedClassesAsStrings);
 
 /*
-Simulate @Input props
+Construct this in the component based on the Input props available.
+We need to transform the props from the format the developer enters them via @Input into a format that we can use to
+fetch the correct classes as strings for the correct HTML element.
 */
 const transformedArgs = [
   {
@@ -256,9 +247,9 @@ const transformedInput = transformComponentInput(transformedArgs);
 console.log("transformedInput below");
 console.log(transformedInput);
 
-const classesAsSetsWithtransformed = buttonClass.getClassesAsSets(transformedInput);
+const classesAsSetsWithtransformed = buttonClass.getClassesByHTMLLevelAsSets(transformedInput);
 console.log("*** classesAsSetsWithtransformed");
 console.log(classesAsSetsWithtransformed);
-// const classesAsSets2 = buttonClass.getClassesAsSets(myArgs);
-// console.log("getClassesAsSets2 below");
-// console.log(classesAsSets2);
+const classesAsSets2 = buttonClass.getClassesByHTMLLevelAsSets(myArgs);
+console.log("getClassesAsSets2 below");
+console.log(classesAsSets2);
