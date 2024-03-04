@@ -10,6 +10,7 @@ export class DisableLinkDirective {
 
   @HostListener('click', ['$event']) onClick(e: MouseEvent) {
     if (this.isDisabled) {
+      console.log('about to prevent default');
       e.preventDefault();
     }
   }

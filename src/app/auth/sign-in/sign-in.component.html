@@ -69,7 +69,7 @@
   </div>
   <app-button
     [rounded]="rounded"
-    disabled="isDisabled"
+    disabled="isEnabled"
     [variant]="variant"
     buttonText="Test Button"
     [sx]="{
@@ -84,12 +84,21 @@
   ></app-button>
   <app-button
     href="#"
-    (click)="updateButtonRounded()"
+    #buttonTest
+    (click)="buttonTest.disabled === 'isEnabled' && updateButtonRounded()"
     buttonText="New props test"
     variant="plain"
     rounded="full"
-    disabled="isEnabled"
+    disabled="isDisabled"
   ></app-button>
+  <button
+    appDisableLink
+    #appDisableLink="appDisableLink"
+    [isDisabled]="true"
+    (click)="updateButtonRounded()"
+  >
+    Normal button
+  </button>
   <app-button (click)="updateButtonRounded()" variant="plain" rounded="full">
     <i
       startContent

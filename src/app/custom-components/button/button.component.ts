@@ -87,24 +87,19 @@ export class ButtonComponent implements OnInit, OnChanges {
 
     const classesToRemoveIfDisabled =
       this.buttonFunctions.getTheme().buttonConfig.classesToRemoveIfDisabled;
-    console.log('classesToRemoveIfDisabled');
-    console.log(classesToRemoveIfDisabled);
-    //To do: Need to be more specific. I know it is the container, but this needs to be automatic.
+    //To do: Need to be more specific. I know it is the container which we need to remove the classes from
+    //, but this needs to be automatic.
     if (this.disabled === 'isDisabled') {
-      const containerCSS = this.cssClasses.container;
       //get the spaced strings as a Set
       const containerCSSSet = new Set(
-        containerCSS.split(' ').filter((item) => item.length > 0)
+        this.cssClasses.container.split(' ').filter((item) => item.length > 0)
       );
-      //remove unwanted css classes
+      //remove unwanted CSS classes
       classesToRemoveIfDisabled.forEach((cssClass) => {
         containerCSSSet.delete(cssClass);
       });
       this.cssClasses.container =
         this.buttonFunctions.setToSpacedString(containerCSSSet);
-
-      console.log('this.cssClasses.containerclasses when button disabled');
-      console.log(this.cssClasses.container);
     }
   }
 
