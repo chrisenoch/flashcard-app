@@ -1,10 +1,27 @@
 <button
+  *ngIf="!href"
   [ngClass]="cssClasses.container"
   [disabled]="disabled === 'isDisabled' ? true : false"
 >
+  <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+</button>
+
+<a
+  *ngIf="href"
+  appDisableLink
+  #appDisableLink="appDisableLink"
+  [isDisabled]="disabled === 'isDisabled' ? true : false"
+  href="{{ href }}"
+  [class]="cssClasses.container"
+  [ngClass]="disabled === 'isDisabled' ? classesToAddIfDisabled : ''"
+>
+  <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+</a>
+
+<ng-template #buttonContent>
   <ng-content select="[startContent]"></ng-content>
   <span *ngIf="buttonText" [ngClass]="cssClasses.textContent"
     >{{ buttonText }}
   </span>
   <ng-content select="[endContent]"></ng-content>
-</button>
+</ng-template>

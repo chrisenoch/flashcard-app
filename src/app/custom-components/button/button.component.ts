@@ -21,6 +21,7 @@ export class ButtonComponent implements OnInit, OnChanges {
     this.fields = initFields<typeof this>(this, ButtonComponent);
   }
   @Input() default: 'remove' | 'useDefault' = 'useDefault';
+  @Input() href: string | undefined;
   @Input() buttonText = '';
   @Input() sx:
     | {
@@ -54,8 +55,12 @@ export class ButtonComponent implements OnInit, OnChanges {
     container: string;
     textContent: string;
   };
+  classesToAddIfDisabled!: string;
   ngOnInit(): void {
     this.updateCSSClasses();
+
+    console.log('this.disabledClasses');
+    console.log(this.classesToAddIfDisabled);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -65,10 +70,13 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   private updateCSSClasses() {
+    this.classesToAddIfDisabled =
+      this.buttonFunctions.getDisabledClassesAsString().container; //Needed to add disabled state to link button. Link needs help because <a> tag does not have disabled attribute.
     this.transformedCSSInputArgs = this.getTransformedCSSInputArgs();
     const transformedInput = this.buttonFunctions.transformComponentInput(
       this.transformedCSSInputArgs
     );
+
     this.cssClasses = this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
       transformedInput,
       this.sx
@@ -76,6 +84,28 @@ export class ButtonComponent implements OnInit, OnChanges {
       container: string;
       textContent: string;
     };
+
+    const classesToRemoveIfDisabled =
+      this.buttonFunctions.getTheme().buttonConfig.classesToRemoveIfDisabled;
+    console.log('classesToRemoveIfDisabled');
+    console.log(classesToRemoveIfDisabled);
+    //To do: Need to be more specific. I know it is the container, but this needs to be automatic.
+    if (this.disabled === 'isDisabled') {
+      const containerCSS = this.cssClasses.container;
+      //get the spaced strings as a Set
+      const containerCSSSet = new Set(
+        containerCSS.split(' ').filter((item) => item.length > 0)
+      );
+      //remove unwanted css classes
+      classesToRemoveIfDisabled.forEach((cssClass) => {
+        containerCSSSet.delete(cssClass);
+      });
+      this.cssClasses.container =
+        this.buttonFunctions.setToSpacedString(containerCSSSet);
+
+      console.log('this.cssClasses.containerclasses when button disabled');
+      console.log(this.cssClasses.container);
+    }
   }
 
   private checkIfCSSInputsChanged(changes: SimpleChanges) {

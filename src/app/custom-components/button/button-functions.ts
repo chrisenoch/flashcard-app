@@ -41,17 +41,17 @@ export class ButtonFunctions {
     },
 
     variant: {
-      plain: new Set([' bg-gray-300', 'hover:enabled:bg-gray-400']), //new
-      primary: new Set([' bg-purple-500', 'hover:enabled:bg-purple-600']),
-      secondary: new Set([' bg-pink-500', 'hover:enabled:bg-pink-600']),
+      plain: new Set([' bg-gray-300', 'hover:bg-gray-400']), //new
+      primary: new Set([' bg-purple-500', 'hover:bg-purple-600']),
+      secondary: new Set([' bg-pink-500', 'hover:bg-pink-600']),
       primaryOutlined: new Set([
         'bg-white',
-        'hover:enabled:bg-purple-500',
+        'hover:bg-purple-500',
         'border-2 border-purple-500',
       ]),
       secondaryOutlined: new Set([
         'bg-white',
-        'hover:enabled:bg-pink-500',
+        'hover:bg-pink-500',
         'border-2 border-purple-500',
       ]),
     },
@@ -75,7 +75,7 @@ export class ButtonFunctions {
 
   //This would be imported from elsewhere.
   //To do: make sure this object cannot be manipulated from outside the class, Make it private
-  themeObj = {
+  private themeObj = {
     button: {
       //represent different layers of the HTML
       container: {
@@ -90,6 +90,15 @@ export class ButtonFunctions {
         variant: this.textContent.variant,
       },
     },
+    buttonConfig: {
+      classesToRemoveIfDisabled: new Set([
+        'hover:bg-gray-400',
+        'hover:bg-purple-600',
+        'hover:bg-pink-600',
+        'hover:bg-pink-500',
+        'hover:bg-purple-500',
+      ]),
+    },
     /* Add your own custom objects under the custom key
     custom:{
       button:{//....}
@@ -98,7 +107,19 @@ export class ButtonFunctions {
     */
   };
 
-  convertSetToSpacedString(classesSet) {
+  getTheme() {
+    return structuredClone(this.themeObj);
+  }
+
+  getDisabledClassesAsString() {
+    return {
+      container: this.setToSpacedString(
+        structuredClone(this.themeObj.button.container.disabled.isDisabled)
+      ),
+    };
+  }
+
+  setToSpacedString(classesSet) {
     return Array.from(classesSet.keys()).join(' ');
   }
 
@@ -116,7 +137,7 @@ export class ButtonFunctions {
         finalClassesSet = classesSet;
       }
 
-      returnObject[HTMLLevel] = this.convertSetToSpacedString(finalClassesSet);
+      returnObject[HTMLLevel] = this.setToSpacedString(finalClassesSet);
     });
     return returnObject;
   }
