@@ -6,25 +6,29 @@
 //Construct instance of the class with the current theme.
 export class ButtonFunctions {
   container = {
-    //HTMLLevel
+    //container:HTMLLevel
     disabled: {
       //isDisabled so as to avoid disabled.disabled
       isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  isDisabled:propVariant //  'opacity-50':propClass
       isEnabled: new Set(),
     },
     rounded: {
-      //prop name
+      //sm:prop name
       //always use Sets to have a consistent API.
-      full: new Set(['rounded-full']),
       sm: new Set(['rounded-sm']),
       md: new Set(['rounded-md']),
+      lg: new Set(['rounded-lg']), //new
+      full: new Set(['rounded-full']),
+      default: new Set(['rounded']), //new
     },
     size: {
-      sm: new Set(['px-1', 'py-2']),
-      md: new Set(['px-2', 'py-3']),
+      sm: new Set(['py-2', 'px-3']),
+      md: new Set(['py-3', 'px-4']),
+      lg: new Set(['py-4', 'px-5']), //New
     },
 
     variant: {
+      plain: new Set([' bg-gray-300', 'hover:enabled:bg-gray-400']), //new
       primary: new Set([' bg-purple-500', 'hover:enabled:bg-purple-600']),
       secondary: new Set([' bg-pink-500', 'hover:enabled:bg-pink-600']),
       primaryOutlined: new Set([
@@ -42,15 +46,17 @@ export class ButtonFunctions {
 
   textContent = {
     size: {
-      sm: new Set(['text-sm']),
+      sm: new Set(['text-sm']), //Here sm matches text-sm. This is by chance and not necessary. sm is the prop value and text-sm is the Tailwind class.
       md: new Set(['text-md']),
+      lg: new Set(['text-lg']),
     },
 
     variant: {
-      primary: new Set(['text-white']),
-      secondary: new Set(['text-white']),
-      primaryOutlined: new Set(['text-purple-500']),
-      secondaryOutlined: new Set(['text-pink-500']),
+      plain: new Set(['text-gray-950', 'font-medium']),
+      primary: new Set(['text-white', 'font-medium']),
+      secondary: new Set(['text-white', 'font-medium']),
+      primaryOutlined: new Set(['text-purple-500', 'font-medium']),
+      secondaryOutlined: new Set(['text-pink-500', 'font-medium']),
     },
   };
 

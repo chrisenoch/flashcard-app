@@ -16,11 +16,16 @@ export class SignInComponent {
   }
 
   rounded: 'sm' | 'full' | 'md' = 'full';
+  variant: 'primary' | 'secondary' | 'primaryOutlined' | 'secondaryOutlined' =
+    'primary';
   updateButtonRounded() {
     if (this.rounded === 'full') {
       this.rounded = 'sm';
+      this.variant = 'secondary';
     } else {
       this.rounded = 'full';
+
+      this.variant = 'primary';
     }
   }
 }

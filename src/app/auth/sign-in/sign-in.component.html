@@ -70,17 +70,22 @@
   <app-button
     [rounded]="rounded"
     disabled="isEnabled"
-    variant="secondary"
+    [variant]="variant"
     buttonText="Test Button"
     [sx]="{
     container: {
        add: ['sm:rounded-sm', 'md:rounded-md', 'sm:font-medium'],
       },
      textContent: {
-        add: ['font-light'],
+        add: 'font-light',
 
      }
    }"
+  ></app-button>
+  <app-button
+    buttonText="New props test"
+    variant="plain"
+    rounded="full"
   ></app-button>
   <button (click)="updateButtonRounded()">Update test button</button>
 </app-main-layout>

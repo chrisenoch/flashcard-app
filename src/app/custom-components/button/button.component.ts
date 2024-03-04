@@ -35,33 +35,28 @@ export class ButtonComponent implements OnInit, OnChanges {
     | undefined;
 
   @Input() variant:
+    | 'plain'
     | 'primary'
     | 'secondary'
     | 'primaryOutlined'
     | 'secondaryOutlined' = 'primary';
 
-  @Input() size: 'sm' | 'md' = 'md';
-  @Input() rounded: 'sm' | 'md' | 'full' = 'md';
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() rounded: 'sm' | 'md' | 'lg' | 'full' | 'default' = 'md';
   @Input() disabled: 'isDisabled' | 'isEnabled' = 'isEnabled';
 
   transformedCSSInputArgs: {
     inputPropName: string;
     inputPropValue: any;
   }[] = [];
-
   cssClasses!: { container: string; textContent: string };
   ngOnInit(): void {
     this.updateCSSClasses();
-    console.log('ngOnInit cssClassesByHTMLLevel below');
-    console.log(this.cssClasses);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('in ngonchanges');
     if (this.checkIfCSSInputsChanged(changes)) {
       this.updateCSSClasses();
-      console.log('ngOnChanges cssClassesByHTMLLevel below');
-      console.log(this.cssClasses);
     }
   }
 
