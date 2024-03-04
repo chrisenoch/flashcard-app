@@ -67,4 +67,17 @@
       </button>
     </form>
   </div>
+  <app-button
+    [rounded]="rounded"
+    buttonText="Test Button"
+    [sx]="{
+    container: {
+       add: ['sm:rounded-sm', 'md:rounded-md', 'sm:font-medium'],
+      },
+     textContent: {
+        add: ['bg-green-500']
+     }
+   }"
+  ></app-button>
+  <button (click)="updateButtonRounded()">Update test button</button>
 </app-main-layout>

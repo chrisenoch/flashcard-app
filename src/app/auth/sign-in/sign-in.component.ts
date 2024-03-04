@@ -14,4 +14,13 @@ export class SignInComponent {
     form.reset();
     this.emailFocuser = { shouldFocus: true };
   }
+
+  rounded: 'sm' | 'full' | 'md' = 'full';
+  updateButtonRounded() {
+    if (this.rounded === 'full') {
+      this.rounded = 'sm';
+    } else {
+      this.rounded = 'full';
+    }
+  }
 }
