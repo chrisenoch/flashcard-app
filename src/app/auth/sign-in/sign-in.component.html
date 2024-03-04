@@ -69,13 +69,16 @@
   </div>
   <app-button
     [rounded]="rounded"
+    disabled="isEnabled"
+    variant="secondary"
     buttonText="Test Button"
     [sx]="{
     container: {
        add: ['sm:rounded-sm', 'md:rounded-md', 'sm:font-medium'],
       },
      textContent: {
-        add: ['bg-green-500']
+        add: ['font-light'],
+
      }
    }"
   ></app-button>

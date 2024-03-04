@@ -24,12 +24,12 @@ export class ButtonComponent implements OnInit, OnChanges {
   @Input() sx:
     | {
         container?: {
-          add?: string[];
-          remove?: string[];
+          add?: string | string[];
+          remove?: string | string[];
         };
         textContent?: {
-          add?: string[];
-          remove?: string[];
+          add?: string | string[];
+          remove?: string | string[];
         };
       }
     | undefined;
@@ -48,8 +48,51 @@ export class ButtonComponent implements OnInit, OnChanges {
     inputPropName: string;
     inputPropValue: any;
   }[] = [];
+
+  cssClasses!: { container: string; textContent: string };
   ngOnInit(): void {
-    this.transformedCSSInputArgs = [
+    this.updateCSSClasses();
+    console.log('ngOnInit cssClassesByHTMLLevel below');
+    console.log(this.cssClasses);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('in ngonchanges');
+    if (this.checkIfCSSInputsChanged(changes)) {
+      this.updateCSSClasses();
+      console.log('ngOnChanges cssClassesByHTMLLevel below');
+      console.log(this.cssClasses);
+    }
+  }
+
+  private updateCSSClasses() {
+    this.transformedCSSInputArgs = this.getTransformedCSSInputArgs();
+    const transformedInput = this.buttonFunctions.transformComponentInput(
+      this.transformedCSSInputArgs
+    );
+    this.cssClasses = this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
+      transformedInput,
+      this.sx
+    ) as { container: string; textContent: string };
+  }
+
+  private checkIfCSSInputsChanged(changes: SimpleChanges) {
+    let haveChanged = false;
+    for (let i = 0; i < this.transformedCSSInputArgs.length; i++) {
+      const inputPropName = this.transformedCSSInputArgs[i].inputPropName;
+      if (
+        changes[inputPropName].currentValue !==
+        changes[inputPropName].previousValue
+      ) {
+        haveChanged = true;
+        break;
+      }
+    }
+    return haveChanged;
+  }
+
+  private getTransformedCSSInputArgs() {
+    return [
       {
         inputPropName: this.fields.rounded,
         inputPropValue: this.rounded,
@@ -69,77 +112,5 @@ export class ButtonComponent implements OnInit, OnChanges {
         inputPropValue: this.disabled,
       },
     ];
-
-    const transformedInput = this.buttonFunctions.transformComponentInput(
-      this.transformedCSSInputArgs
-    );
-    const cssClassesByHTMLLevel =
-      this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
-        transformedInput,
-        this.sx
-      );
-
-    console.log('ngOnInit cssClassesByHTMLLevel below');
-    console.log(cssClassesByHTMLLevel);
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('in ngonchanges');
-    if (this.checkIfCSSInputsChanged(changes)) {
-      console.log('ran ngChanges inside if');
-      //update css classes
-      const transformedInput = this.buttonFunctions.transformComponentInput([
-        {
-          inputPropName: this.fields.rounded,
-          inputPropValue: this.rounded,
-        },
-        {
-          inputPropName: this.fields.size,
-          inputPropValue: this.size,
-        },
-
-        {
-          inputPropName: this.fields.variant,
-          inputPropValue: this.variant,
-        },
-
-        {
-          inputPropName: this.fields.disabled,
-          inputPropValue: this.disabled,
-        },
-      ]);
-      const cssClassesByHTMLLevel =
-        this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
-          transformedInput,
-          this.sx
-        );
-
-      console.log('ngOnChanges cssClassesByHTMLLevel below');
-      console.log(cssClassesByHTMLLevel);
-    }
-  }
-
-  // containerCSS = '';
-  // textContentCSS = '';
-
-  private checkIfCSSInputsChanged(changes: SimpleChanges) {
-    console.log('in checkcssinputsifchanged');
-    let haveChanged = false;
-    console.log(this.transformedCSSInputArgs.length);
-    for (let i = 0; i < this.transformedCSSInputArgs.length; i++) {
-      const inputPropName = this.transformedCSSInputArgs[i].inputPropName;
-      console.log('curr ');
-      console.log(changes[inputPropName].currentValue);
-      console.log('prev ');
-      console.log(changes[inputPropName].previousValue);
-      if (
-        changes[inputPropName].currentValue !==
-        changes[inputPropName].previousValue
-      ) {
-        haveChanged = true;
-        break;
-      }
-    }
-    return haveChanged;
   }
 }

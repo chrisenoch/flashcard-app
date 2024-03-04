@@ -1,3 +1,6 @@
-<button class="rounded-full bg-gray-50 hover:enabled:bg-gray-200 h-12 w-12">
-  <span class="text-gray-900 text-2xl">{{ buttonText }}</span>
+<button
+  [ngClass]="cssClasses.container"
+  [disabled]="disabled === 'isDisabled' ? true : false"
+>
+  <span [ngClass]="cssClasses.textContent">{{ buttonText }}</span>
 </button>
