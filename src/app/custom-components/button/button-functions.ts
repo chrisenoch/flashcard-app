@@ -5,12 +5,25 @@
 //Light and dark theme
 //Construct instance of the class with the current theme.
 export class ButtonFunctions {
+  //container:HTMLLevel
   container = {
-    //container:HTMLLevel
     disabled: {
       //isDisabled so as to avoid disabled.disabled
       isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  isDisabled:propVariant //  'opacity-50':propClass
       isEnabled: new Set(),
+    },
+    default: {
+      //So the dev can remove default styling which is not otherwise available via Input prop names
+      //There are two kinds of defaults for each component:
+      // 1. The component gets assigned default props such as isEnabled, md, primary.
+      // 2. Other default props make up the button such as display:inline-flex, justify-center, etc.
+      useDefault: new Set([
+        'inline-flex',
+        'items-center',
+        'justify-center',
+        'whitespace-nowrap',
+      ]),
+      remove: new Set(),
     },
     rounded: {
       //sm:prop name
@@ -48,7 +61,7 @@ export class ButtonFunctions {
     size: {
       sm: new Set(['text-sm']), //Here sm matches text-sm. This is by chance and not necessary. sm is the prop value and text-sm is the Tailwind class.
       md: new Set(['text-md']),
-      lg: new Set(['text-lg']),
+      lg: new Set(['text-xl']),
     },
 
     variant: {
@@ -66,6 +79,7 @@ export class ButtonFunctions {
     button: {
       //represent different layers of the HTML
       container: {
+        default: this.container.default,
         disabled: this.container.disabled,
         rounded: this.container.rounded,
         variant: this.container.variant,

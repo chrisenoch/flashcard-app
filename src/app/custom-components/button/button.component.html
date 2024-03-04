@@ -2,5 +2,9 @@
   [ngClass]="cssClasses.container"
   [disabled]="disabled === 'isDisabled' ? true : false"
 >
-  <span [ngClass]="cssClasses.textContent">{{ buttonText }}</span>
+  <ng-content select="[startContent]"></ng-content>
+  <span *ngIf="buttonText" [ngClass]="cssClasses.textContent"
+    >{{ buttonText }}
+  </span>
+  <ng-content select="[endContent]"></ng-content>
 </button>

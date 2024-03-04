@@ -20,6 +20,7 @@ export class ButtonComponent implements OnInit, OnChanges {
     this.buttonFunctions = new ButtonFunctions();
     this.fields = initFields<typeof this>(this, ButtonComponent);
   }
+  @Input() default: 'remove' | 'useDefault' = 'useDefault';
   @Input() buttonText = '';
   @Input() sx:
     | {
@@ -49,7 +50,10 @@ export class ButtonComponent implements OnInit, OnChanges {
     inputPropName: string;
     inputPropValue: any;
   }[] = [];
-  cssClasses!: { container: string; textContent: string };
+  cssClasses!: {
+    container: string;
+    textContent: string;
+  };
   ngOnInit(): void {
     this.updateCSSClasses();
   }
@@ -68,7 +72,10 @@ export class ButtonComponent implements OnInit, OnChanges {
     this.cssClasses = this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
       transformedInput,
       this.sx
-    ) as { container: string; textContent: string };
+    ) as {
+      container: string;
+      textContent: string;
+    };
   }
 
   private checkIfCSSInputsChanged(changes: SimpleChanges) {
@@ -105,6 +112,10 @@ export class ButtonComponent implements OnInit, OnChanges {
       {
         inputPropName: this.fields.disabled,
         inputPropValue: this.disabled,
+      },
+      {
+        inputPropName: this.fields.default,
+        inputPropValue: this.default,
       },
     ];
   }

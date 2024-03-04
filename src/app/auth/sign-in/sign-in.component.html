@@ -83,9 +83,16 @@
    }"
   ></app-button>
   <app-button
+    (click)="updateButtonRounded()"
     buttonText="New props test"
     variant="plain"
     rounded="full"
   ></app-button>
+  <app-button (click)="updateButtonRounded()" variant="plain" rounded="full">
+    <i
+      startContent
+      class="bi bi-chevron-double-left text-2xl text-gray-950 font-medium"
+    ></i>
+  </app-button>
   <button (click)="updateButtonRounded()">Update test button</button>
 </app-main-layout>

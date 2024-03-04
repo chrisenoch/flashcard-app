@@ -98,77 +98,71 @@
     <!-- IMPORTANT: I haven't extracted these into button components because soon I will start my own component library and use the button components from there.-->
     <ul class="flex gap-4 justify-center min-w-[30rem]">
       <li class="h-full flex items-center">
-        <button
+        <app-button
           (click)="onStart()"
-          class="py-2 px-3 rounded-full bg-gray-300 hover:enabled:bg-gray-400"
-        >
-          <span class="text-xl text-gray-950 font-medium">Start</span>
-        </button>
-        <button
-          (click)="onStart()"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:enabled:bg-gray-400"
-        >
-          <span
-            class="py-3 px-4 inline-block text-xl text-gray-950 font-medium rounded-full"
-            ><span>Start</span></span
-          >
-        </button>
+          buttonText="Start"
+          variant="plain"
+          rounded="full"
+          size="lg"
+        ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <button
+        <app-button
           (click)="onPreviousSection()"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:enabled:bg-gray-400"
+          variant="plain"
+          rounded="full"
+          size="lg"
         >
-          <span
-            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
-            ><i class="bi bi-chevron-double-left text-2xl"></i
-          ></span>
-        </button>
+          <i
+            startContent
+            class="bi bi-chevron-double-left text-2xl text-gray-950 font-medium"
+          ></i>
+        </app-button>
       </li>
       <li class="h-full flex items-center">
-        <button
+        <app-button
           (click)="onPrevious()"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:enabled:bg-gray-400"
+          variant="plain"
+          rounded="full"
+          size="lg"
         >
-          <span
-            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
-            ><i class="bi bi-chevron-left text-2xl"></i
-          ></span>
-        </button>
+          <i
+            startContent
+            class="bi bi-chevron-left text-2xl text-gray-950 font-medium"
+          ></i>
+        </app-button>
       </li>
       <li class="h-full flex items-center">
-        <button
-          (click)="onNext()"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:enabled:bg-gray-400"
-        >
-          <span
-            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
-            ><i class="bi bi-chevron-right text-2xl"></i
-          ></span>
-        </button>
+        <app-button (click)="onNext()" variant="plain" rounded="full" size="lg">
+          <i
+            startContent
+            class="bi bi-chevron-right text-2xl text-gray-950 font-medium"
+          ></i>
+        </app-button>
       </li>
       <li class="h-full flex items-center">
-        <button
+        <app-button
           (click)="onNextSection()"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:enabled:bg-gray-400"
+          variant="plain"
+          rounded="full"
+          size="lg"
         >
-          <span
-            class="py-3 px-4 flex gap-2 text-xl text-gray-950 font-medium rounded-full"
-            ><i class="bi bi-chevron-double-right text-2xl"></i
-          ></span>
-        </button>
+          <i
+            startContent
+            class="bi bi-chevron-double-right text-2xl text-gray-950 font-medium"
+          ></i>
+        </app-button>
       </li>
 
       <li class="h-full flex items-center">
-        <button
+        <app-button
           (click)="onEnd()"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-300 hover:enabled:bg-gray-400"
+          buttonText="End"
+          variant="plain"
+          rounded="full"
+          size="lg"
         >
-          <span
-            class="py-3 px-4 inline-block text-xl text-gray-950 font-medium rounded-full"
-            ><span>End</span></span
-          >
-        </button>
+        </app-button>
       </li>
     </ul>
   </div>
