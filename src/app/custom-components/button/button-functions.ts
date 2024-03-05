@@ -12,7 +12,7 @@ import { Theme } from './theme';
 export class ButtonFunctions extends Theme {
   //Can define config options as class variables for extra control. By default, we keep the variant classes on disabled. However, this allows the developer to change this behaviour.
   addVariantWhenDisabled = true;
-  mode = 'dark';
+  //mode = 'dark';
   constructor(addVariantsWhenDisabled?) {
     super();
     if (addVariantsWhenDisabled) {

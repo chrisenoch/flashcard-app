@@ -65,8 +65,6 @@ export class Theme {
       returnObject[HTMLLevel] = new Set();
       Object.keys(HTMLLevelProps).forEach((propName) => {
         const propVariant = HTMLLevelProps[propName];
-        console.log('addvariantwhendisabled');
-        console.log(this.addVariantWhenDisabled);
         if (
           propName === 'variant' &&
           currentDisabledState === 'isDisabled' &&
@@ -116,7 +114,11 @@ export class Theme {
   }
 
   transformComponentInput(inputPropObjects) {
+    console.log('in transformComponentInput, mode below');
+    console.log(this.mode);
     const buttonObj = structuredClone(this.component);
+    console.log('in transformComponentInput, mode below after stuctued clone');
+    console.log(this.mode);
     const classesObj = {};
     const buttonObjHTMLLevelKeys = []; //For error checking
     const inputPropObjectsHTMLLevelKeys = []; //For error checking
@@ -192,6 +194,12 @@ export class Theme {
       }
     }
     return haveChanged;
+  }
+
+  setDarkOrLight(mode: 'dark' | 'light') {
+    this.mode = mode;
+    console.log('setting mode in theme');
+    console.log(this.mode);
   }
 }
 

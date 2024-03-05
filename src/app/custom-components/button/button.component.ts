@@ -6,7 +6,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ButtonFunctions } from './button-functions';
-import { initFields } from 'src/app/models/types/getFields';
+import {
+  PropertyNamesAsStrings,
+  initFields,
+} from 'src/app/models/types/getFields';
 
 @Component({
   selector: 'app-button',
@@ -14,9 +17,9 @@ import { initFields } from 'src/app/models/types/getFields';
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent implements OnInit, OnChanges {
-  fields;
+  fields!: PropertyNamesAsStrings<this>;
   constructor() {
-    this.fields = initFields<typeof this>(this, ButtonComponent);
+    // this.fields = initFields<typeof this>(this, ButtonComponent);
   }
   @Input() theme: ButtonFunctions | undefined;
   @Input() default: 'remove' | 'useDefault' = 'useDefault';
@@ -56,6 +59,7 @@ export class ButtonComponent implements OnInit, OnChanges {
     textContent: string;
   };
   ngOnInit(): void {
+    this.fields = initFields<typeof this>(this, ButtonComponent);
     if (this.theme) {
       //Use modified theme if provided. If not, use default theme.
       this.buttonFunctions = this.theme;
@@ -67,6 +71,16 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('changes');
+    console.log('this.theme?.mode');
+    console.log(this.theme?.mode);
+    console.log('this.buttonFunctions.mode');
+    console.log(this.buttonFunctions?.mode);
+    if (this.theme) {
+      //Use modified theme if provided. If not, use default theme.
+      this.buttonFunctions = this.theme;
+    }
+    changes && console.log(changes);
     if (
       this.buttonFunctions &&
       this.buttonFunctions.checkIfCSSInputsChanged(
@@ -75,6 +89,15 @@ export class ButtonComponent implements OnInit, OnChanges {
       )
     ) {
       this.updateCSSClasses();
+    }
+    if (
+      changes[this.fields?.theme]?.currentValue !==
+      changes[this.fields?.theme]?.previousValue
+    ) {
+      console.log('updating css classes');
+      this.updateCSSClasses();
+      console.log('new classes below');
+      console.log(this.cssClasses.container);
     }
   }
 

@@ -96,5 +96,11 @@
         buttonText="Modified theme"
       ></app-button>
     </form>
+    <app-button
+      [theme]="modifiedButtonTest"
+      buttonText="Toggle modifiedButtonTest mode "
+      (click)="toggleMode()"
+    ></app-button>
+    <button (click)="toggleMode()">Toggle Mode</button>
   </div>
 </app-main-layout>
