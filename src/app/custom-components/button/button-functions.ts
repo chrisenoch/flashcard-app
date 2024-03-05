@@ -12,6 +12,7 @@ import { Theme } from './theme';
 export class ButtonFunctions extends Theme {
   //Can define config options as class variables for extra control. By default, we keep the variant classes on disabled. However, this allows the developer to change this behaviour.
   addVariantWhenDisabled = true;
+  mode = 'dark';
   constructor(addVariantsWhenDisabled?) {
     super();
     if (addVariantsWhenDisabled) {
@@ -114,26 +115,81 @@ export class ButtonFunctions extends Theme {
     },
   };
 
-  component = {
-    //represent different layers of the HTML
+  containerDarkVariant = {
+    plain: new Set([
+      'bg-gray-800',
+      'data-[disabled=false]:hover:bg-gray-900',
+      'text-gray-200',
+      'font-medium',
+    ]),
+    primary: new Set([
+      'bg-orange-500',
+      'data-[disabled=false]:hover:bg-orange-600',
+      'text-gray-800',
+      'font-bold',
+    ]),
+    secondary: new Set([
+      'bg-pink-500',
+      'data-[disabled=false]:hover:bg-pink-600',
+      'text-white',
+      'font-medium',
+    ]),
+    primaryOutlined: new Set([
+      'bg-white',
+      'data-[disabled=false]:hover:bg-purple-500',
+      'outline',
+      'outline-2',
+      'outline-purple-500',
+      '-outline-offset-2',
+      'text-purple-500',
+      'font-medium',
+      'data-[disabled=false]:hover:text-white',
+    ]),
+    secondaryOutlined: new Set([
+      'bg-white',
+      'data-[disabled=false]:hover:bg-pink-500',
+      'outline',
+      'outline-2',
+      'outline-pink-500',
+      '-outline-offset-2',
+      'text-pink-500',
+      'font-medium',
+      'data-[disabled=false]:hover:text-white',
+    ]),
+  };
+
+  componentLight = {
+    //container, textContent, etc: represent different layers of the HTML
     container: {
       default: this.container.default,
       disabled: this.container.disabled,
       rounded: this.container.rounded,
-      variant: this.container.variant,
       size: this.container.size,
+      variant: this.container.variant,
     },
     textContent: {
       size: this.textContent.size,
       variant: this.textContent.variant,
     },
   };
-  /* Add your own custom objects under the custom key
+
+  component = {
+    //Mode in Theme refers to this level and represents dark or light theme.
+    light: this.componentLight,
+    dark: {
+      container: {
+        ...this.componentLight.container,
+        variant: this.containerDarkVariant, // We only change the variant but need to copy everything else.
+      },
+      textContent: this.componentLight.textContent,
+    },
+    /* Add your own custom objects under the custom key
     custom:{
       button:{//....}
       CTAButton:{//...}
     }
     */
+  };
 
   //This would be imported from elsewhere.
   // //To do: make sure this object cannot be manipulated from outside the class.

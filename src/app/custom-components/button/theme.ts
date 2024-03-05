@@ -20,6 +20,7 @@ export class Theme {
   // }
   addVariantWhenDisabled = true;
   component: any;
+  mode: 'dark' | 'light' = 'light';
 
   setToSpacedString(classesSet) {
     return Array.from(classesSet.keys()).join(' ');
@@ -74,7 +75,8 @@ export class Theme {
           return;
         }
 
-        const propVariantSet = this.component[HTMLLevel][propName][propVariant];
+        const propVariantSet =
+          this.component[this.mode][HTMLLevel][propName][propVariant];
         const propVariantSetCopy = new Set([...propVariantSet]);
         returnObject[HTMLLevel] = new Set([
           ...returnObject[HTMLLevel],
@@ -118,8 +120,8 @@ export class Theme {
     const classesObj = {};
     const buttonObjHTMLLevelKeys = []; //For error checking
     const inputPropObjectsHTMLLevelKeys = []; //For error checking
-    Object.entries(buttonObj).forEach(([HTMLLevel, propObj]) => {
-      buttonObjHTMLLevelKeys.push(Object.keys(buttonObj[HTMLLevel]));
+    Object.entries(buttonObj[this.mode]).forEach(([HTMLLevel, propObj]) => {
+      buttonObjHTMLLevelKeys.push(Object.keys(buttonObj[this.mode][HTMLLevel]));
       classesObj[HTMLLevel] = propObj;
       inputPropObjects.forEach((inputPropObj) => {
         if (classesObj[HTMLLevel][inputPropObj.inputPropName]) {
