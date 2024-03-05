@@ -94,8 +94,8 @@ export class AccordionComponent
     //Saves a render compared to using AfterContentChecked.
     if (
       this.accordionTabsCC &&
-      changes[this.fields.accordionState].currentValue !==
-        changes[this.fields.accordionState].previousValue
+      changes[this.fields.accordionState]?.currentValue !==
+        changes[this.fields.accordionState]?.previousValue
     ) {
       this.updateShowAllTabs();
     }
