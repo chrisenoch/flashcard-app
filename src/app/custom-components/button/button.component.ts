@@ -86,8 +86,8 @@ export class ButtonComponent implements OnInit, OnChanges {
     for (let i = 0; i < this.transformedCSSInputArgs.length; i++) {
       const inputPropName = this.transformedCSSInputArgs[i].inputPropName;
       if (
-        changes[inputPropName].currentValue !==
-        changes[inputPropName].previousValue
+        changes[inputPropName]?.currentValue !==
+        changes[inputPropName]?.previousValue
       ) {
         haveChanged = true;
         break;
