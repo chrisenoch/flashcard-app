@@ -1,10 +1,24 @@
 //@ts-nocheck
 
+//TO DO
+
+//Extract all these methods into a theme class so they can be used for any component. E.g. For the curent: const propVariantSet =
+//this.themeObj.button[HTMLLevel][propName][propVariant]; 'button' should be dynamic and be able to be replaced with any component.
+//Include types
+//Ability to turrn off all styles? - Can alerady do this by extending and overriding the sets.
+//Light and dark theme
+//Construct instance of the class with the current theme.
+//Each variant should have light, normal and dark versions. This is not related to light/dark theme. E.g. If pink is a variant, the developer should be able to use a light/dark pink button easily.
+//Add tertiary variant. I always want a third main colour.
+//Add colou methods to get inverse, etc. Should be able to just add an arbitrary colour and then button hover, focus, and other states should adjust automatially.
+//Create your own compoennt by extending theme.
+//Modify an existing component by extending the component. E.g. extend Button.
+//My idea is: Theme-> Component (with css) -> component (with js). This way develoepr can choose if he wants the JavaScript or only the CSS version.
 export class Theme {
   // getTheme() {
   //   return structuredClone(this.themeObj);
   // }
-
+  addVariantWhenDisabled = true;
   component: any;
 
   setToSpacedString(classesSet) {
@@ -50,6 +64,8 @@ export class Theme {
       returnObject[HTMLLevel] = new Set();
       Object.keys(HTMLLevelProps).forEach((propName) => {
         const propVariant = HTMLLevelProps[propName];
+        console.log('addvariantwhendisabled');
+        console.log(this.addVariantWhenDisabled);
         if (
           propName === 'variant' &&
           currentDisabledState === 'isDisabled' &&

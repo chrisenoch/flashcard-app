@@ -1,14 +1,9 @@
 // @ts-nocheck
 import { Theme } from './theme';
 
-//TO DO
-//Extract all these methods into a theme class so they can be used for any component. E.g. For the curent: const propVariantSet =
-//this.themeObj.button[HTMLLevel][propName][propVariant]; 'button' should be dynamic and be able to be replaced with any component.
-//Include types
-//Light and dark theme
-//Construct instance of the class with the current theme.
-//Each variant should have light, normal and dark versions. This is not related to light/dark theme. E.g. If pink is a variant, the developer should be able to use a light/dark pink button easily.
-//Add tertiary variant. I always want a third main colour.
+/* To do
+- Add focus styles
+*/
 
 /*Notes
  * Do not use hover:enabled. This will not work on LinkButtons. Use 'data-[disabled=false]:* E.g. 'data-[disabled=false]:hover:bg-gray-400'
@@ -49,14 +44,14 @@ export class ButtonFunctions extends Theme {
       //always use Sets to have a consistent API.
       sm: new Set(['rounded-sm']),
       md: new Set(['rounded-md']),
-      lg: new Set(['rounded-lg']), //new
+      lg: new Set(['rounded-lg']),
       full: new Set(['rounded-full']),
-      default: new Set(['rounded']), //new
+      default: new Set(['rounded']),
     },
     size: {
       sm: new Set(['py-2', 'px-3']),
       md: new Set(['py-3', 'px-4']),
-      lg: new Set(['py-4', 'px-5']), //New
+      lg: new Set(['py-4', 'px-5']),
     },
 
     variant: {
@@ -65,7 +60,7 @@ export class ButtonFunctions extends Theme {
         'data-[disabled=false]:hover:bg-gray-400',
         'text-gray-950',
         'font-medium',
-      ]), //new
+      ]),
       primary: new Set([
         'bg-purple-500',
         'data-[disabled=false]:hover:bg-purple-600',
