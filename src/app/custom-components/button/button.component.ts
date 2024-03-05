@@ -67,7 +67,13 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.checkIfCSSInputsChanged(changes)) {
+    if (
+      this.buttonFunctions &&
+      this.buttonFunctions.checkIfCSSInputsChanged(
+        changes,
+        this.transformedCSSInputArgs
+      )
+    ) {
       this.updateCSSClasses();
     }
   }
@@ -86,21 +92,6 @@ export class ButtonComponent implements OnInit, OnChanges {
       container: string;
       textContent: string;
     };
-  }
-
-  private checkIfCSSInputsChanged(changes: SimpleChanges) {
-    let haveChanged = false;
-    for (let i = 0; i < this.transformedCSSInputArgs.length; i++) {
-      const inputPropName = this.transformedCSSInputArgs[i].inputPropName;
-      if (
-        changes[inputPropName]?.currentValue !==
-        changes[inputPropName]?.previousValue
-      ) {
-        haveChanged = true;
-        break;
-      }
-    }
-    return haveChanged;
   }
 
   private getTransformedCSSInputArgs() {

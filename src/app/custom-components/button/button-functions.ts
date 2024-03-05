@@ -119,7 +119,7 @@ export class ButtonFunctions extends Theme {
     },
   };
 
-  button = {
+  component = {
     //represent different layers of the HTML
     container: {
       default: this.container.default,

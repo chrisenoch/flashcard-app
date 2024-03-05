@@ -1,9 +1,11 @@
-// @ts-nocheck
+//@ts-nocheck
 
 export class Theme {
-  getTheme() {
-    return structuredClone(this.themeObj);
-  }
+  // getTheme() {
+  //   return structuredClone(this.themeObj);
+  // }
+
+  component: any;
 
   setToSpacedString(classesSet) {
     return Array.from(classesSet.keys()).join(' ');
@@ -56,7 +58,7 @@ export class Theme {
           return;
         }
 
-        const propVariantSet = this.button[HTMLLevel][propName][propVariant];
+        const propVariantSet = this.component[HTMLLevel][propName][propVariant];
         const propVariantSetCopy = new Set([...propVariantSet]);
         returnObject[HTMLLevel] = new Set([
           ...returnObject[HTMLLevel],
@@ -96,7 +98,7 @@ export class Theme {
   }
 
   transformComponentInput(inputPropObjects) {
-    const buttonObj = structuredClone(this.button);
+    const buttonObj = structuredClone(this.component);
     const classesObj = {};
     const buttonObjHTMLLevelKeys = []; //For error checking
     const inputPropObjectsHTMLLevelKeys = []; //For error checking
@@ -151,6 +153,27 @@ export class Theme {
     }
 
     return classesObj;
+  }
+
+  checkIfCSSInputsChanged(
+    changes: SimpleChanges,
+    transformedCSSInputArgs: {
+      inputPropName: string;
+      inputPropValue: any;
+    }[]
+  ) {
+    let haveChanged = false;
+    for (let i = 0; i < transformedCSSInputArgs.length; i++) {
+      const inputPropName = transformedCSSInputArgs[i].inputPropName;
+      if (
+        changes[inputPropName]?.currentValue !==
+        changes[inputPropName]?.previousValue
+      ) {
+        haveChanged = true;
+        break;
+      }
+    }
+    return haveChanged;
   }
 }
 
