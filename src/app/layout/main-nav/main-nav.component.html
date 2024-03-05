@@ -12,7 +12,7 @@
       >
     </div>
 
-    <ul class="flex grow h-full items-center justify-end gap-5">
+    <ul class="flex grow h-full items-center justify-end gap-4">
       <li *ngFor="let item of navItems" class="h-full flex items-center">
         <app-button
           buttonText="{{ item.name }}"
@@ -38,28 +38,32 @@
         ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <!--So many layers for Sign in link because originally this had a gradient background and gradient text.-->
-        <a
+        <app-button
           href="/login"
-          class="group p-1 h-fit w-fit inline-block rounded-full border-pink-500 border-2 hover:bg-pink-500"
-        >
-          <span
-            class="py-2 px-4 inline-block font-medium bg-white group-hover:bg-pink-500 rounded-full"
-            ><span class="text-pink-500 group-hover:text-white"
-              >Sign in</span
-            ></span
-          ></a
-        >
+          buttonText="SignIn"
+          rounded="full"
+          variant="secondaryOutlined"
+          [sx]="{
+            container: {
+              add: ['py-3.5', 'px-5'],
+              remove: ['py-3', 'px-4']
+            }
+          }"
+        ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <a
+        <app-button
           href="#"
-          class="p-1 h-fit w-fit inline-block rounded-full border-pink-500 border-2 bg-pink-500 hover:bg-pink-600 hover:border-pink-600"
-        >
-          <span class="py-2 px-4 inline-block text-white font-bold rounded-full"
-            ><span>Try free</span></span
-          ></a
-        >
+          buttonText="Try free"
+          rounded="full"
+          variant="secondary"
+          [sx]="{
+            container: {
+              add: ['font-bold', 'py-3.5', 'px-5'],
+              remove: ['font-medium', 'py-3', 'px-4']
+            }
+          }"
+        ></app-button>
       </li>
     </ul>
   </div>

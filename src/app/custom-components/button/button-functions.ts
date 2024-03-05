@@ -59,24 +59,42 @@ export class ButtonFunctions {
       plain: new Set([
         'bg-gray-300',
         'data-[disabled=false]:hover:bg-gray-400',
+        'text-gray-950',
+        'font-medium',
       ]), //new
       primary: new Set([
-        ' bg-purple-500',
+        'bg-purple-500',
         'data-[disabled=false]:hover:bg-purple-600',
+        'text-white',
+        'font-medium',
       ]),
       secondary: new Set([
-        ' bg-pink-500',
+        'bg-pink-500',
         'data-[disabled=false]:hover:bg-pink-600',
+        'text-white',
+        'font-medium',
       ]),
       primaryOutlined: new Set([
         'bg-white',
         'data-[disabled=false]:hover:bg-purple-500',
-        'border-2 border-purple-500',
+        'outline',
+        'outline-2',
+        'outline-purple-500',
+        '-outline-offset-2',
+        'text-purple-500',
+        'font-medium',
+        'data-[disabled=false]:hover:text-white',
       ]),
       secondaryOutlined: new Set([
         'bg-white',
         'data-[disabled=false]:hover:bg-pink-500',
-        'border-2 border-purple-500',
+        'outline',
+        'outline-2',
+        'outline-pink-500',
+        '-outline-offset-2',
+        'text-pink-500',
+        'font-medium',
+        'data-[disabled=false]:hover:text-white',
       ]),
     },
   };
@@ -89,11 +107,11 @@ export class ButtonFunctions {
     },
 
     variant: {
-      plain: new Set(['text-gray-950', 'font-medium']),
-      primary: new Set(['text-white', 'font-medium']),
-      secondary: new Set(['text-white', 'font-medium']),
-      primaryOutlined: new Set(['text-purple-500', 'font-medium']),
-      secondaryOutlined: new Set(['text-pink-500', 'font-medium']),
+      plain: new Set(),
+      primary: new Set(),
+      secondary: new Set(),
+      primaryOutlined: new Set(),
+      secondaryOutlined: new Set([]),
     },
   };
 
