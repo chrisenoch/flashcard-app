@@ -18,7 +18,7 @@ export class ButtonComponent implements OnInit, OnChanges {
   constructor() {
     this.fields = initFields<typeof this>(this, ButtonComponent);
   }
-  @Input() theme: ButtonFunctions | undefined; // For now, ButtonFunctions includes the entire theme. The theme will be extracted.
+  @Input() theme: ButtonFunctions | undefined;
   @Input() default: 'remove' | 'useDefault' = 'useDefault';
   @Input() href: string | undefined;
   @Input() buttonText = '';

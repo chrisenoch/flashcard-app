@@ -17,8 +17,16 @@ export class SignInComponent {
     'text-orange-200',
     'font-bold',
   ]);
+  modifiedButtonTestTwo = new ButtonFunctions();
+  newPrimaryTwo = new Set([
+    'bg-green-700',
+    'data-[disabled=false]:hover:bg-green-800',
+    'text-gray-900',
+    'font-light',
+  ]);
   constructor() {
     this.modifiedButtonTest.container.variant.primary = this.newPrimary;
+    this.modifiedButtonTestTwo.container.variant.primary = this.newPrimaryTwo;
   }
 
   onSubmit(form: NgForm) {
