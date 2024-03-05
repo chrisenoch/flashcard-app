@@ -55,12 +55,8 @@ export class ButtonComponent implements OnInit, OnChanges {
     container: string;
     textContent: string;
   };
-  classesToAddIfDisabled!: string;
   ngOnInit(): void {
     this.updateCSSClasses();
-
-    console.log('this.disabledClasses');
-    console.log(this.classesToAddIfDisabled);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -70,8 +66,6 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   private updateCSSClasses() {
-    this.classesToAddIfDisabled =
-      this.buttonFunctions.getDisabledClassesAsString().container; //Needed to add disabled state to link button. Link needs help because <a> tag does not have disabled attribute.
     this.transformedCSSInputArgs = this.getTransformedCSSInputArgs();
     const transformedInput = this.buttonFunctions.transformComponentInput(
       this.transformedCSSInputArgs
@@ -79,28 +73,12 @@ export class ButtonComponent implements OnInit, OnChanges {
 
     this.cssClasses = this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
       transformedInput,
+      this.disabled,
       this.sx
     ) as {
       container: string;
       textContent: string;
     };
-
-    const classesToRemoveIfDisabled =
-      this.buttonFunctions.getTheme().buttonConfig.classesToRemoveIfDisabled;
-    //To do: Need to be more specific. I know it is the container which we need to remove the classes from
-    //, but this needs to be automatic.
-    if (this.disabled === 'isDisabled') {
-      //get the spaced strings as a Set
-      const containerCSSSet = new Set(
-        this.cssClasses.container.split(' ').filter((item) => item.length > 0)
-      );
-      //remove unwanted CSS classes
-      classesToRemoveIfDisabled.forEach((cssClass) => {
-        containerCSSSet.delete(cssClass);
-      });
-      this.cssClasses.container =
-        this.buttonFunctions.setToSpacedString(containerCSSSet);
-    }
   }
 
   private checkIfCSSInputsChanged(changes: SimpleChanges) {

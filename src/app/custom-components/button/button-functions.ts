@@ -4,7 +4,20 @@
 //Include types
 //Light and dark theme
 //Construct instance of the class with the current theme.
+
+/*Notes
+ * Do not use hover:enabled. This will not work on LinkButtons. Use 'data-[disabled=false]:* E.g. 'data-[disabled=false]:hover:bg-gray-400'
+ *
+ */
 export class ButtonFunctions {
+  //Can define config options as class variables for extra control. By default, we keep the variant classes on disabled. However, this allows the developer to change this behaviour.
+  addVariantWhenDisabled = true;
+  constructor(addVariantsWhenDisabled?) {
+    if (addVariantsWhenDisabled) {
+      this.addVariantWhenDisabled = addVariantsWhenDisabled;
+    }
+  }
+
   //container:HTMLLevel
   container = {
     disabled: {
@@ -41,17 +54,26 @@ export class ButtonFunctions {
     },
 
     variant: {
-      plain: new Set([' bg-gray-300', 'hover:bg-gray-400']), //new
-      primary: new Set([' bg-purple-500', 'hover:bg-purple-600']),
-      secondary: new Set([' bg-pink-500', 'hover:bg-pink-600']),
+      plain: new Set([
+        ' bg-gray-300',
+        'data-[disabled=false]:hover:bg-gray-400',
+      ]), //new
+      primary: new Set([
+        ' bg-purple-500',
+        'data-[disabled=false]:hover:bg-purple-600',
+      ]),
+      secondary: new Set([
+        ' bg-pink-500',
+        'data-[disabled=false]:hover:bg-pink-600',
+      ]),
       primaryOutlined: new Set([
         'bg-white',
-        'hover:bg-purple-500',
+        'data-[disabled=false]:hover:bg-purple-500',
         'border-2 border-purple-500',
       ]),
       secondaryOutlined: new Set([
         'bg-white',
-        'hover:bg-pink-500',
+        'data-[disabled=false]:hover:bg-pink-500',
         'border-2 border-purple-500',
       ]),
     },
@@ -90,15 +112,9 @@ export class ButtonFunctions {
         variant: this.textContent.variant,
       },
     },
-    buttonConfig: {
-      classesToRemoveIfDisabled: new Set([
-        'hover:bg-gray-400',
-        'hover:bg-purple-600',
-        'hover:bg-pink-600',
-        'hover:bg-pink-500',
-        'hover:bg-purple-500',
-      ]),
-    },
+    //To do: buttonConfig should be inside the button object.
+    //This can contain extra data about the button.
+    buttonConfig: {},
     /* Add your own custom objects under the custom key
     custom:{
       button:{//....}
@@ -111,24 +127,27 @@ export class ButtonFunctions {
     return structuredClone(this.themeObj);
   }
 
-  getDisabledClassesAsString() {
-    return {
-      container: this.setToSpacedString(
-        structuredClone(this.themeObj.button.container.disabled.isDisabled)
-      ),
-    };
-  }
-
   setToSpacedString(classesSet) {
     return Array.from(classesSet.keys()).join(' ');
   }
 
   //To do:changesObj should be optional argument
-  getPossiblyModifiedClassesAsStrings(desiredClassesObj, changesObj) {
-    const classesSets = this.getClassesByHTMLLevelAsSets(desiredClassesObj);
+  getPossiblyModifiedClassesAsStrings(
+    desiredClassesObj,
+    currentDisabledState,
+    changesObj
+  ) {
+    const classesSets = this.getClassesByHTMLLevelAsSets(
+      desiredClassesObj,
+      currentDisabledState
+    );
     const returnObject = {};
     Object.keys(classesSets).forEach((HTMLLevel) => {
       const classesSet = classesSets[HTMLLevel];
+
+      //To do
+      //Can not add variants if disabled here.
+
       let finalClassesSet;
       //If changesObj exists, then the developer wants to add/delete some of the classes
       if (changesObj && changesObj[HTMLLevel]) {
@@ -142,7 +161,7 @@ export class ButtonFunctions {
     return returnObject;
   }
 
-  getClassesByHTMLLevelAsSets(desiredClassesObj) {
+  getClassesByHTMLLevelAsSets(desiredClassesObj, currentDisabledState) {
     const returnObject = {
       container: new Set(),
       textContent: new Set(),
@@ -151,6 +170,14 @@ export class ButtonFunctions {
       returnObject[HTMLLevel] = new Set();
       Object.keys(HTMLLevelProps).forEach((propName) => {
         const propVariant = HTMLLevelProps[propName];
+        if (
+          propName === 'variant' &&
+          currentDisabledState === 'isDisabled' &&
+          !this.addVariantWhenDisabled
+        ) {
+          return;
+        }
+
         const propVariantSet =
           this.themeObj.button[HTMLLevel][propName][propVariant];
         const propVariantSetCopy = new Set([...propVariantSet]);
