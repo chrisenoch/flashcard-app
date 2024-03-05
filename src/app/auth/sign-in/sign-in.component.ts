@@ -1,5 +1,6 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ButtonFunctions } from 'src/app/custom-components/button/button-functions';
 
 @Component({
   selector: 'app-sign-in',
@@ -9,6 +10,16 @@ import { NgForm } from '@angular/forms';
 export class SignInComponent {
   helperTextVariant: 'success' | 'error' = 'error';
   emailFocuser = { shouldFocus: true };
+  modifiedButtonTest = new ButtonFunctions();
+  newPrimary = new Set([
+    'bg-blue-700',
+    'data-[disabled=false]:hover:bg-blue-800',
+    'text-orange-200',
+    'font-bold',
+  ]);
+  constructor() {
+    this.modifiedButtonTest.container.variant.primary = this.newPrimary;
+  }
 
   onSubmit(form: NgForm) {
     form.reset();

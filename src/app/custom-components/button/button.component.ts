@@ -14,12 +14,11 @@ import { initFields } from 'src/app/models/types/getFields';
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent implements OnInit, OnChanges {
-  buttonFunctions;
   fields;
   constructor() {
-    this.buttonFunctions = new ButtonFunctions();
     this.fields = initFields<typeof this>(this, ButtonComponent);
   }
+  @Input() theme: ButtonFunctions | undefined; // For now, ButtonFunctions includes the entire theme. The theme will be extracted.
   @Input() default: 'remove' | 'useDefault' = 'useDefault';
   @Input() href: string | undefined;
   @Input() buttonText = '';
@@ -47,6 +46,7 @@ export class ButtonComponent implements OnInit, OnChanges {
   @Input() rounded: 'sm' | 'md' | 'lg' | 'full' | 'default' = 'md';
   @Input() disabled: 'isDisabled' | 'isEnabled' = 'isEnabled';
 
+  buttonFunctions!: ButtonFunctions;
   transformedCSSInputArgs: {
     inputPropName: string;
     inputPropValue: any;
@@ -56,6 +56,13 @@ export class ButtonComponent implements OnInit, OnChanges {
     textContent: string;
   };
   ngOnInit(): void {
+    if (this.theme) {
+      //Use modified theme if provided. If not, use default theme.
+      this.buttonFunctions = this.theme;
+    } else {
+      this.buttonFunctions = new ButtonFunctions();
+    }
+
     this.updateCSSClasses();
   }
 
