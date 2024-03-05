@@ -4,6 +4,8 @@
 //Include types
 //Light and dark theme
 //Construct instance of the class with the current theme.
+//Each variant should have light, normal and dark versions. This is not related to light/dark theme. E.g. If pink is a variant, the developer should be able to use a light/dark pink button easily.
+//Add tertiary variant. I always want a third main colour.
 
 /*Notes
  * Do not use hover:enabled. This will not work on LinkButtons. Use 'data-[disabled=false]:* E.g. 'data-[disabled=false]:hover:bg-gray-400'
@@ -55,7 +57,7 @@ export class ButtonFunctions {
 
     variant: {
       plain: new Set([
-        ' bg-gray-300',
+        'bg-gray-300',
         'data-[disabled=false]:hover:bg-gray-400',
       ]), //new
       primary: new Set([
@@ -96,7 +98,7 @@ export class ButtonFunctions {
   };
 
   //This would be imported from elsewhere.
-  //To do: make sure this object cannot be manipulated from outside the class, Make it private
+  //To do: make sure this object cannot be manipulated from outside the class.
   private themeObj = {
     button: {
       //represent different layers of the HTML

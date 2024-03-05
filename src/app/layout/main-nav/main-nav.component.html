@@ -22,26 +22,20 @@
           disabled="isDisabled"
           [sx]="{
             container: {
-              remove: 'opacity-50'
+              remove: [
+                'opacity-50',
+                'py-3',
+                'bg-gray-300',
+                'data-[disabled=false]:hover:bg-gray-400'
+              ],
+              add: [
+                'bg-gray-200',
+                'py-2',
+                'data-[disabled=false]:hover:bg-gray-300'
+              ]
             }
           }"
         ></app-button>
-        <a
-          appDisableLink
-          #appDisableLink="appDisableLink"
-          [isDisabled]="true"
-          href="{{ item.href }}"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-200"
-          [ngClass]="{
-            'cursor-not-allowed': appDisableLink.isDisabled,
-            'hover:bg-gray-300': !appDisableLink.isDisabled
-          }"
-        >
-          <span
-            class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>{{ item.name }}</span></span
-          ></a
-        >
       </li>
       <li class="h-full flex items-center">
         <!--So many layers for Sign in link because originally this had a gradient background and gradient text.-->
