@@ -43,7 +43,7 @@ export class SignInComponent implements DoCheck {
     const newModifiedButtonTest = new ButtonFunctions();
     newModifiedButtonTest.container.variant.primary = this.newPrimary;
     this.modifiedButtonTest = newModifiedButtonTest;
-    this.modifiedButtonTest.setDarkOrLight(mode);
+    this.modifiedButtonTest.mode = mode;
   }
 
   toggleMode() {

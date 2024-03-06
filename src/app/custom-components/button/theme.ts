@@ -14,9 +14,6 @@
 //Modify an existing component by extending the component. E.g. extend Button.
 //My idea is: Theme-> Component (with css) -> component (with js). This way develoepr can choose if he wants the JavaScript or only the CSS version.
 export class Theme {
-  // getTheme() {
-  //   return structuredClone(this.themeObj);
-  // }
   addVariantWhenDisabled = true;
   component: any;
   mode: 'dark' | 'light' = 'light';
@@ -57,14 +54,6 @@ export class Theme {
       returnObject[HTMLLevel] = this.setToSpacedString(finalClassesSet);
     });
     return returnObject;
-  }
-
-  private trimValues(classesSet: any) {
-    const trimmedClassesSet = new Set();
-    classesSet.forEach((cssClass) => {
-      trimmedClassesSet.add(cssClass.trim());
-    });
-    return trimmedClassesSet;
   }
 
   getClassesByHTMLLevelAsSets(desiredClassesObj, currentDisabledState) {
@@ -204,7 +193,11 @@ export class Theme {
     return haveChanged;
   }
 
-  setDarkOrLight(mode: 'dark' | 'light') {
-    this.mode = mode;
+  private trimValues(classesSet: any) {
+    const trimmedClassesSet = new Set();
+    classesSet.forEach((cssClass) => {
+      trimmedClassesSet.add(cssClass.trim());
+    });
+    return trimmedClassesSet;
   }
 }
