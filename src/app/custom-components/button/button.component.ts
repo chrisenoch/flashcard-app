@@ -27,9 +27,6 @@ export class ButtonComponent implements OnInit, OnChanges {
   constructor(private buttonService: ButtonService) {
     this.fields = initFields<typeof this>(this, ButtonComponent);
     this.initMultiPropCSSInputArgsToCheckIfChanged();
-
-    console.log('fields');
-    console.log(this.fields);
   }
 
   @Input() theme: ButtonFunctions | undefined = undefined;
@@ -58,8 +55,10 @@ export class ButtonComponent implements OnInit, OnChanges {
 
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
   @Input() rounded: 'sm' | 'md' | 'lg' | 'full' | 'default' = 'md';
-  @Input('disabled') disabledInitOnly: boolean = false;
-  disabled = this.disabledInitOnly ? 'isDisabled' : 'isEnabled';
+  @Input('disabled') set disabledInitOnly(isDisabled: boolean) {
+    this.disabled = isDisabled ? 'isDisabled' : 'isEnabled';
+  }
+  disabled: 'isDisabled' | 'isEnabled' = 'isEnabled';
   buttonFunctions!: ButtonFunctions;
   transformedCSSInputArgs: {
     inputPropName: string;
@@ -71,7 +70,6 @@ export class ButtonComponent implements OnInit, OnChanges {
   };
 
   ngOnInit(): void {
-    this.disabled = this.disabledInitOnly ? 'isDisabled' : 'isEnabled';
     if (this.theme) {
       //Use modified theme if provided. If not, use default theme.
       this.buttonFunctions = this.theme;
@@ -88,9 +86,6 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.disabled = this.disabledInitOnly ? 'isDisabled' : 'isEnabled';
-    console.log('value of disabled');
-    console.log(this.disabled);
     if (this.theme) {
       //Update modified theme if provided. If not, use default theme.
       this.buttonFunctions = this.theme;
