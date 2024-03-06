@@ -42,7 +42,7 @@ export class ButtonFunctions extends Theme {
       remove: new Set(),
     },
     rounded: {
-      //sm:prop name
+      //rounded:prop name
       //always use Sets to have a consistent API.
       sm: new Set(['rounded-sm']),
       md: new Set(['rounded-md']),
@@ -64,7 +64,7 @@ export class ButtonFunctions extends Theme {
         'font-medium',
       ]),
       primary: new Set([
-        'bg-purple-500',
+        ' bg-purple-500',
         'data-[disabled=false]:hover:bg-purple-600',
         'text-white',
         'font-medium',

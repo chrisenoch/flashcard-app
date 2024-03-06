@@ -39,20 +39,32 @@ export class Theme {
     Object.keys(classesSets).forEach((HTMLLevel) => {
       const classesSet = classesSets[HTMLLevel];
 
-      //To do
-      //Can not add variants if disabled here.
+      // trim because if developer adds leading or trailing spaces by mistake many
+      // things will not work as we rely on fetching the exact values from sets.
+      const trimmedClassesSet = this.trimValues(classesSet);
 
       let finalClassesSet;
       //If changesObj exists, then the developer wants to add/delete some of the classes
       if (changesObj && changesObj[HTMLLevel]) {
-        finalClassesSet = this.editClasses(classesSet, changesObj[HTMLLevel]);
+        finalClassesSet = this.editClasses(
+          trimmedClassesSet,
+          changesObj[HTMLLevel]
+        );
       } else {
-        finalClassesSet = classesSet;
+        finalClassesSet = trimmedClassesSet;
       }
 
       returnObject[HTMLLevel] = this.setToSpacedString(finalClassesSet);
     });
     return returnObject;
+  }
+
+  private trimValues(classesSet: any) {
+    const trimmedClassesSet = new Set();
+    classesSet.forEach((cssClass) => {
+      trimmedClassesSet.add(cssClass.trim());
+    });
+    return trimmedClassesSet;
   }
 
   getClassesByHTMLLevelAsSets(desiredClassesObj, currentDisabledState) {
@@ -89,22 +101,22 @@ export class Theme {
     if (add) {
       if (typeof add === 'string') {
         const cssClass = add;
-        classesSet.add(cssClass);
+        classesSet.add(cssClass.trim());
       } else {
         const cssClasses = add;
         cssClasses.forEach((cssClass) => {
-          classesSet.add(cssClass);
+          classesSet.add(cssClass.trim());
         });
       }
     }
     if (remove) {
       if (typeof remove === 'string') {
         const cssClass = remove;
-        classesSet.delete(cssClass);
+        classesSet.delete(cssClass.trim());
       } else {
         const cssClasses = remove;
         cssClasses.forEach((cssClass) => {
-          classesSet.delete(cssClass);
+          classesSet.delete(cssClass.trim());
         });
       }
     }
@@ -113,11 +125,7 @@ export class Theme {
   }
 
   transformComponentInput(inputPropObjects) {
-    console.log('in transformComponentInput, mode below');
-    console.log(this.mode);
     const componentObj = structuredClone(this.component);
-    console.log('in transformComponentInput, mode below after stuctued clone');
-    console.log(this.mode);
     const classesObj = {};
     const componentObjHTMLLevelKeys = []; //For error checking
     const inputPropObjectsHTMLLevelKeys = []; //For error checking

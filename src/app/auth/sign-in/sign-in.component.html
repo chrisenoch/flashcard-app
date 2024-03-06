@@ -90,7 +90,6 @@
         [size]="size"
       >
       </app-button>
-      <app-button buttonText="Existing theme"></app-button>
       <!-- <app-button
         [theme]="modifiedButtonTest"
         buttonText="Modified theme"
@@ -101,7 +100,7 @@
       ></app-button>
       <app-button
         [theme]="modifiedButtonTest"
-        buttonText="modifiedButtonTest - sx and size dynamic **"
+        buttonText="modifiedButtonTest"
         [sx]="modBtnSXProps"
         [size]="size"
       ></app-button>
@@ -112,8 +111,17 @@
       (click)="toggleMode()"
     ></app-button>
     <button (click)="updateModifiedThemeButton()">
-      updateModifiedThemeButton **
+      updateModifiedThemeButton
     </button>
     <button (click)="updateSizeSubmitButton()">updateSize submit button</button>
+    <app-button
+      buttonText="Existing theme"
+      [sx]="{
+        container: {
+          remove: ['bg-purple-500','text-white'],
+
+        }
+      }"
+    ></app-button>
   </div>
 </app-main-layout>
