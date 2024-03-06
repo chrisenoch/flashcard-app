@@ -77,6 +77,8 @@ export class ButtonComponent implements OnInit, OnChanges {
       //To do: Should get one instance of this from a global store. In case a compoennt wants to change the global theme.
       this.buttonFunctions = new ButtonFunctions();
     }
+    console.log('this.theme.contaienr.disabled in ngOnInit ' + this.buttonText);
+    console.log(this.theme?.container.disabled);
     this.updateCSSClasses();
 
     this.buttonService.mode$.subscribe((mode) => {
@@ -102,6 +104,11 @@ export class ButtonComponent implements OnInit, OnChanges {
         ))
     ) {
       console.log('about to update css props for ' + this.buttonText);
+      console.log(
+        'this.theme.contaienr.disabled in ngOnChanges ' + this.buttonText
+      );
+      console.log('isdisabled ' + this.disabled);
+      console.log(this.theme?.container.disabled);
       this.updateCSSClasses();
     }
   }

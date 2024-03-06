@@ -1,6 +1,7 @@
 import { Component, DoCheck, OnInit, SimpleChanges } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ButtonFunctions } from 'src/app/custom-components/button/button-functions';
+import { ButtonFunctionsChild } from 'src/app/custom-components/button/button-functions-child';
 import { ButtonService } from 'src/app/custom-components/button/button.service';
 
 @Component({
@@ -26,6 +27,8 @@ export class SignInComponent {
     'font-light',
   ]);
 
+  buttonChild = new ButtonFunctionsChild();
+
   constructor(private buttonService: ButtonService) {
     this.modifiedButtonTest.container.variant.primary = this.newPrimary;
     // this.modifiedButtonTest.mode = 'dark';
@@ -42,6 +45,22 @@ export class SignInComponent {
     newModifiedButtonTest.container.variant.primary = this.newPrimary;
     this.modifiedButtonTest = newModifiedButtonTest;
     this.modifiedButtonTest.mode = mode;
+  }
+
+  private updateChildMode(mode: 'dark' | 'light') {
+    const newButtonChild = new ButtonFunctionsChild();
+    newButtonChild.container.variant.primary = this.newPrimary;
+    this.buttonChild = newButtonChild;
+    this.buttonChild.mode = mode;
+  }
+
+  toggleNestedModeChild() {
+    if (this.buttonChild.mode === 'dark') {
+      //Object reference needs to change or changes not picked up. Could perhaps define an id and check for this in ngChanges. This way, easier to instantiate changes as we couldn't have to create the class again with all the modifications.
+      this.updateChildMode('light');
+    } else {
+      this.updateChildMode('dark');
+    }
   }
 
   toggleNestedMode() {

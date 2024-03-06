@@ -115,6 +115,15 @@
       buttonText="Toggle modifiedButtonTest global mode "
       (click)="toggleGlobalMode()"
     ></app-button>
-    <app-button buttonText="Existing theme"></app-button>
+    <app-button
+      (click)="toggleNestedModeChild()"
+      buttonText="Existing theme"
+    ></app-button>
+    <app-button
+      [theme]="buttonChild"
+      buttonText="Button Child"
+      [size]="size"
+      [disabled]="false"
+    ></app-button>
   </div>
 </app-main-layout>
