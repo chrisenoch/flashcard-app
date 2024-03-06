@@ -16,7 +16,7 @@
 export class Theme {
   addVariantWhenDisabled = true;
   component: any;
-  mode: 'dark' | 'light' = 'light';
+  mode: string = 'light';
 
   setToSpacedString(classesSet) {
     return Array.from(classesSet.keys()).join(' ');

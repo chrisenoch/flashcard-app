@@ -10,6 +10,7 @@ import {
   PropertyNamesAsStrings,
   initFields,
 } from 'src/app/models/types/getFields';
+import { ButtonService } from './button.service';
 
 @Component({
   selector: 'app-button',
@@ -22,7 +23,7 @@ export class ButtonComponent implements OnInit, OnChanges {
     inputPropName: string;
     inputPropValue: any;
   }[] = [];
-  constructor() {
+  constructor(private buttonService: ButtonService) {
     this.fields = initFields<typeof this>(this, ButtonComponent);
     this.initMultiPropCSSInputArgsToCheckIfChanged();
   }
@@ -73,6 +74,17 @@ export class ButtonComponent implements OnInit, OnChanges {
       this.buttonFunctions = new ButtonFunctions();
     }
     this.updateCSSClasses();
+
+    this.buttonService.mode$.subscribe((mode) => {
+      console.log('in buttonService subscription and subscription arg below');
+      console.log(mode);
+      console.log('buttonText ' + this.buttonText);
+      this.buttonFunctions.mode = mode;
+
+      console.log('new mode of button functions class');
+      console.log(this.buttonFunctions.mode);
+      this.updateCSSClasses();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -91,7 +103,7 @@ export class ButtonComponent implements OnInit, OnChanges {
           this.multiPropCSSInputArgsToCheckIfChanged
         ))
     ) {
-      console.log('about to update css props');
+      console.log('about to update css props for ' + this.buttonText);
       this.updateCSSClasses();
     }
   }

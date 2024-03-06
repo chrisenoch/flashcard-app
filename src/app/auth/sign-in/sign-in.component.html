@@ -59,7 +59,7 @@
           - May not include spaces
         </p>
       </div>
-      <app-button
+      <!-- <app-button
         [theme]="modifiedButtonTest"
         buttonText="Submit"
         variant="plain"
@@ -89,15 +89,15 @@
         [disabled]="!f.valid ? 'isDisabled' : 'isEnabled'"
         [size]="size"
       >
-      </app-button>
+      </app-button> -->
       <!-- <app-button
         [theme]="modifiedButtonTest"
         buttonText="Modified theme"
       ></app-button> -->
-      <app-button
+      <!-- <app-button
         [theme]="modifiedButtonTestTwo"
         buttonText="Modified theme Two"
-      ></app-button>
+      ></app-button> -->
       <app-button
         [theme]="modifiedButtonTest"
         buttonText="modifiedButtonTest"
@@ -107,21 +107,14 @@
     </form>
     <app-button
       [theme]="modifiedButtonTest"
-      buttonText="Toggle modifiedButtonTest mode "
-      (click)="toggleMode()"
+      buttonText="Toggle modifiedButtonTest nested mode "
+      (click)="toggleNestedMode()"
     ></app-button>
-    <button (click)="updateModifiedThemeButton()">
-      updateModifiedThemeButton
-    </button>
-    <button (click)="updateSizeSubmitButton()">updateSize submit button</button>
     <app-button
-      buttonText="Existing theme"
-      [sx]="{
-        container: {
-          remove: ['bg-purple-500','text-white'],
-
-        }
-      }"
+      [theme]="modifiedButtonTest"
+      buttonText="Toggle modifiedButtonTest global mode "
+      (click)="toggleGlobalMode()"
     ></app-button>
+    <app-button buttonText="Existing theme"></app-button>
   </div>
 </app-main-layout>

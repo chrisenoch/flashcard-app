@@ -1,13 +1,14 @@
 import { Component, DoCheck, OnInit, SimpleChanges } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ButtonFunctions } from 'src/app/custom-components/button/button-functions';
+import { ButtonService } from 'src/app/custom-components/button/button.service';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent implements DoCheck {
+export class SignInComponent {
   helperTextVariant: 'success' | 'error' = 'error';
   emailFocuser = { shouldFocus: true };
   modifiedButtonTest = new ButtonFunctions();
@@ -25,13 +26,10 @@ export class SignInComponent implements DoCheck {
     'font-light',
   ]);
 
-  constructor() {
+  constructor(private buttonService: ButtonService) {
     this.modifiedButtonTest.container.variant.primary = this.newPrimary;
     // this.modifiedButtonTest.mode = 'dark';
     this.modifiedButtonTestTwo.container.variant.primary = this.newPrimaryTwo;
-  }
-  ngDoCheck(): void {
-    // if (this.originalMode)
   }
 
   onSubmit(form: NgForm) {
@@ -46,12 +44,20 @@ export class SignInComponent implements DoCheck {
     this.modifiedButtonTest.mode = mode;
   }
 
-  toggleMode() {
+  toggleNestedMode() {
     if (this.modifiedButtonTest.mode === 'dark') {
-      //Object referenceneeds to change or changes not picked up. Could perhaps define an id and check for this in ngChanges. This way, easier to instantiate changes as we couldn't have to create the class again with all the modifications.
+      //Object reference needs to change or changes not picked up. Could perhaps define an id and check for this in ngChanges. This way, easier to instantiate changes as we couldn't have to create the class again with all the modifications.
       this.updatModifiedButtonTest('light');
     } else {
       this.updatModifiedButtonTest('dark');
+    }
+  }
+
+  toggleGlobalMode() {
+    if (this.modifiedButtonTest.mode === 'dark') {
+      this.buttonService.updateMode('light');
+    } else {
+      this.buttonService.updateMode('dark');
     }
   }
 

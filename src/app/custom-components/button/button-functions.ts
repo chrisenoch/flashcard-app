@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 import { Theme } from './theme';
 
 /* To do
@@ -12,8 +12,7 @@ import { Theme } from './theme';
  */
 export class ButtonFunctions extends Theme {
   //Can define config options as class variables for extra control. By default, we keep the variant classes on disabled. However, this allows the developer to change this behaviour.
-  addVariantWhenDisabled = true;
-  //mode = 'dark';
+  override addVariantWhenDisabled = true;
   constructor(addVariantsWhenDisabled?) {
     super();
     if (addVariantsWhenDisabled) {
@@ -25,7 +24,7 @@ export class ButtonFunctions extends Theme {
   container = {
     disabled: {
       //isDisabled so as to avoid disabled.disabled
-      isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  isDisabled:propVariant //  'opacity-50':propClass
+      isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  isDisabled:propVariant //  'opacity-50':propCSSClass
       isEnabled: new Set(),
     },
     default: {
@@ -130,8 +129,8 @@ export class ButtonFunctions extends Theme {
       'font-bold',
     ]),
     secondary: new Set([
-      'bg-pink-500',
-      'data-[disabled=false]:hover:bg-pink-600',
+      'bg-yellow-500',
+      'data-[disabled=false]:hover:bg-yellow-600',
       'text-white',
       'font-medium',
     ]),
