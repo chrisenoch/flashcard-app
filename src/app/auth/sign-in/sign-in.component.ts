@@ -24,11 +24,10 @@ export class SignInComponent implements DoCheck {
     'text-gray-900',
     'font-light',
   ]);
-  //originalMode;
+
   constructor() {
     this.modifiedButtonTest.container.variant.primary = this.newPrimary;
     // this.modifiedButtonTest.mode = 'dark';
-    //this.originalMode = 'dark';
     this.modifiedButtonTestTwo.container.variant.primary = this.newPrimaryTwo;
   }
   ngDoCheck(): void {
@@ -40,34 +39,49 @@ export class SignInComponent implements DoCheck {
     this.emailFocuser = { shouldFocus: true };
   }
 
+  private updatModifiedButtonTest(mode: 'dark' | 'light') {
+    const newModifiedButtonTest = new ButtonFunctions();
+    newModifiedButtonTest.container.variant.primary = this.newPrimary;
+    this.modifiedButtonTest = newModifiedButtonTest;
+    this.modifiedButtonTest.setDarkOrLight(mode);
+  }
+
   toggleMode() {
-    console.log('in toggleMode');
-    console.log('this.modifiedButtonTest.mode at start');
-    console.log(this.modifiedButtonTest.mode);
-
-    //this.modifiedButtonTest.setDarkOrLight('dark');
-    //this.modifiedButtonTest.mode = 'dark';
-    console.log('this.modifiedButtonTest.mode  BEFORE IF ELSE');
-    console.log(this.modifiedButtonTest.mode);
     if (this.modifiedButtonTest.mode === 'dark') {
-      const newModifiedButtonTest = new ButtonFunctions();
-      newModifiedButtonTest.container.variant.primary = this.newPrimary;
-      this.modifiedButtonTest = newModifiedButtonTest;
-      console.log('in if');
-      this.modifiedButtonTest.setDarkOrLight('light');
+      //Object referenceneeds to change or changes not picked up. Could perhaps define an id and check for this in ngChanges. This way, easier to instantiate changes as we couldn't have to create the class again with all the modifications.
+      this.updatModifiedButtonTest('light');
     } else {
-      const newModifiedButtonTest = new ButtonFunctions();
-      newModifiedButtonTest.container.variant.primary = this.newPrimary;
-      this.modifiedButtonTest = newModifiedButtonTest;
-      console.log('in else');
-      this.modifiedButtonTest.setDarkOrLight('dark');
+      this.updatModifiedButtonTest('dark');
     }
+  }
 
-    console.log(
-      'new mode in modifiedbuttontest ' + this.modifiedButtonTest.mode
-    );
+  //test
+  modBtnSXProps: any = {
+    container: {
+      add: [
+        'w-full',
+        'bg-gray-700',
+        'data-[disabled=false]:hover:bg-gray-800',
+        'text-white',
+      ],
+    },
+  };
+  updateModifiedThemeButton() {
+    this.modBtnSXProps = {
+      container: {
+        remove: [
+          'w-full',
+          'bg-gray-700',
+          'data-[disabled=false]:hover:bg-gray-800',
+          'text-white',
+        ],
+      },
+    };
+  }
 
-    //this.modifiedButtonTest.up
+  size: 'lg' | 'sm' = 'lg';
+  updateSizeSubmitButton() {
+    this.size = 'sm';
   }
 
   rounded: 'sm' | 'full' | 'md' = 'full';

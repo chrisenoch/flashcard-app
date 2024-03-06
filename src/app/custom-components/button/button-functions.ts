@@ -183,12 +183,6 @@ export class ButtonFunctions extends Theme {
       },
       textContent: this.componentLight.textContent,
     },
-    /* Add your own custom objects under the custom key
-    custom:{
-      button:{//....}
-      CTAButton:{//...}
-    }
-    */
   };
 
   //This would be imported from elsewhere.

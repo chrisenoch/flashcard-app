@@ -175,7 +175,7 @@ export class Theme {
     return classesObj;
   }
 
-  checkIfCSSInputsChanged(
+  checkIfInputsChanged(
     changes: SimpleChanges,
     transformedCSSInputArgs: {
       inputPropName: string;

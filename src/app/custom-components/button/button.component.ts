@@ -17,13 +17,18 @@ import {
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent implements OnInit, OnChanges {
-  fields!: PropertyNamesAsStrings<this>;
+  fields: PropertyNamesAsStrings<this>;
+  multiPropCSSInputArgsToCheckIfChanged: {
+    inputPropName: string;
+    inputPropValue: any;
+  }[] = [];
   constructor() {
-    // this.fields = initFields<typeof this>(this, ButtonComponent);
+    this.fields = initFields<typeof this>(this, ButtonComponent);
+    this.initMultiPropCSSInputArgsToCheckIfChanged();
   }
-  @Input() theme: ButtonFunctions | undefined;
+  @Input() theme: ButtonFunctions | undefined = undefined;
   @Input() default: 'remove' | 'useDefault' = 'useDefault';
-  @Input() href: string | undefined;
+  @Input() href: string | undefined = undefined;
   @Input() buttonText = '';
   @Input() sx:
     | {
@@ -36,7 +41,7 @@ export class ButtonComponent implements OnInit, OnChanges {
           remove?: string | string[];
         };
       }
-    | undefined;
+    | undefined = undefined;
 
   @Input() variant:
     | 'plain'
@@ -58,46 +63,36 @@ export class ButtonComponent implements OnInit, OnChanges {
     container: string;
     textContent: string;
   };
+
   ngOnInit(): void {
-    this.fields = initFields<typeof this>(this, ButtonComponent);
     if (this.theme) {
       //Use modified theme if provided. If not, use default theme.
       this.buttonFunctions = this.theme;
     } else {
+      //To do: Should get one instance of this from a global store. In case a compoennt wants to change the global theme.
       this.buttonFunctions = new ButtonFunctions();
     }
-
     this.updateCSSClasses();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes');
-    console.log('this.theme?.mode');
-    console.log(this.theme?.mode);
-    console.log('this.buttonFunctions.mode');
-    console.log(this.buttonFunctions?.mode);
     if (this.theme) {
-      //Use modified theme if provided. If not, use default theme.
+      //Update modified theme if provided. If not, use default theme.
       this.buttonFunctions = this.theme;
     }
-    changes && console.log(changes);
     if (
       this.buttonFunctions &&
-      this.buttonFunctions.checkIfCSSInputsChanged(
+      (this.buttonFunctions.checkIfInputsChanged(
         changes,
         this.transformedCSSInputArgs
-      )
+      ) ||
+        this.buttonFunctions.checkIfInputsChanged(
+          changes,
+          this.multiPropCSSInputArgsToCheckIfChanged
+        ))
     ) {
+      console.log('about to update css props');
       this.updateCSSClasses();
-    }
-    if (
-      changes[this.fields?.theme]?.currentValue !==
-      changes[this.fields?.theme]?.previousValue
-    ) {
-      console.log('updating css classes');
-      this.updateCSSClasses();
-      console.log('new classes below');
-      console.log(this.cssClasses.container);
     }
   }
 
@@ -117,6 +112,19 @@ export class ButtonComponent implements OnInit, OnChanges {
     };
   }
 
+  //Only include theme and sx prop here.
+  private initMultiPropCSSInputArgsToCheckIfChanged() {
+    this.multiPropCSSInputArgsToCheckIfChanged.push({
+      inputPropName: this.fields.theme,
+      inputPropValue: this.theme,
+    });
+    this.multiPropCSSInputArgsToCheckIfChanged.push({
+      inputPropName: this.fields.sx,
+      inputPropValue: this.sx,
+    });
+  }
+
+  //Do not add "Theme" or "sx" here.
   private getTransformedCSSInputArgs() {
     return [
       {
