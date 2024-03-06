@@ -8,9 +8,8 @@
 //Ability to turrn off all styles? - Can alerady do this by extending and overriding the sets.
 //Light and dark theme
 //Construct instance of the class with the current theme.
-//Each variant should have light, normal and dark versions. This is not related to light/dark theme. E.g. If pink is a variant, the developer should be able to use a light/dark pink button easily.
 //Add tertiary variant. I always want a third main colour.
-//Add colou methods to get inverse, etc. Should be able to just add an arbitrary colour and then button hover, focus, and other states should adjust automatially.
+//Add colour methods to get inverse, etc. Should be able to just add an arbitrary colour and then button hover, focus, and other states should adjust automatially.
 //Create your own compoennt by extending theme.
 //Modify an existing component by extending the component. E.g. extend Button.
 //My idea is: Theme-> Component (with css) -> component (with js). This way develoepr can choose if he wants the JavaScript or only the CSS version.
@@ -116,14 +115,16 @@ export class Theme {
   transformComponentInput(inputPropObjects) {
     console.log('in transformComponentInput, mode below');
     console.log(this.mode);
-    const buttonObj = structuredClone(this.component);
+    const componentObj = structuredClone(this.component);
     console.log('in transformComponentInput, mode below after stuctued clone');
     console.log(this.mode);
     const classesObj = {};
-    const buttonObjHTMLLevelKeys = []; //For error checking
+    const componentObjHTMLLevelKeys = []; //For error checking
     const inputPropObjectsHTMLLevelKeys = []; //For error checking
-    Object.entries(buttonObj[this.mode]).forEach(([HTMLLevel, propObj]) => {
-      buttonObjHTMLLevelKeys.push(Object.keys(buttonObj[this.mode][HTMLLevel]));
+    Object.entries(componentObj[this.mode]).forEach(([HTMLLevel, propObj]) => {
+      componentObjHTMLLevelKeys.push(
+        Object.keys(componentObj[this.mode][HTMLLevel])
+      );
       classesObj[HTMLLevel] = propObj;
       inputPropObjects.forEach((inputPropObj) => {
         if (classesObj[HTMLLevel][inputPropObj.inputPropName]) {
@@ -133,32 +134,31 @@ export class Theme {
         }
       });
     });
-    const flattenedButtonObjHTMLLevelKeys = buttonObjHTMLLevelKeys.flatMap(
-      (key) => key
-    );
+    const flattenedComponentObjHTMLLevelKeys =
+      componentObjHTMLLevelKeys.flatMap((key) => key);
     if (
-      flattenedButtonObjHTMLLevelKeys.length !==
+      flattenedComponentObjHTMLLevelKeys.length !==
       inputPropObjectsHTMLLevelKeys.length
     ) {
       let errorMessageHint = '';
       if (
-        flattenedButtonObjHTMLLevelKeys.length >
+        flattenedComponentObjHTMLLevelKeys.length >
         inputPropObjectsHTMLLevelKeys.length
       ) {
-        const flattenedButtonObjHTMLLevelKeysSet = new Set([
-          ...flattenedButtonObjHTMLLevelKeys,
+        const flattenedComponentObjHTMLLevelKeysSet = new Set([
+          ...flattenedComponentObjHTMLLevelKeys,
         ]);
         inputPropObjectsHTMLLevelKeys.forEach((key) => {
-          flattenedButtonObjHTMLLevelKeysSet.delete(key);
+          flattenedComponentObjHTMLLevelKeysSet.delete(key);
         });
         errorMessageHint =
-          'The extra keys are in the button theme object and are: ' +
-          [...flattenedButtonObjHTMLLevelKeysSet].join();
+          'The extra keys are in the component theme object and are: ' +
+          [...flattenedComponentObjHTMLLevelKeysSet].join();
       } else {
         const inputPropObjectsHTMLLevelKeysSet = new Set([
-          ...flattenedButtonObjHTMLLevelKeys,
+          ...flattenedComponentObjHTMLLevelKeys,
         ]);
-        flattenedButtonObjHTMLLevelKeys.forEach((key) => {
+        flattenedComponentObjHTMLLevelKeys.forEach((key) => {
           inputPropObjectsHTMLLevelKeysSet.delete(key);
         });
         errorMessageHint =
@@ -198,33 +198,5 @@ export class Theme {
 
   setDarkOrLight(mode: 'dark' | 'light') {
     this.mode = mode;
-    console.log('setting mode in theme');
-    console.log(this.mode);
   }
 }
-
-// export const themeObj = {
-//   button: {
-//     //represent different layers of the HTML
-//     container: {
-//       default: this.container.default,
-//       disabled: this.container.disabled,
-//       rounded: this.container.rounded,
-//       variant: this.container.variant,
-//       size: this.container.size,
-//     },
-//     textContent: {
-//       size: this.textContent.size,
-//       variant: this.textContent.variant,
-//     },
-//   },
-//   //To do: buttonConfig should be inside the button object.
-//   //This can contain extra data about the button.
-//   buttonConfig: {},
-//   /* Add your own custom objects under the custom key
-//     custom:{
-//       button:{//....}
-//       CTAButton:{//...}
-//     }
-//     */
-// };

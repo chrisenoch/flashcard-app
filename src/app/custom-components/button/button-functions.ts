@@ -3,6 +3,7 @@ import { Theme } from './theme';
 
 /* To do
 - Add focus styles
+- Each variant should have light, normal and dark versions. This is not related to light/dark theme. E.g. If pink is a variant, the developer should be able to use a light/dark pink button easily.
 */
 
 /*Notes
@@ -179,141 +180,9 @@ export class ButtonFunctions extends Theme {
     dark: {
       container: {
         ...this.componentLight.container,
-        variant: this.containerDarkVariant, // We only change the variant but need to copy everything else.
+        variant: this.containerDarkVariant, // We only change the variant but we need to copy everything else.
       },
       textContent: this.componentLight.textContent,
     },
   };
-
-  //This would be imported from elsewhere.
-  // //To do: make sure this object cannot be manipulated from outside the class.
-  // private themeObj = {
-  //   button: {
-  //     //represent different layers of the HTML
-  //     container: {
-  //       default: this.container.default,
-  //       disabled: this.container.disabled,
-  //       rounded: this.container.rounded,
-  //       variant: this.container.variant,
-  //       size: this.container.size,
-  //     },
-  //     textContent: {
-  //       size: this.textContent.size,
-  //       variant: this.textContent.variant,
-  //     },
-  //   },
-  //   //To do: buttonConfig should be inside the button object.
-  //   //This can contain extra data about the button.
-  //   buttonConfig: {},
-  //   /* Add your own custom objects under the custom key
-  //   custom:{
-  //     button:{//....}
-  //     CTAButton:{//...}
-  //   }
-  //   */
-  // };
 }
-
-// const myArgs = {
-//   container: {
-//     disabled: 'isDisabled',
-//     rounded: 'full',
-//     size: 'md',
-//     variant: 'primaryOutlined',
-//   },
-//   textContent: {
-//     size: 'md',
-//     variant: 'primaryOutlined',
-//   },
-// };
-
-// const buttonClass = new ButtonFunctions();
-// const classesAsSets = buttonClass.getClassesByHTMLLevelAsSets(myArgs);
-// console.log('**** getClassesAsSets below');
-// console.log(classesAsSets);
-
-// const classesAsStrings =
-//   buttonClass.getPossiblyModifiedClassesAsStrings(myArgs);
-// console.log(classesAsStrings);
-
-// //buttonClass is what is called inside the component after having received the developer arguments.
-// const modifiedClassesAsStrings =
-//   buttonClass.getPossiblyModifiedClassesAsStrings(myArgs, {
-//     container: {
-//       add: ['sm:rounded-sm', 'md:rounded-md', 'sm:font-medium'],
-//       remove: 'rounded-full',
-//     },
-//     textContent: {
-//       add: 'bg-green-500',
-//     },
-//   });
-// console.log(modifiedClassesAsStrings);
-
-/*
-Construct this in the component based on the Input props available.
-We need to transform the props from the format the developer enters them via @Input into a format that we can use to
-fetch the correct classes as strings for the correct HTML element.
-*/
-// const transformedArgs = [
-//   {
-//     inputPropName: 'rounded',
-//     inputPropValue: 'full',
-//   },
-//   {
-//     inputPropName: 'size',
-//     inputPropValue: 'md',
-//   },
-
-//   {
-//     inputPropName: 'variant',
-//     inputPropValue: 'primaryOutlined',
-//   },
-
-//   {
-//     inputPropName: 'disabled',
-//     inputPropValue: 'isEnabled',
-//   },
-// ];
-// const transformedInput = buttonClass.transformComponentInput(transformedArgs);
-// console.log('transformedInput below');
-// console.log(transformedInput);
-
-// const classesAsSetsWithtransformed =
-//   buttonClass.getClassesByHTMLLevelAsSets(transformedInput);
-// console.log('*** classesAsSetsWithtransformed');
-// console.log(classesAsSetsWithtransformed);
-// const classesAsSets2 = buttonClass.getClassesByHTMLLevelAsSets(myArgs);
-// console.log('getClassesAsSets2 below');
-// console.log(classesAsSets2);
-
-/*
-1. user inputs props and possibly object for media queries.
-2. Transform input
-  Input received from transform fn like below:
-  {
-  container: {
-    disabled: 'isEnabled',
-    rounded: 'full',
-    variant: 'primaryOutlined',
-    size: 'md'
-  },
-  textContent: { size: 'md', variant: 'primaryOutlined' }
-}
-3. receive media query in following format:
-{
-  container: {
-    add: ["sm:rounded-sm", "md:rounded-md", "sm:font-medium"],
-    remove: "rounded-full"
-  },
-  textContent: {
-    add: "bg-green-500"
-  }
-}
-Just use getPossiblyModifiedClassesAsStrings with the transformed input and only enter the changes object if it exists.
-//
-// 1. Get classes as Set object by using input from step 2.
-// 2. Loop over keys from step 2 and call editClasses with the corresponding arguments from step 3.
-
-
-
-*/
