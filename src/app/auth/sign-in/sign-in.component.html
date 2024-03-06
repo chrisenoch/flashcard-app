@@ -59,12 +59,12 @@
           - May not include spaces
         </p>
       </div>
-      <!-- <app-button
+      <app-button
         [theme]="modifiedButtonTest"
         buttonText="Submit"
         variant="plain"
         rounded="full"
-        [disabled]="!f.valid ? 'isDisabled' : 'isEnabled'"
+        [disabled]="!f.valid ? true : false"
         [sx]="{
           container: {
             add: [
@@ -86,18 +86,18 @@
       <app-button
         [theme]="modifiedButtonTest"
         buttonText="modifiedButtonTest dynamic size"
-        [disabled]="!f.valid ? 'isDisabled' : 'isEnabled'"
+        [disabled]="!f.valid ? true : false"
         [size]="size"
       >
-      </app-button> -->
-      <!-- <app-button
+      </app-button>
+      <app-button
         [theme]="modifiedButtonTest"
         buttonText="Modified theme"
-      ></app-button> -->
-      <!-- <app-button
+      ></app-button>
+      <app-button
         [theme]="modifiedButtonTestTwo"
         buttonText="Modified theme Two"
-      ></app-button> -->
+      ></app-button>
       <app-button
         [theme]="modifiedButtonTest"
         buttonText="modifiedButtonTest"
