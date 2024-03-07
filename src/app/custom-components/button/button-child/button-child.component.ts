@@ -25,6 +25,7 @@ export class ButtonChildComponent extends ButtonComponent {
     return this.buttonService.getChildButtonFunctions('buttonFunctionsChild');
   }
 
+  //init extra variant/ that does not exist on parent ButtonComponent
   override extraCSSInputArgs() {
     return [
       {

@@ -3,20 +3,17 @@
     <div class="flex flex-col items-start">
       <h1 class="mb-8 text-5xl text-center">Component Library Prototype</h1>
 
-      <section class="mb-4">
-        <h2 class="text-4xl mb-2">Objectives</h2>
-        <ul>
+      <section class="mb-6">
+        <h2 class="text-3xl mb-2">Objectives</h2>
+        <ul class="ml-12">
           <li class="list-disc">
-            Style once, use anywhere. Style your component in Angular and reuse
-            it in a React project.
+            Use your component styles in both Angular and React.
           </li>
+          <li class="list-disc">Media query support that works with SSR.</li>
           <li class="list-disc">
-            Media query support that works with SSR without hydration issues.
+            Themes and nested themes that works with SSR.
           </li>
-          <li class="list-disc">
-            Themes and nested themes that work seamlessly with SSR without
-            hydration issues.
-          </li>
+
           <li class="list-disc">
             Styles out-of-the-box but completely customisable.
           </li>
@@ -32,18 +29,217 @@
           <li class="list-disc">Compatible with Tailwind and CSS modules.</li>
         </ul>
       </section>
-      <section>
-        <h2 class="text-4xl mb-2">Quick example</h2>
-        <ul>
-          <li class="list-disc">Style</li>
-          <li class="list-disc">Expose</li>
+      <section class="mb-6">
+        <h2 class="text-3xl mb-2">Basic example</h2>
+        <div class="bg-gray-200 p-4 mb-2">
+          <code
+            >&lt;app-button buttonText=&quot;Example&quot; size=&quot;sm&quot;
+            rounded=&quot;full&quot; href=&quot;/some/address&quot;
+            variant=&quot;secondary&quot; &gt;&lt;/app-button&gt;
+          </code>
+          <app-button
+            buttonText="Example"
+            size="sm"
+            rounded="full"
+            href="/some/address"
+            variant="secondary"
+          ></app-button>
+        </div>
+        <ul class="ml-12">
+          <li class="list-disc">
+            The above button is a link because it specifies the
+            <strong>href</strong> prop.
+          </li>
+          <li class="list-disc">
+            Link buttons simulate disabled state via data attributes.
+          </li>
         </ul>
-        <code
-          ><ul>
-            <li class="list-disc">Style</li>
-            <li class="list-disc">Expose</li>
-          </ul></code
-        >
+        <app-button
+          class="ml-12"
+          [disabled]="true"
+          buttonText="Example"
+          size="sm"
+          rounded="full"
+          href="/some/address"
+          variant="secondary"
+        ></app-button>
+      </section>
+      <section class="mb-6">
+        <h2 class="text-3xl mb-2">SX prop</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            All levels of the HTMl are exposed. Add or remove any class with the
+            sx prop.
+          </li>
+        </ul>
+        <img src="assets/images/sx-prop.png" alt="" />
+        <div class="p-4 mb-2">
+          <app-button
+            buttonText="Customised"
+            variant="plain"
+            rounded="full"
+            href="#"
+            [sx]="{
+              container: {
+                remove: [
+                  'opacity-50',
+                  'py-3',
+                  'bg-gray-300',
+                  'data-[disabled=false]:hover:bg-gray-400'
+                ],
+                add: [
+                  'bg-gray-200',
+                  'py-2',
+                  'data-[disabled=false]:hover:bg-gray-300'
+                ]
+              }
+            }"
+          ></app-button>
+        </div>
+      </section>
+
+      <section class="mb-6">
+        <h2 class="text-3xl mb-2">Media queries</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">Add the Tailwind classes to the sx prop.</li>
+        </ul>
+        <img src="assets/images/media-queries.png" alt="" />
+        <div class="p-4 mb-2"></div>
+      </section>
+      <section class="mb-6">
+        <h2 class="text-3xl mb-2">Customise the theme on-the-fly</h2>
+        <img
+          class="mb-2"
+          src="assets/images/customise-theme-on-the-fly.png"
+          alt=""
+        />
+        <img src="assets/images/customise-theme-on-the-fly-html.png" alt="" />
+
+        <div class="p-4 mb-2">
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Another button"
+          ></app-button>
+
+          <app-button
+            [theme]="customisedBtn"
+            buttonText="Another button"
+          ></app-button>
+        </div>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            We create a Theme context by passing the instance of the theme down
+            to other components via prop-drilling.
+          </li>
+          <li class="list-disc">
+            Although not as convenient as React context or Angular services,
+            this should help avoid hydration and UI mismatch issues caused by
+            SSR.
+          </li>
+        </ul>
+      </section>
+      <section class="mb-6">
+        <h2 class="text-3xl mb-2">Toggle the nested and global theme</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            <strong>I haven't designed the colours fo dark mode yet.</strong>
+            This just shows the functionality.
+          </li>
+          <li class="list-disc">
+            The theme could be anything (elegant,playful,etc). Not just light or
+            dark mode.
+          </li>
+          <li class="list-disc">
+            You can also use Tailwind's native support for dark and light theme.
+          </li>
+        </ul>
+        <div class="p-4 mb-2">
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Nested button"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Nested button"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            variant="secondary"
+            buttonText="Toggle nested theme"
+            (click)="toggleNestedMode()"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            buttonText="Toggle global theme"
+            (click)="toggleGlobalMode()"
+          ></app-button>
+        </div>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Here we use <code>toggleGlobalMode#</code> and
+            <code>GlobalComponentFunctionService</code> to toggle between light
+            and dark mode.
+          </li>
+        </ul>
+        <img class="mb-2" src="assets/images/global-theme.png" alt="" />
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">The code for toggling the nested theme:</li>
+        </ul>
+        <img src="assets/images/nested-theme.png" alt="" />
+      </section>
+      <section class="mb-6">
+        <h2 class="text-3xl mb-2">Toggle the nested and global theme</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            <strong>I haven't designed the colours fo dark mode yet.</strong>
+            This just shows the functionality.
+          </li>
+          <li class="list-disc">
+            The theme could be anything (elegant,playful,etc). Not just light or
+            dark mode.
+          </li>
+          <li class="list-disc">
+            You can also use Tailwind's native support for dark and light theme.
+          </li>
+        </ul>
+        <div class="p-4 mb-2">
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Nested button"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Nested button"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            variant="secondary"
+            buttonText="Toggle nested theme"
+            (click)="toggleNestedMode()"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            buttonText="Toggle global theme"
+            (click)="toggleGlobalMode()"
+          ></app-button>
+        </div>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Here we use <code>toggleGlobalMode#</code> and
+            <code>GlobalComponentFunctionService</code> to toggle between light
+            and dark mode.
+          </li>
+        </ul>
+        <img class="mb-2" src="assets/images/global-theme.png" alt="" />
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">The code for toggling the nested theme:</li>
+        </ul>
+        <img src="assets/images/nested-theme.png" alt="" />
       </section>
     </div>
   </div>

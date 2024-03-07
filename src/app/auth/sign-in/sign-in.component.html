@@ -119,6 +119,13 @@
       (click)="toggleNestedModeChild()"
       buttonText="Toggle nested child"
     ></app-button>
+    <app-button
+      buttonText="Example"
+      size="lg"
+      rounded="full"
+      href="/some/address"
+      variant="secondary"
+    ></app-button>
     <!-- <app-button
       [theme]="buttonChild"
       buttonText="Button Child with theme"
@@ -155,5 +162,13 @@
     <app-button (click)="updateSizeSubmitButton()" buttonText="Update size"
       >Update size</app-button
     >
+    <app-button
+      buttonText="Update sx"
+      [sx]="{
+        container: {
+          add: ['p-2', 'md:p-3', 'lg:p-4']
+        }
+      }"
+    ></app-button>
   </div>
 </app-main-layout>

@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { ButtonFunctions } from 'src/app/custom-components/button/button-functions';
+import { ButtonService } from 'src/app/custom-components/button/button.service';
+import { GlobalComponentFunctionsService } from 'src/app/custom-components/button/global-component-functions.service';
 
 @Component({
   selector: 'app-component-library',
@@ -6,31 +9,39 @@ import { Component } from '@angular/core';
   styleUrls: ['./component-library.component.scss'],
 })
 export class ComponentLibraryComponent {
-  code = `editClasses(classesSet, changes) {
-    const { add, remove } = changes;
-    if (add) {
-      if (typeof add === 'string') {
-        const cssClass = add;
-        classesSet.add(cssClass.trim());
-      } else {
-        const cssClasses = add;
-        cssClasses.forEach((cssClass) => {
-          classesSet.add(cssClass.trim());
-        });
-      }
-    }
-    if (remove) {
-      if (typeof remove === 'string') {
-        const cssClass = remove;
-        classesSet.delete(cssClass.trim());
-      } else {
-        const cssClasses = remove;
-        cssClasses.forEach((cssClass) => {
-          classesSet.delete(cssClass.trim());
-        });
-      }
-    }
+  customisedBtn = new ButtonFunctions();
+  newPrimary = new Set([
+    'bg-blue-700',
+    'data-[disabled=false]:hover:bg-blue-800',
+    'text-orange-100',
+  ]);
 
-    return classesSet;
-  }`;
+  constructor(
+    private globalComponentFunctionsService: GlobalComponentFunctionsService,
+    private buttonService: ButtonService
+  ) {
+    this.customisedBtn.container.variant.primary = this.newPrimary;
+  }
+
+  toggleGlobalMode() {
+    if (this.buttonService.buttonFunctions.mode === 'dark') {
+      this.globalComponentFunctionsService.updateMode('light');
+    } else {
+      this.globalComponentFunctionsService.updateMode('dark');
+    }
+  }
+
+  toggleNestedMode() {
+    if (this.customisedBtn.mode === 'dark') {
+      this.updateCustomBtnMode('light');
+    } else {
+      this.updateCustomBtnMode('dark');
+    }
+  }
+
+  private updateCustomBtnMode(mode: 'dark' | 'light') {
+    //Object reference needs to change or changes not picked up.
+    this.customisedBtn = Object.create(this.customisedBtn);
+    this.customisedBtn.mode = mode;
+  }
 }
