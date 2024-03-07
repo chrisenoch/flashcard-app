@@ -123,8 +123,18 @@
       [theme]="buttonChild"
       buttonText="Button Child"
       [size]="size"
-      [disabled]="false"
+      [disabled]="true"
     ></app-button>
+    <app-button-child
+      buttonText="Button Child No theme"
+      [size]="size"
+      [disabled]="true"
+    ></app-button-child>
+    <app-button-child
+      buttonText="Button Child No theme 2"
+      [size]="size"
+      [disabled]="false"
+    ></app-button-child>
     <app-button
       (click)="updateModifiedThemeButton()"
       buttonText="Update sx"

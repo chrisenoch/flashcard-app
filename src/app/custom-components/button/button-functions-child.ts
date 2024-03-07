@@ -7,5 +7,10 @@ export class ButtonFunctionsChild extends ButtonFunctions {
       isDisabled: new Set(['bg-gray-500', 'cursor-cell']),
       isEnabled: new Set(),
     };
+    this.component.dark.container.disabled = {
+      isDisabled: new Set(['bg-gray-500', 'cursor-cell']),
+      isEnabled: new Set(),
+    };
+    this.addVariantWhenDisabled = false;
   }
 }

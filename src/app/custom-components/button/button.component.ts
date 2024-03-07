@@ -69,6 +69,7 @@ export class ButtonComponent implements OnInit, OnChanges {
     textContent: string;
   };
 
+  defaultButtonInstance = 'DEFAULT';
   ngOnInit(): void {
     if (this.theme) {
       //Use modified theme if provided. If not, use default theme.
@@ -76,12 +77,11 @@ export class ButtonComponent implements OnInit, OnChanges {
     } else {
       //To do: Should get one instance of this from a global store. In case a compoennt wants to change the global theme.
       //this.buttonFunctions = new ButtonFunctions();
-      this.buttonFunctions = this.buttonService.getButtonFunctions();
+      this.buttonFunctions = this.buttonService.getButtonFunctions(
+        this.defaultButtonInstance
+      );
     }
-    console.log('this.theme.contaienr.disabled in ngOnInit ' + this.buttonText);
-    console.log(this.theme?.container.disabled);
     this.updateCSSClasses();
-
     this.buttonService.mode$.subscribe((mode) => {
       this.buttonFunctions.mode = mode;
       this.updateCSSClasses();
@@ -105,11 +105,6 @@ export class ButtonComponent implements OnInit, OnChanges {
         ))
     ) {
       console.log('about to update css props for ' + this.buttonText);
-      console.log(
-        'this.theme.contaienr.disabled in ngOnChanges ' + this.buttonText
-      );
-      console.log('isdisabled ' + this.disabled);
-      console.log(this.theme?.container.disabled);
       this.updateCSSClasses();
     }
   }

@@ -42,6 +42,7 @@ import { NoSpacesDirective } from './custom-directives/custom-validators/no-spac
 import { NoContentDirective } from './custom-directives/custom-validators/no-content.directive';
 import { ButtonComponent } from './custom-components/button/button.component';
 import { ComponentLibraryComponent } from './blog/component-library/component-library.component';
+import { ButtonChildComponent } from './custom-components/button/button-child/button-child.component';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { ComponentLibraryComponent } from './blog/component-library/component-li
     NoContentDirective,
     ButtonComponent,
     ComponentLibraryComponent,
+    ButtonChildComponent,
   ],
   imports: [
     BrowserModule,

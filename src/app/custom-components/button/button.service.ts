@@ -23,7 +23,7 @@ export class ButtonService {
   // }
 
   //To do: protect ButtonFunction so it can't be modified by mistake from outside.
-  getButtonFunctions() {
+  getButtonFunctions(buttonType: string) {
     return this.buttonFunctions;
   }
 }
