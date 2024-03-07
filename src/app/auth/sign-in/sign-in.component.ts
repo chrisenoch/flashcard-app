@@ -4,6 +4,7 @@ import { ButtonChildService } from 'src/app/custom-components/button/button-chil
 import { ButtonFunctions } from 'src/app/custom-components/button/button-functions';
 import { ButtonFunctionsChild } from 'src/app/custom-components/button/button-functions-child';
 import { ButtonService } from 'src/app/custom-components/button/button.service';
+import { GlobalComponentFunctionsService } from 'src/app/custom-components/button/global-component-functions.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -32,7 +33,8 @@ export class SignInComponent {
 
   constructor(
     private buttonService: ButtonService,
-    private buttonChildService: ButtonChildService
+    private buttonChildService: ButtonChildService,
+    private globalComponentFunctionsService: GlobalComponentFunctionsService
   ) {
     this.modifiedButtonTest.container.variant.primary = this.newPrimary;
     // this.modifiedButtonTest.mode = 'dark';
@@ -78,11 +80,13 @@ export class SignInComponent {
 
   toggleGlobalMode() {
     if (this.modifiedButtonTest.mode === 'dark') {
-      this.buttonService.updateMode('light');
-      this.buttonChildService.updateMode('light');
+      this.globalComponentFunctionsService.updateMode('light');
+      // this.buttonService.updateMode('light');
+      // this.buttonChildService.updateMode('light');
     } else {
-      this.buttonService.updateMode('dark');
-      this.buttonChildService.updateMode('dark');
+      // this.buttonService.updateMode('dark');
+      // this.buttonChildService.updateMode('dark');
+      this.globalComponentFunctionsService.updateMode('dark');
     }
   }
 

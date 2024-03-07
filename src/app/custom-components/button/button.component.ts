@@ -12,6 +12,7 @@ import {
   initFields,
 } from 'src/app/models/types/getFields';
 import { ButtonService } from './button.service';
+import { GlobalComponentFunctionsService } from './global-component-functions.service';
 
 @Component({
   selector: 'app-button',
@@ -24,7 +25,10 @@ export class ButtonComponent implements OnInit, OnChanges {
     inputPropName: string;
     inputPropValue: any;
   }[] = [];
-  constructor(protected buttonService: ButtonService) {
+  constructor(
+    protected buttonService: ButtonService,
+    protected globalComponentFunctions: GlobalComponentFunctionsService
+  ) {
     this.fields = initFields<typeof this>(this, ButtonComponent);
     this.initMultiPropCSSInputArgsToCheckIfChanged();
   }
@@ -77,12 +81,8 @@ export class ButtonComponent implements OnInit, OnChanges {
       this.buttonFunctions = this.initButton();
     }
     this.updateCSSClasses();
-    this.buttonService.mode$.subscribe((mode) => {
+    this.globalComponentFunctions.mode$.subscribe((mode) => {
       this.buttonFunctions.mode = mode;
-
-      console.log('in sub buttontext ' + this.buttonText);
-      console.log('new mode');
-      console.log(this.buttonFunctions.mode);
       this.updateCSSClasses();
     });
   }
