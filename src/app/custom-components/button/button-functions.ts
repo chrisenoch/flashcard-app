@@ -184,12 +184,4 @@ export class ButtonFunctions extends Theme {
       textContent: this.componentLight.textContent,
     },
   };
-
-  testFunc() {
-    console.log('test');
-  }
-
-  getComponentLight() {
-    return this.componentLight;
-  }
 }

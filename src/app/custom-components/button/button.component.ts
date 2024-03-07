@@ -75,7 +75,8 @@ export class ButtonComponent implements OnInit, OnChanges {
       this.buttonFunctions = this.theme;
     } else {
       //To do: Should get one instance of this from a global store. In case a compoennt wants to change the global theme.
-      this.buttonFunctions = new ButtonFunctions();
+      //this.buttonFunctions = new ButtonFunctions();
+      this.buttonFunctions = this.buttonService.getButtonFunctions();
     }
     console.log('this.theme.contaienr.disabled in ngOnInit ' + this.buttonText);
     console.log(this.theme?.container.disabled);
