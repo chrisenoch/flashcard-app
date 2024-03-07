@@ -145,7 +145,7 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   //Do not add "Theme" or "sx" here.
-  private getTransformedCSSInputArgs() {
+  protected getTransformedCSSInputArgs(): any {
     return [
       {
         inputPropName: this.fields.rounded,

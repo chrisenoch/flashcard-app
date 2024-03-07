@@ -32,8 +32,6 @@ export class SignInComponent {
   buttonChild = new ButtonFunctionsChild();
 
   constructor(
-    private buttonService: ButtonService,
-    private buttonChildService: ButtonChildService,
     private globalComponentFunctionsService: GlobalComponentFunctionsService
   ) {
     this.modifiedButtonTest.container.variant.primary = this.newPrimary;

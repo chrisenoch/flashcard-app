@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ButtonComponent } from '../button.component';
 import { ButtonChildService } from './button-child.service';
 import { ButtonService } from '../button.service';
@@ -17,9 +17,42 @@ export class ButtonChildComponent extends ButtonComponent {
     //super(new ButtonChildService());
     super(buttonService, globalComponentFunctions);
   }
+  @Input() transform: 'upperCase' | 'lowerCase' | 'capitalize' | 'normalCase' =
+    'normalCase';
 
   override initButton() {
     //this refers to ButtonChildService (see the constructor)
     return this.buttonService.getChildButtonFunctions('buttonFunctionsChild');
+  }
+
+  protected override getTransformedCSSInputArgs() {
+    return [
+      {
+        inputPropName: this.fields.rounded,
+        inputPropValue: this.rounded,
+      },
+      {
+        inputPropName: this.fields.size,
+        inputPropValue: this.size,
+      },
+
+      {
+        inputPropName: this.fields.variant,
+        inputPropValue: this.variant,
+      },
+
+      {
+        inputPropName: this.fields.disabled,
+        inputPropValue: this.disabled,
+      },
+      {
+        inputPropName: this.fields.default,
+        inputPropValue: this.default,
+      },
+      {
+        inputPropName: 'transform',
+        inputPropValue: this.transform,
+      },
+    ];
   }
 }

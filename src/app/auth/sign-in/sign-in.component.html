@@ -119,7 +119,7 @@
       (click)="toggleNestedModeChild()"
       buttonText="Toggle nested child"
     ></app-button>
-    <app-button
+    <!-- <app-button
       [theme]="buttonChild"
       buttonText="Button Child with theme"
       [size]="size"
@@ -130,12 +130,18 @@
       buttonText="Button Child 2 with theme"
       [size]="size"
       [disabled]="false"
-    ></app-button>
+    ></app-button> -->
 
     <app-button-child
       buttonText="Button Child No theme"
       [size]="size"
       [disabled]="true"
+    ></app-button-child>
+    <app-button-child
+      buttonText="Button Child - with uppercase"
+      transform="upperCase"
+      [size]="size"
+      [disabled]="false"
     ></app-button-child>
     <app-button-child
       buttonText="Button Child No theme 2"
