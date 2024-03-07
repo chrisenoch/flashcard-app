@@ -17,13 +17,8 @@ export class ButtonService {
     this.mode$.next(mode);
   }
 
-  //This does not work. The components render in light mode.
-  // ngOnInit(): void {
-  //   this.buttonFunctions.mode = 'dark';
-  // }
-
   //To do: protect ButtonFunction so it can't be modified by mistake from outside.
-  getButtonFunctions(buttonType: string) {
+  getButtonFunctions() {
     return this.buttonFunctions;
   }
 }

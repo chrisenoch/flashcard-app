@@ -1,5 +1,6 @@
 import { Component, DoCheck, OnInit, SimpleChanges } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ButtonChildService } from 'src/app/custom-components/button/button-child/button-child.service';
 import { ButtonFunctions } from 'src/app/custom-components/button/button-functions';
 import { ButtonFunctionsChild } from 'src/app/custom-components/button/button-functions-child';
 import { ButtonService } from 'src/app/custom-components/button/button.service';
@@ -29,7 +30,10 @@ export class SignInComponent {
 
   buttonChild = new ButtonFunctionsChild();
 
-  constructor(private buttonService: ButtonService) {
+  constructor(
+    private buttonService: ButtonService,
+    private buttonChildService: ButtonChildService
+  ) {
     this.modifiedButtonTest.container.variant.primary = this.newPrimary;
     // this.modifiedButtonTest.mode = 'dark';
     this.modifiedButtonTestTwo.container.variant.primary = this.newPrimaryTwo;
@@ -75,8 +79,10 @@ export class SignInComponent {
   toggleGlobalMode() {
     if (this.modifiedButtonTest.mode === 'dark') {
       this.buttonService.updateMode('light');
+      this.buttonChildService.updateMode('light');
     } else {
       this.buttonService.updateMode('dark');
+      this.buttonChildService.updateMode('dark');
     }
   }
 

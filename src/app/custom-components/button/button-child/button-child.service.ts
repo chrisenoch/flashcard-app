@@ -12,7 +12,7 @@ export class ButtonChildService extends ButtonService {
   }
   buttonFunctionsChild = new ButtonFunctionsChild();
 
-  override getButtonFunctions(buttonType: string) {
+  getChildButtonFunctions(buttonType: string) {
     if (buttonType === 'buttonFunctionsChild') {
       return this.buttonFunctionsChild;
     } else {

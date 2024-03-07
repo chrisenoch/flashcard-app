@@ -24,7 +24,7 @@ export class ButtonComponent implements OnInit, OnChanges {
     inputPropName: string;
     inputPropValue: any;
   }[] = [];
-  constructor(private buttonService: ButtonService) {
+  constructor(protected buttonService: ButtonService) {
     this.fields = initFields<typeof this>(this, ButtonComponent);
     this.initMultiPropCSSInputArgsToCheckIfChanged();
   }
@@ -69,23 +69,26 @@ export class ButtonComponent implements OnInit, OnChanges {
     textContent: string;
   };
 
-  defaultButtonInstance = 'DEFAULT';
   ngOnInit(): void {
     if (this.theme) {
       //Use modified theme if provided. If not, use default theme.
       this.buttonFunctions = this.theme;
     } else {
-      //To do: Should get one instance of this from a global store. In case a compoennt wants to change the global theme.
-      //this.buttonFunctions = new ButtonFunctions();
-      this.buttonFunctions = this.buttonService.getButtonFunctions(
-        this.defaultButtonInstance
-      );
+      this.buttonFunctions = this.initButton();
     }
     this.updateCSSClasses();
     this.buttonService.mode$.subscribe((mode) => {
       this.buttonFunctions.mode = mode;
+
+      console.log('in sub buttontext ' + this.buttonText);
+      console.log('new mode');
+      console.log(this.buttonFunctions.mode);
       this.updateCSSClasses();
     });
+  }
+
+  initButton() {
+    return this.buttonService.getButtonFunctions();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -109,7 +112,7 @@ export class ButtonComponent implements OnInit, OnChanges {
     }
   }
 
-  private updateCSSClasses() {
+  protected updateCSSClasses() {
     this.transformedCSSInputArgs = this.getTransformedCSSInputArgs();
     const transformedInput = this.buttonFunctions.transformComponentInput(
       this.transformedCSSInputArgs
