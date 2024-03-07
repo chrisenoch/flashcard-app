@@ -114,6 +114,8 @@ export class ButtonComponent implements OnInit, OnChanges {
 
   protected updateCSSClasses() {
     this.transformedCSSInputArgs = this.getTransformedCSSInputArgs();
+    console.log('transfomed input args buttontext ' + this.buttonText);
+    console.log(this.transformedCSSInputArgs);
     const transformedInput = this.buttonFunctions.transformComponentInput(
       this.transformedCSSInputArgs
     );
@@ -144,9 +146,16 @@ export class ButtonComponent implements OnInit, OnChanges {
     });
   }
 
+  extraCSSInputArgs(): any {
+    return [];
+  }
+
   //Do not add "Theme" or "sx" here.
   protected getTransformedCSSInputArgs(): any {
+    console.log('extraCSS Input args');
+    console.log(this.extraCSSInputArgs);
     return [
+      ...this.extraCSSInputArgs(),
       {
         inputPropName: this.fields.rounded,
         inputPropValue: this.rounded,

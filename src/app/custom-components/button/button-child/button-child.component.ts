@@ -25,34 +25,43 @@ export class ButtonChildComponent extends ButtonComponent {
     return this.buttonService.getChildButtonFunctions('buttonFunctionsChild');
   }
 
-  protected override getTransformedCSSInputArgs() {
+  override extraCSSInputArgs() {
     return [
-      {
-        inputPropName: this.fields.rounded,
-        inputPropValue: this.rounded,
-      },
-      {
-        inputPropName: this.fields.size,
-        inputPropValue: this.size,
-      },
-
-      {
-        inputPropName: this.fields.variant,
-        inputPropValue: this.variant,
-      },
-
-      {
-        inputPropName: this.fields.disabled,
-        inputPropValue: this.disabled,
-      },
-      {
-        inputPropName: this.fields.default,
-        inputPropValue: this.default,
-      },
       {
         inputPropName: 'transform',
         inputPropValue: this.transform,
       },
     ];
   }
+  //Or override the entire array.
+  // protected override getTransformedCSSInputArgs() {
+  //   return [
+  //     {
+  //       inputPropName: this.fields.rounded,
+  //       inputPropValue: this.rounded,
+  //     },
+  //     {
+  //       inputPropName: this.fields.size,
+  //       inputPropValue: this.size,
+  //     },
+
+  //     {
+  //       inputPropName: this.fields.variant,
+  //       inputPropValue: this.variant,
+  //     },
+
+  //     {
+  //       inputPropName: this.fields.disabled,
+  //       inputPropValue: this.disabled,
+  //     },
+  //     {
+  //       inputPropName: this.fields.default,
+  //       inputPropValue: this.default,
+  //     },
+  //     {
+  //       inputPropName: 'transform',
+  //       inputPropValue: this.transform,
+  //     },
+  //   ];
+  // }
 }
