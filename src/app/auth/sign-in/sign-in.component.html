@@ -144,6 +144,7 @@
       [size]="size"
       [disabled]="true"
     ></app-button-child>
+
     <app-button-child
       buttonText="Button Child - with uppercase"
       transform="upperCase"
@@ -162,8 +163,9 @@
     <app-button (click)="updateSizeSubmitButton()" buttonText="Update size"
       >Update size</app-button
     >
+
     <app-button
-      buttonText="Update sx"
+      buttonText="Media queries"
       [sx]="{
         container: {
           add: ['p-2', 'md:p-3', 'lg:p-4']

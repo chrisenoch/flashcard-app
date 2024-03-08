@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ButtonComponent } from '../button.component';
-import { ButtonChildService } from './button-child.service';
+import { ButtonChildrenService } from './button-child.service';
 import { ButtonService } from '../button.service';
 import { GlobalComponentFunctionsService } from '../global-component-functions.service';
 
@@ -11,21 +11,20 @@ import { GlobalComponentFunctionsService } from '../global-component-functions.s
 })
 export class ButtonChildComponent extends ButtonComponent {
   constructor(
-    protected override buttonService: ButtonChildService,
+    protected override buttonService: ButtonChildrenService,
     protected override globalComponentFunctions: GlobalComponentFunctionsService
   ) {
-    //super(new ButtonChildService());
     super(buttonService, globalComponentFunctions);
   }
-  @Input() transform: 'upperCase' | 'lowerCase' | 'capitalize' | 'normalCase' =
-    'normalCase';
-
   override initButton() {
-    //this refers to ButtonChildService (see the constructor)
+    //this.buttonService below refers to ButtonChildrenService (see the constructor)
     return this.buttonService.getChildButtonFunctions('buttonFunctionsChild');
   }
 
-  //init extra variant/ that does not exist on parent ButtonComponent
+  @Input() transform: 'upperCase' | 'lowerCase' | 'capitalize' | 'normalCase' =
+    'normalCase';
+
+  //init extra prop that does not exist on parent ButtonComponent
   override extraCSSInputArgs() {
     return [
       {
@@ -34,6 +33,7 @@ export class ButtonChildComponent extends ButtonComponent {
       },
     ];
   }
+
   //Or override the entire array.
   // protected override getTransformedCSSInputArgs() {
   //   return [

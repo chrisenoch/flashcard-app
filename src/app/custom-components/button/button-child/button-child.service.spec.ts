@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ButtonChildService } from './button-child.service';
+import { ButtonChildrenService } from './button-child.service';
 
 describe('ButtonChildService', () => {
-  let service: ButtonChildService;
+  let service: ButtonChildrenService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ButtonChildService);
+    service = TestBed.inject(ButtonChildrenService);
   });
 
   it('should be created', () => {

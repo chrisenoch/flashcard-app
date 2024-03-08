@@ -31,6 +31,14 @@ export class ComponentLibraryComponent {
     }
   }
 
+  setGlobalModeToLight() {
+    this.globalComponentFunctionsService.updateMode('light');
+  }
+
+  setGlobalModeToDark() {
+    this.globalComponentFunctionsService.updateMode('dark');
+  }
+
   toggleNestedMode() {
     if (this.customisedBtn.mode === 'dark') {
       this.updateCustomBtnMode('light');
@@ -41,7 +49,9 @@ export class ComponentLibraryComponent {
 
   private updateCustomBtnMode(mode: 'dark' | 'light') {
     //Object reference needs to change or changes not picked up.
-    this.customisedBtn = Object.create(this.customisedBtn);
+    const newCustomisedBtn = new ButtonFunctions();
+    newCustomisedBtn.container.variant.primary = this.newPrimary;
+    this.customisedBtn = newCustomisedBtn;
     this.customisedBtn.mode = mode;
   }
 }

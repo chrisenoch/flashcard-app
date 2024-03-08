@@ -5,7 +5,7 @@ import { ButtonFunctionsChild } from '../button-functions-child';
 @Injectable({
   providedIn: 'root',
 })
-export class ButtonChildService extends ButtonService {
+export class ButtonChildrenService extends ButtonService {
   constructor() {
     super();
     this.buttonFunctionsChild.mode = 'dark';
@@ -18,9 +18,9 @@ export class ButtonChildService extends ButtonService {
     } else {
       throw new Error('Unrecognised button type');
     }
-    //Here shows how we can have multiple separate buttons in this service and return the desired one.
-    //  if (buttonType === 'foo') {
-    //   return this.buttonFunctionsFoo;
+    //Here shows how we can have multiple custom buttons in this service and return the desired one.
+    //  if (buttonType === 'CTA') {
+    //   return this.buttonFunctionsCTA
     // }
   }
 }

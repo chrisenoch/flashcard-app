@@ -1,6 +1,6 @@
 import { Component, DoCheck, OnInit, SimpleChanges } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ButtonChildService } from 'src/app/custom-components/button/button-child/button-child.service';
+import { ButtonChildrenService } from 'src/app/custom-components/button/button-child/button-child.service';
 import { ButtonFunctions } from 'src/app/custom-components/button/button-functions';
 import { ButtonFunctionsChild } from 'src/app/custom-components/button/button-functions-child';
 import { ButtonService } from 'src/app/custom-components/button/button.service';

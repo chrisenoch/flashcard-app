@@ -12,11 +12,6 @@ export class ButtonService {
   }
   buttonFunctions = new ButtonFunctions();
 
-  mode$ = new Subject<string>();
-  updateMode(mode: string) {
-    this.mode$.next(mode);
-  }
-
   //To do: protect ButtonFunction so it can't be modified by mistake from outside.
   getButtonFunctions() {
     return this.buttonFunctions;
