@@ -17,14 +17,14 @@ export class RemovableAlertComponent {
   //alertId: LocalStorageId = 'explanation-of-app-1709991594775';
 
   ngOnInit(): void {
-    console.log('in ngOnInit');
-    const alertStatus = this.localStorageService.fetch(this.alertId);
-    if (alertStatus == null) {
-      this.show = true;
-    } else {
-      this.show = false;
-    }
-    console.log('this.show ' + this.show);
+    // console.log('in ngOnInit');
+    // const alertStatus = this.localStorageService.fetch(this.alertId);
+    // if (alertStatus == null) {
+    //   this.show = true;
+    // } else {
+    //   this.show = false;
+    // }
+    // console.log('this.show ' + this.show);
   }
 
   closeAlert() {

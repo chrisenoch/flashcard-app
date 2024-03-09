@@ -1,11 +1,45 @@
 <div
   class="fixed top-0 left-0 w-screen h-screen bg-gray-950/[.75] z-[1600]"
-  (keydown.shift.t)="onClose()"
   (click)="onClose()"
 ></div>
-<div class="fixed top-[30vh] left-[40vw] w-[20vw] p-4 bg-white z-[1610]">
-  <p>{{ message }}</p>
-  <div class="text-right">
-    <button (click)="onClose()" (keydown.shift.t)="onClose()">Close</button>
+<div
+  class="fixed top-[30vh] left-[40vw] p-4 bg-white z-[1610] whitespace-normal rounded-xl"
+>
+  <button
+    (click)="onClose()"
+    class="bi bi-x-circle-fill absolute top-4 right-4 inline-block text-3xl text-pink-400 cursor-pointer"
+  ></button>
+
+  <div class="flex flex-col gap-2 w-[20vw]">
+    <header class="flex justify-center mb-4">
+      <h1
+        class="inline-block mt-4 text-center text-3xl after:block after:bg-pink-300 after:h-[2px] after:mt-2"
+      >
+        Important
+      </h1>
+    </header>
+    <p>
+      This app is designed for an
+      <span class="underline font-bold">interactive whiteboard.</span>
+      Consequently, it is not responsive.
+    </p>
+    <p>Responsive projects:</p>
+    <a href="https://nextjs-lesson-plans.vercel.app/" target="_blank"
+      >Lesson Planz (new window)</a
+    >
+    <a href="https://gamble-game.vercel.app/" target="_blank"
+      >Gamble Game (new window)</a
+    >
+    <a href="https://travelnews.vercel.app/" target="_blank"
+      >Travel News (new window)</a
+    >
+    <!-- <div class="text-right">
+      <app-button
+        buttonText="Close"
+        size="sm"
+        variant="plain"
+        (click)="onClose()"
+      ></app-button>
+    </div> -->
   </div>
 </div>
