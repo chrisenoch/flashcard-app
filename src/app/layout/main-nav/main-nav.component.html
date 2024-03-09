@@ -7,6 +7,7 @@
   <app-alert
     *ngIf="show"
     message="This is my alert"
+    [id]="alertId"
     (close)="closeAlert()"
   ></app-alert>
   <div class="flex h-full px-32 items-center">

@@ -11,7 +11,6 @@ export class KeyboardListenerDirective {
   @HostListener('document:keydown', ['$event']) onKeydownHandler(
     event: KeyboardEvent
   ) {
-    const a = event.key;
     if (event.key === 'Escape') {
       this.keyboardListenerService.keyboardEvent$.next('Escape');
     }

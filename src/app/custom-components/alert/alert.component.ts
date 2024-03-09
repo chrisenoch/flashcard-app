@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { KeyboardListenerService } from 'src/app/custom-directives/keyboard-listener/keyboard-listener.service';
+import { LocalStorageId } from 'src/app/models/types/localStorageId';
 
 @Component({
   selector: 'app-alert',
@@ -18,6 +19,7 @@ export class AlertComponent implements OnInit {
     });
   }
 
+  @Input({ required: true }) id: LocalStorageId | undefined = undefined;
   @Input({ required: true }) message: string = '';
   @Output() close = new EventEmitter<void>();
 
