@@ -4,12 +4,10 @@
   class="fixed bg-white z-[1500] font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
   appKeyboardListener
 >
-  <app-alert
-    *ngIf="show"
-    message="This is my alert"
-    [id]="alertId"
-    (close)="closeAlert()"
-  ></app-alert>
+  <app-removable-alert
+    alertId="explanation-of-app-1709991594775"
+  ></app-removable-alert>
+
   <div class="flex h-full px-32 items-center">
     <div class="pr-12">
       <a href="#" class="font-BubblegumSans text-4xl">

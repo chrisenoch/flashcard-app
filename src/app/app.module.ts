@@ -45,6 +45,7 @@ import { ComponentLibraryComponent } from './blog/component-library/component-li
 import { ButtonChildComponent } from './custom-components/button/button-child/button-child.component';
 import { AlertComponent } from './custom-components/alert/alert.component';
 import { KeyboardListenerDirective } from './custom-directives/keyboard-listener/keyboard-listener.directive';
+import { RemovableAlertComponent } from './custom-components/removable-alert/removable-alert.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { KeyboardListenerDirective } from './custom-directives/keyboard-listener
     ButtonChildComponent,
     AlertComponent,
     KeyboardListenerDirective,
+    RemovableAlertComponent,
   ],
   imports: [
     BrowserModule,
