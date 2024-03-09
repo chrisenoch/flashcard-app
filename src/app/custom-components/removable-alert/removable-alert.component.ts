@@ -14,17 +14,14 @@ export class RemovableAlertComponent {
   @Input({ required: true }) alertId!: LocalStorageId;
   show = true;
   alertStatus: any = undefined;
-  //alertId: LocalStorageId = 'explanation-of-app-1709991594775';
 
   ngOnInit(): void {
-    // console.log('in ngOnInit');
-    // const alertStatus = this.localStorageService.fetch(this.alertId);
-    // if (alertStatus == null) {
-    //   this.show = true;
-    // } else {
-    //   this.show = false;
-    // }
-    // console.log('this.show ' + this.show);
+    const alertStatus = this.localStorageService.fetch(this.alertId);
+    if (alertStatus == null) {
+      this.show = true;
+    } else {
+      this.show = false;
+    }
   }
 
   closeAlert() {
