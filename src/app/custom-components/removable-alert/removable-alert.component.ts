@@ -8,9 +8,7 @@ import { LocalStorageService } from 'src/app/storage/local-storage.service';
   styleUrls: ['./removable-alert.component.scss'],
 })
 export class RemovableAlertComponent {
-  constructor(private localStorageService: LocalStorageService) {
-    console.log('in nav constructor');
-  }
+  constructor(private localStorageService: LocalStorageService) {}
   @Input({ required: true }) alertId!: LocalStorageId;
   show = true;
   alertStatus: any = undefined;
