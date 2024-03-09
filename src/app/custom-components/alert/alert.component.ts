@@ -12,7 +12,7 @@ export class AlertComponent implements OnInit {
   ngOnInit(): void {
     this.keyboardListenerService.keyboardEvent$.subscribe((e) => {
       console.log('sub received ' + e);
-      if (e === 'ESCAPE') {
+      if (e === 'Escape') {
         this.close.emit();
       }
     });
