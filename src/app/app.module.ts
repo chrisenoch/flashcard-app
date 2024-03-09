@@ -43,6 +43,8 @@ import { NoContentDirective } from './custom-directives/custom-validators/no-con
 import { ButtonComponent } from './custom-components/button/button.component';
 import { ComponentLibraryComponent } from './blog/component-library/component-library.component';
 import { ButtonChildComponent } from './custom-components/button/button-child/button-child.component';
+import { AlertComponent } from './custom-components/alert/alert.component';
+import { KeyboardListenerDirective } from './custom-directives/keyboard-listener/keyboard-listener.directive';
 
 @NgModule({
   declarations: [
@@ -79,6 +81,8 @@ import { ButtonChildComponent } from './custom-components/button/button-child/bu
     ButtonComponent,
     ComponentLibraryComponent,
     ButtonChildComponent,
+    AlertComponent,
+    KeyboardListenerDirective,
   ],
   imports: [
     BrowserModule,

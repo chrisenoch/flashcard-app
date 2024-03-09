@@ -10,4 +10,10 @@ export class MainNavComponent {
     { name: 'Still to do', href: '#' },
     { name: 'Still to do', href: '#' },
   ];
+  show = true;
+
+  closeAlert() {
+    console.log('in closeAlert');
+    this.show = false;
+  }
 }

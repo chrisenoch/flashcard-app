@@ -1,8 +1,14 @@
 <!-- IMPORTANT: I haven't extracted these into button components because soon I will start my own component library and use the button components from there.-->
-<!--To do: Disable hover on buttons when buttons are disabled and map over nav items.-->
+<!--To do: appKeyboardListener and app-alert should not be on the nav but a wrapper for the entire app..-->
 <nav
   class="fixed bg-white z-[1500] font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
+  appKeyboardListener
 >
+  <app-alert
+    *ngIf="show"
+    message="This is my alert"
+    (close)="closeAlert()"
+  ></app-alert>
   <div class="flex h-full px-32 items-center">
     <div class="pr-12">
       <a href="#" class="font-BubblegumSans text-4xl">
