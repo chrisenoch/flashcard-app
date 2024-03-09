@@ -83,10 +83,11 @@
           buttonText="Try free"
           rounded="full"
           variant="secondary"
+          [disabled]="true"
           [sx]="{
             container: {
               add: ['font-bold', 'py-3.5', 'px-5'],
-              remove: ['font-medium', 'py-3', 'px-4']
+              remove: ['opacity-50', 'font-medium', 'py-3', 'px-4']
             }
           }"
         ></app-button>
