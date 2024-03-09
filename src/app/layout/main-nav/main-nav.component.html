@@ -1,7 +1,7 @@
 <!-- IMPORTANT: I haven't extracted these into button components because soon I will start my own component library and use the button components from there.-->
 <!--To do: Disable hover on buttons when buttons are disabled and map over nav items.-->
 <nav
-  class="font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
+  class="fixed bg-white z-[1500] font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
 >
   <div class="flex h-full px-32 items-center">
     <div class="pr-12">
@@ -12,48 +12,79 @@
       >
     </div>
 
-    <ul class="flex grow h-full items-center justify-end gap-5">
+    <ul class="flex grow h-full items-center justify-end gap-4">
       <li *ngFor="let item of navItems" class="h-full flex items-center">
-        <a
-          appDisableLink
-          #appDisableLink="appDisableLink"
-          [isDisabled]="true"
-          href="{{ item.href }}"
-          class="p-1 h-fit w-fit inline-block rounded-full bg-gray-200"
-          [ngClass]="{
-            'cursor-not-allowed': appDisableLink.isDisabled,
-            'hover:bg-gray-300': !appDisableLink.isDisabled
+        <app-button
+          buttonText="Still to do"
+          variant="plain"
+          [disabled]="true"
+          rounded="full"
+          href="/"
+          [sx]="{
+            container: {
+              remove: [
+                'opacity-50',
+                'py-3',
+                'bg-gray-300',
+                'data-[disabled=false]:hover:bg-gray-400'
+              ],
+              add: [
+                'bg-gray-200',
+                'py-2',
+                'data-[disabled=false]:hover:bg-gray-300'
+              ]
+            }
           }"
-        >
-          <span
-            class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>{{ item.name }}</span></span
-          ></a
-        >
+        ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <!--So many layers for Sign in link because originally this had a gradient background and gradient text.-->
-        <a
+        <app-button
+          buttonText="My Component Lib"
+          rounded="full"
+          href="/component-library"
+          [sx]="{
+            container: {
+              remove: [
+                'py-3',
+                'bg-purple-500',
+                'data-[disabled=false]:hover:bg-purple-600'
+              ],
+              add: [
+                'bg-gray-700',
+                'py-2',
+                'data-[disabled=false]:hover:bg-gray-800'
+              ]
+            }
+          }"
+        ></app-button>
+      </li>
+      <li class="h-full flex items-center">
+        <app-button
           href="/login"
-          class="group p-1 h-fit w-fit inline-block rounded-full border-pink-500 border-2 hover:bg-pink-500"
-        >
-          <span
-            class="py-2 px-4 inline-block font-medium bg-white group-hover:bg-pink-500 rounded-full"
-            ><span class="text-pink-500 group-hover:text-white"
-              >Sign in</span
-            ></span
-          ></a
-        >
+          buttonText="SignIn"
+          rounded="full"
+          variant="secondaryOutlined"
+          [sx]="{
+            container: {
+              add: ['py-3.5', 'px-5'],
+              remove: ['py-3', 'px-4']
+            }
+          }"
+        ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <a
+        <app-button
           href="#"
-          class="p-1 h-fit w-fit inline-block rounded-full border-pink-500 border-2 bg-pink-500 hover:bg-pink-600 hover:border-pink-600"
-        >
-          <span class="py-2 px-4 inline-block text-white font-bold rounded-full"
-            ><span>Try free</span></span
-          ></a
-        >
+          buttonText="Try free"
+          rounded="full"
+          variant="secondary"
+          [sx]="{
+            container: {
+              add: ['font-bold', 'py-3.5', 'px-5'],
+              remove: ['font-medium', 'py-3', 'px-4']
+            }
+          }"
+        ></app-button>
       </li>
     </ul>
   </div>

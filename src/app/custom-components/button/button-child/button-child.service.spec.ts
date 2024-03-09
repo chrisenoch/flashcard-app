@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TourGuideService } from './tour-guide.service';
+import { ButtonChildrenService } from './button-child.service';
 
-describe('TourGuideService', () => {
-  let service: TourGuideService;
+describe('ButtonChildService', () => {
+  let service: ButtonChildrenService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(TourGuideService);
+    service = TestBed.inject(ButtonChildrenService);
   });
 
   it('should be created', () => {

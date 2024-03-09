@@ -9,6 +9,5 @@ export class MainNavComponent {
   navItems = [
     { name: 'Still to do', href: '#' },
     { name: 'Still to do', href: '#' },
-    { name: 'Still to do', href: '#' },
   ];
 }

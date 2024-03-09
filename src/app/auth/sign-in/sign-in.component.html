@@ -59,12 +59,29 @@
           - May not include spaces
         </p>
       </div>
-      <button
-        [disabled]="!f.valid"
-        class="mt-1 rounded-full bg-gray-700 hover:enabled:bg-gray-800 p-3 disabled:cursor-not-allowed"
+      <app-button
+        buttonText="Submit"
+        variant="plain"
+        rounded="full"
+        [disabled]="!f.valid ? true : false"
+        [sx]="{
+          container: {
+            add: [
+              'w-full',
+              'bg-gray-700',
+              'data-[disabled=false]:hover:bg-gray-800',
+              'text-white'
+            ],
+            remove: [
+              'bg-gray-300',
+              'data-[disabled=false]:hover:bg-gray-400',
+              'text-gray-950',
+              'font-medium'
+            ]
+          }
+        }"
       >
-        <span class="text-white">Submit</span>
-      </button>
+      </app-button>
     </form>
   </div>
 </app-main-layout>

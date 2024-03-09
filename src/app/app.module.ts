@@ -25,7 +25,6 @@ import { NoTeachingEntitiesErrorComponent } from './errors/no-teaching-entities-
 import { SlideControllerComponent } from './slide-controller/slide-controller.component';
 import { ElementControlsDirective } from './custom-components/element-controls.directive';
 import { TourGuideComponent } from './custom-components/tour-guide/tour-guide.component';
-import { TourGuideDirective } from './custom-components/tour-guide/tour-guide.directive';
 import { TourGuideHelpComponent } from './tour-guide-help/tour-guide-help.component';
 import { TourGuideHelpActionBarComponent } from './tour-guide-help-action-bar/tour-guide-help-action-bar.component';
 import { TourGuideContainerComponent } from './custom-components/tour-guide/tour-guide-container/tour-guide-container.component';
@@ -41,6 +40,9 @@ import { InputClassesDirective } from './custom-directives/input-classes.directi
 import { FocusFormDirective } from './custom-directives/focus-form.directive';
 import { NoSpacesDirective } from './custom-directives/custom-validators/no-spaces.directive';
 import { NoContentDirective } from './custom-directives/custom-validators/no-content.directive';
+import { ButtonComponent } from './custom-components/button/button.component';
+import { ComponentLibraryComponent } from './blog/component-library/component-library.component';
+import { ButtonChildComponent } from './custom-components/button/button-child/button-child.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +60,6 @@ import { NoContentDirective } from './custom-directives/custom-validators/no-con
     SlideControllerComponent,
     ElementControlsDirective,
     TourGuideComponent,
-    TourGuideDirective,
     TourGuideHelpComponent,
     TourGuideHelpActionBarComponent,
     TourGuideContainerComponent,
@@ -75,6 +76,9 @@ import { NoContentDirective } from './custom-directives/custom-validators/no-con
     FocusFormDirective,
     NoSpacesDirective,
     NoContentDirective,
+    ButtonComponent,
+    ComponentLibraryComponent,
+    ButtonChildComponent,
   ],
   imports: [
     BrowserModule,

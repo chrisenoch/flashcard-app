@@ -1,0 +1,381 @@
+<app-main-layout>
+  <div class="w-[64rem] mx-auto my-20 flex flex-col items-center">
+    <div class="flex flex-col items-start">
+      <h1 class="mb-8 text-5xl text-center">Component Library Prototype</h1>
+
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Summary</h2>
+        <ul class="ml-12">
+          <li class="list-disc">
+            Reuse your styles in <strong>both Angular and React</strong>.
+          </li>
+          <li class="list-disc">Inline media query support.</li>
+          <li class="list-disc">
+            Themes and nested themes that can be toggled.
+          </li>
+          <li class="list-disc">Completely customisable components.</li>
+          <li class="list-disc">Customise the theme on-the-fly.</li>
+          <li class="list-disc">
+            <strong>Make reusable custom components.</strong>
+          </li>
+          <li class="list-disc">
+            Supports <strong>light and dark mode.</strong>
+          </li>
+          <li class="list-disc">Used with Tailwind.</li>
+        </ul>
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Basic example</h2>
+        <div class="p-4 flex gap-1">
+          <img
+            class="mb-2"
+            src="assets/images/basic-example.png"
+            alt="basic button demo code"
+          />
+          <app-button
+            buttonText="Example"
+            size="sm"
+            rounded="full"
+            href="/component-library#"
+            variant="secondary"
+          ></app-button>
+        </div>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            The above button is a link because it specifies the
+            <strong>href</strong> prop.
+          </li>
+          <li class="list-disc">
+            Link buttons simulate disabled state via data attributes.
+          </li>
+        </ul>
+        <app-button
+          class="ml-12 mb-2 inline-block"
+          [disabled]="true"
+          buttonText="Example"
+          size="sm"
+          rounded="full"
+          href="/some/address"
+          variant="secondary"
+        ></app-button>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc text-sm">
+            To do: Change 'app-button' to 'Button' so it can be used in React
+            with JSX syntax.
+          </li>
+        </ul>
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">SX prop</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            All levels of the HTMl are exposed. Add or remove any class with the
+            sx prop.
+          </li>
+        </ul>
+        <img src="assets/images/sx-prop.png" alt="sx-prop demo code" />
+        <div class="pl-4 pt-4 pr-4 mb-2">
+          <app-button
+            buttonText="Customised"
+            variant="plain"
+            rounded="full"
+            href="#"
+            [sx]="{
+              container: {
+                remove: [
+                  'opacity-50',
+                  'py-3',
+                  'bg-gray-300',
+                  'data-[disabled=false]:hover:bg-gray-400'
+                ],
+                add: [
+                  'bg-gray-200',
+                  'py-2',
+                  'data-[disabled=false]:hover:bg-gray-300'
+                ]
+              }
+            }"
+          ></app-button>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Media queries</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Add the Tailwind media classes to the sx prop.
+          </li>
+        </ul>
+        <img
+          src="assets/images/media-queries.png"
+          alt="media-queries demo code"
+        />
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Customise the theme on-the-fly</h2>
+        <img
+          class="mb-2"
+          src="assets/images/customise-theme-on-the-fly.png"
+          alt="demo of how to customise the theme on-the-fly"
+        />
+        <img
+          src="assets/images/customise-theme-on-the-fly-html.png"
+          alt="demo of how to customise the theme on-the-fly HTML code"
+        />
+
+        <div class="p-4 mb-2">
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Another button"
+          ></app-button>
+
+          <app-button
+            [theme]="customisedBtn"
+            buttonText="Another button"
+          ></app-button>
+        </div>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            We create a Theme context by passing the instance of the theme down
+            to other components via prop-drilling.
+          </li>
+          <li class="list-disc">
+            Although not as convenient as React context or Angular services,
+            this should help avoid hydration and UI mismatch issues caused by
+            React context and SSR.
+          </li>
+        </ul>
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Toggle the nested and global theme</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            <strong>I haven't designed the colours fo dark mode yet.</strong>
+            This just shows the functionality.
+          </li>
+          <li class="list-disc">
+            The theme could be anything (elegant,playful,etc). Not just light or
+            dark mode.
+          </li>
+          <li class="list-disc">
+            You can also use Tailwind's native support for dark and light theme.
+          </li>
+        </ul>
+        <div class="p-4 mb-2">
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Nested button"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            [theme]="customisedBtn"
+            buttonText="Nested button"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            variant="secondary"
+            buttonText="Toggle nested theme"
+            (click)="toggleNestedMode()"
+          ></app-button>
+          <app-button
+            class="mr-2"
+            buttonText="Toggle global theme"
+            (click)="toggleGlobalMode()"
+          ></app-button>
+        </div>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Here we use <code>toggleGlobalMode#</code> and
+            <code>GlobalComponentFunctionService</code> to toggle between light
+            and dark mode.
+          </li>
+        </ul>
+        <img
+          class="mb-2"
+          src="assets/images/global-theme.png"
+          alt="demo of how to toggle the global theme"
+        />
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">The code for toggling the nested theme:</li>
+        </ul>
+        <img
+          src="assets/images/nested-theme.png"
+          alt="demo of how to toggle a nested theme"
+        />
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Create themed reusable components</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Extend the library's components to make your own customised reusable
+            components.
+          </li>
+          <li class="list-disc">
+            Here are two snippets from ButtonFunctions, which is the class that
+            defines the default styles for the ButtonComponent.
+          </li>
+          <li class="list-disc">
+            The component is the main part of the class.
+          </li>
+        </ul>
+        <img
+          class="mb-2"
+          src="assets/images/button-functions-component.png"
+          alt="The component in ButtonFunctions class"
+        />
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Some styles for the buton container are below.
+          </li>
+        </ul>
+        <img
+          class="mb-6"
+          src="assets/images/button-functions.png"
+          alt="A selection of CSS classes from ButtonFucntions class."
+        />
+        <h3 class="text-3xl mb-2">Step 1</h3>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Extend ButtonFunctions. In this class you can define any custom
+            style overrides. Here, we override the disabled styles. However, you
+            could override the variant (primary, secondary, etc) or any other
+            prop.
+          </li>
+          <li class="list-disc">
+            We also decide to not add the variant when the button is disabled.
+          </li>
+          <li class="list-disc">
+            Remember to override all themes/modes (light and dark here).
+          </li>
+        </ul>
+        <img
+          class="mb-6"
+          src="assets/images/btn-child-override-disabled.png"
+          alt="Overriding the disabled styles step 1"
+        />
+        <h3 class="text-3xl mb-2">Step 2</h3>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Extend ButtonService. ButtonService ensures there is one instance of
+            ButtonFunctions in the entire app. We need to do the same for the
+            newly-created ButtonFunctionsChild.
+          </li>
+          <li class="list-disc">
+            This service can act as a factory for your custom buttons. Or you
+            could create one service per custom button.
+          </li>
+          <li class="list-disc">You can override the default mode/theme.</li>
+        </ul>
+        <img
+          class="mb-6"
+          src="assets/images/button-child-service.png"
+          alt="Overriding the disabled styles step 2"
+        />
+        <h3 class="text-3xl mb-2">Step 3</h3>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Create a normal Angular component and extend ButtonComponent.
+          </li>
+          <li class="list-disc">
+            Provide the service you created in the previous step as an argument
+            to buttonService.
+          </li>
+          <li class="list-disc">
+            Override initButton# Ensure the argument you provide for
+            getButtonFunctionsChild matches the one you defined in the service.
+            (buttonFunctionsChild).
+          </li>
+          <li class="list-disc">
+            Edit the templateUrl to point to the parent ButtonComponent.
+            Altenatively, you could write your own HTML.
+          </li>
+          <li class="list-disc">And you are done.</li>
+        </ul>
+        <img
+          class="mb-6"
+          src="assets/images/button-child-component.png"
+          alt="Overriding the disabled styles step 3"
+        />
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Add extra props</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Here we add the extra prop 'transform' to the customised reusable
+            component. This determines if the text is uppercase, lowercase, etc.
+          </li>
+          <li class="list-disc">
+            You can add any extra prop that controls the CSS classes that get
+            applied to the component.
+          </li>
+        </ul>
+        <h2 class="text-3xl mb-2">Step 1</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Add the extra prop 'transform' to all modes/themes of the relevant
+            HTML level/s. Here, we only need to add classes to the container.
+          </li>
+          <li class="list-disc">
+            So we add the prop 'transform' to the container:
+            <code
+              >this.component.light.<strong>container.transform</strong> =</code
+            >
+            ...
+          </li>
+          <li class="list-disc">
+            If we wanted to add classes to the 'textContent' HTML level, we
+            could do:
+            <code
+              >this.component.light.<strong>textContent.transform</strong>
+              =</code
+            >
+            ...
+          </li>
+          <li class="list-disc">
+            Remember to add for all themes/modes (dark and light here).
+          </li>
+        </ul>
+        <img
+          class="mb-6"
+          src="assets/images/btn-child-with-new-prop-2.png"
+          alt="Adding a new 'transform' prop step 1"
+        />
+        <h2 class="text-3xl mb-2">Step 2</h2>
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">
+            Update the reusable component (in this case app-button-child).
+            inputPropName must be a string which matches the name of
+            inputPropValue exactly. inputPropValue is the variable name of the
+            input binding.
+          </li>
+        </ul>
+        <img
+          class="mb-2"
+          src="assets/images/button-child-component-new-prop.png"
+          alt="Adding a new 'transform' prop step 2"
+        />
+        <ul class="ml-12 mb-2">
+          <li class="list-disc">And that's it!</li>
+        </ul>
+        <app-button-child
+          class="mr-2"
+          transform="upperCase"
+          buttonText="Reusable button"
+        />
+        <app-button
+          class="mr-2"
+          buttonText="Set global theme to light"
+          (click)="setGlobalModeToLight()"
+        ></app-button>
+        <app-button
+          variant="plain"
+          class="mr-2"
+          buttonText="Set global theme to dark"
+          (click)="setGlobalModeToDark()"
+        ></app-button>
+      </section>
+    </div>
+  </div>
+</app-main-layout>
