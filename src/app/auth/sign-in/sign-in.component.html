@@ -60,7 +60,6 @@
         </p>
       </div>
       <app-button
-        [theme]="modifiedButtonTest"
         buttonText="Submit"
         variant="plain"
         rounded="full"
@@ -83,94 +82,6 @@
         }"
       >
       </app-button>
-      <app-button
-        [theme]="modifiedButtonTest"
-        buttonText="modifiedButtonTest dynamic size"
-        [disabled]="!f.valid ? true : false"
-        [size]="size"
-      >
-      </app-button>
-      <app-button
-        [theme]="modifiedButtonTest"
-        buttonText="Modified theme"
-      ></app-button>
-      <app-button
-        [theme]="modifiedButtonTestTwo"
-        buttonText="Modified theme Two"
-      ></app-button>
-      <app-button
-        [theme]="modifiedButtonTest"
-        buttonText="modifiedButtonTest"
-        [sx]="modBtnSXProps"
-        [size]="size"
-      ></app-button>
     </form>
-    <app-button
-      [theme]="modifiedButtonTest"
-      buttonText="Toggle modifiedButtonTest nested mode "
-      (click)="toggleNestedMode()"
-    ></app-button>
-    <app-button
-      [theme]="modifiedButtonTest"
-      buttonText="Toggle modifiedButtonTest global mode "
-      (click)="toggleGlobalMode()"
-    ></app-button>
-    <app-button
-      (click)="toggleNestedModeChild()"
-      buttonText="Toggle nested child"
-    ></app-button>
-    <app-button
-      buttonText="Example"
-      size="lg"
-      rounded="full"
-      href="/some/address"
-      variant="secondary"
-    ></app-button>
-    <!-- <app-button
-      [theme]="buttonChild"
-      buttonText="Button Child with theme"
-      [size]="size"
-      [disabled]="false"
-    ></app-button>
-    <app-button
-      [theme]="buttonChild"
-      buttonText="Button Child 2 with theme"
-      [size]="size"
-      [disabled]="false"
-    ></app-button> -->
-
-    <app-button-child
-      buttonText="Button Child No theme"
-      [size]="size"
-      [disabled]="true"
-    ></app-button-child>
-
-    <app-button-child
-      buttonText="Button Child - with uppercase"
-      transform="upperCase"
-      [size]="size"
-      [disabled]="false"
-    ></app-button-child>
-    <app-button-child
-      buttonText="Button Child No theme 2"
-      [size]="size"
-      [disabled]="false"
-    ></app-button-child>
-    <app-button
-      (click)="updateModifiedThemeButton()"
-      buttonText="Update sx"
-    ></app-button>
-    <app-button (click)="updateSizeSubmitButton()" buttonText="Update size"
-      >Update size</app-button
-    >
-
-    <app-button
-      buttonText="Media queries"
-      [sx]="{
-        container: {
-          add: ['p-2', 'md:p-3', 'lg:p-4']
-        }
-      }"
-    ></app-button>
   </div>
 </app-main-layout>
