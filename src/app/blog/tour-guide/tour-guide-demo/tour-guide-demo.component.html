@@ -1,0 +1,169 @@
+<app-main-layout class="mb-96">
+  <div class="relative">
+    <div class="absolute top-64 cursor-pointer">
+      <app-tour-guide-container>
+        <app-tour-guide
+          elementId="tour-guide-1"
+          elementGroupId="group-1"
+          effectivePosition="absolute"
+          [toggleOnClick]="true"
+          [showOnInitDelay]="3000"
+          [showOnHover]="false"
+          [hideOnHoverOut]="false"
+          position="RIGHT"
+        >
+          <div class="bg-gray-200 w-24 p-2 h-fit rounded-lg text-center">
+            Group 1
+          </div>
+        </app-tour-guide>
+        <!-- <app-slide-option-bar-icon-button iconClasses="bi bi-question" /> -->
+        <div class="bg-green-300 w-24 h-24 flex text-center items-center">
+          Show On Init 3 seconds
+        </div>
+      </app-tour-guide-container>
+    </div>
+    <div class="absolute top-64 left-[calc(60vw-1px)] cursor-pointer">
+      <app-tour-guide-container>
+        <app-tour-guide
+          elementId="tour-guide-2"
+          effectivePosition="absolute"
+          elementGroupId="group-1"
+          [toggleOnClick]="true"
+          [hideOnInitDelay]="5000"
+          [showOnHover]="false"
+          [hideOnHoverOut]="false"
+          position="RIGHT"
+        >
+          <div class="bg-gray-200 w-24 p-2 h-fit rounded-lg text-center">
+            Group 1
+          </div>
+        </app-tour-guide>
+        <!-- <app-slide-option-bar-icon-button iconClasses="bi bi-question" /> -->
+        <div class="bg-pink-300 w-24 h-24 flex text-center items-center">
+          Hide On Init 5 seconds
+        </div>
+      </app-tour-guide-container>
+    </div>
+
+    <div class="absolute top-[32rem] cursor-pointer">
+      <app-tour-guide-container>
+        <app-tour-guide
+          elementId="tour-guide-3"
+          elementGroupId="group-2"
+          effectivePosition="absolute"
+          [showDelay]="2000"
+          [hideDelay]="2000"
+          position="RIGHT"
+        >
+          <div class="bg-gray-200 w-24 p-2 h-fit rounded-lg text-center">
+            Group 2
+          </div>
+        </app-tour-guide>
+        <!-- <app-slide-option-bar-icon-button iconClasses="bi bi-question" /> -->
+        <div class="bg-blue-300 w-24 h-24 flex text-center items-center">
+          Shows and hides after 2 seconds (hover)
+        </div>
+      </app-tour-guide-container>
+    </div>
+
+    <div class="absolute top-[32rem] left-[calc(60vw-1px)] cursor-pointer">
+      <app-tour-guide-container>
+        <app-tour-guide
+          elementId="tour-guide-4"
+          elementGroupId="group-2"
+          effectivePosition="absolute"
+          position="RIGHT"
+          [showOnHover]="false"
+          [hideOnHoverOut]="false"
+          toggleOnCustom="dblclick"
+        >
+          <div class="bg-gray-200 w-24 p-2 h-fit rounded-lg text-center">
+            Group 2
+          </div>
+        </app-tour-guide>
+        <!-- <app-slide-option-bar-icon-button iconClasses="bi bi-question" /> -->
+        <div class="bg-purple-300 w-24 h-24 flex text-center items-center">
+          Toggle on dblClick
+        </div>
+      </app-tour-guide-container>
+    </div>
+  </div>
+
+  <div class="w-[64rem] mx-auto my-20 flex flex-col items-center">
+    <div class="flex flex-col items-start">
+      <h1 class="mb-8 text-5xl text-center">Tour Guide Demo</h1>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Overview</h2>
+        <ul class="ml-12">
+          <li class="list-disc">
+            It is a tooltip with extra features such as timers and the ability
+            to move from one element to another.
+          </li>
+        </ul>
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Features</h2>
+        <ul class="ml-12">
+          <li class="list-disc">Can move from one element to another.</li>
+          <li class="list-disc">
+            Automatically adjusts when:
+            <ul class="ml-6">
+              <li class="list-disc">Screen is resized.</li>
+              <li class="list-disc">User scrolls.</li>
+              <li class="list-disc">
+                Layout shifts due to an item appearing in the DOM that moves
+                content / brreaks the layout.
+              </li>
+            </ul>
+          </li>
+          <li class="list-disc">Customise the arrows.</li>
+          <li class="list-disc">
+            Include any content you want via <code>ng-content</code>.
+          </li>
+        </ul>
+      </section>
+      <section class="mb-10">
+        <h2 class="text-3xl mb-2">Limitations</h2>
+        <ul class="ml-12">
+          <li class="list-disc">
+            Does not adjust position if it overflows the container/page.
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class="my-8 flex flex-wrap gap-2">
+      <app-button
+        class="mr-2"
+        size="sm"
+        buttonText="Show All"
+        elementId="a"
+        appElementControls
+        [onShowAll]="true"
+      ></app-button>
+      <app-button
+        class="mr-2"
+        size="sm"
+        buttonText="Close All"
+        elementId="b"
+        appElementControls
+        [onCloseAll]="true"
+      ></app-button>
+      <app-button
+        class="mr-2"
+        size="sm"
+        buttonText="Close All In Group 1"
+        onCloseAllInGroup="group-1"
+        elementId="c"
+        appElementControls
+      ></app-button>
+      <app-button
+        class="mr-2"
+        size="sm"
+        buttonText="Close All In Group-2"
+        elementId="d"
+        appElementControls
+        onCloseAllInGroup="group-2"
+      ></app-button>
+    </div>
+  </div>
+</app-main-layout>
