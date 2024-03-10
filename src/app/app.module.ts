@@ -34,9 +34,9 @@ import { DisableLinkDirective } from './custom-directives/disable-link.directive
 
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
-import { DefaultClassesDirective } from './custom-directives/default-classes.directive';
-import { InputHelperTextClassesDirective } from './custom-directives/input-helper-text-classes.directive';
-import { InputClassesDirective } from './custom-directives/input-classes.directive';
+import { DefaultClassesDirective } from './custom-directives/styling/default-classes.directive';
+import { InputHelperTextClassesDirective } from './custom-directives/styling/input-helper-text-classes.directive';
+import { InputClassesDirective } from './custom-directives/styling/input-classes.directive';
 import { FocusFormDirective } from './custom-directives/focus-form.directive';
 import { NoSpacesDirective } from './custom-directives/custom-validators/no-spaces.directive';
 import { NoContentDirective } from './custom-directives/custom-validators/no-content.directive';
@@ -46,6 +46,9 @@ import { ButtonChildComponent } from './custom-components/button/button-child/bu
 import { AlertComponent } from './custom-components/alert/alert.component';
 import { KeyboardListenerDirective } from './custom-directives/keyboard-listener/keyboard-listener.directive';
 import { RemovableAlertComponent } from './custom-components/removable-alert/removable-alert.component';
+import { InitTimersDirective } from './custom-directives/init-timers.directive';
+import { DirectivesComponent } from './blog/directives/directives.component';
+import { DisplayControlsDirective } from './custom-directives/display-controls.directive';
 
 @NgModule({
   declarations: [
@@ -85,6 +88,9 @@ import { RemovableAlertComponent } from './custom-components/removable-alert/rem
     AlertComponent,
     KeyboardListenerDirective,
     RemovableAlertComponent,
+    InitTimersDirective,
+    DirectivesComponent,
+    DisplayControlsDirective,
   ],
   imports: [
     BrowserModule,

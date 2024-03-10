@@ -8,8 +8,5 @@ import { LocalStorageService } from 'src/app/storage/local-storage.service';
   styleUrls: ['./main-nav.component.scss'],
 })
 export class MainNavComponent {
-  navItems = [
-    { name: 'Still to do', href: '#' },
-    { name: 'Still to do', href: '#' },
-  ];
+  navItems = [{ name: 'Still to do', href: '#' }];
 }

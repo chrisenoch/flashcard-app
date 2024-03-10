@@ -10,6 +10,8 @@ export class ElementControlsService {
   close$ = new Subject<{ event: Event; elementId: string } | null>();
   closeAll$ = new Subject<Event | null>();
   closeAllOthers$ = new Subject<{ event: Event; elementId: string } | null>();
+  closeById$ = new Subject<{ event: Event; elementId: string } | null>();
+  showById$ = new Subject<{ event: Event; elementId: string } | null>();
   closeAllInGroup$ = new Subject<{
     event: Event;
     elementGroupId: string;
@@ -64,6 +66,10 @@ export class ElementControlsService {
     this.closeAllInGroup$.next({ event: e, elementGroupId: elementGroupId });
   }
 
+  onCloseById(e: Event, elementId: string) {
+    this.closeById$.next({ event: e, elementId: elementId });
+  }
+
   onCloseAllOthersInGroup(e: Event, elementId: string, elementGroupId: string) {
     this.closeAllOthersInGroup$.next({ event: e, elementId, elementGroupId });
   }
@@ -73,11 +79,16 @@ export class ElementControlsService {
   }
 
   onClose(e: Event, elementId: string) {
+    console.log('in onClose e and elementId ' + e + ' ' + elementId);
     this.close$.next({ event: e, elementId: elementId });
   }
 
   onShow(e: Event, elementId: string) {
     this.show$.next({ event: e, elementId });
+  }
+
+  onShowById(e: Event, elementId: string) {
+    this.showById$.next({ event: e, elementId: elementId });
   }
 
   onShowAll(e: Event) {
