@@ -8,11 +8,13 @@ import { Component } from '@angular/core';
 export class DirectivesComponent {
   currentShowControl: 'PAUSE' | 'CANCEL' | 'RESUME' | undefined = undefined;
   currentHideControl: 'PAUSE' | 'CANCEL' | 'RESUME' | undefined = undefined;
+  showTimedEleOne = false;
+  showTimedEleTwo = true;
   updateShowReady() {
-    console.log('updateShowReady called in tour-guide demo component');
+    this.showTimedEleOne = true;
   }
   updateHideReady() {
-    console.log('updateHideReady called in tour-guide demo component');
+    this.showTimedEleTwo = false;
   }
 
   fooOneIsOpen = true;

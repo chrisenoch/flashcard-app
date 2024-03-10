@@ -1,168 +1,203 @@
 <app-main-layout class="mb-96">
-  <div class="mb-96 w-[64rem] mx-auto my-20 flex flex-col items-center">
+  <div class="mb-96 w-[64rem] mx-auto my-20 flex flex-col">
     <div class="flex flex-col items-start">
-      <h1 class="mb-8 text-5xl text-center">Tour Guide Demo</h1>
+      <h1 class="mb-8 text-5xl text-center">Directives</h1>
       <section class="mb-10">
-        <h2 class="text-3xl mb-2">Overview</h2>
+        <h2 class="text-3xl mb-2">Directives I have built:</h2>
         <ul class="ml-12">
           <li class="list-disc">
-            It is a tooltip with extra features such as timers and the ability
-            to move from one element to another.
+            Keyboard listener. Used with my local storage service to ensure some
+            notifications are not shown more than once.
           </li>
-        </ul>
-      </section>
-      <section class="mb-10">
-        <h2 class="text-3xl mb-2">Features</h2>
-        <ul class="ml-12">
-          <li class="list-disc">Can move from one element to another.</li>
           <li class="list-disc">
-            Automatically adjusts when:
-            <ul class="ml-6">
-              <li class="list-disc">Screen is resized.</li>
-              <li class="list-disc">User scrolls.</li>
-              <li class="list-disc">
-                Layout shifts due to an item appearing in the DOM that moves
-                content / brreaks the layout.
-              </li>
-            </ul>
+            CSS classes directive. E.g. the input fields on the form on the
+            SignIn page are styled using directives only.
           </li>
-          <li class="list-disc">Customise the arrows.</li>
           <li class="list-disc">
-            Include any content you want via <code>ng-content</code>.
+            Form focuser. For toggling the focus on an input (see the SignIn
+            page).
           </li>
-        </ul>
-      </section>
-      <section class="mb-10">
-        <h2 class="text-3xl mb-2">Limitations</h2>
-        <ul class="ml-12">
           <li class="list-disc">
-            Does not adjust position if it overflows the container/page.
+            Disable Link directive. For simulating disabled state on a
+            LinkButton.
           </li>
+          <li class="list-disc">And the ones below...</li>
         </ul>
       </section>
     </div>
-    <p class="mt-12 text-purple-600">(Directives control the buttons)</p>
-    <div class="mt-4 mb-8 h-12 flex flex-wrap gap-2">
+
+    <section class="mb-10">
+      <h2 class="text-3xl mb-2">
+        Directives are added to both fire and listen to the various open/close
+        events
+      </h2>
+
+      <div class="mt-4 mb-4 h-12 flex flex-wrap gap-2">
+        <ng-container
+          elementId="Foo"
+          elementGroupId="1"
+          (isOpen)="updateFooOneIsOpen($event)"
+          appDisplayControls
+        >
+          <div *ngIf="fooOneIsOpen" class="bg-blue-300 p-3 rounded-lg">
+            Foo (Group 1)
+          </div>
+        </ng-container>
+        <ng-container
+          elementId="Bar"
+          elementGroupId="1"
+          (isOpen)="updateBarOneIsOpen($event)"
+          appDisplayControls
+        >
+          <div *ngIf="barOneIsOpen" class="bg-blue-300 p-3 rounded-lg">
+            Bar (Group 1)
+          </div>
+        </ng-container>
+        <ng-container
+          elementId="Foo 2"
+          elementGroupId="2"
+          (isOpen)="updateFooTwoIsOpen($event)"
+          appDisplayControls
+        >
+          <div *ngIf="fooTwoIsOpen" class="bg-orange-300 p-3 rounded-lg">
+            Foo 2 (Group 2)
+          </div>
+        </ng-container>
+        <ng-container
+          elementId="Bar 2"
+          elementGroupId="2"
+          (isOpen)="updateBarTwoIsOpen($event)"
+          appDisplayControls
+        >
+          <div *ngIf="barTwoIsOpen" class="bg-orange-300 p-3 rounded-lg">
+            Bar 2 (Group 2)
+          </div>
+        </ng-container>
+      </div>
+      <div class="mt-4 mb-8 h-12 flex flex-wrap gap-2">
+        <app-button
+          buttonText="Close Group 1"
+          appElementControls
+          onCloseAllInGroup="1"
+        ></app-button>
+        <app-button
+          buttonText="Open Group 1"
+          appElementControls
+          onShowAllOthersInGroup="1"
+        ></app-button>
+        <app-button
+          variant="secondary"
+          buttonText="Close Group 2"
+          appElementControls
+          onCloseAllInGroup="2"
+        ></app-button>
+        <app-button
+          variant="secondary"
+          buttonText="Open Group 2"
+          appElementControls
+          onShowAllOthersInGroup="2"
+        ></app-button>
+        <app-button
+          variant="plain"
+          buttonText="Close Foo 1"
+          appElementControls
+          onCloseById="Foo"
+        ></app-button>
+        <app-button
+          variant="plain"
+          buttonText="Open Foo 1"
+          appElementControls
+          onShowById="Foo"
+        ></app-button>
+      </div>
+    </section>
+    <section class="mb-10">
+      <h2 class="text-3xl mb-2">Directives with RXJS to add timers</h2>
+      <ul class="ml-12 mb-4">
+        <li class="list-disc">
+          The timers are for showing/hiding content after a certain amount of
+          time.
+        </li>
+        <li class="list-disc">
+          The timers pause on screen resize and resume after resize has
+          finished.
+        </li>
+        <li class="list-disc">You can cancel, pause or resume the timers.</li>
+        <li class="list-disc">
+          <strong>Refresh the screen to see them in action.</strong>
+        </li>
+        <li class="list-disc">
+          <strong
+            >After cancelling, you must refresh the page because once they have
+            been cancelled, they cannot be resumed.</strong
+          >
+        </li>
+      </ul>
       <ng-container
-        elementId="Foo"
-        elementGroupId="1"
-        (isOpen)="updateFooOneIsOpen($event)"
-        appDisplayControls
-      >
-        <div *ngIf="fooOneIsOpen" class="bg-blue-300 p-3 rounded-lg">
-          Foo (Group 1)
-        </div>
-      </ng-container>
-      <ng-container
-        elementId="Bar"
-        elementGroupId="1"
-        (isOpen)="updateBarOneIsOpen($event)"
-        appDisplayControls
-      >
-        <div *ngIf="barOneIsOpen" class="bg-blue-300 p-3 rounded-lg">
-          Bar (Group 1)
-        </div>
-      </ng-container>
-      <ng-container
-        elementId="Foo 2"
-        elementGroupId="2"
-        (isOpen)="updateFooTwoIsOpen($event)"
-        appDisplayControls
-      >
-        <div *ngIf="fooTwoIsOpen" class="bg-orange-300 p-3 rounded-lg">
-          Foo 2 (Group 2)
-        </div>
-      </ng-container>
-      <ng-container
-        elementId="Bar 2"
-        elementGroupId="2"
-        (isOpen)="updateBarTwoIsOpen($event)"
-        appDisplayControls
-      >
-        <div *ngIf="barTwoIsOpen" class="bg-orange-300 p-3 rounded-lg">
-          Bar 2 (Group 2)
-        </div>
-      </ng-container>
-    </div>
-    <div class="mt-4 mb-8 h-12 flex flex-wrap gap-2">
-      <app-button
-        buttonText="Close Group 1"
-        appElementControls
-        onCloseAllInGroup="1"
-      ></app-button>
-      <app-button
-        buttonText="Open Group 1"
-        appElementControls
-        onShowAllOthersInGroup="1"
-      ></app-button>
-      <app-button
-        variant="secondary"
-        buttonText="Close Group 2"
-        appElementControls
-        onCloseAllInGroup="2"
-      ></app-button>
-      <app-button
-        variant="secondary"
-        buttonText="Open Group 2"
-        appElementControls
-        onShowAllOthersInGroup="2"
-      ></app-button>
-      <app-button
-        variant="plain"
-        buttonText="Close Foo 1"
-        appElementControls
-        onCloseById="Foo"
-      ></app-button>
-      <app-button
-        variant="plain"
-        buttonText="Open Foo 1"
-        appElementControls
-        onShowById="Foo"
-      ></app-button>
-    </div>
-    <div class="mt-4 mb-8 flex flex-wrap gap-2">
-      <div
-        class="bg-orange-300 w-24 h-24"
         appInitTimers
         [showOnInitDelay]="3000"
-        [hideOnInitDelay]="5000"
         (onShowReady)="updateShowReady()"
-        (onHideReady)="updateHideReady()"
         [controlShowOnInitDelay]="currentShowControl"
+      >
+        <div
+          *ngIf="showTimedEleOne"
+          class="bg-green-300 p-3 rounded-lg inline-block mr-2"
+        >
+          ShowOnInit Delay 3 secs
+        </div>
+      </ng-container>
+
+      <ng-container
+        appInitTimers
+        [hideOnInitDelay]="8000"
+        (onHideReady)="updateHideReady()"
         [controlHideOnInitDelay]="currentHideControl"
       >
-        Test delay timer directive
+        <div
+          *ngIf="showTimedEleTwo"
+          class="bg-yellow-300 p-3 rounded-lg inline-block"
+        >
+          HideOnInit Delay 8 secs
+        </div>
+      </ng-container>
+      <div class="mt-4 mb-8 flex flex-wrap gap-2">
+        <app-button
+          size="sm"
+          (click)="controlShowOnInit('PAUSE')"
+          variant="primaryOutlined"
+          buttonText="Pause showOnInit"
+        ></app-button>
+        <app-button
+          size="sm"
+          variant="primaryOutlined"
+          (click)="controlShowOnInit('RESUME')"
+          buttonText="Resume showOnInit"
+        ></app-button>
+        <app-button
+          size="sm"
+          variant="primaryOutlined"
+          (click)="controlShowOnInit('CANCEL')"
+          buttonText="Cancel showOnInit"
+        ></app-button>
+        <app-button
+          size="sm"
+          variant="secondaryOutlined"
+          (click)="controlHideOnInit('PAUSE')"
+          buttonText="Pause HideOnInit"
+        ></app-button>
+        <app-button
+          size="sm"
+          variant="secondaryOutlined"
+          (click)="controlHideOnInit('RESUME')"
+          buttonText="Resume HideOnInit"
+        ></app-button>
+        <app-button
+          size="sm"
+          variant="secondaryOutlined"
+          (click)="controlHideOnInit('CANCEL')"
+          buttonText="Cancel hideOnInit"
+        ></app-button>
       </div>
-      <app-button
-        (click)="controlShowOnInit('PAUSE')"
-        variant="plain"
-        buttonText="Pause showOnInit"
-      ></app-button>
-      <app-button
-        (click)="controlShowOnInit('RESUME')"
-        variant="plain"
-        buttonText="Resume showOnInit"
-      ></app-button>
-      <app-button
-        (click)="controlShowOnInit('CANCEL')"
-        variant="plain"
-        buttonText="Cancel showOnInit"
-      ></app-button>
-      <app-button
-        (click)="controlHideOnInit('PAUSE')"
-        variant="plain"
-        buttonText="Pause HideOnInit"
-      ></app-button>
-      <app-button
-        (click)="controlHideOnInit('RESUME')"
-        variant="plain"
-        buttonText="Resume HideOnInit"
-      ></app-button>
-      <app-button
-        (click)="controlHideOnInit('CANCEL')"
-        variant="plain"
-        buttonText="Cancel hideOnInit"
-      ></app-button>
-    </div>
+    </section>
   </div>
 </app-main-layout>
