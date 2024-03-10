@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import {
   addElementControlsSubscriptions,
   closeElementFromControl,
@@ -7,27 +14,42 @@ import {
 import { ElementControlsService } from '../element-controls.service';
 import { Subscription } from 'rxjs';
 import { controlledTimer } from 'src/app/models/interfaces/controlledTimer';
+import { initDelayTimers } from '../element-visibility';
 
 @Component({
   selector: 'app-directive-test',
   templateUrl: './directive-test.component.html',
   styleUrls: ['./directive-test.component.scss'],
 })
-export class DirectiveTestComponent implements OnInit {
-  visibility: 'hidden' | 'visible' = 'visible'; //change to hidden if use timers
+export class DirectiveTestComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
+  visibility: 'hidden' | 'visible' = 'hidden'; //change to hidden if use timers
   display: 'inline-block' | 'none' = 'inline-block';
   subscriptions: Subscription[] = [];
-  showOnInitDelayTimer: controlledTimer | undefined;
-  hideOnInitDelayTimer: controlledTimer | undefined;
+  // showOnInitDelayTimer: controlledTimer | undefined;
+  // hideOnInitDelayTimer: controlledTimer | undefined;
+  @Input() showOnInitDelay = 0;
+  @Input() hideOnInitDelay = 0;
   hideDelayTimer: controlledTimer | undefined;
   showDelayTimer: controlledTimer | undefined;
   isShowing = false;
   @Input() elementId: string | undefined;
   @Input() elementGroupId: string | undefined;
-  @Input('show') keepShowing = false;
+  @Input('show') keepShowing = true;
 
-  constructor(private elementControlsService: ElementControlsService) {}
+  constructor(
+    private elementControlsService: ElementControlsService,
+    readonly ngZone: NgZone
+  ) {}
+  ngAfterViewInit(): void {
+    initDelayTimers(this);
+  }
   ngOnInit(): void {
+    if (this.showOnInitDelay > 0 || this.hideOnInitDelay > 0) {
+      this.keepShowing = true;
+    }
+
     this.subscriptions.push(
       this.elementControlsService.closeAll$.subscribe((e) => {
         closeElementFromControl(this);
@@ -119,5 +141,9 @@ export class DirectiveTestComponent implements OnInit {
         }
       })
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

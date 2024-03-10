@@ -142,6 +142,13 @@
       <app-directive-test elementId="myTest2" elementGroupId="test-group2"
         >myTest2 (test-group-2)</app-directive-test
       >
+      <app-directive-test
+        elementId="myTest4"
+        elementGroupId="test-group2"
+        [showOnInitDelay]="3000"
+        [hideOnInitDelay]="3000"
+        >ShowOnInit delay 3 secs (test-group2)</app-directive-test
+      >
 
       <app-button
         variant="secondary"
@@ -165,6 +172,18 @@
         appElementControls
         onShowAllOthersInGroup="test-group"
       ></app-button>
+    </div>
+    <div class="mt-4 mb-8 flex flex-wrap gap-2">
+      <div
+        class="bg-orange-300 w-24 h-24"
+        appInitTimers
+        [showOnInitDelay]="3000"
+        [hideOnInitDelay]="3000"
+        (onShowReady)="updateShowReady()"
+        (onHideReady)="updateHideReady()"
+      >
+        Test delay timer directive
+      </div>
     </div>
   </div>
 </app-main-layout>
