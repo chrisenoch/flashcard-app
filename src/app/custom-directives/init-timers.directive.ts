@@ -1,5 +1,4 @@
 import {
-  AfterViewChecked,
   AfterViewInit,
   Directive,
   EventEmitter,
@@ -25,12 +24,48 @@ export class InitTimersDirective implements OnInit, AfterViewInit, OnDestroy {
   @Input() hideOnInitDelay = 0;
   @Output() onShowReady = new EventEmitter<true>(true);
   @Output() onHideReady = new EventEmitter<true>(true);
+
+  @Input() set controlShowOnInitDelay(
+    control: 'PAUSE' | 'RESUME' | 'CANCEL' | undefined
+  ) {
+    if (control === 'PAUSE') {
+      this.showOnInitDelayTimer &&
+        (this.showOnInitDelayTimer.pauseTimer = true);
+    }
+    if (control === 'RESUME') {
+      this.showOnInitDelayTimer &&
+        (this.showOnInitDelayTimer.pauseTimer = false);
+    }
+
+    if (control === 'CANCEL') {
+      this.showOnInitDelayTimer &&
+        (this.showOnInitDelayTimer.cancelTimer = true);
+    }
+  }
+
+  @Input() set controlHideOnInitDelay(
+    control: 'PAUSE' | 'RESUME' | 'CANCEL' | undefined
+  ) {
+    if (control === 'PAUSE') {
+      this.hideOnInitDelayTimer &&
+        (this.hideOnInitDelayTimer.pauseTimer = true);
+    }
+    if (control === 'RESUME') {
+      this.hideOnInitDelayTimer &&
+        (this.hideOnInitDelayTimer.pauseTimer = false);
+    }
+
+    if (control === 'CANCEL') {
+      this.hideOnInitDelayTimer &&
+        (this.hideOnInitDelayTimer.cancelTimer = true);
+    }
+  }
+
   showOnInitDelayTimer: controlledTimer | undefined;
   hideOnInitDelayTimer: controlledTimer | undefined;
   private resizeObs$!: Observable<Event>;
   private resizeSub$!: Subscription | undefined;
   private firstOfResizeBatch = true;
-
   constructor(private ngZone: NgZone) {}
   ngOnInit(): void {
     this.addWindowResizeHandler();
@@ -67,8 +102,7 @@ export class InitTimersDirective implements OnInit, AfterViewInit, OnDestroy {
             this.ngZone.run(() => {
               //Controlled Timer throws error when it is deliberately cancelled. Any other way would result in the 'complete' callback on subscribe being called. I think this is confusing because if the timer has been cancelled it has not completed.
               if (e instanceof ControlledError) {
-                //to do: callback here
-                //this.onShowTimerCancelled.emit();
+                //do nothing.
               }
             });
           },
@@ -87,6 +121,14 @@ export class InitTimersDirective implements OnInit, AfterViewInit, OnDestroy {
             this.ngZone.run(() => {
               //to do callback
               this.onHideReady.emit();
+            });
+          },
+          error: (e: Error) => {
+            this.ngZone.run(() => {
+              //Controlled Timer throws error when it is deliberately cancelled. Any other way would result in the 'complete' callback on subscribe being called. I think this is confusing because if the timer has been cancelled it has not completed.
+              if (e instanceof ControlledError) {
+                //do nothing.
+              }
             });
           },
         });

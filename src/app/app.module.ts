@@ -49,6 +49,7 @@ import { RemovableAlertComponent } from './custom-components/removable-alert/rem
 import { TourGuideDemoComponent } from './blog/tour-guide/tour-guide-demo/tour-guide-demo.component';
 import { DirectiveTestComponent } from './custom-components/directive-test/directive-test.component';
 import { InitTimersDirective } from './custom-directives/init-timers.directive';
+import { DirectivesComponent } from './blog/directives/directives.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { InitTimersDirective } from './custom-directives/init-timers.directive';
     TourGuideDemoComponent,
     DirectiveTestComponent,
     InitTimersDirective,
+    DirectivesComponent,
   ],
   imports: [
     BrowserModule,

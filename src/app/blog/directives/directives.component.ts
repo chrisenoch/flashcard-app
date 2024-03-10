@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-tour-guide-demo',
-  templateUrl: './tour-guide-demo.component.html',
-  styleUrls: ['./tour-guide-demo.component.scss'],
+  selector: 'app-directives',
+  templateUrl: './directives.component.html',
+  styleUrls: ['./directives.component.scss'],
 })
-export class TourGuideDemoComponent {
-  currentShowControl: any = null;
-  currentHideControl: any = null;
+export class DirectivesComponent {
+  currentShowControl: 'PAUSE' | 'CANCEL' | 'RESUME' | undefined = undefined;
+  currentHideControl: 'PAUSE' | 'CANCEL' | 'RESUME' | undefined = undefined;
   updateShowReady() {
     console.log('updateShowReady called in tour-guide demo component');
   }
