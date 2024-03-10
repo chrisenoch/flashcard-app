@@ -42,45 +42,82 @@
       </section>
     </div>
     <p class="mt-12 text-purple-600">(Directives control the buttons)</p>
-    <div class="mt-4 mb-8 flex flex-wrap gap-2">
-      <app-directive-test elementId="myTest" elementGroupId="test-group"
-        >myTest (test-group)</app-directive-test
+    <div class="mt-4 mb-8 h-12 flex flex-wrap gap-2">
+      <ng-container
+        elementId="Foo"
+        elementGroupId="1"
+        (isOpen)="updateFooOneIsOpen($event)"
+        appDisplayControls
       >
-      <app-directive-test elementId="myTest3" elementGroupId="test-group"
-        >myTest3 (test-group)</app-directive-test
+        <div *ngIf="fooOneIsOpen" class="bg-blue-300 p-3 rounded-lg">
+          Foo (Group 1)
+        </div>
+      </ng-container>
+      <ng-container
+        elementId="Bar"
+        elementGroupId="1"
+        (isOpen)="updateBarOneIsOpen($event)"
+        appDisplayControls
       >
-      <app-directive-test elementId="myTest2" elementGroupId="test-group2"
-        >myTest2 (test-group-2)</app-directive-test
+        <div *ngIf="barOneIsOpen" class="bg-blue-300 p-3 rounded-lg">
+          Bar (Group 1)
+        </div>
+      </ng-container>
+      <ng-container
+        elementId="Foo 2"
+        elementGroupId="2"
+        (isOpen)="updateFooTwoIsOpen($event)"
+        appDisplayControls
       >
-      <app-directive-test
-        elementId="myTest4"
-        elementGroupId="test-group2"
-        [showOnInitDelay]="3000"
-        [hideOnInitDelay]="3000"
-        >ShowOnInit delay 3 secs (test-group2)</app-directive-test
+        <div *ngIf="fooTwoIsOpen" class="bg-orange-300 p-3 rounded-lg">
+          Foo 2 (Group 2)
+        </div>
+      </ng-container>
+      <ng-container
+        elementId="Bar 2"
+        elementGroupId="2"
+        (isOpen)="updateBarTwoIsOpen($event)"
+        appDisplayControls
       >
-
+        <div *ngIf="barTwoIsOpen" class="bg-orange-300 p-3 rounded-lg">
+          Bar 2 (Group 2)
+        </div>
+      </ng-container>
+    </div>
+    <div class="mt-4 mb-8 h-12 flex flex-wrap gap-2">
       <app-button
-        variant="secondary"
-        buttonText="close test2 by Id"
+        buttonText="Close Group 1"
         appElementControls
-        onCloseById="myTest2"
+        onCloseAllInGroup="1"
+      ></app-button>
+      <app-button
+        buttonText="Open Group 1"
+        appElementControls
+        onShowAllOthersInGroup="1"
       ></app-button>
       <app-button
         variant="secondary"
-        buttonText="show test2 by Id"
+        buttonText="Close Group 2"
         appElementControls
-        onShowById="myTest2"
+        onCloseAllInGroup="2"
       ></app-button>
       <app-button
-        buttonText="close test-group"
+        variant="secondary"
+        buttonText="Open Group 2"
         appElementControls
-        onCloseAllInGroup="test-group"
+        onShowAllOthersInGroup="2"
       ></app-button>
       <app-button
-        buttonText="open test-group"
+        variant="plain"
+        buttonText="Close Foo 1"
         appElementControls
-        onShowAllOthersInGroup="test-group"
+        onCloseById="Foo"
+      ></app-button>
+      <app-button
+        variant="plain"
+        buttonText="Open Foo 1"
+        appElementControls
+        onShowById="Foo"
       ></app-button>
     </div>
     <div class="mt-4 mb-8 flex flex-wrap gap-2">

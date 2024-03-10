@@ -15,6 +15,28 @@ export class DirectivesComponent {
     console.log('updateHideReady called in tour-guide demo component');
   }
 
+  fooOneIsOpen = true;
+  barOneIsOpen = true;
+  fooTwoIsOpen = true;
+  barTwoIsOpen = true;
+
+  updateFooOneIsOpen(e: boolean) {
+    console.log('in updateISOpen ' + e);
+    this.fooOneIsOpen = e;
+  }
+  updateBarOneIsOpen(e: boolean) {
+    console.log('in updateISOpen ' + e);
+    this.barOneIsOpen = e;
+  }
+  updateFooTwoIsOpen(e: boolean) {
+    console.log('in updateISOpen ' + e);
+    this.fooTwoIsOpen = e;
+  }
+  updateBarTwoIsOpen(e: boolean) {
+    console.log('in updateISOpen ' + e);
+    this.barTwoIsOpen = e;
+  }
+
   controlShowOnInit(control: 'PAUSE' | 'CANCEL' | 'RESUME') {
     if (control === 'PAUSE') {
       this.currentShowControl = 'PAUSE';

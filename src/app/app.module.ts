@@ -50,6 +50,7 @@ import { TourGuideDemoComponent } from './blog/tour-guide/tour-guide-demo/tour-g
 import { DirectiveTestComponent } from './custom-components/directive-test/directive-test.component';
 import { InitTimersDirective } from './custom-directives/init-timers.directive';
 import { DirectivesComponent } from './blog/directives/directives.component';
+import { DisplayControlsDirective } from './custom-directives/display-controls.directive';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import { DirectivesComponent } from './blog/directives/directives.component';
     DirectiveTestComponent,
     InitTimersDirective,
     DirectivesComponent,
+    DisplayControlsDirective,
   ],
   imports: [
     BrowserModule,
