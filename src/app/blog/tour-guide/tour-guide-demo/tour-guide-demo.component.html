@@ -89,7 +89,7 @@
     </div>
   </div>
 
-  <div class="w-[64rem] mx-auto my-20 flex flex-col items-center">
+  <div class="mb-96 w-[64rem] mx-auto my-20 flex flex-col items-center">
     <div class="flex flex-col items-start">
       <h1 class="mb-8 text-5xl text-center">Tour Guide Demo</h1>
       <section class="mb-10">
@@ -131,38 +131,39 @@
         </ul>
       </section>
     </div>
-    <div class="my-8 flex flex-wrap gap-2">
+    <p class="mt-12 text-purple-600">(Directives control the buttons)</p>
+    <div class="mt-4 mb-8 flex flex-wrap gap-2">
+      <app-directive-test elementId="myTest" elementGroupId="test-group"
+        >myTest (test-group)</app-directive-test
+      >
+      <app-directive-test elementId="myTest3" elementGroupId="test-group"
+        >myTest3 (test-group)</app-directive-test
+      >
+      <app-directive-test elementId="myTest2" elementGroupId="test-group2"
+        >myTest2 (test-group-2)</app-directive-test
+      >
+
       <app-button
-        class="mr-2"
-        size="sm"
-        buttonText="Show All"
-        elementId="a"
+        variant="secondary"
+        buttonText="close test2 by Id"
         appElementControls
-        [onShowAll]="true"
+        onCloseById="myTest2"
       ></app-button>
       <app-button
-        class="mr-2"
-        size="sm"
-        buttonText="Close All"
-        elementId="b"
+        variant="secondary"
+        buttonText="show test2 by Id"
         appElementControls
-        [onCloseAll]="true"
+        onShowById="myTest2"
       ></app-button>
       <app-button
-        class="mr-2"
-        size="sm"
-        buttonText="Close All In Group 1"
-        onCloseAllInGroup="group-1"
-        elementId="c"
+        buttonText="close test-group"
         appElementControls
+        onCloseAllInGroup="test-group"
       ></app-button>
       <app-button
-        class="mr-2"
-        size="sm"
-        buttonText="Close All In Group-2"
-        elementId="d"
+        buttonText="open test-group"
         appElementControls
-        onCloseAllInGroup="group-2"
+        onShowAllOthersInGroup="test-group"
       ></app-button>
     </div>
   </div>

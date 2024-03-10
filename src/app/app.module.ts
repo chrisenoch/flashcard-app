@@ -47,6 +47,7 @@ import { AlertComponent } from './custom-components/alert/alert.component';
 import { KeyboardListenerDirective } from './custom-directives/keyboard-listener/keyboard-listener.directive';
 import { RemovableAlertComponent } from './custom-components/removable-alert/removable-alert.component';
 import { TourGuideDemoComponent } from './blog/tour-guide/tour-guide-demo/tour-guide-demo.component';
+import { DirectiveTestComponent } from './custom-components/directive-test/directive-test.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { TourGuideDemoComponent } from './blog/tour-guide/tour-guide-demo/tour-g
     KeyboardListenerDirective,
     RemovableAlertComponent,
     TourGuideDemoComponent,
+    DirectiveTestComponent,
   ],
   imports: [
     BrowserModule,
