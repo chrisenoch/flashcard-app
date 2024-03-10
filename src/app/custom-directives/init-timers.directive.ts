@@ -5,24 +5,36 @@ import {
   EventEmitter,
   Input,
   NgZone,
+  OnDestroy,
+  OnInit,
   Output,
 } from '@angular/core';
-import { controllableTimer } from '../custom-components/controllable-timer';
+import {
+  controllableTimer,
+  pauseTimers,
+} from '../custom-components/controllable-timer';
 import { controlledTimer } from '../models/interfaces/controlledTimer';
 import { ControlledError } from '../custom-components/errors/ControlledError';
+import { Observable, Subscription, debounceTime, fromEvent, tap } from 'rxjs';
 
 @Directive({
   selector: '[appInitTimers]',
 })
-export class InitTimersDirective implements AfterViewInit {
+export class InitTimersDirective implements OnInit, AfterViewInit, OnDestroy {
   @Input() showOnInitDelay = 0;
   @Input() hideOnInitDelay = 0;
   @Output() onShowReady = new EventEmitter<true>(true);
   @Output() onHideReady = new EventEmitter<true>(true);
   showOnInitDelayTimer: controlledTimer | undefined;
   hideOnInitDelayTimer: controlledTimer | undefined;
+  private resizeObs$!: Observable<Event>;
+  private resizeSub$!: Subscription | undefined;
+  private firstOfResizeBatch = true;
 
   constructor(private ngZone: NgZone) {}
+  ngOnInit(): void {
+    this.addWindowResizeHandler();
+  }
 
   ngAfterViewInit(): void {
     this.initDelayTimers();
@@ -80,5 +92,44 @@ export class InitTimersDirective implements AfterViewInit {
         });
       });
     }
+  }
+
+  private addWindowResizeHandler() {
+    this.resizeObs$ = fromEvent(window, 'resize');
+    this.ngZone.runOutsideAngular(() => {
+      this.resizeSub$ = this.resizeObs$
+        .pipe(
+          tap(() => {
+            this.handleWindowResizeStart();
+          }),
+          debounceTime(1000)
+        )
+        .subscribe((e) => {
+          this.ngZone.run(() => {
+            this.handleWindowResizeEnd();
+          });
+        });
+    });
+  }
+
+  private handleWindowResizeStart() {
+    if (this.firstOfResizeBatch) {
+      this.ngZone.run(() => {
+        pauseTimers(
+          [this.showOnInitDelayTimer, this.hideOnInitDelayTimer],
+          true
+        );
+        this.firstOfResizeBatch = false;
+      });
+    }
+  }
+
+  private handleWindowResizeEnd() {
+    pauseTimers([this.showOnInitDelayTimer, this.hideOnInitDelayTimer], false);
+    this.firstOfResizeBatch = true;
+  }
+
+  ngOnDestroy(): void {
+    this.resizeSub$ && this.resizeSub$.unsubscribe();
   }
 }

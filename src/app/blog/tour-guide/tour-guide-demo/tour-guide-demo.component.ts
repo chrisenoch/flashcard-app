@@ -9,7 +9,6 @@ export class TourGuideDemoComponent {
   updateShowReady() {
     console.log('updateShowReady called in tour-guide demo component');
   }
-
   updateHideReady() {
     console.log('updateHideReady called in tour-guide demo component');
   }
