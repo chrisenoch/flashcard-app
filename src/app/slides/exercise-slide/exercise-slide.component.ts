@@ -1,11 +1,4 @@
-import {
-  AfterContentChecked,
-  AfterViewChecked,
-  Component,
-  Input,
-  ViewChild,
-} from '@angular/core';
-import { AccordionComponent } from 'src/app/custom-components/accordion/accordion.component';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-exercise-slide',
@@ -13,7 +6,11 @@ import { AccordionComponent } from 'src/app/custom-components/accordion/accordio
   styleUrls: ['./exercise-slide.component.scss'],
 })
 export default class ExerciseSlideComponent {
-  @Input() questions: { question: string; answer: string }[] = [];
+  @Input() questions: {
+    questionId: string;
+    question: string;
+    answer: string;
+  }[] = [];
   @Input() accordionState = {
     showAllTabs: false,
   };

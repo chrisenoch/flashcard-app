@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WordItem } from './models/interfaces/wordItem';
+import { WordEntity } from './models/interfaces/wordEntity';
 import { of } from 'rxjs';
 
 @Injectable({
@@ -7,14 +7,14 @@ import { of } from 'rxjs';
 })
 export class WordService {
   //words will eventually come from backend. So emulate this by using 'of' to create an observable for now.
-  getWordItems() {
-    return of(this.wordItems.slice());
+  getWordEntities() {
+    return of(this.wordEntities.slice());
   }
 
-  wordItems: WordItem[] = [
+  wordEntities: WordEntity[] = [
     {
       id: 'word-1',
-      type: 'WORD',
+      kind: 'WORD',
       english: 'Table',
       spanish: 'La mesa',
       explanation:
@@ -23,7 +23,7 @@ export class WordService {
     },
     {
       id: 'word-2',
-      type: 'WORD',
+      kind: 'WORD',
       english: 'Chair',
       spanish: 'La silla',
       explanation: 'Some chair explanation here',
@@ -31,7 +31,7 @@ export class WordService {
     },
     {
       id: 'word-3',
-      type: 'WORD',
+      kind: 'WORD',
       english: 'Door',
       spanish: 'La puerta',
       explanation: 'Some door explanation here',
@@ -39,7 +39,7 @@ export class WordService {
     },
     {
       id: 'word-4',
-      type: 'WORD',
+      kind: 'WORD',
       english: 'Lamp',
       spanish: 'La lámpara',
       explanation: 'Some explanation here',
@@ -47,7 +47,7 @@ export class WordService {
     },
     {
       id: 'word-5',
-      type: 'WORD',
+      kind: 'WORD',
       english: 'Bedside table',
       spanish: 'La mesita de noche',
       explanation: 'Some explanation here',
@@ -55,7 +55,7 @@ export class WordService {
     },
     {
       id: 'word-6',
-      type: 'WORD',
+      kind: 'WORD',
       english: 'Bookcase',
       spanish: 'La estantería',
       explanation: 'Some explanation here',
@@ -63,7 +63,7 @@ export class WordService {
     },
     {
       id: 'word-7',
-      type: 'WORD',
+      kind: 'WORD',
       english: 'Wardrobe',
       spanish: 'El armario',
       explanation: 'Some explanation here',

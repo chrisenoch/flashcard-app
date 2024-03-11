@@ -3,7 +3,7 @@
 
   <ol class="text-3xl content-around flex flex-col flex-wrap w-[80%] h-[36rem]">
     <div
-      *ngFor="let item of wordItems; index as i"
+      *ngFor="let wordEntity of wordEntities; index as i"
       class="flex items-center gap-4 pb-12"
     >
       <div
@@ -11,8 +11,8 @@
       >
         {{ i + 1 }}
       </div>
-      <li *ngIf="showPrimaryWordFirst">{{ item.english }}</li>
-      <li *ngIf="!showPrimaryWordFirst">{{ item.spanish }}</li>
+      <li *ngIf="showPrimaryWordFirst">{{ wordEntity.english }}</li>
+      <li *ngIf="!showPrimaryWordFirst">{{ wordEntity.spanish }}</li>
     </div>
   </ol>
 </div>

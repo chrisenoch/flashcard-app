@@ -1,0 +1,34 @@
+<div class="flex gap-2">
+  <span
+    class="mr-16 absolute -top-4 left-0 inline-block w-30 h-30 bg-blue-100 rounded-full"
+  >
+    <!-- <img
+      class="h-16"
+      src="https://raw.githubusercontent.com/chrisenoch/assets/main/teacher.png"
+      alt=""
+    /> -->
+    <img class="h-16" src="assets/images/working-man-14894.png" alt="" />
+  </span>
+  <!-- <button
+    appElementControls
+    [elementId]="elementId"
+    [onShowAll]="true"
+    class="ml-16 text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+  >
+    Show All
+  </button>
+  <button
+    appElementControls
+    [elementId]="elementId"
+    [onCloseAllOthers]="true"
+    class="text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+  >
+    Close All
+  </button> -->
+  <button
+    class="ml-16 mr-4 text-blue-950 hover:enabled:bg-blue-200 py-1 px-2 rounded-lg"
+    (click)="onToggleTooltips()"
+  >
+    Turn {{ showTooltipsOnUserAction ? "off" : "on" }} Tooltips
+  </button>
+</div>

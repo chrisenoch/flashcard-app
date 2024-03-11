@@ -1,5 +1,5 @@
 <div
-  class="relative pt-16 h-[calc(100%-96px)] flex flex-col gap-8 items-center rounded-xl border-purple-500/10 border bg-[#FCFFF5]"
+  class="relative pt-16 h-[calc(100%-96px)] flex flex-col gap-8 items-center rounded-xl"
 >
   <p
     class="text-purple-500 text-8xl"
@@ -17,25 +17,17 @@
     <p class="text-purple-500 text-8xl" *ngIf="showPrimaryWordFirst">
       {{ primaryWord }}
     </p>
-    <i
-      *ngIf="showPrimaryWordFirst"
-      class="bi bi-diamond-fill text-gray-700"
-    ></i>
 
     <p class="text-purple-500 text-8xl" *ngIf="!showPrimaryWordFirst">
       {{ secondaryWord }}
     </p>
   </ng-container>
   <ng-container *ngIf="showTranslation">
-    <p *ngIf="showPrimaryWordFirst" class="text-pink-500 text-6xl">
+    <p *ngIf="showPrimaryWordFirst" class="mt-3 text-pink-500 text-6xl">
       {{ "(" + secondaryWord + ")" }}
     </p>
-    <i
-      *ngIf="!showPrimaryWordFirst"
-      class="bi bi-diamond-fill text-black font-medium"
-    ></i>
 
-    <p *ngIf="!showPrimaryWordFirst" class="text-pink-500 text-6xl">
+    <p *ngIf="!showPrimaryWordFirst" class="mt-3 text-pink-500 text-6xl">
       {{ "(" + primaryWord + ")" }}
     </p>
   </ng-container>

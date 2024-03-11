@@ -3,11 +3,22 @@ import {
   AfterContentInit,
   Component,
   ContentChildren,
+  DoCheck,
   Input,
+  OnChanges,
   OnInit,
   QueryList,
+  SimpleChanges,
 } from '@angular/core';
 import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
+import { triggerCycle } from 'src/app/utlities/tick';
+import {
+  PropertyNamesAsStrings,
+  initFields,
+  getKeysAsValues,
+  initFieldsNoSetters,
+} from 'src/app/models/types/getFields';
+import { ChevronLeftIcon } from 'primeng/icons/chevronleft';
 
 @Component({
   selector: 'app-accordion',
@@ -15,102 +26,127 @@ import { AccordionTabComponent } from './accordion-tab/accordion-tab.component';
   styleUrls: ['./accordion.component.scss'],
 })
 export class AccordionComponent
-  implements AfterContentChecked, OnInit, AfterContentInit
+  implements OnInit, AfterContentChecked, AfterContentInit, OnChanges, DoCheck
 {
+  //This allows us to use typed values for SimpleChanges in ngOnChanges
+  private fields;
   @Input() multiple = true;
-  @Input() accordionState = {
-    showAllTabs: false,
+  // Using accordionState object ensures updateShowAllTabs only runs if it was the last user action on the accordion.
+  // The problem with using a boolean such as shouldShowAllTabs is that the parent is telling us to run this method via changing an input prop.
+  // Imagine the user clicks "show all tabs", and then subsequently hides a tab. When the user hides a tab, ngOnChanges will run
+  // and updateShowAllTabs should not be run because the user just requested a tab to be hidden.
+  // If we used a boolean, updateShowAllTabs would run.
+  @Input() accordionState: {
+    showAllTabs: 'NOT_INITIALISED' | boolean;
+  } = {
+    showAllTabs: 'NOT_INITIALISED',
   };
 
-  accordionTabs: AccordionTabComponent[] = [];
+  _allowDay = true;
 
-  //use this to get the isActive status of the accordion tabs
+  @Input() set allowDay(value: boolean) {
+    this._allowDay = value;
+  }
+
+  get allowDay(): boolean {
+    return this._allowDay;
+  }
+
+  //Use this to get the isActive status of the accordion tabs
   @ContentChildren(AccordionTabComponent)
-  private contentChildren!: QueryList<AccordionTabComponent>;
+  private accordionTabsCC!: QueryList<AccordionTabComponent>;
 
-  private previousAccordionState = {};
-  private activeTabId: string | null = null; //keeps track of the activeTabId
-  private tabIdToRemove: string | null = null;
+  private activeTabId: string | 'NO_ACTIVE_TAB' = 'NO_ACTIVE_TAB';
 
-  ngOnInit() {
-    this.previousAccordionState = this.accordionState;
+  constructor() {
+    this.fields = initFields<typeof this>(this, AccordionComponent);
+    //this.fields.
+    console.log('fields below');
+    console.log(this.fields);
+  }
+
+  ngOnInit(): void {
+    if (
+      !this.multiple &&
+      this.accordionState.showAllTabs !== 'NOT_INITIALISED'
+    ) {
+      console.error(
+        'If multiple is equal to false, you should not provide a value for accordionState.showAllTabs.'
+      );
+    }
+  }
+
+  ngDoCheck(): void {
+    if (this.accordionTabsCC && !this.multiple) {
+      this.ensureOnlyOneTabIsActive();
+    }
   }
 
   ngAfterContentInit(): void {
-    this.updateShowAllTabsOnPageLoad();
-    this.initAccordionTabArr();
+    triggerCycle(this.updateShowAllTabs.bind(this));
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('changes below');
+    console.log(changes);
+    //As far as I understand, we can act on the content children here because we are telling the contentChildren what to do from a parent.
+    //If a parent were responding to changes in a content child (e.g. user form input), then we would need to use AfterContentChecked.
+    //Saves a render compared to using AfterContentChecked.
+    if (
+      this.accordionTabsCC &&
+      changes[this.fields.accordionState]?.currentValue !==
+        changes[this.fields.accordionState]?.previousValue
+    ) {
+      this.updateShowAllTabs();
+    }
   }
 
   ngAfterContentChecked() {
-    this.ensureOnlyOneTabIsActive();
-
-    if (this.accordionState !== this.previousAccordionState) {
-      this.updateShowAllTabs();
-      this.previousAccordionState = this.accordionState;
-    }
-  }
-
-  private initAccordionTabArr() {
-    for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
-      if (ele) {
-        this.accordionTabs.push(ele);
-      }
-    }
-  }
-
-  private updateShowAllTabsOnPageLoad() {
-    let showAllTabs = this.accordionState.showAllTabs;
-    for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
-      if (ele && ele.isActive === null) {
-        ele.isActive = showAllTabs;
-      }
-    }
+    // Can't run it here due to ExpressionChangedAfterItsHasBeenChecked error
+    // if (!this.multiple) {
+    //   this.ensureOnlyOneTabIsActive();
+    // }
+    // Can do this here instead of in ngOnChanges, but in this case Angular conducts an extra change detection check.
+    // if (this.accordionState !== this.previousAccordionState) {
+    //   triggerCycle(this.updateShowAllTabs.bind(this));
+    //   this.previousAccordionState = this.accordionState;
+    // }
   }
 
   private updateShowAllTabs() {
-    let showAllTabs = this.accordionState.showAllTabs;
-    for (let i = 0; i < this.contentChildren.length; i++) {
-      let ele = this.contentChildren.get(i);
-      if (ele) {
-        ele.isActive = showAllTabs;
+    if (this.accordionState.showAllTabs !== 'NOT_INITIALISED') {
+      for (let i = 0; i < this.accordionTabsCC.length; i++) {
+        let ele = this.accordionTabsCC.get(i);
+        if (ele) {
+          ele.isActive = this.accordionState.showAllTabs;
+        }
       }
     }
   }
 
   private ensureOnlyOneTabIsActive() {
-    if (!this.multiple) {
-      for (let i = 0; i < this.contentChildren.length; i++) {
-        let ele = this.contentChildren.get(i);
-
-        if (ele) {
+    //get new active tab
+    for (let i = 0; i < this.accordionTabsCC.length; i++) {
+      const accordionTab = this.accordionTabsCC.get(i);
+      if (accordionTab) {
+        if (accordionTab.isActive && this.activeTabId === 'NO_ACTIVE_TAB') {
           //no previous activeTab so just update it
-          if (ele.isActive && this.activeTabId === null) {
-            this.activeTabId = ele.tabId;
-            //need
-          } else if (
-            ele.isActive &&
-            this.activeTabId !== null &&
-            ele.tabId !== this.activeTabId
-          ) {
-            //need to set it on the actual value as well
-            this.tabIdToRemove = this.activeTabId;
-
-            //update activeTabId
-            this.activeTabId = ele.tabId;
-            break;
-          }
+          this.activeTabId = accordionTab.tabId;
+        } else if (
+          accordionTab.isActive &&
+          accordionTab.tabId !== this.activeTabId
+        ) {
+          this.activeTabId = accordionTab.tabId;
+          break;
         }
       }
+    }
 
-      if (this.tabIdToRemove) {
-        this.contentChildren.forEach((ele) => {
-          if (ele.tabId === this.tabIdToRemove) {
-            ele.isActive = false;
-          }
-        });
-        this.tabIdToRemove = null;
+    //remove other active tabs
+    for (let i = 0; i < this.accordionTabsCC.length; i++) {
+      const accordionTab = this.accordionTabsCC.get(i);
+      if (accordionTab && this.activeTabId !== accordionTab.tabId) {
+        accordionTab.isActive = false;
       }
     }
   }

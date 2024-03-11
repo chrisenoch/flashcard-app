@@ -1,6 +1,13 @@
+<!-- IMPORTANT: I haven't extracted these into button components because soon I will start my own component library and use the button components from there.-->
+<!--To do: appKeyboardListener and app-alert should not be on the nav but a wrapper for the entire app..-->
 <nav
-  class="font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
+  class="fixed bg-white z-[1500] font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
+  appKeyboardListener
 >
+  <app-removable-alert
+    alertId="explanation-of-app-1709991594775"
+  ></app-removable-alert>
+
   <div class="flex h-full px-32 items-center">
     <div class="pr-12">
       <a href="#" class="font-BubblegumSans text-4xl">
@@ -10,62 +17,79 @@
       >
     </div>
 
-    <ul class="flex grow h-full items-center justify-end gap-5">
+    <ul class="flex grow h-full items-center justify-end gap-4">
       <li class="h-full flex items-center">
-        <a
-          href="#"
-          class="p-1 h-fit w-fit hover:bg-gray-300 inline-block rounded-full bg-gray-200"
-        >
-          <span
-            class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>Flashcards</span></span
-          ></a
-        >
+        <app-button
+          buttonText="Directives"
+          variant="plain"
+          rounded="full"
+          href="/directives-demo"
+          [sx]="{
+            container: {
+              remove: [
+                'opacity-50',
+                'py-3',
+                'bg-gray-300',
+                'data-[disabled=false]:hover:bg-gray-400'
+              ],
+              add: [
+                'bg-gray-200',
+                'py-2',
+                'data-[disabled=false]:hover:bg-gray-300'
+              ]
+            }
+          }"
+        ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <a
-          href="#"
-          class="p-1 h-fit w-fit hover:bg-gray-300 inline-block rounded-full bg-gray-200"
-        >
-          <span
-            class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>Classes</span></span
-          ></a
-        >
+        <app-button
+          buttonText="My Component Lib"
+          rounded="full"
+          href="/component-library"
+          [sx]="{
+            container: {
+              remove: [
+                'py-3',
+                'bg-purple-500',
+                'data-[disabled=false]:hover:bg-purple-600'
+              ],
+              add: [
+                'bg-gray-700',
+                'py-2',
+                'data-[disabled=false]:hover:bg-gray-800'
+              ]
+            }
+          }"
+        ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <a
-          href="#"
-          class="p-1 h-fit w-fit hover:bg-gray-300 inline-block rounded-full bg-gray-200"
-        >
-          <span
-            class="py-1 px-3 inline-block text-gray-950 font-medium rounded-full"
-            ><span>Games</span></span
-          ></a
-        >
+        <app-button
+          href="/login"
+          buttonText="SignIn"
+          rounded="full"
+          variant="secondaryOutlined"
+          [sx]="{
+            container: {
+              add: ['py-3.5', 'px-5'],
+              remove: ['py-3', 'px-4']
+            }
+          }"
+        ></app-button>
       </li>
       <li class="h-full flex items-center">
-        <a
+        <app-button
           href="#"
-          class="group p-1 h-fit w-fit inline-block rounded-full border-pink-500 border-2 hover:bg-pink-500"
-        >
-          <span
-            class="py-2 px-4 inline-block font-medium bg-white group-hover:bg-pink-500 rounded-full"
-            ><span class="text-pink-500 group-hover:text-white"
-              >Sign in</span
-            ></span
-          ></a
-        >
-      </li>
-      <li class="h-full flex items-center">
-        <a
-          href="#"
-          class="p-1 h-fit w-fit inline-block rounded-full border-pink-500 border-2 bg-pink-500 hover:bg-pink-600 hover:border-pink-600"
-        >
-          <span class="py-2 px-4 inline-block text-white font-bold rounded-full"
-            ><span>Try free</span></span
-          ></a
-        >
+          buttonText="Try free"
+          rounded="full"
+          variant="secondary"
+          [disabled]="true"
+          [sx]="{
+            container: {
+              add: ['font-bold', 'py-3.5', 'px-5'],
+              remove: ['opacity-50', 'font-medium', 'py-3', 'px-4']
+            }
+          }"
+        ></app-button>
       </li>
     </ul>
   </div>
