@@ -15,11 +15,11 @@ export class RemovableAlertComponent {
 
   ngOnInit(): void {
     const alertStatus = this.localStorageService.fetch(this.alertId);
-    if (alertStatus == null) {
-      this.show = true;
-    } else {
-      this.show = false;
-    }
+    // if (alertStatus == null) {
+    //   this.show = true;
+    // } else {
+    //   this.show = false;
+    // }
   }
 
   closeAlert() {

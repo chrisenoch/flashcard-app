@@ -6,45 +6,48 @@ This is obviusly not reusable. I have just created my component library prototyp
   (click)="onClose()"
 ></div>
 <div
-  class="fixed top-[30vh] left-[40vw] p-4 bg-white z-[1610] whitespace-normal rounded-xl"
+  class="fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w- w-[450px] w-max-[90%] p-4 bg-white z-[1610] whitespace-normal rounded-xl"
 >
   <button
     (click)="onClose()"
     class="bi bi-x-circle-fill absolute top-4 right-4 inline-block text-3xl text-pink-400 cursor-pointer"
   ></button>
 
-  <div class="flex flex-col gap-2 w-[20vw] items-start">
-    <header class="w-full flex justify-center mb-4">
+  <div class="flex flex-col gap-2 items-start">
+    <header class="w-full flex justify-center mb-4 -mt-1">
       <h1
         class="inline-block mt-4 text-center text-3xl after:block after:bg-pink-300 after:h-[2px] after:mt-2"
       >
-        Important
+        Please note
       </h1>
     </header>
-    <p>
-      This app is designed for an
-      <span class="underline font-bold">interactive whiteboard.</span>
-      Consequently, it is not responsive.
-    </p>
-    <div class="underline mt-2">Responsive projects:</div>
-    <div class="ml-4">
-      <div class="flex gap-1 items-center pb-2">
-        <div class="bi bi-circle-fill text-[0.4rem] text-pink-400"></div>
-        <a href="https://nextjs-lesson-plans.vercel.app/" target="_blank"
-          >Lesson Planz <span class="text-sm">(new window)</span></a
-        >
-      </div>
-      <div class="flex gap-1 items-center pb-2">
-        <div class="bi bi-circle-fill text-[0.4rem] text-pink-400"></div>
-        <a href="https://gamble-game.vercel.app/" target="_blank"
-          >Gamble Game <span class="text-sm">(new window)</span></a
-        >
-      </div>
-      <div class="flex gap-1 items-center pb-2">
-        <div class="bi bi-circle-fill text-[0.4rem] text-pink-400"></div>
-        <a href="https://travelnews.vercel.app/" target="_blank"
-          >Travel News <span class="text-sm">(new window)</span></a
-        >
+    <div class="px-1.5">
+      <p class="mb-3">
+        This app is designed for an
+        <span class="underline font-bold">interactive whiteboard.</span>
+        Consequently, it is not responsive.
+      </p>
+      <div class="my-4 w-full bg-gray-200 h-[0.05rem]"></div>
+      <div class="underline mt-2 mb-2">Responsive projects:</div>
+      <div class="ml-4">
+        <div class="flex gap-1 items-center pb-2.5">
+          <div class="mr-1 bi bi-circle-fill text-[0.4rem] text-pink-400"></div>
+          <a href="https://nextjs-lesson-plans.vercel.app/" target="_blank"
+            >Lesson Planz <span class="text-sm">(new window)</span></a
+          >
+        </div>
+        <div class="flex gap-1 items-center pb-2.5">
+          <div class="mr-1 bi bi-circle-fill text-[0.4rem] text-pink-400"></div>
+          <a href="https://gamble-game.vercel.app/" target="_blank"
+            >Gamble Game <span class="text-sm">(new window)</span></a
+          >
+        </div>
+        <div class="flex gap-1 items-center pb-2.5">
+          <div class="mr-1 bi bi-circle-fill text-[0.4rem] text-pink-400"></div>
+          <a href="https://travelnews.vercel.app/" target="_blank"
+            >Travel News <span class="text-sm">(new window)</span></a
+          >
+        </div>
       </div>
     </div>
   </div>
