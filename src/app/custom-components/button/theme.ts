@@ -1,6 +1,6 @@
-//@ts-nocheck
-
 //TO DO
+
+import { SimpleChanges } from '@angular/core';
 
 //Extract all these methods into a theme class so they can be used for any component. E.g. For the curent: const propVariantSet =
 //this.themeObj.button[HTMLLevel][propName][propVariant]; 'button' should be dynamic and be able to be replaced with any component.
@@ -13,133 +13,140 @@
 //Create your own compoennt by extending theme.
 //Modify an existing component by extending the component. E.g. extend Button.
 //My idea is: Theme-> Component (with css) -> component (with js). This way develoepr can choose if he wants the JavaScript or only the CSS version.
+//If component does not use disabled state, just set it as isEnabled
 export class Theme {
   addVariantWhenDisabled = true;
   component: any;
   mode: string = 'light';
 
-  setToSpacedString(classesSet) {
+  setToSpacedString(classesSet: Set<string>) {
     return Array.from(classesSet.keys()).join(' ');
   }
 
   //To do:changesObj should be optional argument
-  getPossiblyModifiedClassesAsStrings(
-    desiredClassesObj,
-    currentDisabledState,
-    changesObj
+  getCSSClassesStringByHTMLLevel(
+    desiredCSSPropsByHTMLLevel: CSSPropsByHTMLLevel,
+    currentDisabledState: DisabledState,
+    cssChangesByHTMLLevel?: CSSChangesByHTMLLevel
   ) {
-    const classesSets = this.getClassesByHTMLLevelAsSets(
-      desiredClassesObj,
+    const cssClassesSetsByHTMLLevel = this.getCSSClassesSetsByHTMLLevel(
+      desiredCSSPropsByHTMLLevel,
       currentDisabledState
     );
-    const returnObject = {};
-    Object.keys(classesSets).forEach((HTMLLevel) => {
-      const classesSet = classesSets[HTMLLevel];
+    const cssClassesStringsByHTMLLevel: CSSClassesStringsByHTMLLevel = {};
+    Object.keys(cssClassesSetsByHTMLLevel).forEach((HTMLLevel) => {
+      const cssClassesSet = cssClassesSetsByHTMLLevel[HTMLLevel];
 
       // trim because if developer adds leading or trailing spaces by mistake many
       // things will not work as we rely on fetching the exact values from sets.
-      const trimmedClassesSet = this.trimValues(classesSet);
+      const trimmedCSSClassesSet = this.trimValues(cssClassesSet);
 
-      let finalClassesSet;
+      let finalCSSClassesSet;
       //If changesObj exists, then the developer wants to add/delete some of the classes
-      if (changesObj && changesObj[HTMLLevel]) {
-        finalClassesSet = this.editClasses(
-          trimmedClassesSet,
-          changesObj[HTMLLevel]
+      if (cssChangesByHTMLLevel && cssChangesByHTMLLevel[HTMLLevel]) {
+        finalCSSClassesSet = this.editCSSClasses(
+          trimmedCSSClassesSet,
+          cssChangesByHTMLLevel[HTMLLevel]
         );
       } else {
-        finalClassesSet = trimmedClassesSet;
+        finalCSSClassesSet = trimmedCSSClassesSet;
       }
 
-      returnObject[HTMLLevel] = this.setToSpacedString(finalClassesSet);
+      cssClassesStringsByHTMLLevel[HTMLLevel] =
+        this.setToSpacedString(finalCSSClassesSet);
     });
-    return returnObject;
+    return cssClassesStringsByHTMLLevel;
   }
 
-  getClassesByHTMLLevelAsSets(desiredClassesObj, currentDisabledState) {
-    const returnObject = {
-      container: new Set(),
-      textContent: new Set(),
-    };
-    Object.entries(desiredClassesObj).forEach(([HTMLLevel, HTMLLevelProps]) => {
-      returnObject[HTMLLevel] = new Set();
-      Object.keys(HTMLLevelProps).forEach((propName) => {
-        const propVariant = HTMLLevelProps[propName];
-        if (
-          propName === 'variant' &&
-          currentDisabledState === 'isDisabled' &&
-          !this.addVariantWhenDisabled
-        ) {
-          return;
-        }
+  getCSSClassesSetsByHTMLLevel(
+    desiredCSSPropsByHTMLLevel: CSSPropsByHTMLLevel,
+    currentDisabledState: DisabledState
+  ) {
+    // const cssClassesByHTMLLevel: CSSClassesByHTMLLevel = {
+    //   container: new Set(),
+    //   textContent: new Set(),
+    // };
+    const cssClassesByHTMLLevel: CSSClassesByHTMLLevel = {};
+    Object.entries(desiredCSSPropsByHTMLLevel).forEach(
+      ([HTMLLevel, HTMLLevelProps]) => {
+        cssClassesByHTMLLevel[HTMLLevel] = new Set();
+        Object.keys(HTMLLevelProps).forEach((propName) => {
+          const propVariant = HTMLLevelProps[propName];
+          if (
+            propName === 'variant' &&
+            currentDisabledState === 'isDisabled' &&
+            !this.addVariantWhenDisabled
+          ) {
+            return;
+          }
 
-        const propVariantSet =
-          this.component[this.mode][HTMLLevel][propName][propVariant];
-        const propVariantSetCopy = new Set([...propVariantSet]);
-        returnObject[HTMLLevel] = new Set([
-          ...returnObject[HTMLLevel],
-          ...propVariantSetCopy,
-        ]);
-      });
-    });
-    return returnObject;
+          const propVariantSet =
+            this.component[this.mode][HTMLLevel][propName][propVariant];
+          const propVariantSetCopy = new Set([...propVariantSet]);
+          cssClassesByHTMLLevel[HTMLLevel] = new Set([
+            ...cssClassesByHTMLLevel[HTMLLevel],
+            ...propVariantSetCopy,
+          ]);
+        });
+      }
+    );
+    return cssClassesByHTMLLevel;
   }
 
-  editClasses(classesSet, changes) {
-    const { add, remove } = changes;
+  editCSSClasses(cssClassesSet: Set<string>, cssChanges: CSSChanges) {
+    const { add, remove } = cssChanges;
     if (add) {
       if (typeof add === 'string') {
         const cssClass = add;
-        classesSet.add(cssClass.trim());
+        cssClassesSet.add(cssClass.trim());
       } else {
         const cssClasses = add;
         cssClasses.forEach((cssClass) => {
-          classesSet.add(cssClass.trim());
+          cssClassesSet.add(cssClass.trim());
         });
       }
     }
     if (remove) {
       if (typeof remove === 'string') {
         const cssClass = remove;
-        classesSet.delete(cssClass.trim());
+        cssClassesSet.delete(cssClass.trim());
       } else {
         const cssClasses = remove;
         cssClasses.forEach((cssClass) => {
-          classesSet.delete(cssClass.trim());
+          cssClassesSet.delete(cssClass.trim());
         });
       }
     }
 
-    return classesSet;
+    return cssClassesSet;
   }
 
-  transformComponentInput(inputPropObjects) {
-    const componentObj = structuredClone(this.component);
-    const classesObj = {};
-    const componentObjHTMLLevelKeys = []; //For error checking
-    const inputPropObjectsHTMLLevelKeys = []; //For error checking
-    Object.entries(componentObj[this.mode]).forEach(([HTMLLevel, propObj]) => {
-      componentObjHTMLLevelKeys.push(
-        Object.keys(componentObj[this.mode][HTMLLevel])
-      );
-      classesObj[HTMLLevel] = propObj;
+  transformComponentInput(
+    inputPropObjects: {
+      inputPropName: string;
+      inputPropValue: string;
+    }[]
+  ) {
+    const component: Component = structuredClone(this.component);
+    const cssPropsByHTMLLevel: CSSPropsByHTMLLevel = {};
+    const componentHTMLLevelKeys: string[][] = []; //For error checking
+    const inputPropObjectsHTMLLevelKeys: string[] = []; //For error checking
+
+    Object.entries(component[this.mode]).forEach(([HTMLLevel, propObj]) => {
+      componentHTMLLevelKeys.push(Object.keys(component[this.mode][HTMLLevel]));
+      cssPropsByHTMLLevel[HTMLLevel] = propObj as any;
       inputPropObjects.forEach((inputPropObj) => {
-        if (classesObj[HTMLLevel][inputPropObj.inputPropName]) {
+        if (cssPropsByHTMLLevel[HTMLLevel][inputPropObj.inputPropName]) {
           inputPropObjectsHTMLLevelKeys.push(inputPropObj.inputPropName);
-          classesObj[HTMLLevel][inputPropObj.inputPropName] =
+          cssPropsByHTMLLevel[HTMLLevel][inputPropObj.inputPropName] =
             inputPropObj.inputPropValue;
         }
       });
     });
 
-    console.log('componentObjHTMLLevelKeys');
-    console.log(componentObjHTMLLevelKeys);
-
-    console.log('inputPropObjectsHTMLLevelKeys');
-    console.log(inputPropObjectsHTMLLevelKeys);
-
-    const flattenedComponentObjHTMLLevelKeys =
-      componentObjHTMLLevelKeys.flatMap((key) => key);
+    const flattenedComponentObjHTMLLevelKeys = componentHTMLLevelKeys.flatMap(
+      (key) => key
+    );
     if (
       flattenedComponentObjHTMLLevelKeys.length !==
       inputPropObjectsHTMLLevelKeys.length
@@ -176,9 +183,7 @@ export class Theme {
       );
     }
 
-    console.log('classesObj');
-    console.log(classesObj);
-    return classesObj;
+    return cssPropsByHTMLLevel;
   }
 
   checkIfInputsChanged(
@@ -202,11 +207,47 @@ export class Theme {
     return haveChanged;
   }
 
-  private trimValues(classesSet: any) {
-    const trimmedClassesSet = new Set();
+  private trimValues(classesSet: Set<string>) {
+    const trimmedClassesSet: Set<string> = new Set();
     classesSet.forEach((cssClass) => {
       trimmedClassesSet.add(cssClass.trim());
     });
     return trimmedClassesSet;
   }
 }
+
+type DisabledState = 'isDisabled' | 'isEnabled';
+type CSSClassesStringsByHTMLLevel = { [key: string]: string };
+
+type CSSChanges = {
+  add?: string | string[];
+  remove?: string | string[];
+};
+type CSSChangesByHTMLLevel = {
+  [key: string]: {
+    add?: string | string[];
+    remove?: string | string[];
+  };
+};
+type Component = {
+  [key: string]: {
+    //light
+    [key: string]: {
+      //container
+      [key: string]: {
+        //variant
+        [key: string]: Set<string>;
+      };
+    };
+  };
+};
+
+type CSSClassesByHTMLLevel = {
+  [key: string]: Set<string>;
+};
+
+type CSSPropsByHTMLLevel = {
+  [key: string]: {
+    [key: string]: string;
+  };
+};

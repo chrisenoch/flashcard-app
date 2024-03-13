@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { Theme } from './theme';
 
 /* To do
@@ -13,12 +12,6 @@ import { Theme } from './theme';
 export class ButtonFunctions extends Theme {
   //Can define config options as class variables for extra control. By default, we keep the variant classes on disabled. However, this allows the developer to change this behaviour.
   override addVariantWhenDisabled = true;
-  constructor(addVariantsWhenDisabled?) {
-    super();
-    if (addVariantsWhenDisabled) {
-      this.addVariantWhenDisabled = addVariantsWhenDisabled;
-    }
-  }
 
   //container:HTMLLevel
   container = {
@@ -173,7 +166,7 @@ export class ButtonFunctions extends Theme {
     },
   };
 
-  component = {
+  override component = {
     //Mode in Theme refers to this level and represents dark or light theme.
     light: this.componentLight,
     dark: {

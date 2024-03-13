@@ -118,7 +118,7 @@ export class ButtonComponent implements OnInit, OnChanges {
       this.transformedCSSInputArgs
     );
 
-    this.cssClasses = this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
+    this.cssClasses = this.buttonFunctions.getCSSClassesStringByHTMLLevel(
       transformedInput,
       this.disabled,
       this.sx
