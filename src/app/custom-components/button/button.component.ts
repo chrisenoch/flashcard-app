@@ -149,7 +149,10 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   //Do not add "Theme" or "sx" here.
-  protected getTransformedCSSInputArgs(): any {
+  protected getTransformedCSSInputArgs(): {
+    inputPropName: string;
+    inputPropValue: string;
+  }[] {
     return [
       ...this.extraCSSInputArgs(),
       {

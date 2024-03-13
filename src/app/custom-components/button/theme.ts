@@ -131,6 +131,13 @@ export class Theme {
         }
       });
     });
+
+    console.log('componentObjHTMLLevelKeys');
+    console.log(componentObjHTMLLevelKeys);
+
+    console.log('inputPropObjectsHTMLLevelKeys');
+    console.log(inputPropObjectsHTMLLevelKeys);
+
     const flattenedComponentObjHTMLLevelKeys =
       componentObjHTMLLevelKeys.flatMap((key) => key);
     if (
@@ -169,6 +176,8 @@ export class Theme {
       );
     }
 
+    console.log('classesObj');
+    console.log(classesObj);
     return classesObj;
   }
 
