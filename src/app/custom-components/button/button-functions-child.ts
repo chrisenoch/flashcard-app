@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { ButtonFunctions } from './button-functions';
 
 export class ButtonFunctionsChild extends ButtonFunctions {
@@ -9,7 +8,7 @@ export class ButtonFunctionsChild extends ButtonFunctions {
     this.component.light.container.disabled = this.disabled;
     this.component.dark.container.disabled = this.disabled;
 
-    this.component.light.container.transform = {
+    this.component.light.container['transform'] = {
       // Object property refer to the propVariant
       // Values in the Set are the Tailwind classes that get added when the prop variant is selected.
       // E.g. <app-button-child transform="upperCase"/>
@@ -19,7 +18,7 @@ export class ButtonFunctionsChild extends ButtonFunctions {
       normalCase: new Set(['normal-case']),
       capitalize: new Set(['capitalize']),
     };
-    this.component.dark.container.transform = this.transform;
+    this.component.dark.container['transform'] = this.transform;
   }
 
   /*
@@ -36,7 +35,7 @@ export class ButtonFunctionsChild extends ButtonFunctions {
   };
 
   //change existing prop
-  disabled = {
+  disabled: { isDisabled: Set<string>; isEnabled: Set<string> } = {
     isDisabled: new Set(['bg-gray-500', 'cursor-cell']),
     isEnabled: new Set(),
   };

@@ -216,20 +216,20 @@ export class Theme {
   }
 }
 
-type DisabledState = 'isDisabled' | 'isEnabled';
-type CSSClassesStringsByHTMLLevel = { [key: string]: string };
+export type DisabledState = 'isDisabled' | 'isEnabled';
+export type CSSClassesStringsByHTMLLevel = { [key: string]: string };
 
-type CSSChanges = {
+export type CSSChanges = {
   add?: string | string[];
   remove?: string | string[];
 };
-type CSSChangesByHTMLLevel = {
+export type CSSChangesByHTMLLevel = {
   [key: string]: {
     add?: string | string[];
     remove?: string | string[];
   };
 };
-type Component = {
+export type Component = {
   [key: string]: {
     //light
     [key: string]: {
@@ -242,11 +242,14 @@ type Component = {
   };
 };
 
-type CSSClassesByHTMLLevel = {
+export type CSSClassesByHTMLLevel = {
   [key: string]: Set<string>;
 };
 
-type CSSPropsByHTMLLevel = {
+export type HTMLLevel = { [key: string]: { [key: string]: Set<string> } };
+
+//check this is correct and ensure a set should not be here
+export type CSSPropsByHTMLLevel = {
   [key: string]: {
     [key: string]: string;
   };
