@@ -1,3 +1,9 @@
+import {
+  ButtonComponent,
+  ButtonComponentMode,
+  ButtonContainer,
+  ButtonTextContent,
+} from './models/button';
 import { Theme } from './theme';
 
 /* To do
@@ -10,68 +16,68 @@ import { Theme } from './theme';
  *
  */
 
-type ButtonContainer = {
-  disabled: {
-    isDisabled: Set<string>;
-    isEnabled: Set<string>;
-  };
-  default: {
-    useDefault: Set<string>;
-    remove: Set<string>;
-  };
-  rounded: {
-    sm: Set<string>;
-    md: Set<string>;
-    lg: Set<string>;
-    full: Set<string>;
-    default: Set<string>;
-  };
-  size: {
-    sm: Set<string>;
-    md: Set<string>;
-    lg: Set<string>;
-  };
-  variant: {
-    plain: Set<string>;
-    primary: Set<string>;
-    secondary: Set<string>;
-    primaryOutlined: Set<string>;
-    secondaryOutlined: Set<string>;
-  };
-} & {
-  [key: string]: {
-    [key: string]: Set<string>;
-  };
-};
+// type ButtonContainer = {
+//   disabled: {
+//     isDisabled: Set<string>;
+//     isEnabled: Set<string>;
+//   };
+//   default: {
+//     useDefault: Set<string>;
+//     remove: Set<string>;
+//   };
+//   rounded: {
+//     sm: Set<string>;
+//     md: Set<string>;
+//     lg: Set<string>;
+//     full: Set<string>;
+//     default: Set<string>;
+//   };
+//   size: {
+//     sm: Set<string>;
+//     md: Set<string>;
+//     lg: Set<string>;
+//   };
+//   variant: {
+//     plain: Set<string>;
+//     primary: Set<string>;
+//     secondary: Set<string>;
+//     primaryOutlined: Set<string>;
+//     secondaryOutlined: Set<string>;
+//   };
+// } & {
+//   [key: string]: {
+//     [key: string]: Set<string>;
+//   };
+// };
 
-type ButtonTextContent = {
-  size: {
-    sm: Set<string>;
-    md: Set<string>;
-    lg: Set<string>;
-  };
-  variant: {
-    plain: Set<string>;
-    primary: Set<string>;
-    secondary: Set<string>;
-    primaryOutlined: Set<string>;
-    secondaryOutlined: Set<string>;
-  };
-} & {
-  [key: string]: {
-    [key: string]: Set<string>;
-  };
-};
+// type ButtonTextContent = {
+//   size: {
+//     sm: Set<string>;
+//     md: Set<string>;
+//     lg: Set<string>;
+//   };
+//   variant: {
+//     plain: Set<string>;
+//     primary: Set<string>;
+//     secondary: Set<string>;
+//     primaryOutlined: Set<string>;
+//     secondaryOutlined: Set<string>;
+//   };
+// } & {
+//   [key: string]: {
+//     [key: string]: Set<string>;
+//   };
+// };
 
-type ButtonComponentMode = {
-  container: ButtonContainer;
-  textContent: ButtonTextContent;
-};
+// type ButtonComponentMode = {
+//   container: ButtonContainer;
+//   textContent: ButtonTextContent;
+// };
 
-type ButtonComponent = {
-  dark: ButtonComponentMode;
-  light: ButtonComponentMode;
-};
+// type ButtonComponent = {
+//   dark: ButtonComponentMode;
+//   light: ButtonComponentMode;
+// };
 
 export class ButtonFunctions extends Theme {
   //Can define config options as class variables for extra control. By default, we keep the variant classes on disabled. However, this allows the developer to change this behaviour.
