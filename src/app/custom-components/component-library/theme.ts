@@ -32,7 +32,6 @@ export class Theme {
     return Array.from(classesSet.keys()).join(' ');
   }
 
-  //To do:changesObj should be optional argument
   getCSSClassesStringByHTMLLevel(
     desiredCSSPropsByHTMLLevel: CSSPropsByHTMLLevel,
     currentDisabledState: DisabledState,
@@ -71,10 +70,6 @@ export class Theme {
     desiredCSSPropsByHTMLLevel: CSSPropsByHTMLLevel,
     currentDisabledState: DisabledState
   ) {
-    // const cssClassesByHTMLLevel: CSSClassesByHTMLLevel = {
-    //   container: new Set(),
-    //   textContent: new Set(),
-    // };
     const cssClassesByHTMLLevel: CSSClassesByHTMLLevel = {};
     Object.entries(desiredCSSPropsByHTMLLevel).forEach(
       ([HTMLLevel, HTMLLevelProps]) => {

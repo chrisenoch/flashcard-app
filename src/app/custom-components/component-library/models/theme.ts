@@ -29,7 +29,6 @@ export type CSSClassesByHTMLLevel = {
 
 export type HTMLLevel = { [key: string]: { [key: string]: Set<string> } };
 
-//check this is correct and ensure a set should not be here
 export type CSSPropsByHTMLLevel = {
   [key: string]: {
     [key: string]: string;

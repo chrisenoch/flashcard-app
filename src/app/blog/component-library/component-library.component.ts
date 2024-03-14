@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ButtonFunctions } from 'src/app/custom-components/component-library/button/button-functions';
 import { ButtonService } from 'src/app/custom-components/component-library/button/button.service';
-import { GlobalComponentFunctionsService } from 'src/app/custom-components/component-library/button/global-component-functions.service';
+import { GlobalComponentFunctionsService } from 'src/app/custom-components/component-library/global-component-functions.service';
 
 @Component({
   selector: 'app-component-library',

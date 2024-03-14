@@ -3,8 +3,8 @@ import {
   ButtonComponentMode,
   ButtonContainer,
   ButtonTextContent,
-} from './models/button';
-import { Theme } from './theme';
+} from '../models/button';
+import { Theme } from '../theme';
 
 /* To do
 - Add focus styles

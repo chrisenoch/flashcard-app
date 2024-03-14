@@ -11,7 +11,7 @@ import {
   initFields,
 } from 'src/app/models/types/getFields';
 import { ButtonService } from './button.service';
-import { GlobalComponentFunctionsService } from './global-component-functions.service';
+import { GlobalComponentFunctionsService } from '../global-component-functions.service';
 
 @Component({
   selector: 'app-button',
