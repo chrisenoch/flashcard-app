@@ -1,5 +1,10 @@
-//@ts-nocheck
-import { Theme } from './theme';
+import {
+  ButtonComponent,
+  ButtonComponentMode,
+  ButtonContainer,
+  ButtonTextContent,
+} from '../models/button';
+import { Theme } from '../theme';
 
 /* To do
 - Add focus styles
@@ -10,18 +15,76 @@ import { Theme } from './theme';
  * Do not use hover:enabled. This will not work on LinkButtons. Use 'data-[disabled=false]:* E.g. 'data-[disabled=false]:hover:bg-gray-400'
  *
  */
+
+// type ButtonContainer = {
+//   disabled: {
+//     isDisabled: Set<string>;
+//     isEnabled: Set<string>;
+//   };
+//   default: {
+//     useDefault: Set<string>;
+//     remove: Set<string>;
+//   };
+//   rounded: {
+//     sm: Set<string>;
+//     md: Set<string>;
+//     lg: Set<string>;
+//     full: Set<string>;
+//     default: Set<string>;
+//   };
+//   size: {
+//     sm: Set<string>;
+//     md: Set<string>;
+//     lg: Set<string>;
+//   };
+//   variant: {
+//     plain: Set<string>;
+//     primary: Set<string>;
+//     secondary: Set<string>;
+//     primaryOutlined: Set<string>;
+//     secondaryOutlined: Set<string>;
+//   };
+// } & {
+//   [key: string]: {
+//     [key: string]: Set<string>;
+//   };
+// };
+
+// type ButtonTextContent = {
+//   size: {
+//     sm: Set<string>;
+//     md: Set<string>;
+//     lg: Set<string>;
+//   };
+//   variant: {
+//     plain: Set<string>;
+//     primary: Set<string>;
+//     secondary: Set<string>;
+//     primaryOutlined: Set<string>;
+//     secondaryOutlined: Set<string>;
+//   };
+// } & {
+//   [key: string]: {
+//     [key: string]: Set<string>;
+//   };
+// };
+
+// type ButtonComponentMode = {
+//   container: ButtonContainer;
+//   textContent: ButtonTextContent;
+// };
+
+// type ButtonComponent = {
+//   dark: ButtonComponentMode;
+//   light: ButtonComponentMode;
+// };
+
 export class ButtonFunctions extends Theme {
   //Can define config options as class variables for extra control. By default, we keep the variant classes on disabled. However, this allows the developer to change this behaviour.
   override addVariantWhenDisabled = true;
-  constructor(addVariantsWhenDisabled?) {
-    super();
-    if (addVariantsWhenDisabled) {
-      this.addVariantWhenDisabled = addVariantsWhenDisabled;
-    }
-  }
 
   //container:HTMLLevel
-  container = {
+  container: ButtonContainer = {
     disabled: {
       //isDisabled so as to avoid disabled.disabled
       isDisabled: new Set(['opacity-50', 'cursor-not-allowed']), //  isDisabled:propVariant //  'opacity-50':propCSSClass
@@ -99,7 +162,7 @@ export class ButtonFunctions extends Theme {
     },
   };
 
-  textContent = {
+  textContent: ButtonTextContent = {
     size: {
       sm: new Set(['text-sm']), //Here sm matches text-sm. This is by chance and not necessary. sm is the prop value and text-sm is the Tailwind class.
       md: new Set(['text-md']),
@@ -158,7 +221,7 @@ export class ButtonFunctions extends Theme {
     ]),
   };
 
-  componentLight = {
+  componentLight: ButtonComponentMode = {
     //container, textContent, etc: represent different layers of the HTML
     container: {
       default: this.container.default,
@@ -173,7 +236,7 @@ export class ButtonFunctions extends Theme {
     },
   };
 
-  component = {
+  override component: ButtonComponent = {
     //Mode in Theme refers to this level and represents dark or light theme.
     light: this.componentLight,
     dark: {
