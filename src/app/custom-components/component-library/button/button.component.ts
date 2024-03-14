@@ -1,6 +1,5 @@
 import {
   Component,
-  DoCheck,
   Input,
   OnChanges,
   OnInit,
@@ -12,7 +11,7 @@ import {
   initFields,
 } from 'src/app/models/types/getFields';
 import { ButtonService } from './button.service';
-import { GlobalComponentFunctionsService } from './global-component-functions.service';
+import { GlobalComponentFunctionsService } from '../global-component-functions.service';
 
 @Component({
   selector: 'app-button',
@@ -118,7 +117,7 @@ export class ButtonComponent implements OnInit, OnChanges {
       this.transformedCSSInputArgs
     );
 
-    this.cssClasses = this.buttonFunctions.getPossiblyModifiedClassesAsStrings(
+    this.cssClasses = this.buttonFunctions.getCSSClassesStringByHTMLLevel(
       transformedInput,
       this.disabled,
       this.sx
@@ -149,7 +148,10 @@ export class ButtonComponent implements OnInit, OnChanges {
   }
 
   //Do not add "Theme" or "sx" here.
-  protected getTransformedCSSInputArgs(): any {
+  protected getTransformedCSSInputArgs(): {
+    inputPropName: string;
+    inputPropValue: string;
+  }[] {
     return [
       ...this.extraCSSInputArgs(),
       {

@@ -1,8 +1,13 @@
 <!-- IMPORTANT: I haven't extracted these into button components because soon I will start my own component library and use the button components from there.-->
-<!--To do: Disable hover on buttons when buttons are disabled and map over nav items.-->
+<!--To do: appKeyboardListener and app-alert should not be on the nav but a wrapper for the entire app..-->
 <nav
   class="fixed bg-white z-[1500] font-medium h-20 w-full border-b border-gray-900/10 whitespace-nowrap"
+  appKeyboardListener
 >
+  <app-removable-alert
+    alertId="explanation-of-app-1709991594775"
+  ></app-removable-alert>
+
   <div class="flex h-full px-32 items-center">
     <div class="pr-12">
       <a href="#" class="font-BubblegumSans text-4xl">
@@ -13,13 +18,12 @@
     </div>
 
     <ul class="flex grow h-full items-center justify-end gap-4">
-      <li *ngFor="let item of navItems" class="h-full flex items-center">
+      <li class="h-full flex items-center">
         <app-button
-          buttonText="Still to do"
+          buttonText="Directives"
           variant="plain"
-          [disabled]="true"
           rounded="full"
-          href="/"
+          href="/directives-demo"
           [sx]="{
             container: {
               remove: [
@@ -78,10 +82,11 @@
           buttonText="Try free"
           rounded="full"
           variant="secondary"
+          [disabled]="true"
           [sx]="{
             container: {
               add: ['font-bold', 'py-3.5', 'px-5'],
-              remove: ['font-medium', 'py-3', 'px-4']
+              remove: ['opacity-50', 'font-medium', 'py-3', 'px-4']
             }
           }"
         ></app-button>

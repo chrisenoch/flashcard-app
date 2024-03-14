@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ButtonComponent } from '../button.component';
 import { ButtonChildrenService } from './button-child.service';
 import { ButtonService } from '../button.service';
-import { GlobalComponentFunctionsService } from '../global-component-functions.service';
+import { GlobalComponentFunctionsService } from '../../global-component-functions.service';
 
 @Component({
   selector: 'app-button-child',

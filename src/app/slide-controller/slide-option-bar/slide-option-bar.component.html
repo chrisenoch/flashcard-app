@@ -1,5 +1,5 @@
 <div
-  class="my-4 px-2 py-4 flex flex-col items-center gap-2 p-x-8 rounded-3xl bg-gray-300"
+  class="mb-auto mt-8 my-4 px-2 py-4 flex flex-col items-center gap-2 p-x-8 rounded-3xl bg-gray-300"
 >
   <app-tour-guide-container>
     <app-tour-guide
@@ -8,7 +8,6 @@
       [toggleOnClick]="true"
       [showOnHover]="false"
       [hideOnHoverOut]="false"
-      [show]="true"
       [position]="sidebarsOnRight ? 'LEFT' : 'RIGHT'"
       [arrowLeft]="sidebarsOnRight ? false : true"
       [arrowRight]="sidebarsOnRight ? true : false"
@@ -41,7 +40,7 @@
       [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-2">
-        <p message class="mr-4">
+        <p message class="mr-4 text-blue-950">
           Show/Hide <span class="underline">translation</span>
         </p>
       </app-tour-guide-help>
@@ -63,7 +62,7 @@
       [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-3">
-        <p message class="mr-4">
+        <p message class="mr-4 text-blue-950">
           Toggle <span class="underline">primary language</span>
         </p>
       </app-tour-guide-help>
@@ -86,7 +85,7 @@
       [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-4">
-        <p message class="mr-4">
+        <p message class="mr-4 text-blue-950">
           Show/Hide <span class="underline">explanation</span>
         </p>
       </app-tour-guide-help>
@@ -97,7 +96,7 @@
     />
   </app-tour-guide-container>
 
-  <app-tour-guide-container>
+  <!-- <app-tour-guide-container>
     <app-tour-guide
       elementId="tour-guide-5"
       [showOnHover]="showTooltips"
@@ -109,13 +108,13 @@
       [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-5">
-        <p message class="mr-4">
+        <p message class="mr-4 text-blue-950">
           Show/Hide <span class="underline">example sentences</span>
         </p>
       </app-tour-guide-help>
     </app-tour-guide>
     <app-slide-option-bar-text-button buttonText="Eg" />
-  </app-tour-guide-container>
+  </app-tour-guide-container> -->
 
   <app-tour-guide-container>
     <app-tour-guide
@@ -129,7 +128,7 @@
       [arrowRightCSSClasses]="tourGuideArrowRightCSSClasses"
     >
       <app-tour-guide-help elementId="tour-guide-6">
-        <p message class="mr-4">
+        <p message class="mr-4 text-blue-950">
           Only show <span class="underline">visited words</span> on sidebar
         </p>
       </app-tour-guide-help>

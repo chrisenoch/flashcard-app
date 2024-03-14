@@ -13,6 +13,8 @@ export class ElementControlsDirective {
 
   private onCloseAllObs$: Observable<Event> | undefined;
   private onCloseAllSub$: Subscription | undefined;
+  private onCloseByIdObs$: Observable<Event> | undefined;
+  private onCloseByIdSub$: Subscription | undefined;
   private onCloseAllOthersObs$: Observable<Event> | undefined;
   private onCloseAllOthersSub$: Subscription | undefined;
   private onCloseAllOthersInGroupObs$: Observable<Event> | undefined;
@@ -25,6 +27,8 @@ export class ElementControlsDirective {
   private onToggleShowOtherSub$: Subscription | undefined;
   private onShowAllObs$: Observable<Event> | undefined;
   private onShowAllSub$: Subscription | undefined;
+  private onShowByIdObs$: Observable<Event> | undefined;
+  private onShowByIdSub$: Subscription | undefined;
   private onShowAllOthersInGroupObs$: Observable<Event> | undefined;
   private onShowAllOthersInGroupSub$: Subscription | undefined;
   private onGoToNextIdObs$: Observable<Event> | undefined;
@@ -43,19 +47,15 @@ export class ElementControlsDirective {
   @Input() onCloseAll = false;
   @Input() onCloseAllOthers = false;
   @Input() onCloseAllInGroup: string | undefined;
+  @Input() onCloseById: string | undefined;
   @Input() onCloseAllOthersInGroup: string | undefined;
   @Input() onShowAll = false;
+  @Input() onShowById: string | undefined;
   @Input() onShowAllOthersInGroup: string | undefined;
   @Input() onGoToNextId: true | undefined;
   @Input() onGoToPreviousId: true | undefined;
   @Input() onGoToFirstId: true | undefined;
   @Input() onGoToLastId: true | undefined;
-
-  ngOnInit(): void {
-    if (!this.elementId) {
-      throw Error('You must set the elementId attribute');
-    }
-  }
 
   //I chose this approach instead of @HostListener, because this lets me add event listeners conditionally.
   ngAfterViewInit(): void {
@@ -69,6 +69,24 @@ export class ElementControlsDirective {
       this.onCloseObs$ = fromEvent(this.element.nativeElement, 'click');
       this.onCloseSub$ = this.onCloseObs$.subscribe((e) => {
         this.elementControlsService.onClose(e, this.elementId);
+      });
+    }
+
+    if (this.onCloseById) {
+      this.onCloseByIdObs$ = fromEvent(this.element.nativeElement, 'click');
+      this.onCloseByIdSub$ = this.onCloseByIdObs$.subscribe((e) => {
+        console.log('running sub closeById');
+        console.log('e and elementId');
+        console.log(e + ' ' + this.elementId);
+        this.elementControlsService.onClose(e, this.onCloseById!);
+      });
+    }
+
+    if (this.onShowById) {
+      this.onShowByIdObs$ = fromEvent(this.element.nativeElement, 'click');
+      this.onShowByIdSub$ = this.onShowByIdObs$.subscribe((e) => {
+        console.log('running sub showById');
+        this.elementControlsService.onShow(e, this.onShowById!);
       });
     }
 

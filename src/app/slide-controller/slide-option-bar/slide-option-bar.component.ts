@@ -25,8 +25,6 @@ export class SlideOptionBarComponent {
 
   updateToggleTooltips() {
     this.showTooltips = !this.showTooltips;
-    console.log('inside updateToggleTooltips');
-    console.log('new this.showTooltips' + this.showTooltips);
   }
 
   onShowContentAfterWordVisited() {
