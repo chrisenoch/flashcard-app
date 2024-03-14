@@ -40,9 +40,9 @@ import { InputClassesDirective } from './custom-directives/styling/input-classes
 import { FocusFormDirective } from './custom-directives/focus-form.directive';
 import { NoSpacesDirective } from './custom-directives/custom-validators/no-spaces.directive';
 import { NoContentDirective } from './custom-directives/custom-validators/no-content.directive';
-import { ButtonComponent } from './custom-components/button/button.component';
+import { ButtonComponent } from './custom-components/component-library/button/button.component';
 import { ComponentLibraryComponent } from './blog/component-library/component-library.component';
-import { ButtonChildComponent } from './custom-components/button/button-child/button-child.component';
+import { ButtonChildComponent } from './custom-components/component-library/button/button-child/button-child.component';
 import { AlertComponent } from './custom-components/alert/alert.component';
 import { KeyboardListenerDirective } from './custom-directives/keyboard-listener/keyboard-listener.directive';
 import { RemovableAlertComponent } from './custom-components/removable-alert/removable-alert.component';
