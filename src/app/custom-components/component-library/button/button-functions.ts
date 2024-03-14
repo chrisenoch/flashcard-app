@@ -1,4 +1,4 @@
-import { CSSPropsByHTMLLevel, HTMLLevel, Theme } from './theme';
+import { Theme } from './theme';
 
 /* To do
 - Add focus styles

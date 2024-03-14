@@ -1,6 +1,15 @@
 //TO DO
 
 import { SimpleChanges } from '@angular/core';
+import {
+  CSSChanges,
+  CSSChangesByHTMLLevel,
+  CSSClassesByHTMLLevel,
+  CSSClassesStringsByHTMLLevel,
+  CSSPropsByHTMLLevel,
+  DisabledState,
+  Component,
+} from './models/theme';
 
 //Extract all these methods into a theme class so they can be used for any component. E.g. For the curent: const propVariantSet =
 //this.themeObj.button[HTMLLevel][propName][propVariant]; 'button' should be dynamic and be able to be replaced with any component.
@@ -215,42 +224,3 @@ export class Theme {
     return trimmedClassesSet;
   }
 }
-
-export type DisabledState = 'isDisabled' | 'isEnabled';
-export type CSSClassesStringsByHTMLLevel = { [key: string]: string };
-
-export type CSSChanges = {
-  add?: string | string[];
-  remove?: string | string[];
-};
-export type CSSChangesByHTMLLevel = {
-  [key: string]: {
-    add?: string | string[];
-    remove?: string | string[];
-  };
-};
-export type Component = {
-  [key: string]: {
-    //light
-    [key: string]: {
-      //container
-      [key: string]: {
-        //variant
-        [key: string]: Set<string>;
-      };
-    };
-  };
-};
-
-export type CSSClassesByHTMLLevel = {
-  [key: string]: Set<string>;
-};
-
-export type HTMLLevel = { [key: string]: { [key: string]: Set<string> } };
-
-//check this is correct and ensure a set should not be here
-export type CSSPropsByHTMLLevel = {
-  [key: string]: {
-    [key: string]: string;
-  };
-};
