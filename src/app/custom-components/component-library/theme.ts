@@ -60,8 +60,20 @@ export class Theme {
         finalCSSClassesSet = trimmedCSSClassesSet;
       }
 
+      if (
+        finalCSSClassesSet.has(
+          'extra bg-gray-200        py-2 data-[disabled=false]:hover:bg-gray-300'
+        )
+      ) {
+        console.log('finalCSSClassesSet');
+        console.log(finalCSSClassesSet);
+      }
+
       cssClassesStringsByHTMLLevel[HTMLLevel] =
         this.setToSpacedString(finalCSSClassesSet);
+
+      console.log('this.setToSpacedString(finalCSSClassesSet)');
+      console.log(this.setToSpacedString(finalCSSClassesSet));
     });
     return cssClassesStringsByHTMLLevel;
   }
@@ -102,6 +114,8 @@ export class Theme {
     if (add) {
       if (typeof add === 'string') {
         const cssClass = add;
+        console.log('cssClass in editCSSClasses ');
+        console.log(cssClass.trim());
         cssClassesSet.add(cssClass.trim());
       } else {
         const cssClasses = add;
@@ -111,15 +125,15 @@ export class Theme {
       }
     }
     if (remove) {
+      let cssClasses: string[] = [];
       if (typeof remove === 'string') {
-        const cssClass = remove;
-        cssClassesSet.delete(cssClass.trim());
+        cssClasses = this.trimAllSpacesAndStoreInArray(remove);
       } else {
-        const cssClasses = remove;
-        cssClasses.forEach((cssClass) => {
-          cssClassesSet.delete(cssClass.trim());
-        });
+        cssClasses = remove;
       }
+      cssClasses.forEach((cssClass) => {
+        cssClassesSet.delete(cssClass.trim());
+      });
     }
 
     return cssClassesSet;
@@ -214,8 +228,17 @@ export class Theme {
   private trimValues(classesSet: Set<string>) {
     const trimmedClassesSet: Set<string> = new Set();
     classesSet.forEach((cssClass) => {
+      // console.log('in foreach');
+      // console.log(cssClass.trim());
       trimmedClassesSet.add(cssClass.trim());
     });
     return trimmedClassesSet;
+  }
+
+  private trimAllSpacesAndStoreInArray(str: string) {
+    const wordArr = str.split(' ');
+    //spaces are removed because filter does not return sparse array empty slots
+    const noSpacesArr = wordArr.filter((ele) => ele);
+    return noSpacesArr;
   }
 }
