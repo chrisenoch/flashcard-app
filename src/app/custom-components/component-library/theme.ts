@@ -100,26 +100,26 @@ export class Theme {
   editCSSClasses(cssClassesSet: Set<string>, cssChanges: CSSChanges) {
     const { add, remove } = cssChanges;
     if (add) {
+      let cssClasses: string[] = [];
       if (typeof add === 'string') {
-        const cssClass = add;
-        cssClassesSet.add(cssClass.trim());
+        cssClasses = this.trimAllSpacesAndStoreInArray(add);
       } else {
-        const cssClasses = add;
-        cssClasses.forEach((cssClass) => {
-          cssClassesSet.add(cssClass.trim());
-        });
+        cssClasses = add;
       }
+      cssClasses.forEach((cssClass) => {
+        cssClassesSet.add(cssClass.trim());
+      });
     }
     if (remove) {
+      let cssClasses: string[] = [];
       if (typeof remove === 'string') {
-        const cssClass = remove;
-        cssClassesSet.delete(cssClass.trim());
+        cssClasses = this.trimAllSpacesAndStoreInArray(remove);
       } else {
-        const cssClasses = remove;
-        cssClasses.forEach((cssClass) => {
-          cssClassesSet.delete(cssClass.trim());
-        });
+        cssClasses = remove;
       }
+      cssClasses.forEach((cssClass) => {
+        cssClassesSet.delete(cssClass.trim());
+      });
     }
 
     return cssClassesSet;
@@ -217,5 +217,12 @@ export class Theme {
       trimmedClassesSet.add(cssClass.trim());
     });
     return trimmedClassesSet;
+  }
+
+  private trimAllSpacesAndStoreInArray(str: string) {
+    const wordArr = str.split(' ');
+    //spaces are removed because filter does not return sparse array empty slots
+    const noSpacesArr = wordArr.filter((ele) => ele);
+    return noSpacesArr;
   }
 }
