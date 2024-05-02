@@ -60,20 +60,8 @@ export class Theme {
         finalCSSClassesSet = trimmedCSSClassesSet;
       }
 
-      if (
-        finalCSSClassesSet.has(
-          'extra bg-gray-200        py-2 data-[disabled=false]:hover:bg-gray-300'
-        )
-      ) {
-        console.log('finalCSSClassesSet');
-        console.log(finalCSSClassesSet);
-      }
-
       cssClassesStringsByHTMLLevel[HTMLLevel] =
         this.setToSpacedString(finalCSSClassesSet);
-
-      console.log('this.setToSpacedString(finalCSSClassesSet)');
-      console.log(this.setToSpacedString(finalCSSClassesSet));
     });
     return cssClassesStringsByHTMLLevel;
   }
@@ -112,17 +100,15 @@ export class Theme {
   editCSSClasses(cssClassesSet: Set<string>, cssChanges: CSSChanges) {
     const { add, remove } = cssChanges;
     if (add) {
+      let cssClasses: string[] = [];
       if (typeof add === 'string') {
-        const cssClass = add;
-        console.log('cssClass in editCSSClasses ');
-        console.log(cssClass.trim());
-        cssClassesSet.add(cssClass.trim());
+        cssClasses = this.trimAllSpacesAndStoreInArray(add);
       } else {
-        const cssClasses = add;
-        cssClasses.forEach((cssClass) => {
-          cssClassesSet.add(cssClass.trim());
-        });
+        cssClasses = add;
       }
+      cssClasses.forEach((cssClass) => {
+        cssClassesSet.add(cssClass.trim());
+      });
     }
     if (remove) {
       let cssClasses: string[] = [];
@@ -228,8 +214,6 @@ export class Theme {
   private trimValues(classesSet: Set<string>) {
     const trimmedClassesSet: Set<string> = new Set();
     classesSet.forEach((cssClass) => {
-      // console.log('in foreach');
-      // console.log(cssClass.trim());
       trimmedClassesSet.add(cssClass.trim());
     });
     return trimmedClassesSet;
